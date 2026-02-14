@@ -118,6 +118,19 @@ body {
     justify-content: space-between;
 }
 
+/* Desktop Order (Default) */
+.brand-container {
+    order: 1;
+}
+
+.nav-links {
+    order: 2;
+}
+
+.login-btn {
+    order: 3;
+}
+
 .brand-container {
     display: flex;
     align-items: center;
@@ -842,7 +855,6 @@ section {
 
     /* Login Button on Mobile Header */
     .login-btn {
-        display: flex !important;
         order: 2;
         /* Login next to hamburger */
         margin-right: 15px;
