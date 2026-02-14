@@ -95,6 +95,7 @@ const RegistrationSchema = new mongoose.Schema({
     date: { type: Date, default: Date.now },
     location: String,
     ticketId: String,
+    paymentId: String,
     paymentStatus: { type: String, default: "PENDING" }
 }, {
     bufferCommands: false, // Disable buffering
@@ -234,13 +235,14 @@ app.post("/api/create-order", async (req, res) => {
 });
 
 // Payment Success Endpoint (With Verification)
+// Payment Success Endpoint (With Verification & Finalization)
 app.post("/api/payment-success", async (req, res) => {
     try {
         await connectDB();
-        const { ticketId, razorpay_payment_id, razorpay_order_id, razorpay_signature } = req.body;
+        const { ticketId, razorpay_payment_id, razorpay_order_id, razorpay_signature, eventData } = req.body;
 
-        if (!ticketId || !razorpay_payment_id || !razorpay_order_id || !razorpay_signature) {
-            return res.status(400).json({ error: "Missing payment details" });
+        if (!ticketId || !razorpay_payment_id || !razorpay_order_id || !razorpay_signature || !eventData) {
+            return res.status(400).json({ error: "Missing payment or registration details" });
         }
 
         // Verify Signature
@@ -256,11 +258,22 @@ app.post("/api/payment-success", async (req, res) => {
         }
 
         // --- SUCCESS LOGIC ---
-        const registration = await Registration.findOne({ ticketId });
-        if (!registration) return res.status(404).json({ error: "Registration not found" });
+        // Check if already registered (Idempotency)
+        let registration = await Registration.findOne({ ticketId });
+        if (registration) {
+            return res.json({ success: true, message: "Registration already exists", alreadyRegistered: true });
+        }
 
-        // Update status to PAID
-        registration.paymentStatus = "PAID";
+        // Create NEW Registration (Only now!)
+        registration = new Registration({
+            ...eventData,
+            ticketId,
+            date: new Date(),
+            paymentStatus: "PAID", // Directly set to PAID
+            eventId: razorpay_order_id, // Store order ID if needed
+            paymentId: razorpay_payment_id
+        });
+
         await registration.save();
 
         // Save to Excel NOW
@@ -268,10 +281,10 @@ app.post("/api/payment-success", async (req, res) => {
             if (!result.success) console.error("Excel save failed:", result.error);
         }).catch(err => console.error("Excel save error:", err));
 
-        res.json({ success: true, message: "Payment verified and recorded" });
+        res.json({ success: true, message: "Payment verified and registration complete" });
     } catch (error) {
         console.error("Payment verification error:", error);
-        res.status(500).json({ error: "Internal server error" });
+        res.status(500).json({ error: "Internal server error: " + error.message });
     }
 });
 

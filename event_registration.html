@@ -172,102 +172,97 @@
             };
 
             try {
-                // 1. Register User
-                const result = await registerForEvent(eventData);
+                try {
+                    // 1. Generate Ticket ID Locally
+                    const ticketId = "VTX-" + Date.now();
 
-                if (!result.success) {
-                    throw new Error(result.message || "Registration failed");
-                }
+                    submitBtn.textContent = 'Initiating Payment...';
 
-                submitBtn.textContent = 'Initiating Payment...';
+                    // Save details (Legacy/Backup) - strictly for session reference if needed
+                    sessionStorage.setItem('pendingTicketId', ticketId);
 
-                // Save details (Legacy/Backup)
-                sessionStorage.setItem('pendingTicketId', result.data.ticketId);
-                sessionStorage.setItem('regName', result.data.name);
-                sessionStorage.setItem('regEvent', result.data.event);
+                    // 2. Create Razorpay Order
+                    const orderRes = await fetch('/api/create-order', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ ticketId: ticketId, type: 'event' })
+                    });
 
-                // 2. Create Razorpay Order
-                const ticketId = result.data.ticketId;
-                const orderRes = await fetch('/api/create-order', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ ticketId: ticketId, type: 'event' })
-                });
+                    const order = await orderRes.json();
+                    if (!orderRes.ok) throw new Error(order.error || "Payment initiation failed");
 
-                const order = await orderRes.json();
-                if (!orderRes.ok) throw new Error(order.error || "Payment initiation failed");
+                    // 3. Open Razorpay
+                    const options = {
+                        "key": "rzp_test_SFZWAVjpbUiAMd",
+                        "amount": order.amount,
+                        "currency": "INR",
+                        "name": "Vortex Innovators",
+                        "description": "Event Registration Fee",
+                        "image": "https://img.sanishtech.com/u/0bf8d54cbb2ec0a4f34988b547a491dd.png",
+                        "order_id": order.id,
+                        "handler": async function (response) {
+                            try {
+                                submitBtn.textContent = 'Verifying & Registering...';
 
-                // 3. Open Razorpay
-                const options = {
-                    "key": "rzp_test_SFZWAVjpbUiAMd",
-                    "amount": order.amount,
-                    "currency": "INR",
-                    "name": "Vortex Innovators",
-                    "description": "Event Registration Fee",
-                    "image": "https://img.sanishtech.com/u/0bf8d54cbb2ec0a4f34988b547a491dd.png",
-                    "order_id": order.id,
-                    "handler": async function (response) {
-                        try {
-                            submitBtn.textContent = 'Verifying Payment...';
+                                // 4. Verify Payment & Finalize Registration
+                                const verifyRes = await fetch('/api/payment-success', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        ticketId: ticketId,
+                                        razorpay_payment_id: response.razorpay_payment_id,
+                                        razorpay_order_id: response.razorpay_order_id,
+                                        razorpay_signature: response.razorpay_signature,
+                                        eventData: eventData // Pass registration data here!
+                                    })
+                                });
 
-                            // 4. Verify Payment
-                            const verifyRes = await fetch('/api/payment-success', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({
-                                    ticketId: ticketId,
-                                    razorpay_payment_id: response.razorpay_payment_id,
-                                    razorpay_order_id: response.razorpay_order_id,
-                                    razorpay_signature: response.razorpay_signature
-                                })
-                            });
-
-                            const verifyData = await verifyRes.json();
-                            if (verifyRes.ok) {
-                                window.location.href = 'registration_success.html';
-                            } else {
-                                alert("Payment verification failed: " + verifyData.error);
+                                const verifyData = await verifyRes.json();
+                                if (verifyRes.ok) {
+                                    window.location.href = 'registration_success.html';
+                                } else {
+                                    alert("Payment verification failed: " + verifyData.error);
+                                    submitBtn.textContent = "Retry Payment";
+                                    submitBtn.disabled = false;
+                                }
+                            } catch (err) {
+                                console.error(err);
+                                alert("Verification error. Please contact support.");
                                 submitBtn.textContent = "Retry Payment";
                                 submitBtn.disabled = false;
                             }
-                        } catch (err) {
-                            console.error(err);
-                            alert("Verification error. Please contact support.");
-                            submitBtn.textContent = "Retry Payment";
-                            submitBtn.disabled = false;
+                        },
+                        "prefill": {
+                            "name": eventData.name,
+                            "email": eventData.email || "guest@example.com",
+                            "contact": eventData.phone
+                        },
+                        "theme": {
+                            "color": "#00d2ff"
+                        },
+                        "modal": {
+                            "ondismiss": function () {
+                                alert('Payment cancelled. You can retry payment later.');
+                                submitBtn.textContent = "Proceed to Payment";
+                                submitBtn.disabled = false;
+                            }
                         }
-                    },
-                    "prefill": {
-                        "name": eventData.name,
-                        "email": eventData.email || "guest@example.com",
-                        "contact": eventData.phone
-                    },
-                    "theme": {
-                        "color": "#00d2ff"
-                    },
-                    "modal": {
-                        "ondismiss": function () {
-                            alert('Payment cancelled. You can retry payment later.');
-                            submitBtn.textContent = "Proceed to Payment";
-                            submitBtn.disabled = false;
-                        }
-                    }
-                };
+                    };
 
-                const rzp1 = new Razorpay(options);
-                rzp1.on('payment.failed', function (response) {
-                    alert("Payment Failed: " + response.error.description);
+                    const rzp1 = new Razorpay(options);
+                    rzp1.on('payment.failed', function (response) {
+                        alert("Payment Failed: " + response.error.description);
+                        submitBtn.disabled = false;
+                    });
+                    rzp1.open();
+
+                } catch (error) {
+                    console.error("Process error:", error);
+                    alert('Error: ' + error.message);
+                    submitBtn.textContent = originalText;
                     submitBtn.disabled = false;
-                });
-                rzp1.open();
-
-            } catch (error) {
-                console.error("Process error:", error);
-                alert('Error: ' + error.message);
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
-            }
-        });
+                }
+            });
     </script>
 </body>
 
