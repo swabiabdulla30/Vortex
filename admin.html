@@ -156,7 +156,10 @@
                     return;
                 }
 
-                if (!res.ok) throw new Error("Failed to fetch");
+                if (!res.ok) {
+                    const errorText = await res.text();
+                    throw new Error(`Failed to fetch: ${res.status} ${res.statusText} - ${errorText}`);
+                }
 
                 allRegistrations = await res.json();
                 populateEventFilter(allRegistrations);
