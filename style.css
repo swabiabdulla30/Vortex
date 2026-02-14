@@ -794,6 +794,8 @@ section {
         display: block;
         cursor: pointer;
         z-index: 2000;
+        order: 3;
+        /* Hamburger always on right */
     }
 
     .hamburger div {
@@ -802,6 +804,12 @@ section {
         background-color: #fff;
         margin: 5px;
         transition: all 0.3s ease;
+    }
+
+    .brand-container {
+        order: 1;
+        /* Brand on left */
+        flex-grow: 1;
     }
 
     /* Mobile Nav Links (Slide Out) */
@@ -825,6 +833,27 @@ section {
         border-left: 1px solid #333;
         padding-top: 60px;
         /* Space for close button if needed */
+    }
+
+    /* Hide Desktop Login Button inside Nav Links if accidentally present */
+    .nav-links .login-btn {
+        display: none !important;
+    }
+
+    /* Login Button on Mobile Header */
+    .login-btn {
+        display: flex !important;
+        order: 2;
+        /* Login next to hamburger */
+        margin-right: 15px;
+        /* Spacing from hamburger */
+        padding: 8px 15px;
+        font-size: 0.8rem;
+    }
+
+    .user-dropdown-container {
+        order: 2;
+        margin-right: 15px;
     }
 
     .nav-links.nav-active {
