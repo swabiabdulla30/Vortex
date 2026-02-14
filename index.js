@@ -122,6 +122,7 @@ const authenticateToken = async (req, res, next) => {
 // --- Auth Routes ---
 app.post("/api/signup", async (req, res) => {
     try {
+        await connectDB();
         const { name, email, password } = req.body;
         const existingUser = await User.findOne({ email });
         if (existingUser) return res.status(400).json({ error: "User already exists" });
@@ -138,6 +139,7 @@ app.post("/api/signup", async (req, res) => {
 
 app.post("/api/login", async (req, res) => {
     try {
+        await connectDB();
         const { email, password } = req.body;
         const user = await User.findOne({ email });
         if (!user) return res.status(400).json({ error: "User not found" });
@@ -156,6 +158,7 @@ app.post("/api/login", async (req, res) => {
 // --- Public Routes ---
 app.post("/api/register", async (req, res) => {
     try {
+        await connectDB();
         const ticketId = "VTX-" + Date.now();
         const data = new Registration({ ...req.body, ticketId, date: new Date() });
         await data.save();
@@ -207,6 +210,7 @@ app.post("/api/create-order", async (req, res) => {
 // Payment Success Endpoint (With Verification)
 app.post("/api/payment-success", async (req, res) => {
     try {
+        await connectDB();
         const { ticketId, razorpay_payment_id, razorpay_order_id, razorpay_signature } = req.body;
 
         if (!ticketId || !razorpay_payment_id || !razorpay_order_id || !razorpay_signature) {
@@ -247,6 +251,7 @@ app.post("/api/payment-success", async (req, res) => {
 
 app.get("/api/ticket/:ticketId", async (req, res) => {
     try {
+        await connectDB();
         const ticket = await Registration.findOne({ ticketId: req.params.ticketId });
         if (!ticket) return res.status(404).json({ error: "Not found" });
         res.json(ticket);
@@ -257,6 +262,7 @@ app.get("/api/ticket/:ticketId", async (req, res) => {
 
 app.get("/api/my-tickets", async (req, res) => {
     try {
+        await connectDB();
         const { email } = req.query;
         if (!email) return res.status(400).json({ error: "Email required" });
         const tickets = await Registration.find({ email }).sort({ date: -1 });
@@ -270,6 +276,7 @@ app.get("/api/my-tickets", async (req, res) => {
 app.get("/api/admin/export", authenticateToken, async (req, res) => {
     if (req.user.role !== 'admin') return res.status(403).json({ error: "Access denied" });
     try {
+        await connectDB();
         const registrations = await Registration.find().sort({ date: -1 });
         const buffer = generateExcelBuffer(registrations);
         res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -284,6 +291,7 @@ app.get("/api/admin/export", authenticateToken, async (req, res) => {
 app.get("/api/admin/registrations", authenticateToken, async (req, res) => {
     if (req.user.role !== 'admin') return res.status(403).json({ error: "Access denied" });
     try {
+        await connectDB();
         const registrations = await Registration.find().sort({ date: -1 });
         res.json(registrations);
     } catch (error) {
@@ -294,6 +302,7 @@ app.get("/api/admin/registrations", authenticateToken, async (req, res) => {
 app.delete("/api/admin/registration/:id", authenticateToken, async (req, res) => {
     if (req.user.role !== 'admin') return res.status(403).json({ error: "Access denied" });
     try {
+        await connectDB();
         await Registration.findByIdAndDelete(req.params.id);
         res.json({ message: "Registration deleted" });
     } catch (error) {
