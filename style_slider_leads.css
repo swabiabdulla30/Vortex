@@ -106,12 +106,27 @@
     letter-spacing: 1px;
 }
 
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
+100% {
+    transform: rotate(360deg);
+}
+}
+
+/* Mobile Responsive for Leads Slider */
+@media (max-width: 768px) {
+    .leads-slider-container {
+        height: 400px;
     }
 
-    100% {
-        transform: rotate(360deg);
+    .lead-slide {
+        min-width: 100%;
+        /* Show 1 item fully */
+        transform: scale(0.9);
+        opacity: 1;
+        /* Ensure visible */
+        filter: blur(0);
+    }
+
+    .lead-slide.active {
+        transform: scale(1);
     }
 }

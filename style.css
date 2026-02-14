@@ -160,6 +160,10 @@ body {
     transform: scale(1.05);
 }
 
+.hamburger {
+    display: none;
+}
+
 .nav-links {
     display: flex;
     gap: 30px;
@@ -770,8 +774,72 @@ section {
         font-size: 5rem;
     }
 
+    /* Hamburger Menu Icon */
+    .hamburger {
+        display: block;
+        cursor: pointer;
+        z-index: 2000;
+    }
+
+    .hamburger div {
+        width: 25px;
+        height: 3px;
+        background-color: #fff;
+        margin: 5px;
+        transition: all 0.3s ease;
+    }
+
+    /* Mobile Nav Links (Slide Out) */
     .nav-links {
-        display: none;
+        position: fixed;
+        right: 0;
+        top: 0;
+        height: 100vh;
+        background: rgba(5, 5, 5, 0.95);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 70%;
+        transform: translateX(100%);
+        transition: transform 0.5s ease-in;
+        z-index: 1500;
+        backdrop-filter: blur(10px);
+        border-left: 1px solid var(--glass-border);
+    }
+
+    .nav-links.nav-active {
+        transform: translateX(0%);
+    }
+
+    .nav-links a {
+        opacity: 0;
+        margin: 20px 0;
+        font-size: 1.2rem;
+    }
+
+    @keyframes navLinkFade {
+        from {
+            opacity: 0;
+            transform: translateX(50px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .toggle .line1 {
+        transform: rotate(-45deg) translate(-5px, 6px);
+    }
+
+    .toggle .line2 {
+        opacity: 0;
+    }
+
+    .toggle .line3 {
+        transform: rotate(45deg) translate(-5px, -6px);
     }
 
     .mission-grid {
