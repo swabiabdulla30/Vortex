@@ -111,22 +111,46 @@
 }
 }
 
-/* Mobile Responsive for Leads Slider */
+/* Mobile Responsive for Leads Slider (Standard Grid) */
 @media (max-width: 768px) {
     .leads-slider-container {
-        height: 400px;
+        height: auto;
+        overflow: visible;
+        max-width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .leads-wrapper {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 30px;
+        transform: none !important;
+        /* Disable JS slider movement */
+        width: 100%;
     }
 
     .lead-slide {
         min-width: 100%;
-        /* Show 1 item fully */
-        transform: scale(0.9);
+        height: auto;
         opacity: 1;
-        /* Ensure visible */
-        filter: blur(0);
+        transform: none;
+        filter: none;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
     }
 
     .lead-slide.active {
-        transform: scale(1);
+        transform: none;
+    }
+
+    .lead-slide .frame {
+        width: 120px;
+        height: 120px;
+    }
+
+    .lead-slide .member-info h3 {
+        font-size: 1.3rem;
     }
 }

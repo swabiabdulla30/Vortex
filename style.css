@@ -915,6 +915,29 @@ section {
         /* Show header */
     }
 
+    /* Standardize Section Padding */
+    section {
+        padding: 40px 20px;
+    }
+
+    /* Standardize Forms for Mobile (Prevent Zoom) */
+    .form-control {
+        font-size: 16px !important;
+        /* Prevents iOS zoom */
+        padding: 12px 15px;
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 15px;
+        font-size: 1rem;
+    }
+
+    .glass-form {
+        padding: 20px;
+        border-radius: 15px;
+    }
+
     /* Hide the 3D slider on mobile if distinct */
     .gallery-container {
         display: none;
