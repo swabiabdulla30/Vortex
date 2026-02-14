@@ -48,7 +48,8 @@ const connectDB = async () => {
         const mongoURI = process.env.MONGODB_URI;
 
         await mongoose.connect(mongoURI, {
-            serverSelectionTimeoutMS: 5000
+            serverSelectionTimeoutMS: 5000, // Fail fast if no connection (5s)
+            socketTimeoutMS: 45000, // Close sockets after 45s of inactivity
         });
         console.log("MongoDB Connected: Atlas (Cloud)");
     } catch (err) {
@@ -78,6 +79,9 @@ const UserSchema = new mongoose.Schema({
     password: String,
     role: { type: String, default: "user" },
     createdAt: { type: Date, default: Date.now }
+}, {
+    bufferCommands: false, // Disable buffering
+    autoCreate: false // Disable auto-creation of collection to prevent initial connection issues
 });
 
 const RegistrationSchema = new mongoose.Schema({
@@ -92,6 +96,9 @@ const RegistrationSchema = new mongoose.Schema({
     location: String,
     ticketId: String,
     paymentStatus: { type: String, default: "PENDING" }
+}, {
+    bufferCommands: false, // Disable buffering
+    autoCreate: false // Disable auto-creation of collection
 });
 
 // Force deletion of models to prevent OverwriteModelError (brute force fix for serverless)
