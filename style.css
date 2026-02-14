@@ -753,13 +753,18 @@ section {
 
 @media (max-width: 768px) {
     .glass-nav {
-        width: 90%;
-        min-width: 0;
-        padding: 15px 25px;
-        top: 20px;
+        width: 100%;
+        min-width: 100%;
+        padding: 15px 20px;
+        top: 0;
         bottom: auto;
-        border-radius: 30px;
-        background: rgba(10, 10, 10, 0.9);
+        border-radius: 0;
+        background: rgba(5, 5, 5, 0.95);
+        /* Solid functionality */
+        border-bottom: 1px solid var(--glass-border);
+        border-top: none;
+        border-left: none;
+        border-right: none;
     }
 
     .system-status {
@@ -804,18 +809,22 @@ section {
         position: fixed;
         right: 0;
         top: 0;
+        /* Starts from top */
         height: 100vh;
-        background: rgba(5, 5, 5, 0.95);
+        background: #000;
+        /* Solid black */
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        width: 70%;
+        width: 80%;
+        /* Wider menu */
         transform: translateX(100%);
-        transition: transform 0.5s ease-in;
+        transition: transform 0.3s ease-in-out;
         z-index: 1500;
-        backdrop-filter: blur(10px);
-        border-left: 1px solid var(--glass-border);
+        border-left: 1px solid #333;
+        padding-top: 60px;
+        /* Space for close button if needed */
     }
 
     .nav-links.nav-active {
@@ -875,29 +884,39 @@ section {
         /* proportional to mobile */
     }
 
-    /* Single Page UI for Mobile Gallery */
+    /* Standard Mobile Gallery (Grid) */
     #gallery {
-        height: 100vh;
-        padding: 0;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
+        height: auto;
+        /* Allow scrolling */
+        padding: 60px 20px;
+        overflow: visible;
+        display: block;
     }
 
     #gallery .section-header {
-        margin-bottom: 20px;
-        margin-top: 60px;
-        /* Space for top nav/status */
+        margin-bottom: 40px;
+        margin-top: 0;
     }
 
     #gallery .section-title {
         font-size: 2.5rem;
     }
 
-    /* HIDE the grid and second header on mobile */
-    .gallery-grid,
+    .gallery-grid {
+        display: grid;
+        /* Show grid */
+        grid-template-columns: 1fr;
+        /* Single column */
+        gap: 20px;
+    }
+
     .all-projects-header {
+        display: block;
+        /* Show header */
+    }
+
+    /* Hide the 3D slider on mobile if distinct */
+    .gallery-container {
         display: none;
     }
 }
