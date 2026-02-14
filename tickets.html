@@ -63,7 +63,7 @@
             }
 
             try {
-                const res = await fetch(`http://localhost:5000/api/my-tickets?email=${encodeURIComponent(user.email)}`);
+                const res = await fetch(`/api/my-tickets?email=${encodeURIComponent(user.email)}`);
                 const tickets = await res.json();
 
                 if (tickets.length === 0) {
