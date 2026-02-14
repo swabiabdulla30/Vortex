@@ -303,7 +303,7 @@ app.delete("/api/admin/registration/:id", authenticateToken, async (req, res) =>
 
 // --- Serve Frontend for any other route ---
 // --- Serve Frontend for any other route ---
-app.get('*', (req, res) => {
+app.get(/(.*)/, (req, res) => {
     res.sendFile(path.join(process.cwd(), 'index.html'));
 });
 
