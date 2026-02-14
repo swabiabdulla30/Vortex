@@ -78,9 +78,9 @@ const UserSchema = new mongoose.Schema({
     email: { type: String, unique: true },
     password: String,
     role: { type: String, default: "user" },
+    role: { type: String, default: "user" },
     createdAt: { type: Date, default: Date.now }
 }, {
-    bufferCommands: false, // Disable buffering
     autoCreate: false // Disable auto-creation of collection to prevent initial connection issues
 });
 
@@ -98,7 +98,6 @@ const RegistrationSchema = new mongoose.Schema({
     paymentId: String,
     paymentStatus: { type: String, default: "PENDING" }
 }, {
-    bufferCommands: false, // Disable buffering
     autoCreate: false // Disable auto-creation of collection
 });
 
