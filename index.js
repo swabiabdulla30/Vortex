@@ -56,34 +56,8 @@ const connectDB = async () => {
     }
 };
 
-// --- Seed Admin User ---
-const seedAdmin = async () => {
-    try {
-        const adminEmail = "admin@vortex.com";
-        const existingAdmin = await User.findOne({ email: adminEmail });
-        if (!existingAdmin) {
-            console.log("Seeding admin user...");
-            const hashedPassword = await bcrypt.hash("admin123", 10);
-            const admin = new User({
-                name: "Admin User",
-                email: adminEmail,
-                password: hashedPassword,
-                role: "admin"
-            });
-            await admin.save();
-            console.log("Admin user seeded: admin@vortex.com / admin123");
-        }
-    } catch (error) {
-        console.error("Error seeding admin:", error);
-    }
-};
-
 // Start services
-const startServices = async () => {
-    await connectDB();
-    await seedAdmin();
-};
-startServices();
+connectDB();
 
 // Only start Excel service if NOT in serverless env (double check)
 const { startExcelService } = require("./excel_service");
@@ -167,6 +141,25 @@ app.post("/api/login", async (req, res) => {
     try {
         await connectDB();
         const { email, password } = req.body;
+
+        // --- Lazy Admin Seeding ---
+        if (email === "admin@vortex.com") {
+            const adminExists = await User.findOne({ email });
+            if (!adminExists) {
+                console.log("Lazy seeding admin user...");
+                const hashedPassword = await bcrypt.hash("admin123", 10);
+                const newAdmin = new User({
+                    name: "Admin User",
+                    email: "admin@vortex.com",
+                    password: hashedPassword,
+                    role: "admin"
+                });
+                await newAdmin.save();
+                console.log("Admin user created on-the-fly.");
+            }
+        }
+        // --------------------------
+
         const user = await User.findOne({ email });
         if (!user) return res.status(400).json({ error: "User not found" });
 
