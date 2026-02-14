@@ -10,7 +10,7 @@
   },
   "scripts": {
     "start": "node index.js",
-    "build": "mkdir dist && echo 'No build step executed'"
+    "build": "echo 'Build handled by vercel.json'"
   },
   "engines": {
     "node": "20.x"
