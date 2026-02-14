@@ -31,12 +31,17 @@ app.get('/debug-info', (req, res) => {
 
 // --- Database Connection ---
 // --- Database Connection ---
+// --- Database Connection ---
 const connectDB = async () => {
     try {
-        // In Vercel, ONLY connect if MONGODB_URI is provided.
-        // Do NOT try localhost, it will timeout and crash the function.
         if (!process.env.MONGODB_URI) {
             console.log("No MONGODB_URI found. Skipping DB connection (Vercel Mode).");
+            return;
+        }
+
+        // Check if we already have a connection
+        if (mongoose.connection.readyState === 1) {
+            console.log("MongoDB already connected.");
             return;
         }
 
@@ -89,8 +94,12 @@ const RegistrationSchema = new mongoose.Schema({
     paymentStatus: { type: String, default: "PENDING" }
 });
 
-const User = mongoose.models.User || mongoose.model("User", UserSchema);
-const Registration = mongoose.models.Registration || mongoose.model("Registration", RegistrationSchema);
+// Force deletion of models to prevent OverwriteModelError (brute force fix for serverless)
+if (mongoose.models.User) delete mongoose.models.User;
+if (mongoose.models.Registration) delete mongoose.models.Registration;
+
+const User = mongoose.model("User", UserSchema);
+const Registration = mongoose.model("Registration", RegistrationSchema);
 
 // --- Middleware ---
 const authenticateToken = async (req, res, next) => {
