@@ -10,7 +10,7 @@
   },
   "scripts": {
     "start": "node index.js",
-    "build": "echo 'No build step executed'"
+    "build": "mkdir dist && echo 'No build step executed'"
   },
   "engines": {
     "node": "20.x"

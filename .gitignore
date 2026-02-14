@@ -3,3 +3,5 @@ vortex_db_data/
 *.log
 .vscode/
 .env
+
+dist/
