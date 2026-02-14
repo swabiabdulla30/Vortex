@@ -116,6 +116,7 @@ const authenticateToken = async (req, res, next) => {
     if (!token) return res.status(401).json({ error: "No token provided" });
 
     try {
+        await connectDB(); // Ensure DB is connected before querying
         const decoded = jwt.verify(token, "VORTEX_SECRET");
         const user = await User.findById(decoded.id);
         if (!user) return res.status(401).json({ error: "User not found" });
