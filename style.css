@@ -756,8 +756,8 @@ section {
         width: 90%;
         min-width: 0;
         padding: 15px 25px;
-        bottom: 20px;
-        top: auto;
+        top: 20px;
+        bottom: auto;
         border-radius: 30px;
         background: rgba(10, 10, 10, 0.9);
     }
