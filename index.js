@@ -89,8 +89,8 @@ const RegistrationSchema = new mongoose.Schema({
     paymentStatus: { type: String, default: "PENDING" }
 });
 
-const User = mongoose.model("User", UserSchema);
-const Registration = mongoose.model("Registration", RegistrationSchema);
+const User = mongoose.models.User || mongoose.model("User", UserSchema);
+const Registration = mongoose.models.Registration || mongoose.model("Registration", RegistrationSchema);
 
 // --- Middleware ---
 const authenticateToken = async (req, res, next) => {
