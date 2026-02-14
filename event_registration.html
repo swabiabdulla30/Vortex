@@ -188,7 +188,7 @@
 
                 // 2. Create Razorpay Order
                 const ticketId = result.data.ticketId;
-                const orderRes = await fetch('http://127.0.0.1:5000/api/create-order', {
+                const orderRes = await fetch('/api/create-order', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ ticketId: ticketId, type: 'event' })
@@ -211,7 +211,7 @@
                             submitBtn.textContent = 'Verifying Payment...';
 
                             // 4. Verify Payment
-                            const verifyRes = await fetch('http://127.0.0.1:5000/api/payment-success', {
+                            const verifyRes = await fetch('/api/payment-success', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({
