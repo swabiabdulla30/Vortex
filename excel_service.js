@@ -3,26 +3,65 @@ const path = require('path');
 const fs = require('fs');
 
 const EXCEL_FILE = path.join(__dirname, 'registrations.xlsx');
-const QUEUE_FILE = path.join(__dirname, 'pending_writes.json');
 
 // Helper to check if we are in a read-only environment
 const isReadOnlyEnv = () => {
     return process.env.VERCEL || process.env.NODE_ENV === 'production';
 };
 
-const startExcelService = () => {
-    // Ensure queue file exists (Only in writable environments)
-    if (!isReadOnlyEnv()) {
-        try {
-            if (!fs.existsSync(QUEUE_FILE)) {
-                fs.writeFileSync(QUEUE_FILE, JSON.stringify([]));
-            }
-        } catch (e) {
-            console.warn("Could not create queue file (likely read-only fs):", e.message);
+/**
+ * Appends a registration to the local Excel file (Local env only)
+ */
+const appendRegistrationToExcel = async (registration) => {
+    if (isReadOnlyEnv()) {
+        console.log(`[Excel Service] Read-only environment. Skipping Excel write for: ${registration.email}`);
+        return { success: true, skipped: true };
+    }
+
+    try {
+        let workbook;
+        if (fs.existsSync(EXCEL_FILE)) {
+            workbook = xlsx.readFile(EXCEL_FILE);
+        } else {
+            workbook = xlsx.utils.book_new();
+            xlsx.utils.book_append_sheet(workbook, xlsx.utils.json_to_sheet([]), "Registrations");
         }
 
-        // Start a periodic flush check (every 10 seconds) ONLY if writable
-        setInterval(flushQueue, 10000);
+        const worksheet = workbook.Sheets["Registrations"] || workbook.Sheets[workbook.SheetNames[0]];
+        const currentData = xlsx.utils.sheet_to_json(worksheet) || [];
+
+        const newRow = {
+            "Ticket ID": registration.ticketId || '',
+            "Name": registration.name || '',
+            "Email": registration.email || '',
+            "Phone": registration.phone || '',
+            "College": registration.college || '',
+            "Department": registration.department || '',
+            "Year": registration.year || '',
+            "Event": registration.event || '',
+            "Date": registration.date ? new Date(registration.date).toLocaleString() : '',
+            "Payment Status": registration.paymentStatus || 'PENDING'
+        };
+
+        currentData.push(newRow);
+
+        const newWorksheet = xlsx.utils.json_to_sheet(currentData);
+        workbook.Sheets["Registrations"] = newWorksheet;
+
+        xlsx.writeFile(workbook, EXCEL_FILE);
+        console.log(`[Excel Service] Saved registration for ${registration.email}`);
+        return { success: true };
+    } catch (error) {
+        console.error("[Excel Service] Error writing to Excel:", error);
+        return { success: false, error: error.message };
+    }
+};
+
+const startExcelService = () => {
+    if (!isReadOnlyEnv()) {
+        console.log("[Excel Service] initialized in writable mode.");
+    } else {
+        console.log("[Excel Service] initialized in read-only mode (Vercel).");
     }
 };
 
