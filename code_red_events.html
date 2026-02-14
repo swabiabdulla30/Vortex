@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Red Events - Vortex Innovators</title>
+    <meta name="description" content="Code Red Events - Vortex Innovators">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+
+    <!-- Spotlight Effect Container -->
+    <div id="spotlight"></div>
+
+    <!-- Navigation -->
+    <nav class="glass-nav">
+        <div class="nav-content">
+            <div class="brand-container">
+                <a href="index.html">
+                    <img src="https://img.sanishtech.com/u/0bf8d54cbb2ec0a4f34988b547a491dd.png" alt="Vortex Logo"
+                        class="nav-logo-img">
+                </a>
+                <a href="index.html" class="logo">VORTEX</a>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-item">Home</a>
+                <a href="about.html" class="nav-item">About</a>
+                <a href="events.html" class="nav-item active">Events</a>
+                <a href="gallery.html" class="nav-item">Gallery</a>
+            </div>
+            <a href="#login" class="login-btn">
+                <span class="icon">🔒</span> LOGIN
+            </a>
+        </div>
+    </nav>
+
+    <!-- System Status Bar -->
+    <div class="system-status">
+        <div class="status-indicator active"></div>
+        <span class="status-text">> SYSTEM_STATUS: ONLINE // ENCRYPTION: ACTIVE</span>
+    </div>
+
+    <!-- Events Section -->
+    <section id="code-red-events" class="content-section" style="padding-top: 100px;">
+        <div class="section-header">
+            <span class="section-tag">SERIES</span>
+            <h2 class="section-title">CODE RED: SERIES</h2>
+            <a href="events.html"
+                style="color: var(--primary-red); text-decoration: none; margin-top: 10px; display: inline-block;">&larr;
+                Back to All Events</a>
+        </div>
+        <div class="section-container">
+            <div class="cards-grid">
+                <!-- Event 1 -->
+                <div class="card event-card"
+                    onclick="window.location.href='event_registration.html?event=CODE%20RED%3A%20NIGHT'">
+                    <div class="card-status status-active">● REGISTRATION OPEN</div>
+                    <div class="card-image bg-hack"></div>
+                    <!-- Reusing existing class or add new one if needed, using placeholders for now -->
+                    <div class="card-content">
+                        <div class="date-badge">
+                            <span class="month">FEB</span>
+                            <span class="day">15</span>
+                        </div>
+                        <div class="event-details">
+                            <span class="event-type">// COMPETITION</span>
+                            <h3>CODE RED: NIGHT</h3>
+                            <p>24-hour intense coding marathon.</p>
+                            <div class="card-footer">
+                                <span class="location">📍 BCA LAB 1</span>
+                                <span class="arrow">↗</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event 2 -->
+                <div class="card event-card"
+                    onclick="window.location.href='event_registration.html?event=DEBUGGING%20SPRINT'">
+                    <div class="card-status status-soon">● COMING SOON</div>
+                    <div class="card-image"
+                        style="background-image: url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&q=80');">
+                    </div>
+                    <div class="card-content">
+                        <div class="date-badge">
+                            <span class="month">FEB</span>
+                            <span class="day">22</span>
+                        </div>
+                        <div class="event-details">
+                            <span class="event-type">// HACKATHON</span>
+                            <h3>DEBUGGING SPRINT</h3>
+                            <p>Fix the bugs in record time.</p>
+                            <div class="card-footer">
+                                <span class="location">📍 LAB 2</span>
+                                <span class="arrow">↗</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event 3 -->
+                <div class="card event-card"
+                    onclick="window.location.href='event_registration.html?event=ALGO%20MASTERS'">
+                    <div class="card-status status-soon">● COMING SOON</div>
+                    <div class="card-image"
+                        style="background-image: url('https://images.unsplash.com/photo-1555099962-4199c345e5dd?auto=format&fit=crop&q=80');">
+                    </div>
+                    <div class="card-content">
+                        <div class="date-badge">
+                            <span class="month">MAR</span>
+                            <span class="day">01</span>
+                        </div>
+                        <div class="event-details">
+                            <span class="event-type">// CHALLENGE</span>
+                            <h3>ALGO MASTERS</h3>
+                            <p>Solve complex algorithmic problems.</p>
+                            <div class="card-footer">
+                                <span class="location">📍 SEMINAR HALL</span>
+                                <span class="arrow">↗</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event 4 -->
+                <div class="card event-card"
+                    onclick="window.location.href='event_registration.html?event=REACT%20DEEP%20DIVE'">
+                    <div class="card-status status-soon">● COMING SOON</div>
+                    <div class="card-image"
+                        style="background-image: url('https://images.unsplash.com/photo-1507721999472-8ed4421c4af2?auto=format&fit=crop&q=80');">
+                    </div>
+                    <div class="card-content">
+                        <div class="date-badge">
+                            <span class="month">MAR</span>
+                            <span class="day">10</span>
+                        </div>
+                        <div class="event-details">
+                            <span class="event-type">// WORKSHOP</span>
+                            <h3>REACT DEEP DIVE</h3>
+                            <p>Advanced concepts in React.js.</p>
+                            <div class="card-footer">
+                                <span class="location">📍 LAB 3</span>
+                                <span class="arrow">↗</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event 5 -->
+                <div class="card event-card"
+                    onclick="window.location.href='event_registration.html?event=TECH%20TRIVIA'">
+                    <div class="card-status status-soon">● COMING SOON</div>
+                    <div class="card-image"
+                        style="background-image: url('https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&q=80');">
+                    </div>
+                    <div class="card-content">
+                        <div class="date-badge">
+                            <span class="month">MAR</span>
+                            <span class="day">25</span>
+                        </div>
+                        <div class="event-details">
+                            <span class="event-type">// QUIZ</span>
+                            <h3>TECH TRIVIA</h3>
+                            <p>Test your tech knowledge.</p>
+                            <div class="card-footer">
+                                <span class="location">📍 AUDITORIUM</span>
+                                <span class="arrow">↗</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event 6 -->
+                <div class="card event-card"
+                    onclick="window.location.href='event_registration.html?event=UI%2FUX%20DASH'">
+                    <div class="card-status status-soon">● COMING SOON</div>
+                    <div class="card-image"
+                        style="background-image: url('https://images.unsplash.com/photo-1550439062-609e1531270e?auto=format&fit=crop&q=80');">
+                    </div>
+                    <div class="card-content">
+                        <div class="date-badge">
+                            <span class="month">APR</span>
+                            <span class="day">05</span>
+                        </div>
+                        <div class="event-details">
+                            <span class="event-type">// DESIGN</span>
+                            <h3>UI/UX DASH</h3>
+                            <p>Create stunning interfaces quickly.</p>
+                            <div class="card-footer">
+                                <span class="location">📍 DESIGN STUDIO</span>
+                                <span class="arrow">↗</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <footer>
+        <div class="contact-section">
+            <h3>CONNECT WITH US</h3>
+            <div class="social-links">
+                <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
+                <a href="mailto:vortexinnovators2k24@gmail.com" class="social-icon"><i class="fas fa-envelope"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+            </div>
+            <p class="copyright">© 2026 VORTEX INNOVATORS. SYSTEM_STATUS: ONLINE</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

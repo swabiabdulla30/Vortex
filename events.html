@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events - Vortex Innovators</title>
+    <meta name="description" content="Vortex Innovators - Student Innovation Community under BCA Department.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style_slider.css">
+    <link rel="stylesheet" href="style_slider_leads.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+
+
+
+    <!-- Spotlight Effect Container -->
+    <div id="spotlight"></div>
+
+    <!-- Navigation -->
+    <nav class="glass-nav">
+        <div class="nav-content">
+            <div class="brand-container">
+                <a href="index.html">
+                    <img src="https://img.sanishtech.com/u/0bf8d54cbb2ec0a4f34988b547a491dd.png" alt="Vortex Logo"
+                        class="nav-logo-img">
+                </a>
+                <a href="index.html" class="logo">VORTEX</a>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-item">Home</a>
+                <a href="about.html" class="nav-item">About</a>
+                <a href="events.html" class="nav-item active">Events</a>
+                <a href="gallery.html" class="nav-item">Gallery</a>
+            </div>
+            <a href="login.html" class="login-btn">
+                <span class="icon">🔒</span> LOGIN
+            </a>
+        </div>
+    </nav>
+
+    <!-- System Status Bar -->
+    <div class="system-status">
+        <div class="status-indicator active"></div>
+        <span class="status-text">> SYSTEM_STATUS: ONLINE // ENCRYPTION: ACTIVE</span>
+    </div>
+
+    <!-- Events Section -->
+    <section id="events" class="content-section" style="padding-top: 100px;">
+        <div class="section-header">
+            <span class="section-tag">ARCHIVES</span>
+            <h2 class="section-title">UPCOMING SESSIONS</h2>
+        </div>
+        <div class="section-container">
+            <div class="cards-grid">
+                <div class="card event-card" onclick="window.location.href='code_red_events.html'"
+                    style="cursor: pointer;">
+                    <div class="card-status status-active">● REGISTRATION OPEN</div>
+                    <div class="card-image bg-hack"></div>
+                    <div class="card-content">
+                        <div class="date-badge">
+                            <span class="month">FEB</span>
+                            <span class="day">15</span>
+                        </div>
+                        <div class="event-details">
+                            <span class="event-type"></span>
+                            <h3>CODE RED: NIGHT</h3>
+                            <p>24-hour intense coding marathon.</p>
+                            <div class="card-footer">
+                                <span class="location">📍 BCA LAB 1</span>
+                                <span class="arrow">↗</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card event-card">
+                    <div class="card-status status-soon">● COMING SOON</div>
+                    <div class="card-image bg-workshop"></div>
+                    <div class="card-content">
+                        <div class="date-badge">
+                            <span class="month">FEB</span>
+                            <span class="day">20</span>
+                        </div>
+                        <div class="event-details">
+                            <span class="event-type">// WORKSHOP</span>
+                            <h3>CYBER DEFENSE</h3>
+                            <p>Intro to ethical hacking and defense.</p>
+                            <div class="card-footer">
+                                <span class="location">📍 SEMINAR HALL</span>
+                                <span class="arrow">↗</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card event-card">
+                    <div class="card-status status-soon">● COMING SOON</div>
+                    <div class="card-image bg-talk"></div>
+                    <div class="card-content">
+                        <div class="date-badge">
+                            <span class="month">MAR</span>
+                            <span class="day">05</span>
+                        </div>
+                        <div class="event-details">
+                            <span class="event-type"> TECH TALK</span>
+                            <h3>AI FRONTIERS</h3>
+                            <p>Exploring the future of Generative AI.</p>
+                            <div class="card-footer">
+                                <span class="location">📍 AUDITORIUM</span>
+                                <span class="arrow">↗</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <footer>
+        <div class="contact-section">
+            <h3>CONNECT WITH US</h3>
+            <div class="social-links">
+                <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
+                <a href="mailto:vortexinnovators2k24@gmail.com" class="social-icon"><i class="fas fa-envelope"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+            </div>
+            <p class="copyright">© 2026 VORTEX INNOVATORS. SYSTEM_STATUS: ONLINE</p>
+        </div>
+    </footer>
+
+    <!-- Lightbox Container -->
+    <div id="lightbox">
+        <span class="close-lightbox">&times;</span>
+        <img id="lightbox-img" src="" alt="Full Screen Image">
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

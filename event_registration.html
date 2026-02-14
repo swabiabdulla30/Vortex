@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Registration - Vortex Innovators</title>
+    <meta name="description" content="Register for Code Red Events">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<script>
+    // Check if user is logged in
+    const currentUser = localStorage.getItem('vortexCurrentUser');
+    if (!currentUser) {
+        // Save current URL to redirect back after login
+        sessionStorage.setItem('loginRedirectUrl', window.location.href);
+        window.location.href = 'login.html';
+    }
+</script>
+
+<body>
+
+    <!-- Spotlight Effect Container -->
+    <div id="spotlight"></div>
+
+    <!-- Navigation -->
+    <nav class="glass-nav">
+        <div class="nav-content">
+            <div class="brand-container">
+                <a href="index.html">
+                    <img src="https://img.sanishtech.com/u/0bf8d54cbb2ec0a4f34988b547a491dd.png" alt="Vortex Logo"
+                        class="nav-logo-img">
+                </a>
+                <a href="index.html" class="logo">VORTEX</a>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-item">Home</a>
+                <a href="about.html" class="nav-item">About</a>
+                <a href="events.html" class="nav-item">Events</a>
+                <a href="gallery.html" class="nav-item">Gallery</a>
+            </div>
+            <a href="#login" class="login-btn">
+                <span class="icon">🔒</span> LOGIN
+            </a>
+        </div>
+    </nav>
+
+    <!-- Registration Section -->
+    <section id="registration" class="content-section" style="padding-top: 150px;">
+        <div class="section-header">
+            <span class="section-tag">JOIN NOW</span>
+            <h2 class="section-title">EVENT REGISTRATION</h2>
+        </div>
+        <div class="section-container" style="max-width: 600px;">
+            <form id="registration-form" class="glass-form">
+                <div class="form-group">
+                    <label for="event-name">Event Name</label>
+                    <input type="text" id="event-name" name="event-name" readonly class="form-control"
+                        placeholder="Event Name">
+                </div>
+
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" required class="form-control"
+                        placeholder="Enter your full name">
+                </div>
+
+                <div class="form-group">
+                    <label for="department">Department</label>
+                    <select id="department" name="department" required class="form-control">
+                        <option value="" disabled selected>Select Department</option>
+                        <option value="CSE A">CSE A</option>
+                        <option value="CSE B">CSE B</option>
+                        <option value="CYBER SECURITY">CYBER SECURITY</option>
+                        <option value="AI/DS">AI/DS</option>
+                        <option value="BBA">BBA</option>
+                        <option value="BCA A">BCA A</option>
+                        <option value="BCA B">BCA B</option>
+                        <option value="BCA">BCA</option>
+                        <option value="MCA">MCA</option>
+                        <option value="MBA">MBA</option>
+                        <option value="DIPLOMA CSE">DIPLOMA CSE</option>
+                        <option value="DIPLOMA AIML">DIPLOMA AIML</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" required class="form-control"
+                        placeholder="Enter your phone number">
+                </div>
+
+                <div class="form-group">
+                    <label for="year">Year</label>
+                    <select id="year" name="year" required class="form-control">
+                        <option value="" disabled selected>Select Year</option>
+                        <option value="1">1st Year</option>
+                        <option value="2">2nd Year</option>
+                        <option value="3">3rd Year</option>
+                        <option value="4">4th Year</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="college">College</label>
+                    <input type="text" id="college" name="college"
+                        value="KMCT Institute of Emerging Technology and Management" readonly class="form-control">
+                </div>
+
+                <button type="submit" class="submit-btn">SECURED MY SPOT</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <footer>
+        <div class="contact-section">
+            <h3>CONNECT WITH US</h3>
+            <div class="social-links">
+                <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
+                <a href="mailto:vortexinnovators2k24@gmail.com" class="social-icon"><i class="fas fa-envelope"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+            </div>
+            <p class="copyright">© 2026 VORTEX INNOVATORS. SYSTEM_STATUS: ONLINE</p>
+        </div>
+    </footer>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="script.js"></script>
+    <script>
+        // Auto-fill event name from URL
+        window.onload = function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const eventName = urlParams.get('event');
+            if (eventName) {
+                document.getElementById('event-name').value = decodeURIComponent(eventName);
+            }
+        }
+
+        // Handle Registration & Direct Payment
+        document.getElementById('registration-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const submitBtn = this.querySelector('.submit-btn');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Processing Registration...';
+            submitBtn.disabled = true;
+
+            // Get user email
+            const userStr = localStorage.getItem('vortexCurrentUser');
+            const user = userStr ? JSON.parse(userStr) : null;
+            const userEmail = user ? user.email : '';
+
+            // Get form values
+            const eventData = {
+                name: document.getElementById('name').value,
+                email: userEmail,
+                event: document.getElementById('event-name').value,
+                department: document.getElementById('department').value,
+                phone: document.getElementById('phone').value,
+                year: document.getElementById('year').value,
+                college: document.getElementById('college').value,
+                location: "Main Auditorium",
+                date: new Date().toISOString()
+            };
+
+            try {
+                // 1. Register User
+                const result = await registerForEvent(eventData);
+
+                if (!result.success) {
+                    throw new Error(result.message || "Registration failed");
+                }
+
+                submitBtn.textContent = 'Initiating Payment...';
+
+                // Save details (Legacy/Backup)
+                sessionStorage.setItem('pendingTicketId', result.data.ticketId);
+                sessionStorage.setItem('regName', result.data.name);
+                sessionStorage.setItem('regEvent', result.data.event);
+
+                // 2. Create Razorpay Order
+                const ticketId = result.data.ticketId;
+                const orderRes = await fetch('http://127.0.0.1:5000/api/create-order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ticketId: ticketId, type: 'event' })
+                });
+
+                const order = await orderRes.json();
+                if (!orderRes.ok) throw new Error(order.error || "Payment initiation failed");
+
+                // 3. Open Razorpay
+                const options = {
+                    "key": "rzp_test_SFZWAVjpbUiAMd",
+                    "amount": order.amount,
+                    "currency": "INR",
+                    "name": "Vortex Innovators",
+                    "description": "Event Registration Fee",
+                    "image": "https://img.sanishtech.com/u/0bf8d54cbb2ec0a4f34988b547a491dd.png",
+                    "order_id": order.id,
+                    "handler": async function (response) {
+                        try {
+                            submitBtn.textContent = 'Verifying Payment...';
+
+                            // 4. Verify Payment
+                            const verifyRes = await fetch('http://127.0.0.1:5000/api/payment-success', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    ticketId: ticketId,
+                                    razorpay_payment_id: response.razorpay_payment_id,
+                                    razorpay_order_id: response.razorpay_order_id,
+                                    razorpay_signature: response.razorpay_signature
+                                })
+                            });
+
+                            const verifyData = await verifyRes.json();
+                            if (verifyRes.ok) {
+                                window.location.href = 'registration_success.html';
+                            } else {
+                                alert("Payment verification failed: " + verifyData.error);
+                                submitBtn.textContent = "Retry Payment";
+                                submitBtn.disabled = false;
+                            }
+                        } catch (err) {
+                            console.error(err);
+                            alert("Verification error. Please contact support.");
+                            submitBtn.textContent = "Retry Payment";
+                            submitBtn.disabled = false;
+                        }
+                    },
+                    "prefill": {
+                        "name": eventData.name,
+                        "email": eventData.email || "guest@example.com",
+                        "contact": eventData.phone
+                    },
+                    "theme": {
+                        "color": "#00d2ff"
+                    },
+                    "modal": {
+                        "ondismiss": function () {
+                            alert('Payment cancelled. You can retry payment later.');
+                            submitBtn.textContent = "Proceed to Payment";
+                            submitBtn.disabled = false;
+                        }
+                    }
+                };
+
+                const rzp1 = new Razorpay(options);
+                rzp1.on('payment.failed', function (response) {
+                    alert("Payment Failed: " + response.error.description);
+                    submitBtn.disabled = false;
+                });
+                rzp1.open();
+
+            } catch (error) {
+                console.error("Process error:", error);
+                alert('Error: ' + error.message);
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+
+</html>

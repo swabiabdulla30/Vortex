@@ -1,0 +1,5 @@
+node_modules/
+vortex_db_data/
+*.log
+.vscode/
+.env

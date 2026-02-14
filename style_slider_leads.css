@@ -1,0 +1,117 @@
+/* Main Leads Slider Styles */
+.leads-slider-container {
+    width: 100%;
+    max-width: 1000px;
+    height: 450px;
+    margin: 0 auto 40px auto;
+    overflow: hidden;
+    position: relative;
+    /* Removed border/bg for cleaner look as per reference */
+}
+
+.leads-wrapper {
+    display: flex;
+    height: 100%;
+    transition: transform 0.5s ease-in-out;
+    align-items: center;
+    /* Vertically center items */
+}
+
+.lead-slide {
+    min-width: 33.333%;
+    /* Show 3 items */
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    opacity: 0.5;
+    transform: scale(0.8);
+    transition: all 0.5s ease;
+    filter: blur(1px);
+}
+
+.lead-slide.active {
+    opacity: 1;
+    transform: scale(1.1);
+    z-index: 10;
+    filter: blur(0);
+}
+
+.lead-slide .member-card {
+    width: 100%;
+    /* height: 100%; Removed to allow scaling content naturally */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    transition: transform 0.3s ease;
+}
+
+.lead-slide .member-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Framed Image */
+.lead-slide .frame {
+    width: 150px;
+    height: 150px;
+    border: 2px solid var(--primary-red);
+    padding: 5px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.lead-slide .frame::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    border: 1px dashed rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    animation: spin 10s linear infinite;
+}
+
+.lead-slide .member-image {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.lead-slide .member-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.lead-slide .member-info h3 {
+    color: #fff;
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+    letter-spacing: 2px;
+}
+
+.lead-slide .member-info p {
+    color: var(--primary-red);
+    font-size: 0.8rem;
+    font-family: monospace;
+    letter-spacing: 1px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}

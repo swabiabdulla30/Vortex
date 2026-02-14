@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery - Vortex Innovators</title>
+    <meta name="description" content="Vortex Innovators - Student Innovation Community under BCA Department.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style_slider.css">
+    <link rel="stylesheet" href="style_slider_leads.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+
+
+
+    <!-- Spotlight Effect Container -->
+    <div id="spotlight"></div>
+
+    <!-- Navigation -->
+    <nav class="glass-nav">
+        <div class="nav-content">
+            <div class="brand-container">
+                <a href="index.html">
+                    <img src="https://img.sanishtech.com/u/0bf8d54cbb2ec0a4f34988b547a491dd.png" alt="Vortex Logo"
+                        class="nav-logo-img">
+                </a>
+                <a href="index.html" class="logo">VORTEX</a>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-item">Home</a>
+                <a href="about.html" class="nav-item">About</a>
+                <a href="events.html" class="nav-item">Events</a>
+                <a href="gallery.html" class="nav-item active">Gallery</a>
+            </div>
+            <a href="login.html" class="login-btn">
+                <span class="icon">🔒</span> LOGIN
+            </a>
+        </div>
+    </nav>
+
+    <!-- System Status Bar -->
+    <div class="system-status">
+        <div class="status-indicator active"></div>
+        <span class="status-text">> SYSTEM_STATUS: ONLINE // ENCRYPTION: ACTIVE</span>
+    </div>
+
+    <section id="gallery" class="content-section">
+        <div class="section-header">
+            <span class="section-tag"></span>
+            <h2 class="section-title">PROJECT ARCHIVE</h2>
+        </div>
+
+        <div class="gallery-container">
+            <div class="slide">
+                <div class="item"
+                    style="background-image: url('https://images.unsplash.com/photo-1579829366248-204fe8413f31?auto=format&fit=crop&q=80');">
+                    <div class=" content">
+                        <div class="name">AI DRONE SWARM</div>
+                        <div class="des">Autonomous drone coordination system for search and rescue operations.</div>
+                        <button>VIEW DATA</button>
+                    </div>
+                </div>
+
+                <!-- Placeholders for other items -->
+                <div class="item"
+                    style="background-image: url('https://images.unsplash.com/photo-1504384308090-c54be3852f33?auto=format&fit=crop&q=80');">
+                    <div class="content">
+                        <div class="name">PROJECT ALPHA</div>
+                        <div class="des">Description of project alpha goes here.</div>
+                        <button>VIEW DATA</button>
+                    </div>
+                </div>
+
+                <div class="item"
+                    style="background-image: url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80');">
+                    <div class="content">
+                        <div class="name">PROJECT BETA</div>
+                        <div class="des">Description of project beta goes here.</div>
+                        <button>VIEW DATA</button>
+                    </div>
+                </div>
+
+                <div class="item"
+                    style="background-image: url('https://images.unsplash.com/photo-1558494949-ef526b0042a0?auto=format&fit=crop&q=80');">
+                    <div class="content">
+                        <div class="name">PROJECT GAMMA</div>
+                        <div class="des">Description of project gamma goes here.</div>
+                        <button>VIEW DATA</button>
+                    </div>
+                </div>
+
+                <div class="item"
+                    style="background-image: url('https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&q=80');">
+                    <div class="content">
+                        <div class="name">CYBER SECURITY</div>
+                        <div class="des">Advanced network security protocols and threat detection systems.</div>
+                        <button>VIEW DATA</button>
+                    </div>
+                </div>
+
+                <div class="item"
+                    style="background-image: url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80');">
+                    <div class="content">
+                        <div class="name">IOT HUB</div>
+                        <div class="des">Centralized control system for smart home and industrial IoT devices.</div>
+                        <button>VIEW DATA</button>
+                    </div>
+                </div>
+
+                <div class="item"
+                    style="background-image: url('https://images.unsplash.com/photo-1639762681485-074b7f938ba0?auto=format&fit=crop&q=80');">
+                    <div class="content">
+                        <div class="name">BLOCKCHAIN</div>
+                        <div class="des">Decentralized ledger technology for secure and transparent transactions.</div>
+                        <button>VIEW DATA</button>
+                    </div>
+                </div>
+
+                <div class="item"
+                    style="background-image: url('https://images.unsplash.com/photo-1592478411213-61535fdd861d?auto=format&fit=crop&q=80');">
+                    <div class="content">
+                        <div class="name">AR NAVIGATION</div>
+                        <div class="des">Augmented reality navigation system for indoor and outdoor environments.</div>
+                        <button>VIEW DATA</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slider-buttons">
+                <button id="prev" class="prev"><i class="fa-solid fa-arrow-left"></i></button>
+                <button id="next" class="next"><i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+        </div>
+
+        <div class="section-header all-projects-header">
+            <span class="section-tag">FULL REPOSITORY</span>
+            <h2 class="section-title">ALL PROJECTS</h2>
+        </div>
+
+        <div class="gallery-grid">
+            <div class="gallery-item"
+                style="background-image: url('https://images.unsplash.com/photo-1579829366248-204fe8413f31?auto=format&fit=crop&q=80'); background-size: cover; background-position: center;">
+                <div class="overlay">
+                    <!-- <span>AI DRONE SWARM</span> -->
+                </div>
+            </div>
+            <div class="gallery-item"
+                style="background-image: url('https://images.unsplash.com/photo-1504384308090-c54be3852f33?auto=format&fit=crop&q=80'); background-size: cover; background-position: center;">
+                <div class="overlay">
+                    <span>PROJECT ALPHA</span>
+                </div>
+            </div>
+            <div class="gallery-item"
+                style="background-image: url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80'); background-size: cover; background-position: center;">
+                <div class="overlay">
+                    <span>PROJECT BETA</span>
+                </div>
+            </div>
+            <div class="gallery-item"
+                style="background-image: url('https://images.unsplash.com/photo-1558494949-ef526b0042a0?auto=format&fit=crop&q=80'); background-size: cover; background-position: center;">
+                <div class="overlay">
+                    <span>PROJECT GAMMA</span>
+                </div>
+            </div>
+            <div class="gallery-item"
+                style="background-image: url('https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&q=80'); background-size: cover; background-position: center;">
+                <div class="overlay">
+                    <span>CYBER SECURITY</span>
+                </div>
+            </div>
+            <div class="gallery-item"
+                style="background-image: url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80'); background-size: cover; background-position: center;">
+                <div class="overlay">
+                    <span>IOT HUB</span>
+                </div>
+            </div>
+            <div class="gallery-item"
+                style="background-image: url('https://images.unsplash.com/photo-1639762681485-074b7f938ba0?auto=format&fit=crop&q=80'); background-size: cover; background-position: center;">
+                <div class="overlay">
+                    <span>BLOCKCHAIN</span>
+                </div>
+            </div>
+            <div class="gallery-item"
+                style="background-image: url('https://images.unsplash.com/photo-1592478411213-61535fdd861d?auto=format&fit=crop&q=80'); background-size: cover; background-position: center;">
+                <div class="overlay">
+                    <span>AR NAVIGATION</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <footer>
+        <div class="contact-section">
+            <h3>CONNECT WITH US</h3>
+            <div class="social-links">
+                <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
+                <a href="mailto:vortexinnovators2k24@gmail.com" class="social-icon"><i class="fas fa-envelope"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+            </div>
+            <p class="copyright">© 2026 VORTEX INNOVATORS. SYSTEM_STATUS: ONLINE</p>
+        </div>
+    </footer>
+
+    <!-- Lightbox Container -->
+    <div id="lightbox">
+        <span class="close-lightbox">&times;</span>
+        <img id="lightbox-img" src="" alt="Full Screen Image">
+    </div>
+
+    <script src="script.js"></script>
+    <script src="script_slider.js"></script>
+    <script src="script_slider_leads.js"></script>
+</body>
+
+</html>

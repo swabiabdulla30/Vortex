@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Tickets - Vortex Innovators</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="glass-nav">
+        <div class="nav-content">
+            <div class="brand-container">
+                <a href="index.html">
+                    <img src="https://img.sanishtech.com/u/0bf8d54cbb2ec0a4f34988b547a491dd.png" alt="Vortex Logo"
+                        class="nav-logo-img">
+                </a>
+                <a href="index.html" class="logo">VORTEX</a>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-item">Home</a>
+                <a href="events.html" class="nav-item">Events</a>
+            </div>
+            <a href="login.html" class="login-btn">LOGIN</a>
+        </div>
+    </nav>
+
+    <div class="tickets-section"
+        style="padding-top: 150px; max-width: 1200px; margin: 0 auto; padding-bottom: 50px; min-height: 80vh;">
+        <h1 class="glow-text" style="text-align: center; margin-bottom: 40px;">MY TICKETS</h1>
+
+        <div id="tickets-container"
+            style="display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; padding: 20px;">
+            <div style="color: white; font-size: 1.2rem;">Loading your tickets...</div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const container = document.getElementById('tickets-container');
+            const userStr = localStorage.getItem('vortexCurrentUser');
+
+            if (!userStr) {
+                container.innerHTML = `
+                    <div style="text-align: center; color: white;">
+                        <p>Please login to view your tickets.</p>
+                        <a href="login.html" class="submit-btn" style="display: inline-block; margin-top: 20px; text-decoration: none;">LOGIN NOW</a>
+                    </div>
+                `;
+                return;
+            }
+
+            const user = JSON.parse(userStr);
+            if (!user.email) {
+                container.innerHTML = '<p style="color: white;">User email not found. Please re-login.</p>';
+                return;
+            }
+
+            try {
+                const res = await fetch(`http://localhost:5000/api/my-tickets?email=${encodeURIComponent(user.email)}`);
+                const tickets = await res.json();
+
+                if (tickets.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align: center; color: rgba(255,255,255,0.7);">
+                            <i class="fas fa-ticket-alt" style="font-size: 4rem; margin-bottom: 20px; opacity: 0.5;"></i>
+                            <p style="font-size: 1.5rem;">No active tickets found.</p>
+                            <p style="margin-top: 10px;">Ready to join the action?</p>
+                            <a href="events.html" class="submit-btn" style="display: inline-block; margin-top: 20px; text-decoration: none;">BROWSE EVENTS</a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = tickets.map(ticket => `
+                    <div class="ticket-card" style="
+                        background: rgba(255, 255, 255, 0.05);
+                        border: 1px solid rgba(255, 255, 255, 0.1);
+                        border-radius: 15px;
+                        width: 350px;
+                        overflow: hidden;
+                        backdrop-filter: blur(10px);
+                        transition: transform 0.3s ease, box-shadow 0.3s ease;
+                        position: relative;
+                    " onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='0 10px 30px rgba(0,255,213,0.2)'" 
+                      onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                        
+                        <div class="ticket-header" style="
+                            background: linear-gradient(90deg, #00C9FF 0%, #92FE9D 100%);
+                            padding: 15px;
+                            color: #000;
+                            font-weight: bold;
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                        ">
+                            <span>${ticket.event}</span>
+                            <span style="background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">${ticket.paymentStatus}</span>
+                        </div>
+                        
+                        <div class="ticket-body" style="padding: 20px; color: white;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <span style="color: #888;">Ticket ID:</span>
+                                <span style="color: #00ffd5; font-family: monospace;">${ticket.ticketId}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <span style="color: #888;">Date:</span>
+                                <span>${new Date(ticket.date).toLocaleDateString()}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <span style="color: #888;">Name:</span>
+                                <span>${ticket.name}</span>
+                            </div>
+                            <div style="text-align: center; margin-top: 20px;">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${ticket.ticketId}" alt="QR Code" style="border-radius: 8px;">
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error(error);
+                container.innerHTML = '<p style="color: #ff4444;">Failed to load tickets. Is the server running?</p>';
+            }
+        });
+    </script>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

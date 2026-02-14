@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Vortex Innovators</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .admin-container {
+            padding: 120px 20px 50px;
+            max-width: 1200px;
+            margin: 0 auto;
+            color: #fff;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .data-table th {
+            background: rgba(0, 0, 0, 0.5);
+            color: #00d2ff;
+            font-weight: 700;
+        }
+
+        .data-table tr:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .status-paid {
+            color: #00ff88;
+            font-weight: bold;
+        }
+
+        .status-pending {
+            color: #ffaa00;
+            font-weight: bold;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            background: #00d2ff;
+            color: #000;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        .delete-btn {
+            background: #ff4444;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="glass-nav">
+        <div class="nav-content">
+            <div class="brand-container">
+                <a href="index.html" class="logo">VORTEX ADMIN</a>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-item">Home</a>
+                <a href="#" onclick="logout()">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>Event Registrations</h1>
+            <div style="display: flex; gap: 10px;">
+                <select id="status-filter" class="action-btn"
+                    style="background: #333; color: white; border: 1px solid #555;">
+                    <option value="PAID" style="background: #333; color: #00ff88; font-weight: bold;" selected>PAID ONLY
+                    </option>
+                    <option value="all" style="background: #333; color: white;">All Status</option>
+                    <option value="PENDING" style="background: #333; color: #ffaa00;">Pending</option>
+                </select>
+                <select id="event-filter" class="action-btn"
+                    style="background: #333; color: white; border: 1px solid #555;">
+                    <option value="all" style="background: #333; color: white;">All Events</option>
+                </select>
+                <button onclick="exportExcel()" class="action-btn" style="background: #00ff88; color: #000;">Export to
+                    Excel</button>
+                <button onclick="fetchData()" class="action-btn">Refresh Data</button>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Name</th>
+                        <th>Event</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Details</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="data-body">
+                    <tr>
+                        <td colspan="7">Loading...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <script>
+        let allRegistrations = [];
+
+        async function fetchData() {
+            const token = localStorage.getItem('vortexToken');
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                const res = await fetch('http://127.0.0.1:5000/api/admin/registrations', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (res.status === 403) {
+                    alert("Access Denied: Admin privileges required.");
+                    window.location.href = 'index.html';
+                    return;
+                }
+
+                if (!res.ok) throw new Error("Failed to fetch");
+
+                allRegistrations = await res.json();
+                populateEventFilter(allRegistrations);
+
+                // Default to PAID ONLY view on load
+                document.getElementById('status-filter').value = 'PAID';
+                filterAndRender();
+            } catch (error) {
+                console.error(error);
+                document.getElementById('data-body').innerHTML = `<tr><td colspan="7" style="color:red">Error loading data: ${error.message}</td></tr>`;
+            }
+        }
+
+        async function exportExcel() {
+            const token = localStorage.getItem('vortexToken');
+            if (!token) return;
+
+            try {
+                const res = await fetch('http://127.0.0.1:5000/api/admin/export', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (res.ok) {
+                    const blob = await res.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `registrations_${new Date().toISOString().slice(0, 10)}.xlsx`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                } else {
+                    alert("Export failed: " + res.statusText);
+                }
+            } catch (error) {
+                console.error("Export error:", error);
+                alert("Export failed");
+            }
+        }
+
+        function populateEventFilter(data) {
+            const filter = document.getElementById('event-filter');
+            const currentSelection = filter.value;
+            const events = [...new Set(data.map(item => item.event).filter(Boolean))];
+
+            filter.innerHTML = '<option value="all" style="background: #333; color: white;">All Events</option>' +
+                events.map(event => `<option value="${event}" style="background: #333; color: white;">${event}</option>`).join('');
+
+            if (events.includes(currentSelection)) {
+                filter.value = currentSelection;
+            }
+        }
+
+        document.getElementById('event-filter').addEventListener('change', filterAndRender);
+        document.getElementById('status-filter').addEventListener('change', filterAndRender);
+
+        function filterAndRender() {
+            const eventFilter = document.getElementById('event-filter').value;
+            const statusFilter = document.getElementById('status-filter').value;
+
+            let filteredData = allRegistrations;
+
+            // Filter by Event
+            if (eventFilter !== 'all') {
+                filteredData = filteredData.filter(item => item.event === eventFilter);
+            }
+
+            // Filter by Status
+            if (statusFilter !== 'all') {
+                // If filtering by PAID, match "PAID". If PENDING, match anything else or specific "PENDING"
+                if (statusFilter === 'PAID') {
+                    filteredData = filteredData.filter(item => item.paymentStatus === 'PAID');
+                } else {
+                    filteredData = filteredData.filter(item => item.paymentStatus !== 'PAID');
+                }
+            }
+
+            renderTable(filteredData);
+        }
+
+        function renderTable(data) {
+            const tbody = document.getElementById('data-body');
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8">No registrations found.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = data.map(item => `
+                <tr>
+                    <td>${new Date(item.date).toLocaleDateString()}</td>
+                    <td>${item.name}</td>
+                    <td>${item.event}</td>
+                    <td>${item.email}</td>
+                    <td>${item.phone}</td>
+                    <td>${item.department} / ${item.year}Yr / ${item.college}</td>
+                    <td class="${item.paymentStatus === 'PAID' ? 'status-paid' : 'status-pending'}">
+                        ${item.paymentStatus}
+                    </td>
+                    <td>
+                        <button onclick="deleteRegistration('${item._id}')" class="action-btn delete-btn">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function deleteRegistration(id) {
+            console.log("Attempting to delete ID:", id);
+            if (!confirm("Are you sure you want to delete this registration?")) return;
+
+            const token = localStorage.getItem('vortexToken');
+            try {
+                const res = await fetch(`http://127.0.0.1:5000/api/admin/registration/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (res.ok) {
+                    alert("Registration deleted.");
+                    fetchData(); // Refresh table
+                } else {
+                    const data = await res.json();
+                    alert("Error: " + data.error);
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Failed to delete.");
+            }
+        }
+
+
+        function logout() {
+            localStorage.removeItem('vortexToken');
+            localStorage.removeItem('vortexCurrentUser');
+            window.location.href = 'index.html';
+        }
+
+        window.onload = fetchData;
+    </script>
+</body>
+
+</html>
