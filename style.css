@@ -127,7 +127,8 @@ body {
     order: 2;
 }
 
-.login-btn {
+.login-btn,
+.user-dropdown-container {
     order: 3;
 }
 
@@ -853,19 +854,35 @@ section {
         display: none !important;
     }
 
-    /* Login Button on Mobile Header */
-    .login-btn {
+    /* Login Button & User Dropdown on Mobile Header */
+    .login-btn,
+    .user-dropdown-container {
         order: 2;
-        /* Login next to hamburger */
-        margin-right: 15px;
-        /* Spacing from hamburger */
-        padding: 8px 15px;
+        /* Next to hamburger */
+        margin-right: 10px;
+        /* Spacing */
+    }
+
+    .login-btn {
+        padding: 8px 12px;
         font-size: 0.8rem;
     }
 
-    .user-dropdown-container {
-        order: 2;
-        margin-right: 15px;
+    /* Adjust User Button for Mobile */
+    .user-btn {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* Fix Dropdown Menu Position on Mobile */
+    .dropdown-menu {
+        top: 50px;
+        right: 60px;
+        /* Shift left to not be covered by edge */
+        width: 200px;
+        background: rgba(10, 10, 10, 0.95);
     }
 
     .nav-links.nav-active {
