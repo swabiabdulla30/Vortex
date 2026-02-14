@@ -56,8 +56,34 @@ const connectDB = async () => {
     }
 };
 
+// --- Seed Admin User ---
+const seedAdmin = async () => {
+    try {
+        const adminEmail = "admin@vortex.com";
+        const existingAdmin = await User.findOne({ email: adminEmail });
+        if (!existingAdmin) {
+            console.log("Seeding admin user...");
+            const hashedPassword = await bcrypt.hash("admin123", 10);
+            const admin = new User({
+                name: "Admin User",
+                email: adminEmail,
+                password: hashedPassword,
+                role: "admin"
+            });
+            await admin.save();
+            console.log("Admin user seeded: admin@vortex.com / admin123");
+        }
+    } catch (error) {
+        console.error("Error seeding admin:", error);
+    }
+};
+
 // Start services
-connectDB();
+const startServices = async () => {
+    await connectDB();
+    await seedAdmin();
+};
+startServices();
 
 // Only start Excel service if NOT in serverless env (double check)
 const { startExcelService } = require("./excel_service");
