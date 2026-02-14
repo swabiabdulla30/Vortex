@@ -35,8 +35,8 @@ app.get('/debug-info', (req, res) => {
 const connectDB = async () => {
     try {
         if (!process.env.MONGODB_URI) {
-            console.log("No MONGODB_URI found. Skipping DB connection (Vercel Mode).");
-            return;
+            console.error("CRITICAL: No MONGODB_URI found in environment variables.");
+            throw new Error("MONGODB_URI is not defined");
         }
 
         // Check if we already have a connection
@@ -133,7 +133,7 @@ app.post("/api/signup", async (req, res) => {
         res.status(201).json({ message: "Registered successfully" });
     } catch (error) {
         console.error("Signup error:", error);
-        res.status(500).json({ error: "Internal server error" });
+        res.status(500).json({ error: error.message || "Internal server error" });
     }
 });
 
@@ -170,7 +170,7 @@ app.post("/api/login", async (req, res) => {
         res.json({ token, user: { name: user.name, email: user.email, id: user._id, role: user.role } });
     } catch (error) {
         console.error("Login error:", error);
-        res.status(500).json({ error: "Internal server error" });
+        res.status(500).json({ error: error.message || "Internal server error" });
     }
 });
 
