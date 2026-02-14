@@ -767,11 +767,21 @@ section {
     }
 
     .hero-title {
-        font-size: 4rem;
+        font-size: 2.8rem;
+        /* Reduced from 4rem */
+        line-height: 1.1;
     }
 
     .hero-title .highlight-text {
-        font-size: 5rem;
+        font-size: 3.5rem;
+        /* Reduced from 5rem */
+    }
+
+    .hero-subtitle {
+        font-size: 0.9rem;
+        letter-spacing: 2px;
+        text-align: center;
+        padding: 0 20px;
     }
 
     /* Hamburger Menu Icon */
@@ -844,14 +854,25 @@ section {
 
     .mission-grid {
         grid-template-columns: 1fr;
+        gap: 20px;
+        /* Increased gap */
     }
 
     .hero-stats {
-        gap: 30px;
+        gap: 20px;
+        flex-wrap: wrap;
+        /* Allow wrapping */
+        justify-content: center;
     }
 
     section {
-        padding: 80px 20px;
+        padding: 60px 20px;
+        /* Slightly reduced vertical padding to fit more content, but balanced */
+    }
+
+    .section-title {
+        font-size: 2.2rem;
+        /* proportional to mobile */
     }
 
     /* Single Page UI for Mobile Gallery */
@@ -891,7 +912,8 @@ section {
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    padding: 40px;
+    padding: 25px;
+    /* More breathing room inside form */
     border-radius: 20px;
     border: 1px solid var(--glass-border);
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
