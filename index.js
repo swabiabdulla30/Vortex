@@ -5,13 +5,27 @@ const jwt = require("jsonwebtoken");
 const cors = require("cors");
 const path = require('path');
 const fs = require('fs');
+const helmet = require("helmet");
+const compression = require("compression");
+const rateLimit = require("express-rate-limit");
 const { appendRegistrationToExcel, generateExcelBuffer } = require("./excel_service");
 
 const app = express();
+
+// --- Security & Performance Middleware ---
+app.use(helmet()); // Security headers
+app.use(compression()); // Gzip compression
 app.use(cors());
 app.use(express.json());
 
-// Serve static files from the current directory
+// Rate Limiting (Prevent abuse)
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
+    message: "Too many requests from this IP, please try again later."
+});
+app.use("/api/", limiter); // Apply to API routes
+
 // Serve static files from the current directory
 app.use(express.static(path.join(process.cwd())));
 
@@ -29,8 +43,6 @@ app.get('/debug-info', (req, res) => {
     }
 });
 
-// --- Database Connection ---
-// --- Database Connection ---
 // --- Database Connection ---
 const connectDB = async () => {
     try {
@@ -50,8 +62,9 @@ const connectDB = async () => {
         await mongoose.connect(mongoURI, {
             serverSelectionTimeoutMS: 5000, // Fail fast if no connection (5s)
             socketTimeoutMS: 45000, // Close sockets after 45s of inactivity
+            maxPoolSize: 10, // Limit connection pool for serverless environment
         });
-        console.log("MongoDB Connected: Atlas (Cloud)");
+        console.log("MongoDB Connected: Atlas (Cloud) with Pool Size 10");
     } catch (err) {
         console.error("MongoDB connection error:", err);
     }
