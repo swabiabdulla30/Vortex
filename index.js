@@ -13,7 +13,17 @@ const { appendRegistrationToExcel, generateExcelBuffer } = require("./excel_serv
 const app = express();
 
 // --- Security & Performance Middleware ---
-app.use(helmet()); // Security headers
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            "default-src": ["'self'"],
+            "img-src": ["'self'", "data:", "https://images.unsplash.com", "https://i.pravatar.cc", "https://img.sanishtech.com"],
+            "script-src": ["'self'", "'unsafe-inline'", "https://checkout.razorpay.com", "https://cdnjs.cloudflare.com"],
+            "frame-src": ["https://api.razorpay.com", "https://checkout.razorpay.com"],
+            "connect-src": ["'self'", "https://lumberjack.razorpay.com"]
+        }
+    }
+})); // Security headers with custom CSP
 app.use(compression()); // Gzip compression
 app.use(cors());
 app.use(express.json());
