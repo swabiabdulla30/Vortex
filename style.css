@@ -26,6 +26,7 @@ body {
     color: var(--text-color);
     font-family: var(--font-main);
     overflow-x: hidden;
+    width: 100%;
     cursor: default;
 }
 
@@ -1033,7 +1034,7 @@ section {
 
     /* Hide the 3D slider on mobile if distinct */
     .gallery-container {
-        display: none;
+        display: none !important;
     }
 }
 
