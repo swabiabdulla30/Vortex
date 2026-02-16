@@ -88,6 +88,12 @@
                     display: flex;
                     flex-direction: column;
                     align-items: center;
+                    position: relative;
+                }
+
+                /* Hiding Radio Buttons */
+                input[name="auth-toggle"] {
+                    display: none;
                 }
 
                 .form-toggle {
@@ -99,10 +105,9 @@
                     width: 100%;
                 }
 
-                .toggle-btn {
+                .toggle-label {
                     flex: 1;
-                    background: none;
-                    border: none;
+                    text-align: center;
                     color: #888;
                     padding: 8px;
                     cursor: pointer;
@@ -110,19 +115,50 @@
                     font-family: 'Outfit', sans-serif;
                     font-weight: 500;
                     transition: all 0.3s ease;
+                    user-select: none;
                 }
 
-                .toggle-btn.active {
+                .toggle-label:hover {
+                    color: #bbb;
+                }
+
+                /* Active Tab Styling via Sibling Selector */
+                #tab-login:checked~.form-toggle label[for="tab-login"],
+                #tab-signup:checked~.form-toggle label[for="tab-signup"] {
                     background: rgba(0, 255, 213, 0.1);
                     color: #00ffd5;
                     box-shadow: 0 0 10px rgba(0, 255, 213, 0.2);
                 }
 
                 .auth-form {
-                    display: flex;
+                    display: none;
+                    /* Hidden by default */
                     flex-direction: column;
                     gap: 15px;
                     width: 100%;
+                }
+
+                /* Show Active Form */
+                #tab-login:checked~#std-login-form {
+                    display: flex;
+                    animation: fadeIn 0.3s ease;
+                }
+
+                #tab-signup:checked~#std-signup-form {
+                    display: flex;
+                    animation: fadeIn 0.3s ease;
+                }
+
+                @keyframes fadeIn {
+                    from {
+                        opacity: 0;
+                        transform: translateY(5px);
+                    }
+
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
                 }
 
                 .form-group input {
@@ -192,16 +228,19 @@
 
             <!-- Standard Login/Signup Form -->
             <div class="glass-form-container" style="width: 100%; max-width: 320px; margin: 0 auto 20px auto;">
-                <!-- Toggle Buttons -->
+
+                <!-- Radio Inputs for CSS Tabs -->
+                <input type="radio" name="auth-toggle" id="tab-login" checked>
+                <input type="radio" name="auth-toggle" id="tab-signup">
+
+                <!-- Toggle Labels -->
                 <div class="form-toggle">
-                    <button type="button" id="show-login" class="toggle-btn active"
-                        onclick="console.log('Login clicked'); window.switchForm('login')">LOGIN</button>
-                    <button type="button" id="show-signup" class="toggle-btn"
-                        onclick="console.log('Signup clicked'); window.switchForm('signup')">SIGNUP</button>
+                    <label for="tab-login" class="toggle-label">LOGIN</label>
+                    <label for="tab-signup" class="toggle-label">SIGNUP</label>
                 </div>
 
                 <!-- Login Form -->
-                <form id="std-login-form" class="auth-form active-form">
+                <form id="std-login-form" class="auth-form">
                     <div class="form-group">
                         <input type="email" id="login-email" placeholder="Email Address" required>
                     </div>
@@ -212,7 +251,7 @@
                 </form>
 
                 <!-- Signup Form -->
-                <form id="std-signup-form" class="auth-form" style="display: none;">
+                <form id="std-signup-form" class="auth-form">
                     <div class="form-group">
                         <input type="text" id="signup-name" placeholder="Full Name" required>
                     </div>
@@ -319,32 +358,22 @@
         }
 
         // Make switchForm globally available and robust
+        // Make switchForm globally available (Adapted for CSS Tabs)
         window.switchForm = function (type) {
-            console.log("Switching form to:", type);
-            const loginForm = document.getElementById('std-login-form');
-            const signupForm = document.getElementById('std-signup-form');
-            const loginBtn = document.getElementById('show-login');
-            const signupBtn = document.getElementById('show-signup');
+            console.log("Switching tab to:", type);
+            const loginTab = document.getElementById('tab-login');
+            const signupTab = document.getElementById('tab-signup');
             const msg = document.getElementById('auth-message');
 
-            if (!loginForm || !signupForm) {
-                console.error("Forms not found!");
-                return;
+            if (msg) {
+                msg.textContent = '';
+                msg.className = '';
             }
 
-            msg.textContent = '';
-            msg.className = '';
-
-            if (type === 'login') {
-                loginForm.style.display = 'flex';
-                signupForm.style.display = 'none';
-                loginBtn.classList.add('active');
-                signupBtn.classList.remove('active');
-            } else {
-                loginForm.style.display = 'none';
-                signupForm.style.display = 'flex';
-                loginBtn.classList.remove('active');
-                signupBtn.classList.add('active');
+            if (type === 'login' && loginTab) {
+                loginTab.checked = true;
+            } else if (type === 'signup' && signupTab) {
+                signupTab.checked = true;
             }
         };
 
