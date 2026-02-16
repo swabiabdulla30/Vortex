@@ -467,30 +467,39 @@ function initGoogleLogin() {
     }
 
     if (!tokenClient) {
-        tokenClient = google.accounts.oauth2.initTokenClient({
-            client_id: GOOGLE_CLIENT_ID,
-            scope: 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email',
-            callback: async (resp) => {
-                if (resp.error) {
-                    throw resp;
-                }
-                await googleLoginSuccess(resp.access_token);
-            },
-        });
+        console.log("Initializing Google Token Client...");
+        try {
+            tokenClient = google.accounts.oauth2.initTokenClient({
+                client_id: GOOGLE_CLIENT_ID,
+                scope: 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email',
+                callback: async (resp) => {
+                    console.log("Google Auth Response:", resp);
+                    if (resp.error) {
+                        console.error("Google Auth Error:", resp);
+                        throw resp;
+                    }
+                    await googleLoginSuccess(resp.access_token);
+                },
+            });
+            console.log("Token Client Initialized.");
+        } catch (e) {
+            console.error("Token Client Init Failed:", e);
+        }
     }
 
-    // Skip if we already have a token? No, always request for fresh sign-in experience or consent
-    // prompt: '' will auto-select if possible, or use 'consent' to force.
+    console.log("Requesting Access Token...");
     tokenClient.requestAccessToken({ prompt: '' });
 }
 
 async function googleLoginSuccess(accessToken) {
+    console.log("Google Login Success! Token:", accessToken);
     try {
         // Fetch User Info
         const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
             headers: { Authorization: `Bearer ${accessToken}` }
         });
         const user = await res.json();
+        console.log("Fetched Google User:", user);
 
         if (user && user.sub) {
             // Success! Mimic Standard Login
