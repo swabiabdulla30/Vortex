@@ -1515,67 +1515,42 @@ footer {
 
 
 /* Google Sign-In Button */
-/* Google Sign-In Button (Standardized) */
 .google-btn {
     width: 100%;
-    background: #ffffff;
-    color: #1f1f1f;
-    /* Google Grey 900 */
-    border: 1px solid #747775;
-    /* Google Grey 300 */
+    background: #fff;
+    color: #333;
+    border: 1px solid #ddd;
     border-radius: 40px;
-    /* Pillow shape as per user request/standard modern */
-    padding: 0;
-    /* Wrapper handles padding */
-    font-size: 14px;
-    /* Standard GSI size */
+    /* Pillow shape common for social login */
+    padding: 12px 20px;
+    font-size: 1rem;
     font-weight: 500;
-    font-family: 'Roboto', arial, sans-serif;
+    font-family: 'Roboto', sans-serif;
+    /* Google uses Roboto */
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    /* Center content */
-    height: 40px;
-    /* Standard Height */
-    transition: background-color .218s, border-color .218s, box-shadow .218s;
+    gap: 12px;
+    transition: all 0.3s ease;
     margin-bottom: 20px;
     position: relative;
     overflow: hidden;
 }
 
+.google-btn img {
+    width: 24px;
+    height: 24px;
+}
+
 .google-btn:hover {
-    background-color: #f8faff;
-    /* Light blue tint on hover */
-    box-shadow: 0 1px 3px rgba(60, 64, 67, 0.3);
-    border-color: #d2e3fc;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+    background: #f7f7f7;
 }
 
 .google-btn:active {
-    background-color: #ecf3fe;
-    /* Darker blue tint on active */
-    box-shadow: none;
-}
-
-.google-icon-wrapper {
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.google-icon {
-    width: 18px;
-    height: 18px;
-}
-
-.btn-text {
-    padding-right: 20px;
-    /* Balance the icon visually */
-    flex-grow: 1;
-    /* allow text to center if needed, or stick to left. GSI centers it usually. */
-    text-align: center;
+    transform: translateY(0);
 }
 
 /* Payment Page Styles - Professional (White Theme) */
