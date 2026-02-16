@@ -45,15 +45,9 @@
                  User asked to replace Login/Hamburger. 
                  It's weird to have Login button on Login page, 
                  but original code had it. I will move it to stay consistent. -->
-            <div class="auth-buttons-group">
-                <a href="#" class="login-btn signup-trigger" onclick="switchForm('signup'); return false;"
-                    style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); margin-right: 10px;">
-                    <span class="icon">📝</span> SIGN UP
-                </a>
-                <a href="login.html" class="login-btn">
-                    <span class="icon">🔒</span> LOGIN
-                </a>
-            </div>
+            <a href="login.html" class="login-btn">
+                <span class="icon">🔒</span> LOGIN
+            </a>
 
             <div class="hamburger">
                 <div class="line1"></div>
@@ -200,8 +194,9 @@
             <div class="glass-form-container" style="width: 100%; max-width: 320px; margin: 0 auto 20px auto;">
                 <!-- Toggle Buttons -->
                 <div class="form-toggle">
-                    <button id="show-login" class="toggle-btn active" onclick="switchForm('login')">LOGIN</button>
-                    <button id="show-signup" class="toggle-btn" onclick="switchForm('signup')">SIGNUP</button>
+                    <button id="show-login" class="toggle-btn active" onclick="switchForm('login')"
+                        style="cursor: default;">LOGIN</button>
+                    <!-- Signup Disabled -->
                 </div>
 
                 <!-- Login Form -->
