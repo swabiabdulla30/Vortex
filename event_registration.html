@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=2.6">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -34,7 +34,8 @@
         <div class="nav-content">
             <div class="brand-container">
                 <a href="index.html">
-                    <img src="https://img.sanishtech.com/u/f6033aa5854472d7e816f6c7a590247e.jpeg" alt="Vortex Logo" class="nav-logo-img">
+                    <img src="https://img.sanishtech.com/u/f6033aa5854472d7e816f6c7a590247e.jpeg" alt="Vortex Logo"
+                        class="nav-logo-img">
                 </a>
                 <a href="index.html" class="logo">VORTEX</a>
             </div>
@@ -49,10 +50,20 @@
                 <div class="line3"></div>
             </div>
             <div class="nav-links">
+                <!-- Mobile Only Header -->
+                <div class="mobile-nav-header mobile-only">
+                    <div class="shield-icon"><i class="fas fa-shield-alt"></i></div>
+                    <div class="close-menu">&times;</div>
+                </div>
+
                 <a href="index.html" class="nav-item">Home</a>
                 <a href="about.html" class="nav-item">About</a>
                 <a href="events.html" class="nav-item">Events</a>
                 <a href="gallery.html" class="nav-item">Gallery</a>
+
+                <a href="login.html" class="login-btn mobile-only">
+                    <span class="icon">🔒</span> LOGIN
+                </a>
             </div>
         </div>
     </nav>
