@@ -20,6 +20,10 @@ window.addEventListener('load', function () {
             container.className = 'user-dropdown-container';
             if (btn.classList.contains('mobile-only')) {
                 container.classList.add('mobile-only');
+                // Ensure it displays flex in menu
+                container.style.display = 'flex';
+                container.style.width = '100%';
+                container.style.justifyContent = 'center';
             }
 
             // Create toggle button

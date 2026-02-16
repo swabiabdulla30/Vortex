@@ -1010,17 +1010,34 @@ section {
     }
 
     .gallery-item {
-        aspect-ratio: 1 / 1;
-        /* Force Square */
+        aspect-ratio: auto;
+        /* Allow full image height */
         height: auto;
         /* reset fixed height */
         border-radius: 8px;
+        margin-bottom: 20px;
+        /* Spacing between items */
     }
 
     .gallery-item img {
-        height: 100%;
+        height: auto;
         width: 100%;
-        object-fit: cover;
+        object-fit: contain;
+        /* Show full image */
+        display: block;
+    }
+
+    .gallery-item .overlay {
+        opacity: 1;
+        /* Always show title */
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.4) 50%, rgba(0, 0, 0, 0) 100%);
+    }
+
+    .gallery-item .overlay span {
+        transform: translateY(0);
+        font-size: 1rem;
+        /* Slightly larger on mobile */
+        padding-bottom: 5px;
     }
 
     .all-projects-header {
