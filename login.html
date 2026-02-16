@@ -475,16 +475,15 @@
             }
 
             // Script Load Check
+            // Script Load Check - Warning Suppressed
+            /*
             setTimeout(() => {
                 if (typeof google === 'undefined' || !google.accounts) {
                     console.warn("Google Script Load Timeout");
-                    if (statusDiv) {
-                        statusDiv.style.display = 'block';
-                        statusDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Google Script Missing.<br>Using Redirect Method.';
-                        statusDiv.style.color = '#ff9800';
-                    }
+                    // Suppressed user warning for cleaner UI
                 }
-            }, 5000); // Increased timeout
+            }, 5000); 
+            */
         });
     </script>
 </body>
