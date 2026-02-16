@@ -1068,8 +1068,10 @@ section {
         border-radius: 15px;
     }
 
-    /* Slider re-enabled with overflow protection */
-    /* .gallery-container { display: none !important; } */
+    /* Slider hidden on mobile as per user request */
+    .gallery-container {
+        display: none !important;
+    }
 }
 
 /* Default padding for desktop gallery (since inline style was removed) */
