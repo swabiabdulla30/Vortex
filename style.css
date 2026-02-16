@@ -1011,33 +1011,105 @@ section {
 
     .gallery-item {
         aspect-ratio: auto;
-        /* Allow full image height */
         height: auto;
-        /* reset fixed height */
-        border-radius: 8px;
-        margin-bottom: 20px;
-        /* Spacing between items */
+        border-radius: 15px;
+        margin-bottom: 30px;
+        position: relative;
+        overflow: hidden;
+        border: 2px solid rgba(0, 255, 213, 0.3);
+        /* Subtle cyan border */
+        box-shadow: 0 0 15px rgba(0, 255, 213, 0.1);
+        background: #000;
+    }
+
+    /* Viewfinder Corners */
+    .gallery-item::before {
+        content: '';
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+        border: 2px solid #00ffd5;
+        /* Bright Cyan */
+        border-radius: 10px;
+        clip-path: polygon(0 0, 20px 0, 20px 2px, 2px 2px, 2px 20px, 0 20px,
+                0 calc(100% - 20px), 2px calc(100% - 20px), 2px calc(100% - 2px), 20px calc(100% - 2px), 20px 100%, 0 100%,
+                100% 100%, 100% calc(100% - 20px), calc(100% - 2px) calc(100% - 20px), calc(100% - 2px) calc(100% - 2px),
+                calc(100% - 20px) calc(100% - 2px), calc(100% - 20px) 100%, 100% 100%,
+                100% 0, calc(100% - 20px) 0, calc(100% - 20px) 2px, calc(100% - 2px) 2px, calc(100% - 2px) 20px, 100% 20px);
+        /* Complex clip path for corners? Or just use images/pseudo elements simpler. 
+           Let's use a simpler 4-corner SVG or pseudo elements approach to be robust. 
+           Actually, the screenshot shows simple L-brackets. 
+           Let's use two pseudo elements for top-left/bottom-right and top-right/bottom-left? 
+           Or just a border-image. 
+           Let's use a background-image gradient for corners. */
+        background:
+            linear-gradient(to right, #00ffd5 2px, transparent 2px) 0 0,
+            linear-gradient(to bottom, #00ffd5 2px, transparent 2px) 0 0,
+            linear-gradient(to left, #00ffd5 2px, transparent 2px) 100% 0,
+            linear-gradient(to bottom, #00ffd5 2px, transparent 2px) 100% 0,
+            linear-gradient(to right, #00ffd5 2px, transparent 2px) 0 100%,
+            linear-gradient(to top, #00ffd5 2px, transparent 2px) 0 100%,
+            linear-gradient(to left, #00ffd5 2px, transparent 2px) 100% 100%,
+            linear-gradient(to top, #00ffd5 2px, transparent 2px) 100% 100%;
+        background-repeat: no-repeat;
+        background-size: 20px 20px;
+        pointer-events: none;
+        z-index: 10;
+    }
+
+    /* Scanline / Crosshair */
+    .gallery-item::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 10px;
+        right: 10px;
+        height: 1px;
+        background: rgba(0, 255, 213, 0.3);
+        z-index: 5;
+        pointer-events: none;
     }
 
     .gallery-item img {
         height: auto;
+        min-height: 250px;
         width: 100%;
-        object-fit: contain;
-        /* Show full image */
+        object-fit: cover;
+        /* Cover to fill box */
         display: block;
+        opacity: 0.8;
     }
 
     .gallery-item .overlay {
         opacity: 1;
-        /* Always show title */
-        background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.4) 50%, rgba(0, 0, 0, 0) 100%);
+        background: transparent;
+        /* Remove gradient, use style */
+        align-items: flex-end;
+        justify-content: flex-start;
+        /* Left align */
+        padding: 20px;
+        z-index: 20;
     }
 
     .gallery-item .overlay span {
-        transform: translateY(0);
-        font-size: 1rem;
-        /* Slightly larger on mobile */
-        padding-bottom: 5px;
+        font-family: monospace;
+        color: #fff;
+        font-size: 1.2rem;
+        font-weight: 700;
+        text-shadow: 0 0 5px rgba(0, 255, 213, 0.8);
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .gallery-item .overlay span::before {
+        content: 'ACCESS_GRANTED';
+        font-size: 0.7rem;
+        color: #00ffd5;
+        margin-bottom: 5px;
+        letter-spacing: 2px;
     }
 
     .all-projects-header {
