@@ -947,6 +947,49 @@ section {
         border-radius: 50%;
     }
 
+    /* User Dropdown in Mobile Menu */
+    .user-dropdown-container.mobile-only {
+        display: flex !important;
+        width: 100%;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .user-dropdown-container.mobile-only .user-btn {
+        width: 100%;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #fff !important;
+        /* Force White Text */
+        font-size: 1rem;
+        padding: 15px;
+        border-radius: 12px;
+        text-transform: uppercase;
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
+
+    /* Mobile Dropdown Menu Position */
+    .user-dropdown-container.mobile-only .dropdown-menu {
+        position: static;
+        /* Flow naturally in menu */
+        width: 100%;
+        background: rgba(10, 10, 10, 0.5);
+        margin-top: 10px;
+        box-shadow: none;
+        border: none;
+        opacity: 0;
+        display: none;
+        /* Hidden by default */
+    }
+
+    .user-dropdown-container.mobile-only .dropdown-menu.show {
+        display: block;
+        opacity: 1;
+        transform: translateY(0);
+    }
+
     .nav-links a.nav-item {
         font-size: 1.1rem;
         margin: 10px 0;
