@@ -2029,8 +2029,8 @@ footer {
     max-width: 90%;
     max-height: 90%;
     border-radius: 8px;
-    box-shadow: 0 0 30px rgba(255, 0, 0, 0.5);
-    border: 2px solid #ff0000;
+    box-shadow: 0 0 20px rgba(255, 50, 50, 0.3);
+    border: 1px solid rgba(255, 80, 80, 0.8);
     transform: scale(0.9);
     transition: transform 0.3s ease;
 }
