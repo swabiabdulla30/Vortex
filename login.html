@@ -45,9 +45,14 @@
                  User asked to replace Login/Hamburger. 
                  It's weird to have Login button on Login page, 
                  but original code had it. I will move it to stay consistent. -->
-            <a href="login.html" class="login-btn">
+            <!-- Dynamic Auth Buttons -->
+            <a href="#" onclick="switchForm('login'); return false;" class="login-btn">
                 <span class="icon">🔒</span> LOGIN
             </a>
+            <a href="#" onclick="switchForm('signup'); return false;" class="login-btn" style="margin-left: 10px;">
+                <span class="icon">📝</span> SIGN UP
+            </a>
+            <!-- End Auth Buttons -->
 
             <div class="hamburger">
                 <div class="line1"></div>
