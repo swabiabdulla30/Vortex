@@ -249,7 +249,14 @@ body {
     box-shadow: 0 0 10px #0f0;
 }
 
-/* Mobile Only Class */
+/* Utility Classes */
+.mobile-only,
+.mobile-profile-card,
+.mobile-bottom-actions {
+    display: none !important;
+}
+
+/* Glassmorphism Classes */
 .mobile-only {
     display: none;
 }
@@ -884,6 +891,18 @@ section {
     .nav-links.nav-active::before {
         opacity: 1;
         pointer-events: all;
+    }
+
+    .mobile-only {
+        display: block !important;
+    }
+
+    .mobile-profile-card {
+        display: flex !important;
+    }
+
+    .mobile-bottom-actions {
+        display: flex !important;
     }
 
     .nav-links {
