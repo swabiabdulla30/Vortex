@@ -950,6 +950,90 @@ section {
         border-radius: 50%;
     }
 
+    /* Premium Mobile Menu Styles */
+    .mobile-profile-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .profile-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: url('https://img.sanishtech.com/u/f6033aa5854472d7e816f6c7a590247e.jpeg');
+        background-size: cover;
+        /* Default Avatar or use Icon */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid var(--primary-red);
+    }
+
+    .profile-avatar i {
+        font-size: 1.5rem;
+        color: #fff;
+        display: none;
+        /* Hide icon if using image bg, or remove bg and show icon */
+    }
+
+    .profile-info {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .profile-name {
+        color: #fff;
+        font-weight: 700;
+        font-size: 1.1rem;
+        text-transform: capitalize;
+    }
+
+    .profile-email {
+        color: #888;
+        font-size: 0.8rem;
+    }
+
+    .mobile-bottom-actions {
+        width: 100%;
+        margin-top: auto;
+        /* Push to bottom */
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .action-link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #ccc;
+        text-decoration: none;
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: background 0.3s;
+    }
+
+    .action-link:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+    }
+
+    .action-link i {
+        width: 25px;
+        text-align: center;
+    }
+
     /* User Dropdown in Mobile Menu */
     .user-dropdown-container.mobile-only {
         display: flex !important;

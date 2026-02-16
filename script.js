@@ -9,90 +9,112 @@ window.addEventListener('load', function () {
         const user = JSON.parse(currentUserData);
         const loginBtns = document.querySelectorAll('.login-btn');
 
-        loginBtns.forEach(btn => {
-            // Change button to Dropdown Toggle
-            // Note: We need to change the structure slightly
-            // Current structure: <a href="login.html" class="login-btn">...</a>
-            // New structure: <div class="user-dropdown-container"> <button ...>Name</button> ...menu... </div>
-
-            // Create container
+        // Desktop Logic: Replace with Dropdown
+        if (!btn.classList.contains('mobile-only')) {
             const container = document.createElement('div');
             container.className = 'user-dropdown-container';
-            if (btn.classList.contains('mobile-only')) {
-                container.classList.add('mobile-only');
-                // Ensure it displays flex in menu
-                container.style.display = 'flex';
-                container.style.width = '100%';
-                container.style.justifyContent = 'center';
-            }
 
-            // Create toggle button
             const toggle = document.createElement('button');
             toggle.className = 'login-btn user-btn';
             toggle.innerHTML = `<span class="icon">👤</span> ${user.name.toUpperCase()}`;
 
-            // Create dropdown menu
             const menu = document.createElement('div');
             menu.className = 'dropdown-menu';
             menu.innerHTML = `
-                <a href="tickets.html" class="dropdown-item"><i class="fas fa-ticket-alt"></i> CHECK TICKETS</a>
-                ${user.role === 'admin' ? '<a href="admin.html" class="dropdown-item"><i class="fas fa-tachometer-alt"></i> DASHBOARD</a>' : ''}
-                <a href="#" class="dropdown-item" id="logout-btn"><i class="fas fa-sign-out-alt"></i> LOGOUT</a>
-            `;
+                    <a href="tickets.html" class="dropdown-item"><i class="fas fa-ticket-alt"></i> CHECK TICKETS</a>
+                    ${user.role === 'admin' ? '<a href="admin.html" class="dropdown-item"><i class="fas fa-tachometer-alt"></i> DASHBOARD</a>' : ''}
+                    <a href="#" class="dropdown-item logout-link"><i class="fas fa-sign-out-alt"></i> LOGOUT</a>
+                `;
 
-            // Assemble
             container.appendChild(toggle);
             container.appendChild(menu);
-
-            // Replace original button
             btn.parentNode.replaceChild(container, btn);
 
-            // Toggle Logic
             toggle.addEventListener('click', (e) => {
                 e.stopPropagation();
                 menu.classList.toggle('show');
             });
 
-            // Close when clicking outside
             document.addEventListener('click', (e) => {
                 if (!container.contains(e.target)) {
                     menu.classList.remove('show');
                 }
             });
-
-            // Logout Logic
-            const logout = menu.querySelector('#logout-btn');
-            logout.addEventListener('click', (e) => {
-                e.preventDefault();
-                if (confirm('Disconnect from Vortex Network?')) {
-                    localStorage.removeItem('vortexCurrentUser');
-                    // Also clear legacy simpler key if any
-                    localStorage.removeItem('vortexUser');
-                    window.location.href = 'index.html';
-                }
-            });
-        });
-    } else {
-        // Fallback for simple name stored previously (Migration/Cleanup)
-        // If simple 'vortexUser' exists but not 'vortexCurrentUser', clear it to force re-login
-        // or just ignore it. Let's ignore it to force new secure flow.
-    }
-
-    if (loadingScreen) {
-        // Check if user has already visited in this session
-        if (sessionStorage.getItem('vortex_visited')) {
-            loadingScreen.style.display = 'none';
         } else {
-            setTimeout(() => {
-                loadingScreen.style.opacity = '0';
-                setTimeout(() => {
-                    loadingScreen.style.display = 'none';
-                    // Mark session as visited
-                    sessionStorage.setItem('vortex_visited', 'true');
-                }, 500);
-            }, 2000);
+            // Mobile Logic: Inject Premium Card at TOP of Menu
+            const navLinks = document.querySelector('.nav-links');
+            if (navLinks) {
+                // Remove existing login button
+                btn.style.display = 'none';
+
+                // Check if profile card already exists
+                if (!navLinks.querySelector('.mobile-profile-card')) {
+                    const profileCard = document.createElement('div');
+                    profileCard.className = 'mobile-profile-card';
+                    profileCard.innerHTML = `
+                            <div class="profile-avatar">
+                                <i class="fas fa-user-astronaut"></i>
+                            </div>
+                            <div class="profile-info">
+                                <div class="profile-name">${user.name}</div>
+                                <div class="profile-email">${user.email || 'ACCESS_GRANTED'}</div>
+                            </div>
+                        `;
+
+                    // Insert after header (close button)
+                    const header = navLinks.querySelector('.mobile-nav-header');
+                    if (header) {
+                        header.insertAdjacentElement('afterend', profileCard);
+                    } else {
+                        navLinks.insertBefore(profileCard, navLinks.firstChild);
+                    }
+
+                    // Inject Bottom Actions
+                    const bottomActions = document.createElement('div');
+                    bottomActions.className = 'mobile-bottom-actions';
+                    bottomActions.innerHTML = `
+                            <a href="tickets.html" class="action-link"><i class="fas fa-ticket-alt"></i> My Tickets</a>
+                            ${user.role === 'admin' ? '<a href="admin.html" class="action-link"><i class="fas fa-tachometer-alt"></i> Admin</a>' : ''}
+                            <a href="#" class="action-link logout-link-mobile" style="color: var(--primary-red);"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
+                        `;
+                    navLinks.appendChild(bottomActions);
+                }
+            }
+        }
+    });
+
+// Logout Logic (Delegated)
+document.addEventListener('click', (e) => {
+    if (e.target.closest('.logout-link') || e.target.closest('.logout-link-mobile')) {
+        e.preventDefault();
+        if (confirm('Disconnect from Vortex Network?')) {
+            localStorage.removeItem('vortexCurrentUser');
+            localStorage.removeItem('vortexUser');
+            window.location.href = 'index.html';
         }
     }
+});
+    } else {
+    // Fallback for simple name stored previously (Migration/Cleanup)
+    // If simple 'vortexUser' exists but not 'vortexCurrentUser', clear it to force re-login
+    // or just ignore it. Let's ignore it to force new secure flow.
+}
+
+if (loadingScreen) {
+    // Check if user has already visited in this session
+    if (sessionStorage.getItem('vortex_visited')) {
+        loadingScreen.style.display = 'none';
+    } else {
+        setTimeout(() => {
+            loadingScreen.style.opacity = '0';
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+                // Mark session as visited
+                sessionStorage.setItem('vortex_visited', 'true');
+            }, 500);
+        }, 2000);
+    }
+}
 });
 
 // Spotlight Effect
