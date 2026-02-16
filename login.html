@@ -160,6 +160,35 @@
                     transform: translateY(-2px);
                     box-shadow: 0 5px 15px rgba(0, 255, 213, 0.3);
                 }
+
+                .google-btn-custom {
+                    width: 100%;
+                    background: white;
+                    color: #333;
+                    border: none;
+                    border-radius: 20px;
+                    padding: 10px 15px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 10px;
+                    font-family: 'Roboto', sans-serif;
+                    font-weight: 500;
+                    font-size: 1rem;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+                }
+
+                .google-btn-custom:hover {
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+                    background: #f7f7f7;
+                }
+
+                .google-btn-custom img {
+                    width: 20px;
+                    height: 20px;
+                }
             </style>
 
             <!-- Standard Login/Signup Form -->
@@ -211,12 +240,13 @@
                     data-ux_mode="popup" data-auto_select="true">
                 </div>
 
-                <!-- Google Sign-In Button Container -->
-                <div id="gsi-container"
-                    style="min-height: 44px; min-width: 250px; display: flex; justify-content: center; align-items: center; margin-bottom: 15px;">
-                    <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="filled_blue"
-                        data-text="signin_with" data-size="large" data-logo_alignment="left" data-width="250">
-                    </div>
+                <!-- Custom Google Sign-In Button -->
+                <div id="gsi-container" style="margin-bottom: 15px; width: 100%;">
+                    <button id="custom-google-btn" type="button" class="google-btn-custom">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
+                            alt="Google Logo">
+                        <span>Sign in with Google</span>
+                    </button>
                 </div>
 
                 <!-- Fallback/Debug Message -->
@@ -388,6 +418,28 @@
         // Debug & Compatibility Checks
         window.addEventListener('load', () => {
             const statusDiv = document.getElementById('gsi-status');
+            const customBtn = document.getElementById('custom-google-btn');
+
+            // Handle Custom Button Click
+            if (customBtn) {
+                customBtn.addEventListener('click', () => {
+                    if (typeof google !== 'undefined' && google.accounts) {
+                        google.accounts.id.prompt((notification) => {
+                            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+                                // If prompt fails (blocked popup), try redirect (Context Switch)
+                                console.log("Popup blocked/skipped, trying redirect context...");
+                                // We can't programmatically switch context easily without reload, 
+                                // but we can hint user.
+                                statusDiv.style.display = 'block';
+                                statusDiv.innerHTML = 'Popup blocked? <br>Please check browser settings.';
+                            }
+                        });
+                    } else {
+                        statusDiv.style.display = 'block';
+                        statusDiv.innerHTML = 'Google Script not loaded yet. Wait...';
+                    }
+                });
+            }
 
             // Check 1: Iframe Detection (Google Login doesn't work in iframes)
             if (window.self !== window.top) {
@@ -403,10 +455,6 @@
                     statusDiv.style.display = 'block';
                     statusDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Google Sign-In failed to load.<br>Check AdBlock or Network.';
                     statusDiv.style.color = '#ff4444';
-                } else {
-                    // Script loaded, but maybe button didn't render?
-                    // We can't easily check iframe rendered state due to cross-origin, 
-                    // but we can assume if script loaded it should try.
                 }
             }, 3000);
         });
