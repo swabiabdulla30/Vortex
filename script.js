@@ -452,3 +452,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+// Login Redirect Logic (Save current page before going to login)
+document.addEventListener('click', (e) => {
+    // Check for link with class login-btn
+    const loginLink = e.target.closest('a.login-btn');
+
+    // Ensure it's a link and points to login.html
+    if (loginLink && loginLink.getAttribute('href').includes('login.html')) {
+        // Don't save if we are already on login page to avoid loops
+        if (!window.location.pathname.includes('login.html')) {
+            sessionStorage.setItem('loginRedirectUrl', window.location.href);
+        }
+    }
+});
