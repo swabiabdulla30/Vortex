@@ -130,40 +130,6 @@ window.addEventListener('load', function () {
     }
 });
 
-// Logout Logic (Delegated)
-document.addEventListener('click', (e) => {
-    if (e.target.closest('.logout-link') || e.target.closest('.logout-link-mobile')) {
-        e.preventDefault();
-        if (confirm('Disconnect from Vortex Network?')) {
-            localStorage.removeItem('vortexCurrentUser');
-            localStorage.removeItem('vortexUser');
-            window.location.href = 'index.html';
-        }
-    }
-});
-
-    } else {
-    // Fallback for simple name stored previously (Migration/Cleanup)
-    // If simple 'vortexUser' exists but not 'vortexCurrentUser', clear it to force re-login
-    // or just ignore it. Let's ignore it to force new secure flow.
-}
-
-if (loadingScreen) {
-    // Check if user has already visited in this session
-    if (sessionStorage.getItem('vortex_visited')) {
-        loadingScreen.style.display = 'none';
-    } else {
-        setTimeout(() => {
-            loadingScreen.style.opacity = '0';
-            setTimeout(() => {
-                loadingScreen.style.display = 'none';
-                // Mark session as visited
-                sessionStorage.setItem('vortex_visited', 'true');
-            }, 500);
-        }, 2000);
-    }
-}
-});
 
 // Spotlight Effect
 document.addEventListener('mousemove', function (e) {
