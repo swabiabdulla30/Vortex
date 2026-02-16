@@ -81,7 +81,9 @@ window.addEventListener('load', function () {
                 }
             }
         }
-    });
+    }
+}
+        }); // End forEach
 
 // Logout Logic (Delegated)
 document.addEventListener('click', (e) => {
@@ -94,6 +96,7 @@ document.addEventListener('click', (e) => {
         }
     }
 });
+
     } else {
     // Fallback for simple name stored previously (Migration/Cleanup)
     // If simple 'vortexUser' exists but not 'vortexCurrentUser', clear it to force re-login
