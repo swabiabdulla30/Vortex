@@ -419,38 +419,43 @@
         });
 
         // Signup Handler
-        document.getElementById('std-signup-form').addEventListener('submit', async (e) => {
-            e.preventDefault(); // STOP FORM SUBMISSION
-            console.log("Signup submit triggered");
+        // Signup Handler
+        const signupFormElement = document.getElementById('std-signup-form');
+        if (signupFormElement) {
+            signupFormElement.addEventListener('submit', async (e) => {
+                e.preventDefault(); // STOP FORM SUBMISSION
+                console.log("Signup submit triggered");
 
-            const name = document.getElementById('signup-name').value;
-            const email = document.getElementById('signup-email').value;
-            const password = document.getElementById('signup-password').value;
-            const msg = document.getElementById('auth-message');
+                const name = document.getElementById('signup-name').value;
+                const email = document.getElementById('signup-email').value;
+                const password = document.getElementById('signup-password').value;
+                const msg = document.getElementById('auth-message');
 
-            msg.textContent = 'Registering Identity...';
-            msg.style.color = '#fff';
+                msg.textContent = 'Registering Identity...';
+                msg.style.color = '#fff';
 
-            try {
-                const result = await registerUser(name, email, password);
-                if (result.success) {
-                    msg.textContent = 'Registration Successful. Please Login.';
-                    msg.style.color = '#00ffd5';
-                    setTimeout(() => {
-                        window.switchForm('login');
-                        document.getElementById('login-email').value = email;
-                        msg.textContent = 'Please login with your new credentials.';
-                    }, 1500);
-                } else {
-                    msg.textContent = 'Error: ' + result.message;
+                try {
+                    const result = await registerUser(name, email, password);
+                    if (result.success) {
+                        msg.textContent = 'Registration Successful. Redirecting...';
+                        msg.style.color = '#00ffd5';
+                        setTimeout(() => {
+                            window.switchForm('login');
+                            document.getElementById('login-email').value = email;
+                            msg.textContent = 'Please login with your new credentials.';
+                        }, 1500);
+                    } else {
+                        msg.textContent = 'Error: ' + result.message;
+                        msg.style.color = '#ff4444';
+                        console.error('Signup Failed:', result.message);
+                    }
+                } catch (err) {
+                    console.error('Signup Exception:', err);
+                    msg.textContent = 'Network Error: ' + err.message;
                     msg.style.color = '#ff4444';
                 }
-            } catch (err) {
-                console.error(err);
-                msg.textContent = 'Network Error during Registration';
-                msg.style.color = '#ff4444';
-            }
-        });
+            });
+        }
 
         // Custom Google Button Logic
         window.addEventListener('load', () => {
