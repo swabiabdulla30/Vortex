@@ -1014,7 +1014,7 @@ section {
         margin-bottom: 30px;
         position: relative;
         overflow: hidden;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid var(--primary-red);
         background: #000;
         cursor: pointer;
     }
@@ -1286,7 +1286,10 @@ footer {
 }
 
 .user-dropdown-container.mobile-only {
-    display: none;
+    display: flex !important;
+    width: 100%;
+    justify-content: center;
+    margin-top: 15px;
 }
 
 .user-btn {
