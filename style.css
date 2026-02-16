@@ -848,65 +848,128 @@ section {
         flex-grow: 1;
     }
 
-    /* Mobile Nav Overlay */
-    .nav-links {
+    /* Mobile Nav Overlay (Backdrop) */
+    .nav-links::before {
+        content: '';
         position: fixed;
         inset: 0;
-        /* Cover entire screen */
-        background: rgba(5, 5, 5, 0.98);
-        /* Very dark, almost solid */
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(5px);
+        z-index: -1;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+    }
+
+    .nav-links.nav-active::before {
+        opacity: 1;
+        pointer-events: all;
+    }
+
+    .nav-links {
+        position: fixed;
+        top: 20px;
+        left: 5%;
+        width: 90%;
+        height: auto;
+        min-height: 300px;
+        background: rgba(10, 10, 10, 0.95);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
         display: flex;
         flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 80px 20px 40px;
-        /* Top padding for close button/logo, bottom for login */
-        transform: translateX(100%);
-        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        align-items: flex-start;
+        /* Align left as per screenshot */
+        justify-content: flex-start;
+        padding: 20px;
+        transform: translateY(-20px);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 1500;
-        border-left: none;
-        width: 100%;
+        border-left: 1px solid var(--glass-border);
     }
 
     .nav-links.nav-active {
-        transform: translateX(0%);
+        transform: translateY(0%);
+        opacity: 1;
+        visibility: visible;
+    }
+
+    /* Mobile Header (Shield & Close) */
+    .mobile-nav-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        margin-bottom: 30px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 15px;
+    }
+
+    .shield-icon {
+        font-size: 1.5rem;
+        color: #fff;
+    }
+
+    .close-menu {
+        font-size: 2rem;
+        color: #fff;
+        cursor: pointer;
+        line-height: 1;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
     }
 
     .nav-links a.nav-item {
-        font-size: 1.5rem;
-        /* Larger links */
-        margin: 15px 0;
-        opacity: 0;
-        /* For animation */
-        font-weight: 700;
-        letter-spacing: 2px;
+        font-size: 1.1rem;
+        margin: 10px 0;
+        opacity: 1;
+        /* Reset animation opacity */
+        font-weight: 500;
+        letter-spacing: 1px;
+        width: 100%;
+        text-align: left;
+        padding: 5px 0;
     }
 
-    /* Mobile Login Button Styles */
-    .mobile-only {
+    .nav-links a.nav-item.active {
+        color: var(--primary-red);
+        font-weight: 700;
+    }
+
+    /* Login Button in Menu (Bottom) */
+    .mobile-only.login-btn {
         display: flex !important;
-        margin-top: auto;
-        /* Push to bottom */
-        width: 80%;
+        margin-top: 30px;
+        width: 100%;
         justify-content: center;
         padding: 15px;
-        background: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(25, 25, 25, 1);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         font-size: 1rem;
         border-radius: 12px;
-        opacity: 0;
-        /* For animation */
+        color: #fff;
+        font-weight: 700;
+        letter-spacing: 1px;
+        opacity: 1;
     }
 
-    .mobile-only .icon {
+    .mobile-only.login-btn .icon {
         margin-right: 10px;
+        color: var(--primary-red);
     }
 
-    /* Animation Delays */
+    /* Animation Delays - Removed for snappier feel or keep simple */
     .nav-links.nav-active .nav-item,
     .nav-links.nav-active .mobile-only {
-        opacity: 1;
-        transition: opacity 0.5s ease 0.3s;
+        transition: none;
     }
 
     /* Gallery Grid - Mobile Squares */

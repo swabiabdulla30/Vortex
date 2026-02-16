@@ -451,6 +451,25 @@ document.addEventListener('DOMContentLoaded', () => {
             burger.classList.toggle('toggle');
         });
     }
+
+    // Close Button Logic
+    const closeMenu = document.querySelector('.close-menu');
+    if (closeMenu) {
+        closeMenu.addEventListener('click', () => {
+            nav.classList.remove('nav-active');
+            burger.classList.remove('toggle');
+        });
+    }
+
+    // Close when clicking outside (on backdrop)
+    document.addEventListener('click', (e) => {
+        if (nav.classList.contains('nav-active') &&
+            !nav.contains(e.target) &&
+            !burger.contains(e.target)) {
+            nav.classList.remove('nav-active');
+            burger.classList.remove('toggle');
+        }
+    });
 });
 
 // Login Redirect Logic (Save current page before going to login)
