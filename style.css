@@ -944,6 +944,12 @@ section {
         font-weight: 700;
     }
 
+    /* Hide Desktop Login/Profile on Mobile */
+    .login-btn,
+    .user-dropdown-container {
+        display: none;
+    }
+
     /* Login Button in Menu (Bottom) */
     .mobile-only.login-btn,
     .user-dropdown-container.mobile-only {
