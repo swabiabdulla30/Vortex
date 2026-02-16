@@ -824,7 +824,9 @@ section {
         cursor: pointer;
         z-index: 2000;
         order: 3;
+        flex-shrink: 0;
         /* Hamburger always on right */
+        position: relative;
     }
 
     .hamburger div {
@@ -874,8 +876,11 @@ section {
     .user-dropdown-container {
         order: 2;
         /* Next to hamburger */
-        margin-right: 10px;
-        /* Spacing */
+        margin-right: 15px;
+        /* improved spacing */
+        flex-shrink: 1;
+        min-width: 0;
+        /* Allow flexbox shrinking */
     }
 
     .login-btn {
