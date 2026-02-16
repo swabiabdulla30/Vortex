@@ -6,6 +6,8 @@
     height: 600px;
     background: transparent;
     margin: 0 auto;
+    overflow: hidden;
+    /* Prevent mobile zoom */
 }
 
 /* Gallery Slider (Updated for IMG tags) */

@@ -1002,8 +1002,8 @@ section {
     /* Gallery Grid - Mobile Squares */
     .gallery-grid {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        /* 2 Columns */
+        grid-template-columns: 1fr;
+        /* 1 Column (One at a time) */
         gap: 10px;
         /* Tighter gap */
         padding: 0 10px;
@@ -1051,10 +1051,8 @@ section {
         border-radius: 15px;
     }
 
-    /* Hide the 3D slider on mobile if distinct */
-    .gallery-container {
-        display: none !important;
-    }
+    /* Slider re-enabled with overflow protection */
+    /* .gallery-container { display: none !important; } */
 }
 
 /* Default padding for desktop gallery (since inline style was removed) */
