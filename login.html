@@ -194,8 +194,10 @@
             <div class="glass-form-container" style="width: 100%; max-width: 320px; margin: 0 auto 20px auto;">
                 <!-- Toggle Buttons -->
                 <div class="form-toggle">
-                    <button id="show-login" class="toggle-btn active" onclick="switchForm('login')">LOGIN</button>
-                    <button id="show-signup" class="toggle-btn" onclick="switchForm('signup')">SIGNUP</button>
+                    <button type="button" id="show-login" class="toggle-btn active"
+                        onclick="console.log('Login clicked'); window.switchForm('login')">LOGIN</button>
+                    <button type="button" id="show-signup" class="toggle-btn"
+                        onclick="console.log('Signup clicked'); window.switchForm('signup')">SIGNUP</button>
                 </div>
 
                 <!-- Login Form -->
