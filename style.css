@@ -964,9 +964,9 @@ section {
         font-weight: 700;
     }
 
-    /* Hide Desktop Login/Profile on Mobile */
-    .login-btn,
-    .user-dropdown-container {
+    /* Hide Desktop Login/Profile on Mobile, BUT keep mobile-specific ones */
+    .login-btn:not(.mobile-only),
+    .user-dropdown-container:not(.mobile-only) {
         display: none !important;
     }
 
@@ -1018,7 +1018,8 @@ section {
         margin-bottom: 30px;
         position: relative;
         overflow: hidden;
-        border: 1px solid var(--primary-red);
+        border: 2px solid #ff0000;
+        /* Forced Bright Red */
         background: #000;
         cursor: pointer;
     }
