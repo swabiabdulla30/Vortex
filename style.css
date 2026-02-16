@@ -1001,11 +1001,9 @@ section {
 
     /* Gallery Grid - Mobile Squares */
     .gallery-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        /* 1 Column (One at a time) */
-        gap: 10px;
-        /* Tighter gap */
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 30px;
         padding: 0 10px;
     }
 
