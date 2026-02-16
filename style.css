@@ -945,7 +945,8 @@ section {
     }
 
     /* Login Button in Menu (Bottom) */
-    .mobile-only.login-btn {
+    .mobile-only.login-btn,
+    .user-dropdown-container.mobile-only {
         display: flex !important;
         margin-top: 30px;
         width: 100%;
@@ -1225,6 +1226,10 @@ footer {
 .user-dropdown-container {
     position: relative;
     display: inline-block;
+}
+
+.user-dropdown-container.mobile-only {
+    display: none;
 }
 
 .user-btn {
