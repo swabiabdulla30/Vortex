@@ -947,7 +947,7 @@ section {
     /* Hide Desktop Login/Profile on Mobile */
     .login-btn,
     .user-dropdown-container {
-        display: none;
+        display: none !important;
     }
 
     /* Login Button in Menu (Bottom) */
