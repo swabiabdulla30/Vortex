@@ -452,7 +452,7 @@ async function registerForEvent(eventData) {
    GOOGLE SIGN-IN INTEGRATION
    ========================================= */
 let tokenClient;
-const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID'; // <--- USER MUST REPLACE THIS
+const GOOGLE_CLIENT_ID = '239875271846-pamr47sh20r4ccm0lihdi1k73jgg6g6a.apps.googleusercontent.com';
 
 function initGoogleLogin() {
     if (typeof google === 'undefined') {
@@ -522,10 +522,7 @@ async function googleLoginSuccess(accessToken) {
         alert("Failed to get user profile from Google.");
     }
 }
-console.error("Registration network error:", error);
-return { success: false, message: error.message || "Network error" };
-    }
-}
+
 
 // Payment Success Mock
 async function markPaymentSuccess(ticketId) {

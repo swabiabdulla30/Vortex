@@ -11,7 +11,7 @@ echo.
 REM Add Node.js to PATH for this session
 set PATH=%PATH%;C:\Program Files\nodejs
 
-node server.js
+node index.js
 if %errorlevel% neq 0 (
     echo.
     echo Error occurred. Press any key to exit.
