@@ -35,7 +35,8 @@
         <div class="nav-content">
             <div class="brand-container">
                 <a href="index.html">
-                    <img src="https://img.sanishtech.com/u/f6033aa5854472d7e816f6c7a590247e.jpeg" alt="Vortex Logo" class="nav-logo-img">
+                    <img src="https://img.sanishtech.com/u/f6033aa5854472d7e816f6c7a590247e.jpeg" alt="Vortex Logo"
+                        class="nav-logo-img">
                 </a>
                 <a href="index.html" class="logo">VORTEX</a>
             </div>
@@ -209,9 +210,18 @@
                     data-ux_mode="popup" data-auto_select="true">
                 </div>
 
-                <!-- Google Sign-In Button -->
-                <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="filled_blue"
-                    data-text="signin_with" data-size="large" data-logo_alignment="left" data-width="250">
+                <!-- Google Sign-In Button Container -->
+                <div id="gsi-container"
+                    style="min-height: 44px; min-width: 250px; display: flex; justify-content: center; align-items: center; margin-bottom: 15px;">
+                    <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="filled_blue"
+                        data-text="signin_with" data-size="large" data-logo_alignment="left" data-width="250">
+                    </div>
+                </div>
+
+                <!-- Fallback/Debug Message -->
+                <div id="gsi-status"
+                    style="font-size: 0.8rem; color: #ffeb3b; display: none; margin-bottom: 10px; text-align: center;">
+                    Google Library loading...
                 </div>
             </div>
 
@@ -371,6 +381,21 @@
                 msg.textContent = 'Error: ' + result.message;
                 msg.style.color = '#ff4444';
             }
+        });
+        // Check for Google Script Load
+        window.addEventListener('load', () => {
+            const statusDiv = document.getElementById('gsi-status');
+            setTimeout(() => {
+                if (typeof google === 'undefined' || !google.accounts) {
+                    statusDiv.style.display = 'block';
+                    statusDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Google Sign-In failed to load.<br>Check AdBlock or Network.';
+                    statusDiv.style.color = '#ff4444';
+                } else {
+                    // Script loaded, but maybe button didn't render?
+                    // We can't easily check iframe rendered state due to cross-origin, 
+                    // but we can assume if script loaded it should try.
+                }
+            }, 3000);
         });
     </script>
 </body>
