@@ -431,14 +431,9 @@ async function loginUser(email, password) {
 async function registerForEvent(eventData) {
     try {
         const token = localStorage.getItem("vortexToken");
-        // Note: The current backend doesn't strictly verify token on register endpoint yet, 
-        // but it's good practice to send it if we add middleware later.
-
         const res = await fetch(`${API_URL}/register`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(eventData)
         });
         const data = await res.json();
@@ -448,8 +443,87 @@ async function registerForEvent(eventData) {
             return { success: false, message: data.error || "Registration failed", details: data.details };
         }
     } catch (error) {
-        console.error("Registration network error:", error);
-        return { success: false, message: error.message || "Network error" };
+        console.error("Registration error:", error);
+        return { success: false, message: error.message };
+    }
+}
+
+/* =========================================
+   GOOGLE SIGN-IN INTEGRATION
+   ========================================= */
+let tokenClient;
+const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID'; // <--- USER MUST REPLACE THIS
+
+function initGoogleLogin() {
+    if (typeof google === 'undefined') {
+        alert("Google Sign-In failed to load. Please refresh.");
+        return;
+    }
+
+    if (GOOGLE_CLIENT_ID === 'YOUR_GOOGLE_CLIENT_ID') {
+        alert("Configuration Error: Google Client ID is missing.\nPlease ask the Admin to update script.js with a valid Client ID.");
+        console.error("Missing Google Client ID. Visit https://console.cloud.google.com/ to get one.");
+        return;
+    }
+
+    if (!tokenClient) {
+        tokenClient = google.accounts.oauth2.initTokenClient({
+            client_id: GOOGLE_CLIENT_ID,
+            scope: 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email',
+            callback: async (resp) => {
+                if (resp.error) {
+                    throw resp;
+                }
+                await googleLoginSuccess(resp.access_token);
+            },
+        });
+    }
+
+    // Skip if we already have a token? No, always request for fresh sign-in experience or consent
+    // prompt: '' will auto-select if possible, or use 'consent' to force.
+    tokenClient.requestAccessToken({ prompt: '' });
+}
+
+async function googleLoginSuccess(accessToken) {
+    try {
+        // Fetch User Info
+        const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+            headers: { Authorization: `Bearer ${accessToken}` }
+        });
+        const user = await res.json();
+
+        if (user && user.sub) {
+            // Success! Mimic Standard Login
+            const vortexUser = {
+                name: user.name,
+                email: user.email,
+                picture: user.picture,
+                googleId: user.sub,
+                token: accessToken // Store access token if needed for API
+            };
+
+            // Save to LocalStorage
+            localStorage.setItem('vortexCurrentUser', JSON.stringify(vortexUser));
+
+            // Redirect
+            const redirectUrl = sessionStorage.getItem('loginRedirectUrl') || 'index.html';
+            sessionStorage.removeItem('loginRedirectUrl');
+
+            // Show Loading
+            const loadingScreen = document.getElementById('loading-screen');
+            if (loadingScreen) loadingScreen.style.display = 'flex';
+
+            setTimeout(() => {
+                window.location.href = redirectUrl;
+            }, 1000);
+        }
+    } catch (err) {
+        console.error("Google Info Fetch Error:", err);
+        alert("Failed to get user profile from Google.");
+    }
+}
+console.error("Registration network error:", error);
+return { success: false, message: error.message || "Network error" };
     }
 }
 
