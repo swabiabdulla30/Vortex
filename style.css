@@ -248,6 +248,11 @@ body {
     box-shadow: 0 0 10px #0f0;
 }
 
+/* Mobile Only Class */
+.mobile-only {
+    display: none;
+}
+
 /* Sections */
 section {
     position: relative;
@@ -843,159 +848,99 @@ section {
         flex-grow: 1;
     }
 
-    /* Mobile Nav Links (Slide Out) */
+    /* Mobile Nav Overlay */
     .nav-links {
         position: fixed;
-        right: 0;
-        top: 0;
-        /* Starts from top */
-        height: 100vh;
-        background: #000;
-        /* Solid black */
+        inset: 0;
+        /* Cover entire screen */
+        background: rgba(5, 5, 5, 0.98);
+        /* Very dark, almost solid */
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        width: 80%;
-        /* Wider menu */
+        padding: 80px 20px 40px;
+        /* Top padding for close button/logo, bottom for login */
         transform: translateX(100%);
-        transition: transform 0.3s ease-in-out;
+        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 1500;
-        border-left: 1px solid #333;
-        padding-top: 60px;
-        /* Space for close button if needed */
-    }
-
-    /* Hide Desktop Login Button inside Nav Links if accidentally present */
-    .nav-links .login-btn {
-        display: none !important;
-    }
-
-    /* Login Button & User Dropdown on Mobile Header */
-    .login-btn,
-    .user-dropdown-container {
-        order: 2;
-        /* Next to hamburger */
-        margin-right: 15px;
-        /* improved spacing */
-        flex-shrink: 1;
-        min-width: 0;
-        /* Allow flexbox shrinking */
-    }
-
-    .login-btn {
-        padding: 8px 12px;
-        font-size: 0.8rem;
-    }
-
-    /* Adjust User Button for Mobile */
-    .user-btn {
-        padding: 8px 12px;
-        font-size: 0.8rem;
-        background: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    /* Fix Dropdown Menu Position on Mobile */
-    .dropdown-menu {
-        top: 50px;
-        right: 60px;
-        /* Shift left to not be covered by edge */
-        width: 200px;
-        background: rgba(10, 10, 10, 0.95);
+        border-left: none;
+        width: 100%;
     }
 
     .nav-links.nav-active {
         transform: translateX(0%);
     }
 
-    .nav-links a {
+    .nav-links a.nav-item {
+        font-size: 1.5rem;
+        /* Larger links */
+        margin: 15px 0;
         opacity: 0;
-        margin: 20px 0;
-        font-size: 1.2rem;
+        /* For animation */
+        font-weight: 700;
+        letter-spacing: 2px;
     }
 
-    @keyframes navLinkFade {
-        from {
-            opacity: 0;
-            transform: translateX(50px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
-
-    .toggle .line1 {
-        transform: rotate(-45deg) translate(-5px, 6px);
-    }
-
-    .toggle .line2 {
-        opacity: 0;
-    }
-
-    .toggle .line3 {
-        transform: rotate(45deg) translate(-5px, -6px);
-    }
-
-    .mission-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
-        /* Increased gap */
-    }
-
-    .hero-stats {
-        gap: 20px;
-        flex-wrap: wrap;
-        /* Allow wrapping */
+    /* Mobile Login Button Styles */
+    .mobile-only {
+        display: flex !important;
+        margin-top: auto;
+        /* Push to bottom */
+        width: 80%;
         justify-content: center;
+        padding: 15px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        font-size: 1rem;
+        border-radius: 12px;
+        opacity: 0;
+        /* For animation */
     }
 
-    section {
-        padding: 60px 20px;
-        /* Slightly reduced vertical padding to fit more content, but balanced */
+    .mobile-only .icon {
+        margin-right: 10px;
     }
 
-    .section-title {
-        font-size: 2.2rem;
-        /* proportional to mobile */
+    /* Animation Delays */
+    .nav-links.nav-active .nav-item,
+    .nav-links.nav-active .mobile-only {
+        opacity: 1;
+        transition: opacity 0.5s ease 0.3s;
     }
 
-    /* Standard Mobile Gallery (Grid) */
-    #gallery {
-        height: auto;
-        /* Allow scrolling */
-        padding: 60px 20px;
-        overflow: visible;
-        display: block;
-    }
-
-    #gallery .section-header {
-        margin-bottom: 40px;
-        margin-top: 0;
-    }
-
-    #gallery .section-title {
-        font-size: 2.5rem;
-    }
-
+    /* Gallery Grid - Mobile Squares */
     .gallery-grid {
         display: grid;
-        /* Show grid */
-        grid-template-columns: 1fr;
-        /* Single column */
-        gap: 20px;
+        grid-template-columns: repeat(2, 1fr);
+        /* 2 Columns */
+        gap: 10px;
+        /* Tighter gap */
+        padding: 0 10px;
+    }
+
+    .gallery-item {
+        aspect-ratio: 1 / 1;
+        /* Force Square */
+        height: auto;
+        /* reset fixed height */
+        border-radius: 8px;
+    }
+
+    .gallery-item img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
     }
 
     .all-projects-header {
         display: block;
-        /* Show header */
+        margin-top: 40px;
     }
 
     /* Standardize Section Padding */
     section {
-        padding: 40px 20px;
+        padding: 40px 10px;
     }
 
     /* Standardize Forms for Mobile (Prevent Zoom) */

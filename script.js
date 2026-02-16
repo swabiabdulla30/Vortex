@@ -18,6 +18,9 @@ window.addEventListener('load', function () {
             // Create container
             const container = document.createElement('div');
             container.className = 'user-dropdown-container';
+            if (btn.classList.contains('mobile-only')) {
+                container.classList.add('mobile-only');
+            }
 
             // Create toggle button
             const toggle = document.createElement('button');
