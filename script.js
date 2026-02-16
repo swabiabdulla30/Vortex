@@ -9,49 +9,42 @@ window.addEventListener('load', function () {
         const user = JSON.parse(currentUserData);
         const loginBtns = document.querySelectorAll('.login-btn');
 
-        // Desktop Logic: Replace with Dropdown
-        if (!btn.classList.contains('mobile-only')) {
-            const container = document.createElement('div');
-            container.className = 'user-dropdown-container';
+        toggle.innerHTML = `<span class="icon">👤</span> ${user.name.toUpperCase()}`;
 
-            const toggle = document.createElement('button');
-            toggle.className = 'login-btn user-btn';
-            toggle.innerHTML = `<span class="icon">👤</span> ${user.name.toUpperCase()}`;
-
-            const menu = document.createElement('div');
-            menu.className = 'dropdown-menu';
-            menu.innerHTML = `
+        const menu = document.createElement('div');
+        menu.className = 'dropdown-menu';
+        menu.innerHTML = `
                     <a href="tickets.html" class="dropdown-item"><i class="fas fa-ticket-alt"></i> CHECK TICKETS</a>
                     ${user.role === 'admin' ? '<a href="admin.html" class="dropdown-item"><i class="fas fa-tachometer-alt"></i> DASHBOARD</a>' : ''}
                     <a href="#" class="dropdown-item logout-link"><i class="fas fa-sign-out-alt"></i> LOGOUT</a>
                 `;
 
-            container.appendChild(toggle);
-            container.appendChild(menu);
-            btn.parentNode.replaceChild(container, btn);
+        container.appendChild(toggle);
+        container.appendChild(menu);
+        btn.parentNode.replaceChild(container, btn);
 
-            toggle.addEventListener('click', (e) => {
-                e.stopPropagation();
-                menu.classList.toggle('show');
-            });
+        toggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            menu.classList.toggle('show');
+        });
 
-            document.addEventListener('click', (e) => {
-                if (!container.contains(e.target)) {
-                    menu.classList.remove('show');
-                }
-            });
-        } else {
-            // Mobile Logic: Inject Premium Card at TOP of Menu
-            const navLinks = document.querySelector('.nav-links');
-            if (navLinks) {
-                // Remove existing login button
-                btn.style.display = 'none';
+        document.addEventListener('click', (e) => {
+            if (!container.contains(e.target)) {
+                menu.classList.remove('show');
+            }
+        });
+    } else {
+        // Mobile Logic: Inject Premium Card at TOP of Menu
+        const navLinks = document.querySelector('.nav-links');
+        if (navLinks) {
+            // Remove existing login button
+            btn.style.display = 'none';
 
-                // Check if profile card already exists
-                if (!navLinks.querySelector('.mobile-profile-card')) {
-                    const profileCard = document.createElement('div');
-                    profileCard.className = 'mobile-profile-card';
-                    profileCard.innerHTML = `
+            // Check if profile card already exists
+            if (!navLinks.querySelector('.mobile-profile-card')) {
+                const profileCard = document.createElement('div');
+                profileCard.className = 'mobile-profile-card';
+                profileCard.innerHTML = `
                             <div class="profile-avatar">
                                 <i class="fas fa-user-astronaut"></i>
                             </div>
@@ -61,27 +54,27 @@ window.addEventListener('load', function () {
                             </div>
                         `;
 
-                    // Insert after header (close button)
-                    const header = navLinks.querySelector('.mobile-nav-header');
-                    if (header) {
-                        header.insertAdjacentElement('afterend', profileCard);
-                    } else {
-                        navLinks.insertBefore(profileCard, navLinks.firstChild);
-                    }
+                // Insert after header (close button)
+                const header = navLinks.querySelector('.mobile-nav-header');
+                if (header) {
+                    header.insertAdjacentElement('afterend', profileCard);
+                } else {
+                    navLinks.insertBefore(profileCard, navLinks.firstChild);
+                }
 
-                    // Inject Bottom Actions
-                    const bottomActions = document.createElement('div');
-                    bottomActions.className = 'mobile-bottom-actions';
-                    bottomActions.innerHTML = `
+                // Inject Bottom Actions
+                const bottomActions = document.createElement('div');
+                bottomActions.className = 'mobile-bottom-actions';
+                bottomActions.innerHTML = `
                             <a href="tickets.html" class="action-link"><i class="fas fa-ticket-alt"></i> My Tickets</a>
                             ${user.role === 'admin' ? '<a href="admin.html" class="action-link"><i class="fas fa-tachometer-alt"></i> Admin</a>' : ''}
                             <a href="#" class="action-link logout-link-mobile" style="color: var(--primary-red);"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
                         `;
-                    navLinks.appendChild(bottomActions);
-                }
+                navLinks.appendChild(bottomActions);
             }
         }
     }
+}
 }
         }); // End forEach
 
