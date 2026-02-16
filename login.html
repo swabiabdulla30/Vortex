@@ -409,28 +409,62 @@
 
         // Custom Google Button Logic
         window.addEventListener('load', () => {
+            // 1. Check for ID Token in URL (Redirect Flow)
+            const fragmentString = window.location.hash.substring(1);
+            const params = new URLSearchParams(fragmentString);
+            const idToken = params.get('id_token');
+
+            if (idToken) {
+                console.log("Found ID Token in URL, logging in...");
+                // Clear hash to clean URL
+                history.replaceState(null, null, ' ');
+
+                // Reuse existing handler
+                handleCredentialResponse({ credential: idToken });
+                return;
+            }
+
             const statusDiv = document.getElementById('gsi-status');
             const customBtn = document.getElementById('custom-google-btn');
 
             if (customBtn) {
                 customBtn.addEventListener('click', () => {
                     console.log("Custom Google Button Clicked");
+
+                    // A. Try Standard GSI Popup
                     if (typeof google !== 'undefined' && google.accounts) {
                         google.accounts.id.prompt((notification) => {
                             if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
                                 console.warn("Google Prompt Skipped/Blocked:", notification.getSkippedReason());
-                                statusDiv.style.display = 'block';
-                                statusDiv.innerHTML = 'Popup blocked? <br>Trying manual redirect...';
-                                // Fallback: If popup fails, we can't do much without backend auth flow, 
-                                // but at least tell user.
+                                fallbackToRedirect(statusDiv);
                             }
                         });
                     } else {
-                        console.error("Google Object not found");
-                        statusDiv.style.display = 'block';
-                        statusDiv.innerHTML = 'Google Script missing.<br>Check internet/adblock.';
+                        // B. Script Missing? Fallback to Redirect immediately
+                        console.error("Google Object not found, using Redirect Fallback");
+                        fallbackToRedirect(statusDiv);
                     }
                 });
+            }
+
+            function fallbackToRedirect(statusDisplay) {
+                if (statusDisplay) {
+                    statusDisplay.style.display = 'block';
+                    statusDisplay.innerHTML = 'Redirecting to Google...';
+                    statusDisplay.style.color = '#00ffd5';
+                }
+
+                // Construct OAuth2 URL
+                const clientId = "239875271846-pamr47sh20r4ccm0lihdi1k73jgg6g6a.apps.googleusercontent.com"; // MUST MATCH
+                const redirectUri = window.location.origin + window.location.pathname; // Matches current page
+                const scope = "email profile openid";
+                const responseType = "id_token";
+                const nonce = "vortex_" + Date.now();
+
+                const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=${responseType}&scope=${encodeURIComponent(scope)}&nonce=${nonce}`;
+
+                console.log("Redirecting to:", authUrl);
+                window.location.href = authUrl;
             }
 
             // Check 1: Iframe Detection (Google Login doesn't work in iframes)
@@ -447,8 +481,8 @@
                     console.warn("Google Script Load Timeout");
                     if (statusDiv) {
                         statusDiv.style.display = 'block';
-                        statusDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Google Script Failed.<br>Content Blocker Detected?';
-                        statusDiv.style.color = '#ff4444';
+                        statusDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Google Script Missing.<br>Using Redirect Method.';
+                        statusDiv.style.color = '#ff9800';
                     }
                 }
             }, 5000); // Increased timeout
