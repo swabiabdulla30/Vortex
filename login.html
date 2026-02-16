@@ -382,9 +382,20 @@
                 msg.style.color = '#ff4444';
             }
         });
-        // Check for Google Script Load
+
+        // Debug & Compatibility Checks
         window.addEventListener('load', () => {
             const statusDiv = document.getElementById('gsi-status');
+
+            // Check 1: Iframe Detection (Google Login doesn't work in iframes)
+            if (window.self !== window.top) {
+                statusDiv.style.display = 'block';
+                statusDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Running in Iframe (Domain Masking).<br>Google Login disabled. Use direct link.';
+                statusDiv.style.color = '#ff9800';
+                return;
+            }
+
+            // Check 2: Google Script Load
             setTimeout(() => {
                 if (typeof google === 'undefined' || !google.accounts) {
                     statusDiv.style.display = 'block';
