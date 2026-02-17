@@ -246,33 +246,27 @@ window.addEventListener('scroll', function () {
 document.addEventListener('DOMContentLoaded', function () {
     const leadsWrapper = document.querySelector('.leads-wrapper');
     const leadSlides = document.querySelectorAll('.lead-slide');
+    const prevBtn = document.getElementById('lead-prev');
+    const nextBtn = document.getElementById('lead-next');
 
     if (leadsWrapper && leadSlides.length > 0) {
         // Initial setup: Ensure the second item (index 1) is active/centered
-        // We show 3 items. Item 1 (center) should be active.
         function setInitialState() {
-            const currentSlides = document.querySelectorAll('.lead-slide');
+            const currentSlides = leadsWrapper.querySelectorAll('.lead-slide');
             currentSlides.forEach(s => s.classList.remove('active'));
             if (currentSlides[1]) currentSlides[1].classList.add('active');
-            // Ensure wrapper is shifted so index 1 is in center.
-            // Items are 33.33% wide.
-            // To center index 1, we want wrapper at -33.33% (showing index 1 in middle slot).
-            // Actually, based on style_slider_leads.css, items are flexed.
-            // Let's rely on the natural flex flow and just shift the wrapper.
-            // Currently, css says .leads-wrapper does transition.
         }
 
         setInitialState();
 
-        // We need to shift the wrapper to the left by 33.333% to verify next item
-        // But for infinite loop with flexbox:
-        // 1. Animate transform translateX(-33.333%)
-        // 2. On transition end:
-        //    - Append first child to end
-        //    - Reset transform to translateX(0)
-        //    - Update active class (always the new 2nd item)
-
         let isAnimating = false;
+        let autoPlayer;
+
+        function updateActive() {
+            const slides = leadsWrapper.querySelectorAll('.lead-slide');
+            slides.forEach(s => s.classList.remove('active'));
+            if (slides[1]) slides[1].classList.add('active');
+        }
 
         function slideNext() {
             if (isAnimating) return;
@@ -282,23 +276,64 @@ document.addEventListener('DOMContentLoaded', function () {
             leadsWrapper.style.transition = 'transform 0.5s ease-in-out';
             leadsWrapper.style.transform = 'translateX(-33.333%)';
 
-            // Use setTimeout to ensure it matches the CSS transition time reliable
             setTimeout(() => {
                 leadsWrapper.style.transition = 'none';
                 leadsWrapper.appendChild(leadsWrapper.firstElementChild);
                 leadsWrapper.style.transform = 'translateX(0)';
-
-                // Update Active Class (Always highlight the new center item, which is index 1)
-                const slides = leadsWrapper.querySelectorAll('.lead-slide');
-                slides.forEach(s => s.classList.remove('active'));
-                if (slides[1]) slides[1].classList.add('active');
-
+                updateActive();
                 isAnimating = false;
             }, 500);
         }
 
-        // Auto-play
-        setInterval(slideNext, 3000);
+        function slidePrev() {
+            if (isAnimating) return;
+            isAnimating = true;
+
+            // Move last item to front immediately, but offset wrapper to keep visual position
+            leadsWrapper.style.transition = 'none';
+            leadsWrapper.prepend(leadsWrapper.lastElementChild);
+            leadsWrapper.style.transform = 'translateX(-33.333%)';
+
+            // Force reflow
+            void leadsWrapper.offsetWidth;
+
+            // Animate back to 0
+            leadsWrapper.style.transition = 'transform 0.5s ease-in-out';
+            leadsWrapper.style.transform = 'translateX(0)';
+
+            setTimeout(() => {
+                updateActive();
+                isAnimating = false;
+            }, 500);
+        }
+
+        function startAutoPlay() {
+            clearInterval(autoPlayer);
+            autoPlayer = setInterval(slideNext, 3000);
+        }
+
+        function resetAutoPlay() {
+            clearInterval(autoPlayer);
+            startAutoPlay();
+        }
+
+        // Event Listeners
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                slideNext();
+                resetAutoPlay();
+            });
+        }
+
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => {
+                slidePrev();
+                resetAutoPlay();
+            });
+        }
+
+        // Start Auto-play
+        startAutoPlay();
     }
 });
 
