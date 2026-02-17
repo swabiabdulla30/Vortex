@@ -242,7 +242,7 @@ window.addEventListener('scroll', function () {
     lastScroll = currentScroll;
 });
 
-// Main Leads Slider Logic (Seamless Loop)
+// Main Leads Slider Logic (Seamless Loop & Touch)
 document.addEventListener('DOMContentLoaded', function () {
     const leadsWrapper = document.querySelector('.leads-wrapper');
     const leadSlides = document.querySelectorAll('.lead-slide');
@@ -250,11 +250,19 @@ document.addEventListener('DOMContentLoaded', function () {
     const nextBtn = document.getElementById('lead-next');
 
     if (leadsWrapper && leadSlides.length > 0) {
-        // Initial setup: Ensure the second item (index 1) is active/centered
+
+        function getShiftPercentage() {
+            return window.innerWidth <= 768 ? 100 : 33.333;
+        }
+
+        // Initial setup
         function setInitialState() {
             const currentSlides = leadsWrapper.querySelectorAll('.lead-slide');
             currentSlides.forEach(s => s.classList.remove('active'));
-            if (currentSlides[1]) currentSlides[1].classList.add('active');
+
+            // Desktop: Center item (index 1) is active. Mobile: First item (index 0) is active.
+            const activeIndex = window.innerWidth <= 768 ? 0 : 1;
+            if (currentSlides[activeIndex]) currentSlides[activeIndex].classList.add('active');
         }
 
         setInitialState();
@@ -265,16 +273,21 @@ document.addEventListener('DOMContentLoaded', function () {
         function updateActive() {
             const slides = leadsWrapper.querySelectorAll('.lead-slide');
             slides.forEach(s => s.classList.remove('active'));
-            if (slides[1]) slides[1].classList.add('active');
+
+            // Desktop: Center item (index 1) is active. Mobile: First item (index 0) is active.
+            const activeIndex = window.innerWidth <= 768 ? 0 : 1;
+            if (slides[activeIndex]) slides[activeIndex].classList.add('active');
         }
 
         function slideNext() {
             if (isAnimating) return;
             isAnimating = true;
 
+            const shift = getShiftPercentage();
+
             // Animate
             leadsWrapper.style.transition = 'transform 0.5s ease-in-out';
-            leadsWrapper.style.transform = 'translateX(-33.333%)';
+            leadsWrapper.style.transform = `translateX(-${shift}%)`;
 
             setTimeout(() => {
                 leadsWrapper.style.transition = 'none';
@@ -289,10 +302,12 @@ document.addEventListener('DOMContentLoaded', function () {
             if (isAnimating) return;
             isAnimating = true;
 
-            // Move last item to front immediately, but offset wrapper to keep visual position
+            const shift = getShiftPercentage();
+
+            // Move last item to front immediately
             leadsWrapper.style.transition = 'none';
             leadsWrapper.prepend(leadsWrapper.lastElementChild);
-            leadsWrapper.style.transform = 'translateX(-33.333%)';
+            leadsWrapper.style.transform = `translateX(-${shift}%)`;
 
             // Force reflow
             void leadsWrapper.offsetWidth;
@@ -317,7 +332,7 @@ document.addEventListener('DOMContentLoaded', function () {
             startAutoPlay();
         }
 
-        // Event Listeners
+        // Event Listeners for Buttons
         if (nextBtn) {
             nextBtn.addEventListener('click', () => {
                 slideNext();
@@ -330,6 +345,33 @@ document.addEventListener('DOMContentLoaded', function () {
                 slidePrev();
                 resetAutoPlay();
             });
+        }
+
+        // Touch / Swipe Support
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        leadsWrapper.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        leadsWrapper.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, { passive: true });
+
+        function handleSwipe() {
+            const swipeThreshold = 50; // Minimum distance for swipe
+            if (touchEndX < touchStartX - swipeThreshold) {
+                // Swipe Left -> Next
+                slideNext();
+                resetAutoPlay();
+            }
+            if (touchEndX > touchStartX + swipeThreshold) {
+                // Swipe Right -> Prev
+                slidePrev();
+                resetAutoPlay();
+            }
         }
 
         // Start Auto-play

@@ -112,38 +112,44 @@
     }
 }
 
-/* Mobile Responsive for Leads Slider (Standard Grid) */
+/* Mobile Responsive for Leads Slider (Touch Enabled) */
 @media (max-width: 768px) {
     .leads-slider-container {
-        height: auto;
-        overflow: visible;
+        height: 400px;
+        overflow: hidden;
         max-width: 100%;
         margin-bottom: 20px;
     }
 
     .leads-wrapper {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 30px;
-        transform: none !important;
-        /* Disable JS slider movement */
+        display: flex;
+        /* Restore Flex for Slider */
+        flex-direction: row;
         width: 100%;
+        /* Force horizontal */
     }
 
     .lead-slide {
         min-width: 100%;
-        height: auto;
-        opacity: 1;
-        transform: none;
+        /* One slide per view */
+        height: 100%;
+        opacity: 0.5;
+        transform: scale(0.9);
         filter: none;
-        padding: 20px;
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 15px;
+        padding: 10px;
+        background: transparent;
+        border: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     .lead-slide.active {
-        transform: none;
+        transform: scale(1);
+        opacity: 1;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
     }
 
     .lead-slide .frame {
@@ -154,6 +160,13 @@
     .lead-slide .member-info h3 {
         font-size: 1.3rem;
     }
+
+    /* Reveal buttons on mobile if desired, or keep hidden and rely on swipe? 
+       User asked for "previous slide", buttons are explicit. 
+       Let's show them but make them smaller/positioned well? 
+       Actually user said "moved by touching", implying swipe reference. 
+       I'll keep buttons hidden to save space as per original intent, 
+       but ensure swipe works. */
 }
 
 /* Slider Navigation Buttons */
