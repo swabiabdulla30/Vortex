@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=2.7">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 
 <body>
@@ -140,9 +141,33 @@
                             <div style="text-align: center; margin-top: 20px;">
                                 <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${ticket.ticketId}" alt="QR Code" style="border-radius: 8px;">
                             </div>
+                            <button onclick="downloadTicket(this)" class="submit-btn" style="width: 100%; margin-top: 15px; background: rgba(0, 255, 213, 0.2); border: 1px solid #00ffd5;">
+                                <i class="fas fa-download"></i> Download Ticket
+                            </button>
                         </div>
                     </div>
                 `).join('');
+
+                window.downloadTicket = function (btn) {
+                    const card = btn.closest('.ticket-card');
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+                    html2canvas(card, {
+                        backgroundColor: null, // Transparent bg if needed, or stick to card style
+                        scale: 2 // Higher quality
+                    }).then(canvas => {
+                        const link = document.createElement('a');
+                        link.download = `Vortex_Ticket_${Date.now()}.png`;
+                        link.href = canvas.toDataURL();
+                        link.click();
+                        btn.innerHTML = originalText;
+                    }).catch(err => {
+                        console.error(err);
+                        alert("Failed to download ticket");
+                        btn.innerHTML = originalText;
+                    });
+                };
 
             } catch (error) {
                 console.error(error);

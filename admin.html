@@ -83,8 +83,8 @@
         <div class="nav-content">
             <div class="brand-container">
                 <a href="index.html">
-                    <img src="https://img.sanishtech.com/u/f6033aa5854472d7e816f6c7a590247e.jpeg" alt="Vortex Logo" class="nav-logo-img"
-                        style="height: 40px; margin-right: 10px; vertical-align: middle;">
+                    <img src="https://img.sanishtech.com/u/f6033aa5854472d7e816f6c7a590247e.jpeg" alt="Vortex Logo"
+                        class="nav-logo-img" style="height: 40px; margin-right: 10px; vertical-align: middle;">
                 </a>
                 <a href="index.html" class="logo">VORTEX ADMIN</a>
             </div>
@@ -171,7 +171,7 @@
 
                 if (!res.ok) {
                     const errorText = await res.text();
-                    throw new Error(`Failed to fetch: ${res.status} ${res.statusText} - ${errorText}`);
+                    throw new Error(`Server Error (${res.status}): ${errorText}`);
                 }
 
                 allRegistrations = await res.json();
@@ -181,36 +181,62 @@
                 document.getElementById('status-filter').value = 'PAID';
                 filterAndRender();
             } catch (error) {
-                console.error(error);
-                document.getElementById('data-body').innerHTML = `<tr><td colspan="7" style="color:red">Error loading data: ${error.message}</td></tr>`;
+                console.error("Fetch Error:", error);
+                document.getElementById('data-body').innerHTML = `
+                    <tr>
+                        <td colspan="8" style="color:red; text-align:center; padding: 20px;">
+                            <strong>Error loading data:</strong> ${error.message}<br>
+                            <small>Check console for details. Ensure you are logged in as Admin.</small>
+                            <button onclick="fetchData()" class="action-btn" style="margin-top:10px;">Retry</button>
+                        </td>
+                    </tr>`;
             }
         }
 
-        async function exportExcel() {
-            const token = localStorage.getItem('vortexToken');
-            if (!token) return;
+        function exportExcel() {
+            if (!allRegistrations || allRegistrations.length === 0) {
+                alert("No data available to export.");
+                return;
+            }
 
             try {
-                const res = await fetch('/api/admin/export', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
+                // Convert to simple CSV
+                const headers = ["Ticket ID", "Name", "Event", "Email", "Phone", "Department", "Year", "College", "Date", "Payment Status", "Payment ID"];
 
-                if (res.ok) {
-                    const blob = await res.blob();
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `registrations_${new Date().toISOString().slice(0, 10)}.xlsx`;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    window.URL.revokeObjectURL(url);
-                } else {
-                    alert("Export failed: " + res.statusText);
-                }
+                // Map data to array of arrays
+                const rows = allRegistrations.map(r => [
+                    r.ticketId || '',
+                    `"${(r.name || '').replace(/"/g, '""')}"`, // Escape quotes
+                    `"${(r.event || '').replace(/"/g, '""')}"`,
+                    r.email || '',
+                    r.phone || '',
+                    r.department || '',
+                    r.year || '',
+                    `"${(r.college || '').replace(/"/g, '""')}"`,
+                    r.date ? new Date(r.date).toLocaleDateString() : '',
+                    r.paymentStatus || 'PENDING',
+                    r.paymentId || ''
+                ]);
+
+                // Combine headers and rows
+                const csvContent = [
+                    headers.join(','),
+                    ...rows.map(row => row.join(','))
+                ].join('\n');
+
+                // Create blob and download
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.setAttribute('href', url);
+                link.setAttribute('download', `vortex_registrations_${new Date().toISOString().slice(0, 10)}.csv`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
             } catch (error) {
                 console.error("Export error:", error);
-                alert("Export failed");
+                alert("Failed to export data: " + error.message);
             }
         }
 
