@@ -465,13 +465,29 @@
             try {
                 const result = await registerUser(name, email, password);
                 if (result.success) {
-                    msg.textContent = 'Registration Successful. Please Login.';
+                    msg.textContent = 'Registration Successful. Logging you in...';
                     msg.style.color = '#00ffd5';
-                    setTimeout(() => {
-                        window.switchForm('login');
-                        document.getElementById('login-email').value = email;
-                        msg.textContent = 'Please login with your new credentials.';
-                    }, 1500);
+
+                    // Auto Login
+                    try {
+                        const loginResult = await loginUser(email, password);
+                        if (loginResult.success) {
+                            setTimeout(() => {
+                                const redirectUrl = sessionStorage.getItem('loginRedirectUrl');
+                                window.location.href = redirectUrl || 'index.html';
+                            }, 1000);
+                        } else {
+                            // Fallback if auto-login fails
+                            throw new Error(loginResult.message);
+                        }
+                    } catch (loginErr) {
+                        console.error("Auto-login failed:", loginErr);
+                        msg.textContent = 'Registration Successful. Please Login manually.';
+                        setTimeout(() => {
+                            window.switchForm('login');
+                            document.getElementById('login-email').value = email;
+                        }, 1500);
+                    }
                 } else {
                     msg.textContent = 'Error: ' + result.message;
                     msg.style.color = '#ff4444';
