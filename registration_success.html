@@ -394,7 +394,8 @@
         <div class="nav-content">
             <div class="brand-container">
                 <a href="index.html">
-                    <img src="https://img.sanishtech.com/u/f6033aa5854472d7e816f6c7a590247e.jpeg" alt="Vortex Logo" class="nav-logo-img">
+                    <img src="https://img.sanishtech.com/u/f6033aa5854472d7e816f6c7a590247e.jpeg" alt="Vortex Logo"
+                        class="nav-logo-img">
                 </a>
                 <a href="index.html" class="logo">VORTEX</a>
             </div>
@@ -606,8 +607,9 @@
                 logging: false,
                 useCORS: true
             }).then(canvas => {
+                const ticketId = document.getElementById('dl-id').innerText.replace('ID: #', '');
                 const link = document.createElement('a');
-                link.download = 'Vortex_Official_Entry_Pass.png';
+                link.download = `Vortex_Pass_${ticketId}.png`;
                 link.href = canvas.toDataURL('image/png');
                 link.click();
 
