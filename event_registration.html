@@ -241,6 +241,12 @@
 
                             const verifyData = await verifyRes.json();
                             if (verifyRes.ok) {
+                                // Save details for the success page ticket
+                                sessionStorage.setItem('regName', eventData.name);
+                                sessionStorage.setItem('regEvent', eventData.event);
+                                sessionStorage.setItem('regDept', eventData.department);
+                                sessionStorage.setItem('regId', ticketId);
+
                                 window.location.href = 'registration_success.html';
                             } else {
                                 alert("Payment verification failed: " + verifyData.error);
