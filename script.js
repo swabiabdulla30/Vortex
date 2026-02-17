@@ -342,22 +342,22 @@ document.addEventListener('DOMContentLoaded', () => {
         // Event Delegation for Gallery Items (Background Images)
         // We attach to body to catch all current and future items
         document.body.addEventListener('click', (e) => {
-            // Check if clicked element is an item or inside an item
-            const item = e.target.closest('.item, .gallery-item');
+            // Check if client clicked inside a gallery item (slider or grid)
+            const galleryItem = e.target.closest('.item, .gallery-item');
 
-            if (item) {
+            if (galleryItem) {
                 // Ignore if clicking a button inside (like View Data)
                 if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
 
                 // Priority Check: Look for an <img> tag inside the item first
-                const img = item.querySelector('img');
+                const img = galleryItem.querySelector('img');
                 if (img) {
                     openLightbox(img.src);
                     return;
                 }
 
                 // Fallback: Check for background-image
-                const style = window.getComputedStyle(item);
+                const style = window.getComputedStyle(galleryItem);
                 const bgImage = style.backgroundImage;
 
                 if (bgImage && bgImage !== 'none') {
@@ -367,12 +367,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         openLightbox(urlMatch[1]);
                     }
                 }
+                return; // Stop processing if handled
             }
 
-            // Also check for regular images with a specific class or context
-            if (e.target.tagName === 'IMG' &&
-                (e.target.closest('.content-section') || e.target.closest('.card'))) {
-                // Exclude icons
+            // Also check for regular images BUT ONLY inside the #gallery section
+            // This prevents images in Events or other sections from popping up
+            if (e.target.tagName === 'IMG' && e.target.closest('#gallery')) {
+                // Exclude icons just in case
                 if (!e.target.classList.contains('icon') && !e.target.classList.contains('logo')) {
                     openLightbox(e.target.src);
                 }
