@@ -140,6 +140,10 @@
                                 <span style="color: #888;">Name:</span>
                                 <span>${ticket.name || user.name || 'Participant'}</span>
                             </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <span style="color: #888;">Department:</span>
+                                <span>${ticket.department || 'General'}</span>
+                            </div>
                             <div style="text-align: center; margin-top: 20px; background: white; padding: 10px; border-radius: 8px; width: 120px; margin-left: auto; margin-right: auto;">
                                 <div id="qrcode-${ticket.ticketId}"></div>
                             </div>
