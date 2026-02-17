@@ -592,35 +592,61 @@
         }
 
         function downloadTicket() {
-            // Target the hidden high-res ticket container
-            const ticketElement = document.querySelector('#download-container');
             const saveBtn = document.querySelector('.save-btn');
-
-            // Visual feedback
             const originalContent = saveBtn.innerHTML;
-            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating High-Res Pass...';
-            saveBtn.style.background = '#333';
+
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            saveBtn.disabled = true;
+
+            const ticketElement = document.getElementById('download-container');
+
+            // Temporary Make Visible for Capture (but obscured)
+            ticketElement.style.zIndex = '9999';
+            ticketElement.style.left = '0';
+            ticketElement.style.top = '0';
+            ticketElement.style.background = '#050505'; // Ensure background
 
             html2canvas(ticketElement, {
-                backgroundColor: null, // Transparent parent, but inner div has bg
-                scale: 1, // It's already large (1200px)
-                logging: false,
-                useCORS: true
+                useCORS: true,
+                scale: 2, // High Res
+                logging: true,
+                allowTaint: true, // Try to allow taint if CORS fails (might block download but worth a try if it's just rendering)
+                backgroundColor: '#050505'
             }).then(canvas => {
-                const ticketId = document.getElementById('dl-id').innerText.replace('ID: #', '');
-                const link = document.createElement('a');
-                link.download = `Vortex_Pass_${ticketId}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
+                // Re-hide
+                ticketElement.style.zIndex = '-1';
+                ticketElement.style.left = '-9999px';
 
-                // Reset button
-                saveBtn.innerHTML = originalContent;
-                saveBtn.style.background = '';
+                try {
+                    const ticketId = document.getElementById('dl-id').innerText.replace('ID: #', '') || 'TICKET';
+                    const link = document.createElement('a');
+                    link.download = `Vortex_Pass_${ticketId}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    saveBtn.innerHTML = '<i class="fas fa-check"></i> Saved!';
+                    setTimeout(() => {
+                        saveBtn.innerHTML = originalContent;
+                        saveBtn.disabled = false;
+                    }, 2000);
+                } catch (e) {
+                    console.error("DataURL Error:", e);
+                    alert("Download failed due to browser security (CORS). Please screenshot the ticket instead.");
+                    saveBtn.innerHTML = originalContent;
+                    saveBtn.disabled = false;
+                }
             }).catch(err => {
-                console.error("Error generating ticket:", err);
-                alert("Could not generate ticket image. Please try again.");
+                console.error("Capture Error:", err);
+
+                // Re-hide on error
+                ticketElement.style.zIndex = '-1';
+                ticketElement.style.left = '-9999px';
+
+                alert("Error generating ticket image: " + err.message);
                 saveBtn.innerHTML = originalContent;
-                saveBtn.style.background = '';
+                saveBtn.disabled = false;
             });
         }
     </script>

@@ -178,23 +178,48 @@
                     const card = btn.closest('.ticket-card');
                     const originalText = btn.innerHTML;
                     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+                    btn.disabled = true;
+
+                    // html2canvas doesn't like backdrop-filter, temporary remove it
+                    const originalBackdrop = card.style.backdropFilter;
+                    card.style.backdropFilter = 'none';
+                    card.style.background = '#111'; // Solid fallback
 
                     const ticketId = card.id.replace('card-', '');
+
                     html2canvas(card, {
-                        backgroundColor: '#1a1a1a',
+                        backgroundColor: '#111',
                         scale: 2,
                         useCORS: true,
                         logging: true
                     }).then(canvas => {
-                        const link = document.createElement('a');
-                        link.download = `Vortex_Ticket_${ticketId}.png`;
-                        link.href = canvas.toDataURL("image/png");
-                        link.click();
+                        try {
+                            const link = document.createElement('a');
+                            link.download = `Vortex_Ticket_${ticketId}.png`;
+                            link.href = canvas.toDataURL("image/png");
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                        } catch (e) {
+                            alert("Security blocking download. Please screenshot.");
+                        }
+
+                        // Restore styles
+                        card.style.backdropFilter = originalBackdrop;
+                        card.style.background = 'rgba(255, 255, 255, 0.05)';
+
                         btn.innerHTML = originalText;
+                        btn.disabled = false;
                     }).catch(err => {
                         console.error("Download Error:", err);
-                        alert("Failed to download ticket. Please check console.");
+                        alert("Failed to download: " + err.message);
+
+                        // Restore styles
+                        card.style.backdropFilter = originalBackdrop;
+                        card.style.background = 'rgba(255, 255, 255, 0.05)';
+
                         btn.innerHTML = originalText;
+                        btn.disabled = false;
                     });
                 };
 
