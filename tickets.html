@@ -87,6 +87,8 @@
                 const res = await fetch(`/api/my-tickets?email=${encodeURIComponent(user.email)}`);
                 const tickets = await res.json();
 
+                console.log("Fetched Tickets:", tickets); // USER DEBUG LOG
+
                 if (tickets.length === 0) {
                     container.innerHTML = `
                         <div style="text-align: center; color: rgba(255,255,255,0.7);">
@@ -100,7 +102,7 @@
                 }
 
                 container.innerHTML = tickets.map(ticket => `
-                    <div class="ticket-card" style="
+                    <div class="ticket-card" id="card-${ticket.ticketId}" style="
                         background: rgba(255, 255, 255, 0.05);
                         border: 1px solid rgba(255, 255, 255, 0.1);
                         border-radius: 15px;
@@ -121,8 +123,8 @@
                             justify-content: space-between;
                             align-items: center;
                         ">
-                            <span>${ticket.event}</span>
-                            <span style="background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">${ticket.paymentStatus}</span>
+                            <span>${ticket.event || 'Unknown Event'}</span>
+                            <span style="background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">${ticket.paymentStatus || 'PAID'}</span>
                         </div>
                         
                         <div class="ticket-body" style="padding: 20px; color: white;">
@@ -132,14 +134,18 @@
                             </div>
                             <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
                                 <span style="color: #888;">Date:</span>
-                                <span>${new Date(ticket.date).toLocaleDateString()}</span>
+                                <span>${ticket.date ? new Date(ticket.date).toLocaleDateString() : 'N/A'}</span>
                             </div>
                             <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                                <span style="color: #888;">Name:</span>
-                                <span>${ticket.name}</span>
+                                <span style="color: #888;">Attendee:</span>
+                                <span>${ticket.name || 'Participant'}</span>
                             </div>
-                            <div style="text-align: center; margin-top: 20px;">
-                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${ticket.ticketId}" alt="QR Code" style="border-radius: 8px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <span style="color: #888;">Department:</span>
+                                <span>${ticket.department || 'General'}</span>
+                            </div>
+                            <div style="text-align: center; margin-top: 20px; background: white; padding: 10px; border-radius: 8px; width: 120px; margin-left: auto; margin-right: auto;">
+                                <div id="qrcode-${ticket.ticketId}"></div>
                             </div>
                             <button onclick="downloadTicket(this)" class="submit-btn" style="width: 100%; margin-top: 15px; background: rgba(0, 255, 213, 0.2); border: 1px solid #00ffd5;">
                                 <i class="fas fa-download"></i> Download Ticket
@@ -148,23 +154,45 @@
                     </div>
                 `).join('');
 
+                // Initialize standard QR codes
+                tickets.forEach(ticket => {
+                    const qrContainer = document.getElementById(`qrcode-${ticket.ticketId}`);
+                    if (qrContainer) {
+                        try {
+                            new QRCode(qrContainer, {
+                                text: ticket.ticketId,
+                                width: 100,
+                                height: 100,
+                                colorDark: "#000000",
+                                colorLight: "#ffffff",
+                                correctLevel: QRCode.CorrectLevel.H
+                            });
+                        } catch (e) {
+                            console.error("QR Code Error:", e);
+                            qrContainer.innerHTML = "QR Error";
+                        }
+                    }
+                });
+
                 window.downloadTicket = function (btn) {
                     const card = btn.closest('.ticket-card');
                     const originalText = btn.innerHTML;
                     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
 
                     html2canvas(card, {
-                        backgroundColor: null, // Transparent bg if needed, or stick to card style
-                        scale: 2 // Higher quality
+                        backgroundColor: '#1a1a1a',
+                        scale: 2,
+                        useCORS: true,
+                        logging: true
                     }).then(canvas => {
                         const link = document.createElement('a');
                         link.download = `Vortex_Ticket_${Date.now()}.png`;
-                        link.href = canvas.toDataURL();
+                        link.href = canvas.toDataURL("image/png");
                         link.click();
                         btn.innerHTML = originalText;
                     }).catch(err => {
-                        console.error(err);
-                        alert("Failed to download ticket");
+                        console.error("Download Error:", err);
+                        alert("Failed to download ticket. Please check console.");
                         btn.innerHTML = originalText;
                     });
                 };

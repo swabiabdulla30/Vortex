@@ -165,6 +165,12 @@
         document.getElementById('registration-form').addEventListener('submit', async function (e) {
             e.preventDefault();
 
+            const eventNameField = document.getElementById('event-name');
+            if (!eventNameField.value || eventNameField.value.trim() === "") {
+                alert("Error: Event Name is missing. Please go back to the Events page and select an event.");
+                return;
+            }
+
             const submitBtn = this.querySelector('.submit-btn');
             const originalText = submitBtn.textContent;
             submitBtn.textContent = 'Processing Registration...';
