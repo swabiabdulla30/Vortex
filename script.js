@@ -56,7 +56,7 @@ window.addEventListener('load', function () {
                         const navLinks = document.querySelector('.nav-links');
                         if (navLinks) {
                             // Hide existing login button
-                            btn.style.display = 'none';
+                            btn.style.setProperty('display', 'none', 'important');
 
                             // Check if profile card already exists
                             if (!navLinks.querySelector('.mobile-profile-card')) {
