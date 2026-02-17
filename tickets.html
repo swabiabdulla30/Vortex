@@ -179,6 +179,7 @@
                     const originalText = btn.innerHTML;
                     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
 
+                    const ticketId = card.id.replace('card-', '');
                     html2canvas(card, {
                         backgroundColor: '#1a1a1a',
                         scale: 2,
@@ -186,7 +187,7 @@
                         logging: true
                     }).then(canvas => {
                         const link = document.createElement('a');
-                        link.download = `Vortex_Ticket_${Date.now()}.png`;
+                        link.download = `Vortex_Ticket_${ticketId}.png`;
                         link.href = canvas.toDataURL("image/png");
                         link.click();
                         btn.innerHTML = originalText;
