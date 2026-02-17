@@ -608,9 +608,9 @@
 
             html2canvas(ticketElement, {
                 useCORS: true,
-                scale: 2, // High Res
+                scale: 1.5, // Reduced slightly for better mobile compatibility while keeping quality
                 logging: true,
-                allowTaint: true, // Try to allow taint if CORS fails (might block download but worth a try if it's just rendering)
+                allowTaint: true,
                 backgroundColor: '#050505'
             }).then(canvas => {
                 // Re-hide
