@@ -349,6 +349,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Ignore if clicking a button inside (like View Data)
                 if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
 
+                // Priority Check: Look for an <img> tag inside the item first
+                const img = item.querySelector('img');
+                if (img) {
+                    openLightbox(img.src);
+                    return;
+                }
+
+                // Fallback: Check for background-image
                 const style = window.getComputedStyle(item);
                 const bgImage = style.backgroundImage;
 
