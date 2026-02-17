@@ -56,7 +56,7 @@ window.addEventListener('load', function () {
                         const navLinks = document.querySelector('.nav-links');
                         if (navLinks) {
                             // Hide existing login button
-                            btn.style.display = 'none';
+                            btn.style.setProperty('display', 'none', 'important');
 
                             // Check if profile card already exists
                             if (!navLinks.querySelector('.mobile-profile-card')) {
@@ -242,63 +242,140 @@ window.addEventListener('scroll', function () {
     lastScroll = currentScroll;
 });
 
-// Main Leads Slider Logic (Seamless Loop)
+// Main Leads Slider Logic (Seamless Loop & Touch)
 document.addEventListener('DOMContentLoaded', function () {
     const leadsWrapper = document.querySelector('.leads-wrapper');
     const leadSlides = document.querySelectorAll('.lead-slide');
+    const prevBtn = document.getElementById('lead-prev');
+    const nextBtn = document.getElementById('lead-next');
 
     if (leadsWrapper && leadSlides.length > 0) {
-        // Initial setup: Ensure the second item (index 1) is active/centered
-        // We show 3 items. Item 1 (center) should be active.
+
+        function getShiftPercentage() {
+            return window.innerWidth <= 768 ? 100 : 33.333;
+        }
+
+        // Initial setup
         function setInitialState() {
-            const currentSlides = document.querySelectorAll('.lead-slide');
+            const currentSlides = leadsWrapper.querySelectorAll('.lead-slide');
             currentSlides.forEach(s => s.classList.remove('active'));
-            if (currentSlides[1]) currentSlides[1].classList.add('active');
-            // Ensure wrapper is shifted so index 1 is in center.
-            // Items are 33.33% wide.
-            // To center index 1, we want wrapper at -33.33% (showing index 1 in middle slot).
-            // Actually, based on style_slider_leads.css, items are flexed.
-            // Let's rely on the natural flex flow and just shift the wrapper.
-            // Currently, css says .leads-wrapper does transition.
+
+            // Desktop: Center item (index 1) is active. Mobile: First item (index 0) is active.
+            const activeIndex = window.innerWidth <= 768 ? 0 : 1;
+            if (currentSlides[activeIndex]) currentSlides[activeIndex].classList.add('active');
         }
 
         setInitialState();
 
-        // We need to shift the wrapper to the left by 33.333% to verify next item
-        // But for infinite loop with flexbox:
-        // 1. Animate transform translateX(-33.333%)
-        // 2. On transition end:
-        //    - Append first child to end
-        //    - Reset transform to translateX(0)
-        //    - Update active class (always the new 2nd item)
-
         let isAnimating = false;
+        let autoPlayer;
+
+        function updateActive() {
+            const slides = leadsWrapper.querySelectorAll('.lead-slide');
+            slides.forEach(s => s.classList.remove('active'));
+
+            // Desktop: Center item (index 1) is active. Mobile: First item (index 0) is active.
+            const activeIndex = window.innerWidth <= 768 ? 0 : 1;
+            if (slides[activeIndex]) slides[activeIndex].classList.add('active');
+        }
 
         function slideNext() {
             if (isAnimating) return;
             isAnimating = true;
 
+            const shift = getShiftPercentage();
+
             // Animate
             leadsWrapper.style.transition = 'transform 0.5s ease-in-out';
-            leadsWrapper.style.transform = 'translateX(-33.333%)';
+            leadsWrapper.style.transform = `translateX(-${shift}%)`;
 
-            // Use setTimeout to ensure it matches the CSS transition time reliable
             setTimeout(() => {
                 leadsWrapper.style.transition = 'none';
                 leadsWrapper.appendChild(leadsWrapper.firstElementChild);
                 leadsWrapper.style.transform = 'translateX(0)';
-
-                // Update Active Class (Always highlight the new center item, which is index 1)
-                const slides = leadsWrapper.querySelectorAll('.lead-slide');
-                slides.forEach(s => s.classList.remove('active'));
-                if (slides[1]) slides[1].classList.add('active');
-
+                updateActive();
                 isAnimating = false;
             }, 500);
         }
 
-        // Auto-play
-        setInterval(slideNext, 3000);
+        function slidePrev() {
+            if (isAnimating) return;
+            isAnimating = true;
+
+            const shift = getShiftPercentage();
+
+            // Move last item to front immediately
+            leadsWrapper.style.transition = 'none';
+            leadsWrapper.prepend(leadsWrapper.lastElementChild);
+            leadsWrapper.style.transform = `translateX(-${shift}%)`;
+
+            // Force reflow
+            void leadsWrapper.offsetWidth;
+
+            // Animate back to 0
+            leadsWrapper.style.transition = 'transform 0.5s ease-in-out';
+            leadsWrapper.style.transform = 'translateX(0)';
+
+            setTimeout(() => {
+                updateActive();
+                isAnimating = false;
+            }, 500);
+        }
+
+        function startAutoPlay() {
+            clearInterval(autoPlayer);
+            autoPlayer = setInterval(slideNext, 3000);
+        }
+
+        function resetAutoPlay() {
+            clearInterval(autoPlayer);
+            startAutoPlay();
+        }
+
+        // Event Listeners for Buttons
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                slideNext();
+                resetAutoPlay();
+            });
+        }
+
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => {
+                slidePrev();
+                resetAutoPlay();
+            });
+        }
+
+        // Touch / Swipe Support
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        leadsWrapper.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        leadsWrapper.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, { passive: true });
+
+        function handleSwipe() {
+            const swipeThreshold = 50; // Minimum distance for swipe
+            if (touchEndX < touchStartX - swipeThreshold) {
+                // Swipe Left -> Next
+                slideNext();
+                resetAutoPlay();
+            }
+            if (touchEndX > touchStartX + swipeThreshold) {
+                // Swipe Right -> Prev
+                slidePrev();
+                resetAutoPlay();
+            }
+        }
+
+        // Start Auto-play
+        startAutoPlay();
     }
 });
 

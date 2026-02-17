@@ -666,7 +666,10 @@ section {
 }
 
 .gallery-item:hover .overlay {
-    opacity: 1;
+    opacity: 0;
+    /* Disabled overlay on hover */
+    display: none;
+    /* Ensure it's gone */
 }
 
 .gallery-item .overlay span {
@@ -678,10 +681,13 @@ section {
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
     transform: translateY(10px);
     transition: transform 0.3s ease;
+    display: none;
+    /* Ensure text is gone too */
 }
 
 .gallery-item:hover .overlay span {
-    transform: translateY(0);
+    transform: translateY(10);
+    display: none;
 }
 
 /* Overlay Visibility Restored */
