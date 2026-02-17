@@ -17,7 +17,7 @@ app.use(helmet({
     contentSecurityPolicy: {
         directives: {
             "default-src": ["'self'"],
-            "img-src": ["'self'", "data:", "https://images.unsplash.com", "https://i.pravatar.cc", "https://img.sanishtech.com"],
+            "img-src": ["'self'", "data:", "https://images.unsplash.com", "https://i.pravatar.cc", "https://img.sanishtech.com", "https://image2url.com"],
             "script-src": ["'self'", "'unsafe-inline'", "https://checkout.razorpay.com", "https://cdnjs.cloudflare.com"],
             "frame-src": ["https://api.razorpay.com", "https://checkout.razorpay.com"],
             "connect-src": ["'self'", "https://lumberjack.razorpay.com"]
