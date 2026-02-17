@@ -311,51 +311,8 @@
     <script src="script.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script>
-        // --- Auth API Helpers (Restored) ---
-        async function loginUser(email, password) {
-            try {
-                const response = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
-                });
-                const data = await response.json();
-                if (response.ok) {
-                    // Update LocalStorage with user data for session management
-                    if (data.user) {
-                        localStorage.setItem('vortexCurrentUser', JSON.stringify(data.user));
-                    }
-                    if (data.token) {
-                        localStorage.setItem('vortexAuthToken', data.token);
-                    }
-                    return { success: true, user: data.user };
-                } else {
-                    return { success: false, message: data.error || 'Invalid credentials' };
-                }
-            } catch (error) {
-                console.error('Login Error:', error);
-                return { success: false, message: 'Unable to connect to server' };
-            }
-        }
+        // --- Auth API Helpers (Duplicate functions removed) ---
 
-        async function registerUser(name, email, password) {
-            try {
-                const response = await fetch('/api/signup', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, email, password })
-                });
-                const data = await response.json();
-                if (response.status === 201) {
-                    return { success: true };
-                } else {
-                    return { success: false, message: data.error || 'Registration failed' };
-                }
-            } catch (error) {
-                console.error('Signup Error:', error);
-                return { success: false, message: 'Unable to connect to server' };
-            }
-        }
 
         // Make switchForm globally available and robust
         // Make switchForm globally available (Adapted for CSS Tabs)

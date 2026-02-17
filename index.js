@@ -134,19 +134,28 @@ const Registration = mongoose.model("Registration", RegistrationSchema);
 // --- Middleware ---
 const authenticateToken = async (req, res, next) => {
     const authHeader = req.headers.authorization;
-    if (!authHeader) return res.status(401).json({ error: "No token provided" });
+    if (!authHeader) {
+        console.log("Auth failed: No Authorization header");
+        return res.status(401).json({ error: "No token provided" });
+    }
     const token = authHeader.split(" ")[1];
-    if (!token) return res.status(401).json({ error: "No token provided" });
+    if (!token) {
+        console.log("Auth failed: No token in header");
+        return res.status(401).json({ error: "No token provided" });
+    }
 
     try {
-        await connectDB(); // Ensure DB is connected before querying
+        await connectDB();
         const decoded = jwt.verify(token, "VORTEX_SECRET");
         const user = await User.findById(decoded.id);
-        if (!user) return res.status(401).json({ error: "User not found" });
+        if (!user) {
+            console.log("Auth failed: User not found for ID:", decoded.id);
+            return res.status(401).json({ error: "User not found" });
+        }
         req.user = user;
         next();
     } catch (e) {
-        console.error("Auth error:", e.message);
+        console.error("Auth verification failed:", e.message);
         return res.status(401).json({ error: "Invalid token: " + e.message });
     }
 };
