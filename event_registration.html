@@ -60,7 +60,6 @@
                 <a href="about.html" class="nav-item">About</a>
                 <a href="events.html" class="nav-item">Events</a>
                 <a href="gallery.html" class="nav-item">Gallery</a>
-                <a href="payment.html" class="nav-item">Payment</a>
 
                 <a href="login.html" class="login-btn mobile-only">
                     <span class="icon">🔒</span> LOGIN
@@ -323,13 +322,8 @@
                 sessionStorage.setItem('regDept', eventData.department);
                 sessionStorage.setItem('regId', ticketId);
 
-                // 3. Open Payment Page in New Tab with Prefilled Data
-                const paymentUrl = new URL(window.location.origin + '/payment.html');
-                paymentUrl.searchParams.append('email', eventData.email);
-                paymentUrl.searchParams.append('phone', eventData.phone);
-                paymentUrl.searchParams.append('name', eventData.name);
-
-                window.open(paymentUrl.toString(), '_blank');
+                // 3. Open Payment Link in New Tab
+                window.open('https://razorpay.me/@heydenbjohn', '_blank');
 
                 // 4. Redirect to Success Page (Optimistic)
                 setTimeout(() => {
