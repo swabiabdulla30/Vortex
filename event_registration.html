@@ -141,22 +141,9 @@
                 <div class="form-group" style="margin-top: 20px;">
                     <label style="margin-bottom: 15px; display: block;">Payment Method</label>
                     <label class="radio-label" style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
-                        <input type="radio" name="payment-method" value="razorpay" checked
-                            onchange="togglePaymentMethod()">
-                        <span>Online Payment (Razorpay)</span>
+                        <input type="radio" name="payment-method" value="razorpay" checked>
+                        <span>Online Payment (Razorpay/UPI/Cards)</span>
                     </label>
-                    <label class="radio-label" style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
-                        <input type="radio" name="payment-method" value="instamojo" onchange="togglePaymentMethod()">
-                        <span>Pay via Instamojo (UPI/Cards)</span>
-                    </label>
-                </div>
-
-
-                <!-- Instamojo Info Section -->
-                <div id="instamojo-section"
-                    style="display: none; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 1px solid var(--glass-border);">
-                    <p style="color: #ccc; margin-bottom: 10px; text-align: center;">You will be redirected to Instamojo
-                        securely to complete your payment.</p>
                 </div>
 
                 <div class="form-group" style="text-align: center; margin-bottom: 20px;">
@@ -199,21 +186,6 @@
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="script.js"></script>
     <script>
-        // UPI Support
-        function togglePaymentMethod() {
-            const method = document.querySelector('input[name="payment-method"]:checked').value;
-            const instamojoSection = document.getElementById('instamojo-section');
-            const submitBtn = document.querySelector('.submit-btn');
-
-            if (method === 'instamojo') {
-                instamojoSection.style.display = 'block';
-                submitBtn.textContent = 'PROCEED TO PAYMENT';
-            } else {
-                instamojoSection.style.display = 'none';
-                submitBtn.textContent = 'SECURED MY SPOT';
-            }
-        }
-
         // Auto-fill event name from URL
         document.addEventListener('DOMContentLoaded', function () {
             // Auto-fill User Data
@@ -269,46 +241,6 @@
                 location: "Main Auditorium",
                 date: new Date().toISOString()
             };
-            // 1. Check Payment Method
-            const paymentMethod = document.querySelector('input[name="payment-method"]:checked').value;
-
-            if (paymentMethod === 'instamojo') {
-                // --- INSTAMOJO FLOW ---
-                submitBtn.textContent = 'Redirecting to Instamojo...';
-
-                try {
-                    const ticketId = "VTX-" + Date.now();
-
-                    const response = await fetch('/api/instamojo/create-payment', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            ticketId: ticketId,
-                            eventData: eventData
-                        })
-                    });
-
-                    const result = await response.json();
-
-                    if (response.ok && result.success) {
-                        // Save details just in case
-                        sessionStorage.setItem('regName', eventData.name);
-                        sessionStorage.setItem('regTicketId', ticketId);
-
-                        // Redirect user
-                        window.location.href = result.longurl;
-                    } else {
-                        throw new Error(result.error || result.details || "Payment initiation failed");
-                    }
-
-                } catch (error) {
-                    console.error("Instamojo Error:", error);
-                    alert("Error: " + error.message);
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = "PROCEED TO PAYMENT";
-                }
-                return;
-            }
 
             // --- DIRECT PAYMENT LINK FLOW ---
             try {
