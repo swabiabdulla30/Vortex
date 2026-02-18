@@ -196,6 +196,7 @@
     </footer>
 
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="script.js"></script>
     <script>
         // UPI Support
         const upiId = "swabiabdulla30@okicici"; // REPLACE WITH YOUR UPI ID
@@ -225,14 +226,21 @@
             document.getElementById('upi-qr').src = qrUrl;
             document.getElementById('upi-id-display').textContent = upiId;
         }
+
         // Auto-fill event name from URL
-        window.onload = function () {
+        document.addEventListener('DOMContentLoaded', function () {
             const urlParams = new URLSearchParams(window.location.search);
             const eventName = urlParams.get('event');
             if (eventName) {
-                document.getElementById('event-name').value = decodeURIComponent(eventName);
+                const decodedName = decodeURIComponent(eventName);
+                const eventField = document.getElementById('event-name');
+                if (eventField) {
+                    eventField.value = decodedName;
+                } else {
+                    console.error("Event Name field not found!");
+                }
             }
-        }
+        });
 
         // Handle Registration & Direct Payment
         document.getElementById('registration-form').addEventListener('submit', async function (e) {
