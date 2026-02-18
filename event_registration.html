@@ -168,7 +168,8 @@
                         Policy</a>
                 </div>
 
-                <button type="submit" class="submit-btn" style="width: 100%;">SECURED MY SPOT</button>
+                <button type="button" class="submit-btn" style="width: 100%;" onclick="handleRegistration(event)">SECURE
+                    MY SPOT</button>
             </form>
         </div>
     </section>
@@ -223,7 +224,7 @@
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="script.js"></script>
     <script>
-        // UPI Support
+        // UPI Support - Toggle visual elements
         function togglePaymentMethod() {
             const method = document.querySelector('input[name="payment-method"]:checked').value;
             const instamojoSection = document.getElementById('instamojo-section');
@@ -234,7 +235,7 @@
                 submitBtn.textContent = 'PROCEED TO PAYMENT';
             } else {
                 instamojoSection.style.display = 'none';
-                submitBtn.textContent = 'SECURED MY SPOT';
+                submitBtn.textContent = 'SECURE MY SPOT';
             }
         }
 
@@ -243,9 +244,13 @@
             // Auto-fill User Data
             const userStr = localStorage.getItem('vortexCurrentUser');
             if (userStr) {
-                const user = JSON.parse(userStr);
-                if (user.name) document.getElementById('name').value = user.name;
-                if (user.email) document.getElementById('email').value = user.email;
+                try {
+                    const user = JSON.parse(userStr);
+                    if (user.name) document.getElementById('name').value = user.name;
+                    if (user.email) document.getElementById('email').value = user.email;
+                } catch (e) {
+                    console.error("User data parse error", e);
+                }
             }
 
             const urlParams = new URLSearchParams(window.location.search);
@@ -255,109 +260,103 @@
                 const eventField = document.getElementById('event-name');
                 if (eventField) {
                     eventField.value = decodedName;
-                } else {
-                    console.error("Event Name field not found!");
                 }
             }
         });
 
-        // Handle Registration & Direct Payment
-        document.getElementById('registration-form').addEventListener('submit', async function (e) {
-            e.preventDefault();
+        // Robust Registration Handler
+        async function handleRegistration(e) {
+            e.preventDefault(); // Stop any default form action
+            console.log("Submit button clicked");
 
-            const eventNameField = document.getElementById('event-name');
-            if (!eventNameField.value || eventNameField.value.trim() === "") {
-                alert("Error: Event Name is missing. Please go back to the Events page and select an event.");
-                return;
-            }
-
-            const submitBtn = this.querySelector('.submit-btn');
+            const submitBtn = document.querySelector('.submit-btn');
             const originalText = submitBtn.textContent;
-            submitBtn.textContent = 'Processing Registration...';
-            submitBtn.disabled = true;
 
-            // Get user email
-            const userStr = localStorage.getItem('vortexCurrentUser');
-            const user = userStr ? JSON.parse(userStr) : null;
-            const userEmail = user ? user.email : '';
+            try {
+                // 1. Manual Validation
+                const requiredIds = ['event-name', 'name', 'email', 'department', 'phone', 'year'];
+                for (const id of requiredIds) {
+                    const el = document.getElementById(id);
+                    if (!el || !el.value.trim()) {
+                        alert(`Please fill in the ${id.replace('-', ' ')} field.`);
+                        el.focus();
+                        return;
+                    }
+                }
 
-            // Get form values
-            const eventData = {
-                name: document.getElementById('name').value,
-                email: document.getElementById('email').value,
-                event: document.getElementById('event-name').value,
-                department: document.getElementById('department').value,
-                phone: document.getElementById('phone').value,
-                year: document.getElementById('year').value,
-                college: document.getElementById('college').value,
-                location: "Main Auditorium",
-                date: new Date().toISOString()
-            };
-            // 1. Check Payment Method
-            const paymentMethod = document.querySelector('input[name="payment-method"]:checked').value;
+                // 2. Prepare Data
+                submitBtn.textContent = 'Processing...';
+                submitBtn.disabled = true;
 
-            if (paymentMethod === 'instamojo') {
-                // --- INSTAMOJO FLOW ---
-                submitBtn.textContent = 'Redirecting to Instamojo...';
+                const eventData = {
+                    name: document.getElementById('name').value,
+                    email: document.getElementById('email').value,
+                    event: document.getElementById('event-name').value,
+                    department: document.getElementById('department').value,
+                    phone: document.getElementById('phone').value,
+                    year: document.getElementById('year').value,
+                    college: document.getElementById('college').value || 'KMCT',
+                    location: "Main Auditorium",
+                    date: new Date().toISOString()
+                };
 
-                try {
-                    const ticketId = "VTX-" + Date.now();
+                // 3. Determine Payment Method
+                const paymentMethodInput = document.querySelector('input[name="payment-method"]:checked');
+                const paymentMethod = paymentMethodInput ? paymentMethodInput.value : 'razorpay';
 
+                console.log("Selected Method:", paymentMethod);
+
+                if (paymentMethod === 'instamojo') {
+                    // --- INSTAMOJO FLOW ---
+                    submitBtn.textContent = 'Redirecting...';
                     const response = await fetch('/api/instamojo/create-payment', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                            ticketId: ticketId,
+                            ticketId: "VTX-" + Date.now(),
                             eventData: eventData
                         })
                     });
-
                     const result = await response.json();
 
                     if (response.ok && result.success) {
-                        // Save details just in case
+                        // Save for redundancy
                         sessionStorage.setItem('regName', eventData.name);
-                        sessionStorage.setItem('regTicketId', ticketId);
-
-                        // Redirect user
                         window.location.href = result.longurl;
                     } else {
-                        throw new Error(result.error || result.details || "Payment initiation failed");
+                        throw new Error(result.error || "Instamojo init failed");
                     }
+                } else {
+                    // --- DIRECT PAYMENT LINK & QR FLOW ---
+                    const ticketId = "VTX-" + Date.now();
 
-                } catch (error) {
-                    console.error("Instamojo Error:", error);
-                    alert("Error: " + error.message);
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = "PROCEED TO PAYMENT";
+                    // Save Registration Data for Success Page
+                    sessionStorage.setItem('regName', eventData.name);
+                    sessionStorage.setItem('regEvent', eventData.event);
+                    sessionStorage.setItem('regDept', eventData.department);
+                    sessionStorage.setItem('regId', ticketId);
+
+                    // Show Payment Modal
+                    const modal = document.getElementById('payment-modal');
+                    if (modal) {
+                        modal.style.display = 'flex';
+                        submitBtn.textContent = 'Please Complete Payment';
+                        submitBtn.disabled = false;
+                    } else {
+                        alert("Error: Payment modal not found. Please contact support.");
+                        submitBtn.disabled = false;
+                    }
                 }
-                return;
-            }
-
-            // --- DIRECT PAYMENT LINK & QR FLOW ---
-            try {
-                // 1. Generate Ticket ID Locally
-                const ticketId = "VTX-" + Date.now();
-
-                // 2. Save Registration Data for Success Page
-                sessionStorage.setItem('regName', eventData.name);
-                sessionStorage.setItem('regEvent', eventData.event);
-                sessionStorage.setItem('regDept', eventData.department);
-                sessionStorage.setItem('regId', ticketId);
-
-                // 3. Show Payment Modal
-                document.getElementById('payment-modal').style.display = 'flex';
-
-                submitBtn.textContent = 'Please Complete Payment';
-                submitBtn.disabled = false;
 
             } catch (error) {
-                console.error("Process error:", error);
-                alert('Error: ' + error.message);
+                console.error("Registration Error:", error);
+                alert("An error occurred: " + error.message);
                 submitBtn.textContent = originalText;
                 submitBtn.disabled = false;
             }
-        });
+        }
+
+        document.getElementById('registration-form').addEventListener('submit', handleRegistration);
 
         // Payment Modal Functions
         function openPaymentLink() {
