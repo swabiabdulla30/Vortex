@@ -22,50 +22,47 @@
             btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Processing...';
             btn.disabled = true;
 
+            // 1. Prepare for Capture (Remove complex styles that confuse html2canvas)
+            const originalStyles = {
+                backdropFilter: card.style.backdropFilter,
+                background: card.style.background,
+                transform: card.style.transform,
+                boxShadow: card.style.boxShadow,
+                transition: card.style.transition,
+                border: card.style.border
+            };
+
+            // Apply "Safe" Styles for Capture
+            card.style.backdropFilter = 'none';
+            card.style.background = '#1a1a1a'; // Solid dark grey background
+            card.style.transform = 'none';
+            card.style.boxShadow = 'none';
+            card.style.transition = 'none';
+            card.style.border = '2px solid #00ffd5'; // Crisp border
+
+            // Hide the download button in the screenshot
+            btn.style.visibility = 'hidden';
+
+            const ticketId = card.id.replace('card-', '');
+
             // Check Library
             if (typeof html2canvas === 'undefined') {
                 alert("System Error: Canvas library missing. Please reload the page.");
-                btn.innerHTML = originalText;
-                btn.disabled = false;
+                restoreStyles(card, originalStyles, btn, originalText);
                 return;
             }
 
-            // 1. Clone the element to avoid messing with the live DOM/Navbar
-            const clone = card.cloneNode(true);
-
-            // 2. Style the clone for perfect capture
-            clone.style.position = 'fixed';
-            clone.style.top = '-9999px'; // Move off-screen
-            clone.style.left = '0';
-            clone.style.width = '350px'; // Force standard card width
-            clone.style.zIndex = '-1';
-            clone.style.margin = '0';
-
-            // Remove 'glass' effects that break html2canvas
-            clone.style.backdropFilter = 'none';
-            clone.style.background = '#1a1a1a';
-            clone.style.boxShadow = 'none';
-            clone.style.transform = 'none';
-            clone.style.border = '2px solid #00ffd5';
-            clone.style.borderRadius = '15px';
-
-            // Hide download button in clone
-            const cloneBtn = clone.querySelector('.submit-btn'); // Changed from .download-btn to .submit-btn to match existing HTML
-            if (cloneBtn) cloneBtn.style.visibility = 'hidden';
-
-            document.body.appendChild(clone);
-
-            // 3. Capture
-            html2canvas(clone, {
-                backgroundColor: '#1a1a1a',
-                scale: 3,
+            // 2. Capture
+            html2canvas(card, {
+                backgroundColor: '#1a1a1a', // Match card background
+                scale: 3, // Higher resolution
                 useCORS: true,
                 allowTaint: true,
-                logging: false
+                logging: false, // Reduce console noise unless debugging
+                ignoreElements: (element) => element === btn // Double ensure button is ignored
             }).then(canvas => {
                 try {
-                    const ticketId = card.id.replace('card-', '') || 'TICKET';
-                    // 4. Download
+                    // 3. Download
                     const image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
                     const link = document.createElement('a');
                     link.download = `Vortex_Ticket_${ticketId}.png`;
@@ -74,27 +71,42 @@
                     link.click();
                     document.body.removeChild(link);
 
+                    // Success Feedback
                     btn.innerHTML = '<i class="fas fa-check"></i> Saved!';
                     setTimeout(() => {
-                        btn.innerHTML = originalText;
-                        btn.disabled = false;
+                        restoreStyles(card, originalStyles, btn, originalText);
                     }, 2000);
+
                 } catch (e) {
                     console.error("Save Error:", e);
-                    alert("Browser blocked the download.");
-                    btn.innerHTML = originalText;
-                    btn.disabled = false;
+                    alert("Browser blocked the download. Please try taking a screenshot instead.");
+                    restoreStyles(card, originalStyles, btn, originalText);
                 }
             }).catch(err => {
                 console.error("Capture Error:", err);
                 alert("Failed to generate ticket image: " + err.message);
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }).finally(() => {
-                // 5. Cleanup
-                document.body.removeChild(clone);
+                restoreStyles(card, originalStyles, btn, originalText);
             });
         };
+
+        function restoreStyles(card, originals, btn, originalText) {
+            card.style.backdropFilter = originals.backdropFilter;
+            card.style.background = originals.background;
+            card.style.transform = originals.transform;
+            card.style.boxShadow = originals.boxShadow;
+            card.style.transition = originals.transition;
+            card.style.border = originals.border;
+
+            btn.style.visibility = 'visible';
+
+            if (btn.innerHTML !== '<i class="fas fa-check"></i> Saved!') {
+                btn.innerHTML = originalText;
+            } else {
+                // Revert 'Saved!' text after delay
+                setTimeout(() => { btn.innerHTML = originalText; btn.disabled = false; }, 1000);
+            }
+            btn.disabled = false;
+        }
 
         document.addEventListener('DOMContentLoaded', async () => {
             const container = document.getElementById('tickets-container');

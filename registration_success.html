@@ -598,57 +598,45 @@
         window.downloadTicket = function () {
             const saveBtn = document.querySelector('.save-btn');
             const originalContent = saveBtn.innerHTML;
-            const ticketElement = document.querySelector('.digital-ticket');
+            const ticketElement = document.querySelector('.digital-ticket'); // Capture the visible ticket
 
-            // Feedback
             saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
             saveBtn.disabled = true;
 
+            // 1. Prepare Styles for Capture
+            const originalStyles = {
+                backdropFilter: ticketElement.style.backdropFilter,
+                background: ticketElement.style.background,
+                transform: ticketElement.style.transform,
+                boxShadow: ticketElement.style.boxShadow,
+                transition: ticketElement.style.transition,
+                border: ticketElement.style.border
+            };
+
+            // Apply "Safe" Styles
+            ticketElement.style.backdropFilter = 'none';
+            ticketElement.style.background = '#050505';
+            ticketElement.style.transform = 'none';
+            ticketElement.style.boxShadow = 'none';
+            ticketElement.style.transition = 'none';
+            ticketElement.style.border = '2px solid #8B0000';
+
+            // Hide button in capture
+            saveBtn.style.visibility = 'hidden';
+
             if (typeof html2canvas === 'undefined') {
-                alert("Error: Canvas library not loaded. Please reload the page.");
-                saveBtn.innerHTML = originalContent;
-                saveBtn.disabled = false;
+                alert("Error: Canvas library not loaded.");
+                restoreStyles(ticketElement, originalStyles, saveBtn, originalContent);
                 return;
             }
 
-            // 1. Clone the element to avoid messing with the live DOM/Navbar
-            const clone = ticketElement.cloneNode(true);
-
-            // 2. Style the clone for perfect capture
-            clone.style.position = 'fixed';
-            clone.style.top = '-9999px'; // Move off-screen
-            clone.style.left = '0';
-            clone.style.width = '850px'; // Force standard width
-            clone.style.zIndex = '-1';
-
-            // Remove 'glass' effects that break html2canvas
-            clone.style.backdropFilter = 'none';
-            clone.style.background = '#050505';
-            clone.style.boxShadow = 'none';
-            clone.style.transform = 'none';
-            clone.style.border = '2px solid #8B0000';
-            clone.style.borderRadius = '20px';
-
-            // Hide button in clone
-            const cloneBtn = clone.querySelector('.save-btn');
-            if (cloneBtn) cloneBtn.style.visibility = 'hidden';
-
-            // Ensure QR Code is visible in clone (canvas might not clone perfectly if it's external)
-            // But innerHTML copy usually works for simple QR.
-
-            document.body.appendChild(clone);
-
-            // 3. Capture
-            html2canvas(clone, {
+            html2canvas(ticketElement, {
                 backgroundColor: '#050505',
                 scale: 3,
                 useCORS: true,
                 logging: false,
-                allowTaint: true,
-                windowWidth: 1000,
-                windowHeight: 800
+                allowTaint: true
             }).then(canvas => {
-                // 4. Download
                 try {
                     const id = document.getElementById('ticket-id').innerText.replace('ID: #', '') || 'TICKET';
                     const link = document.createElement('a');
@@ -660,24 +648,36 @@
 
                     saveBtn.innerHTML = '<i class="fas fa-check"></i> Saved!';
                     setTimeout(() => {
-                        saveBtn.innerHTML = originalContent;
-                        saveBtn.disabled = false;
+                        restoreStyles(ticketElement, originalStyles, saveBtn, originalContent);
                     }, 2000);
                 } catch (e) {
-                    console.error("Save Error:", e);
-                    alert("Browser blocked download.");
-                    saveBtn.innerHTML = originalContent;
-                    saveBtn.disabled = false;
+                    console.error("Download Error:", e);
+                    alert("Browser blocked download. Please screenshot.");
+                    restoreStyles(ticketElement, originalStyles, saveBtn, originalContent);
                 }
             }).catch(err => {
                 console.error("Capture Error:", err);
-                alert("Failed to generate ticket: " + err.message);
-                saveBtn.innerHTML = originalContent;
-                saveBtn.disabled = false;
-            }).finally(() => {
-                // 5. Cleanup
-                document.body.removeChild(clone);
+                alert("Failed to generate image: " + err.message);
+                restoreStyles(ticketElement, originalStyles, saveBtn, originalContent);
             });
+        }
+
+        function restoreStyles(el, originals, btn, originalText) {
+            el.style.backdropFilter = originals.backdropFilter;
+            el.style.background = originals.background;
+            el.style.transform = originals.transform;
+            el.style.boxShadow = originals.boxShadow;
+            el.style.transition = originals.transition;
+            el.style.border = originals.border;
+
+            btn.style.visibility = 'visible';
+
+            if (btn.innerHTML !== '<i class="fas fa-check"></i> Saved!') {
+                btn.innerHTML = originalText;
+            } else {
+                setTimeout(() => { btn.innerHTML = originalText; btn.disabled = false; }, 1000);
+            }
+            btn.disabled = false;
         }
     </script>
 </body>
