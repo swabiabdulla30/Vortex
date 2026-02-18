@@ -322,8 +322,13 @@
                 sessionStorage.setItem('regDept', eventData.department);
                 sessionStorage.setItem('regId', ticketId);
 
-                // 3. Open Payment Link in New Tab
-                window.open('https://rzp.io/rzp/ntvCzgcl', '_blank');
+                // 3. Open Payment Link in New Tab with Prefilled Data
+                const paymentUrl = new URL('https://rzp.io/rzp/ntvCzgcl');
+                paymentUrl.searchParams.append('email', eventData.email);
+                paymentUrl.searchParams.append('phone', eventData.phone);
+                paymentUrl.searchParams.append('name', eventData.name);
+
+                window.open(paymentUrl.toString(), '_blank');
 
                 // 4. Redirect to Success Page (Optimistic)
                 setTimeout(() => {
