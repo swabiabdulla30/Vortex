@@ -220,7 +220,6 @@ elementsToAnimate.forEach(el => {
     el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
     observer.observe(el);
 });
-});
 
 // Navigation Scroll Effect
 let lastScroll = 0;
