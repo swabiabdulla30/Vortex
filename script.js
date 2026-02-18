@@ -164,66 +164,61 @@ document.addEventListener('DOMContentLoaded', function () {
             if (isAnimating) return;
             isAnimating = true;
             let items = document.querySelectorAll('.item');
-            slide.appendChild(items[0]);
-
-            setTimeout(() => {
-                isAnimating = false;
-            }, 500); // Matches CSS transition time
+            document.querySelector('.slide').appendChild(items[0]);
+            setTimeout(() => { isAnimating = false; }, 1000); // Animation duration
         }
 
         function movePrev() {
             if (isAnimating) return;
             isAnimating = true;
             let items = document.querySelectorAll('.item');
-            slide.prepend(items[items.length - 1]);
-
-            setTimeout(() => {
-                isAnimating = false;
-            }, 500); // Matches CSS transition time
+            document.querySelector('.slide').prepend(items[items.length - 1]);
+            setTimeout(() => { isAnimating = false; }, 1000);
         }
 
-        nextBtn.onclick = function () {
+        nextBtn.addEventListener('click', () => {
             moveNext();
-            startAutoSlide(); // Reset timer on manual interaction
-        };
+            startAutoSlide(); // Restart timer on manual interaction
+        });
 
-        prevBtn.onclick = function () {
+        prevBtn.addEventListener('click', () => {
             movePrev();
-            startAutoSlide(); // Reset timer on manual interaction
-        };
+            startAutoSlide();
+        });
 
-        // Start initial auto-slide
+        // Start auto-slide on load
         startAutoSlide();
     }
+});
 
-    // Interactive Effects for Cards - REMOVED to prevent conflict with CSS transforms
-    // CSS handles hover effects for .card, .member-card, and .mini-card now.
 
-    // Scroll Animations using Intersection Observer
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
+// Interactive Effects for Cards - REMOVED to prevent conflict with CSS transforms
+// CSS handles hover effects for .card, .member-card, and .mini-card now.
 
-    const observer = new IntersectionObserver(function (entries) {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('fade-in');
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-            }
-        });
-    }, observerOptions);
+// Scroll Animations using Intersection Observer
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
 
-    // Filter elements to observe (sections and cards)
-    const elementsToAnimate = document.querySelectorAll('.content-section, .member-card, .card');
-    elementsToAnimate.forEach(el => {
-        // Set initial state for animation
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(20px)';
-        el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
-        observer.observe(el);
+const observer = new IntersectionObserver(function (entries) {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('fade-in');
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+        }
     });
+}, observerOptions);
+
+// Filter elements to observe (sections and cards)
+const elementsToAnimate = document.querySelectorAll('.content-section, .member-card, .card');
+elementsToAnimate.forEach(el => {
+    // Set initial state for animation
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+    observer.observe(el);
 });
 
 // Navigation Scroll Effect

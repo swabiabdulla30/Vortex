@@ -83,8 +83,9 @@
         <div class="nav-content">
             <div class="brand-container">
                 <a href="index.html">
-                    <img src="https://image2url.com/r2/default/images/1771323328076-73754ca7-5637-40c3-9e39-77832d8f5a18.jpeg" alt="Vortex Logo"
-                        class="nav-logo-img" style="height: 40px; margin-right: 10px; vertical-align: middle;">
+                    <img src="https://image2url.com/r2/default/images/1771323328076-73754ca7-5637-40c3-9e39-77832d8f5a18.jpeg"
+                        alt="Vortex Logo" class="nav-logo-img"
+                        style="height: 40px; margin-right: 10px; vertical-align: middle;">
                 </a>
                 <a href="index.html" class="logo">VORTEX ADMIN</a>
             </div>
@@ -131,8 +132,7 @@
                         <th>Date</th>
                         <th>Name</th>
                         <th>Event</th>
-                        <th>Email</th>
-                        <th>Phone</th>
+                        <th>Transaction ID</th>
                         <th>Details</th>
                         <th>Status</th>
                         <th>Actions</th>
@@ -187,8 +187,8 @@
                 allRegistrations = await res.json();
                 populateEventFilter(allRegistrations);
 
-                // Default to PAID ONLY view on load
-                document.getElementById('status-filter').value = 'PAID';
+                // Default to PENDING loop for manual verification focus, or keep PAID
+                // document.getElementById('status-filter').value = 'PENDING'; 
                 filterAndRender();
             } catch (error) {
                 console.error("Fetch Error:", error);
@@ -211,7 +211,7 @@
 
             try {
                 // Convert to simple CSV
-                const headers = ["Ticket ID", "Name", "Event", "Email", "Phone", "Department", "Year", "College", "Date", "Payment Status", "Payment ID"];
+                const headers = ["Ticket ID", "Name", "Event", "Email", "Phone", "Department", "Year", "College", "Date", "Payment Status", "Transaction ID"];
 
                 // Map data to array of arrays
                 const rows = allRegistrations.map(r => [
@@ -225,7 +225,7 @@
                     `"${(r.college || '').replace(/"/g, '""')}"`,
                     r.date ? new Date(r.date).toLocaleDateString() : '',
                     r.paymentStatus || 'PENDING',
-                    r.paymentId || ''
+                    r.transactionId || r.paymentId || '' // Use verification field
                 ]);
 
                 // Combine headers and rows
@@ -297,22 +297,65 @@
                 return;
             }
 
-            tbody.innerHTML = data.map(item => `
+            tbody.innerHTML = data.map(item => {
+                const isPaid = item.paymentStatus === 'PAID';
+                // Use transactionId from manual flow or paymentId from Razorpay
+                const transId = item.transactionId || item.paymentId || '-';
+
+                return `
                 <tr>
                     <td>${new Date(item.date).toLocaleDateString()}</td>
-                    <td>${item.name}</td>
+                    <td>
+                        <div style="font-weight:bold;">${item.name}</div>
+                        <div style="font-size:0.8em; color:#aaa;">${item.email}</div>
+                        <div style="font-size:0.8em; color:#aaa;">${item.phone}</div>
+                    </td>
                     <td>${item.event}</td>
-                    <td>${item.email}</td>
-                    <td>${item.phone}</td>
-                    <td>${item.department} / ${item.year}Yr / ${item.college}</td>
-                    <td class="${item.paymentStatus === 'PAID' ? 'status-paid' : 'status-pending'}">
-                        ${item.paymentStatus}
+                    <td style="font-family:monospace; color: #00d2ff;">${transId}</td>
+                    <td>
+                        <div style="font-size:0.85em;">
+                            ${item.department}<br>
+                            ${item.year}Yr • ${item.college}
+                        </div>
+                    </td>
+                    <td class="${isPaid ? 'status-paid' : 'status-pending'}">
+                        ${item.paymentStatus || 'PENDING'}
                     </td>
                     <td>
+                        ${!isPaid ?
+                        `<button onclick="verifyPayment('${item.ticketId}', 'approve')" class="action-btn" style="background:#00ff88; color:black; margin-bottom:5px;">Approve</button>` :
+                        ''}
                         <button onclick="deleteRegistration('${item._id}')" class="action-btn delete-btn">Delete</button>
                     </td>
                 </tr>
-            `).join('');
+            `}).join('');
+        }
+
+        async function verifyPayment(ticketId, action) {
+            if (!confirm(`Are you sure you want to ${action.toUpperCase()} this payment?`)) return;
+
+            const token = localStorage.getItem('vortexToken');
+            try {
+                const res = await fetch('/api/admin/verify-payment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ ticketId, action })
+                });
+
+                const data = await res.json();
+                if (res.ok) {
+                    alert("Success: " + data.message);
+                    fetchData(); // Refresh table
+                } else {
+                    alert("Error: " + data.error);
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Failed to verify payment.");
+            }
         }
 
         async function deleteRegistration(id) {

@@ -267,41 +267,108 @@ app.post("/api/create-order", async (req, res) => {
     }
 });
 
-// Manual Payment Endpoint (UPI / Direct)
-app.post("/api/manual-payment", async (req, res) => {
+// --- INSTAMOJO PAYMENT ENDPOINTS ---
+
+app.post("/api/instamojo/create-payment", async (req, res) => {
     try {
         await connectDB();
-        const { ticketId, transactionId, eventData } = req.body;
+        const { eventData, ticketId } = req.body;
 
-        if (!ticketId || !transactionId || !eventData) {
-            return res.status(400).json({ error: "Missing details" });
+        if (!process.env.INSTAMOJO_API_KEY || !process.env.INSTAMOJO_AUTH_TOKEN) {
+            return res.status(500).json({ error: "Server configuration error: Missing Payment Keys" });
         }
 
-        // Check for duplicate transaction ID (Basic check)
-        const existing = await Registration.findOne({ paymentId: transactionId });
-        if (existing) {
-            return res.status(400).json({ error: "Transaction ID already used" });
-        }
+        // Determine Redirect URL
+        const baseUrl = req.protocol + '://' + req.get('host');
+        const redirectUrl = `${baseUrl}/api/instamojo/callback?ticketId=${ticketId}`;
 
-        const registration = new Registration({
-            ...eventData,
-            ticketId,
-            date: new Date(),
-            paymentStatus: "PENDING_VERIFICATION", // Mark as pending
-            eventId: "MANUAL_ENTRY",
-            paymentId: transactionId
+        const payload = new URLSearchParams({
+            purpose: `Event Registration: ${eventData.event}`,
+            amount: '10', // Fixed amount
+            buyer_name: eventData.name,
+            email: eventData.email,
+            phone: eventData.phone,
+            redirect_url: redirectUrl,
+            send_email: 'True',
+            send_sms: 'True',
+            allow_repeated_payments: 'False',
         });
 
-        await registration.save();
+        const existing = await Registration.findOne({ ticketId });
+        if (!existing) {
+            const registration = new Registration({
+                ...eventData,
+                ticketId,
+                date: new Date(),
+                paymentStatus: "PENDING_INSTAMOJO",
+                eventId: "PENDING",
+                paymentId: "PENDING"
+            });
+            await registration.save();
+        }
 
-        // Note: We are NOT saving to Excel yet, as it's not verified.
-        // Or we could save it with a "PENDING" status in Excel if needed.
-        // For now, let's keep it only in DB until admin verifies.
+        const response = await fetch('https://www.instamojo.com/api/1.1/payment-requests/', {
+            method: 'POST',
+            headers: {
+                'X-Api-Key': process.env.INSTAMOJO_API_KEY,
+                'X-Auth-Token': process.env.INSTAMOJO_AUTH_TOKEN
+            },
+            body: payload
+        });
 
-        res.json({ success: true, message: "Registration submitted for verification" });
+        const data = await response.json();
+
+        if (data.success) {
+            await Registration.updateOne({ ticketId }, { eventId: data.payment_request.id });
+            res.json({ success: true, longurl: data.payment_request.longurl });
+        } else {
+            console.error("Instamojo Error:", data);
+            res.status(400).json({ error: "Payment creation failed", details: data.message });
+        }
+
     } catch (error) {
-        console.error("Manual payment error:", error);
-        res.status(500).json({ error: "Submission failed" });
+        console.error("Instamojo Create Error:", error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.get("/api/instamojo/callback", async (req, res) => {
+    try {
+        await connectDB();
+        const { payment_id, payment_request_id, ticketId } = req.query;
+
+        // Verify Payment Status (Instamojo doesn't verify via GET callback strictly without ID check, but good enough for now)
+        if (payment_id && payment_request_id) {
+            const response = await fetch(`https://www.instamojo.com/api/1.1/payment-requests/${payment_request_id}/${payment_id}/`, {
+                headers: {
+                    'X-Api-Key': process.env.INSTAMOJO_API_KEY,
+                    'X-Auth-Token': process.env.INSTAMOJO_AUTH_TOKEN
+                }
+            });
+            const data = await response.json();
+
+            if (data.success && data.payment_request.payment.status === 'Credit') {
+                // Success!
+                const reg = await Registration.findOneAndUpdate({ ticketId }, {
+                    paymentStatus: 'PAID',
+                    paymentId: payment_id
+                }, { new: true });
+
+                if (reg) {
+                    try { await appendRegistrationToExcel(reg); } catch (e) { }
+
+                    // Redirect to success page with query params
+                    return res.redirect(`/registration_success.html?ticketId=${ticketId}&status=success`);
+                }
+            }
+        }
+
+        // If verification failed
+        res.redirect(`/event_registration.html?error=payment_failed`);
+
+    } catch (error) {
+        console.error("Callback Error:", error);
+        res.status(500).send("Payment Verification Error");
     }
 });
 
@@ -318,7 +385,7 @@ app.post("/api/payment-success", async (req, res) => {
 
         // Verify Signature
         const body = razorpay_order_id + "|" + razorpay_payment_id;
-        const secret = process.env.RAZORPAY_KEY_SECRET || 'qU7KhagCRDF4w04HF3qkQT2w';
+        const secret = process.env.RAZORPAY_KEY_SECRET || 'qU7KhagCRDF4w04HF3qkQT2w'; // Use Env or Fallback to Test Secret
         const expectedSignature = crypto
             .createHmac('sha256', secret)
             .update(body.toString())
@@ -357,6 +424,11 @@ app.post("/api/payment-success", async (req, res) => {
         console.error("Payment verification error:", error);
         res.status(500).json({ error: "Internal server error: " + error.message });
     }
+});
+
+// Endpoint to get Razorpay Key ID safely
+app.get("/api/get-razorpay-key", (req, res) => {
+    res.json({ key: process.env.RAZORPAY_KEY_ID || 'rzp_test_SFZWAVjpbUiAMd' });
 });
 
 app.get("/api/ticket/:ticketId", async (req, res) => {
@@ -406,6 +478,36 @@ app.get("/api/admin/registrations", authenticateToken, async (req, res) => {
         res.json(registrations);
     } catch (error) {
         res.status(500).json({ error: "Failed to fetch registrations" });
+    }
+});
+
+app.post("/api/admin/verify-payment", authenticateToken, async (req, res) => {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: "Access denied" });
+    try {
+        await connectDB();
+        const { ticketId, action } = req.body;
+
+        if (!ticketId || !action) {
+            return res.status(400).json({ error: "Missing ticketId or action" });
+        }
+
+        const status = action === 'approve' ? 'PAID' : 'REJECTED';
+        const registration = await Registration.findOneAndUpdate({
+            ticketId
+        }, {
+            paymentStatus: status
+        }, {
+            new: true
+        });
+
+        if (!registration) {
+            return res.status(404).json({ error: "Registration not found" });
+        }
+
+        res.json({ success: true, message: `Payment ${status.toLowerCase()}`, registration });
+    } catch (error) {
+        console.error("Verification error:", error);
+        res.status(500).json({ error: "Verification failed" });
     }
 });
 
