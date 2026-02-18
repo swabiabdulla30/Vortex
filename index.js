@@ -269,7 +269,7 @@ app.post("/api/create-order", async (req, res) => {
 
 // --- INSTAMOJO PAYMENT ENDPOINTS ---
 
-app.post("/api/instamojo/create-payment", authenticateToken, async (req, res) => {
+app.post("/api/instamojo/create-payment", async (req, res) => {
     try {
         await connectDB();
         const { eventData, ticketId } = req.body;
