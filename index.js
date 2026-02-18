@@ -409,6 +409,36 @@ app.get("/api/admin/registrations", authenticateToken, async (req, res) => {
     }
 });
 
+app.post("/api/admin/verify-payment", authenticateToken, async (req, res) => {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: "Access denied" });
+    try {
+        await connectDB();
+        const { ticketId, action } = req.body;
+
+        if (!ticketId || !action) {
+            return res.status(400).json({ error: "Missing ticketId or action" });
+        }
+
+        const status = action === 'approve' ? 'PAID' : 'REJECTED';
+        const registration = await Registration.findOneAndUpdate({
+            ticketId
+        }, {
+            paymentStatus: status
+        }, {
+            new: true
+        });
+
+        if (!registration) {
+            return res.status(404).json({ error: "Registration not found" });
+        }
+
+        res.json({ success: true, message: `Payment ${status.toLowerCase()}`, registration });
+    } catch (error) {
+        console.error("Verification error:", error);
+        res.status(500).json({ error: "Verification failed" });
+    }
+});
+
 app.delete("/api/admin/registration/:id", authenticateToken, async (req, res) => {
     if (req.user.role !== 'admin') return res.status(403).json({ error: "Access denied" });
     try {
