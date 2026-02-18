@@ -322,18 +322,32 @@
                 const ticketId = "VTX-" + Date.now();
                 submitBtn.textContent = 'Redirecting to Payment...';
 
-                // 2. Save Registration Data for Success Page
+                // 2. Save Registration Data for Success Page (Session)
                 sessionStorage.setItem('regName', eventData.name);
                 sessionStorage.setItem('regEvent', eventData.event);
                 sessionStorage.setItem('regDept', eventData.department);
                 sessionStorage.setItem('regId', ticketId);
 
-                // 3. Open Payment Link in New Tab
+                // 3. Save to Backend (Database) - CRITICAL FIX
+                try {
+                    await fetch('/api/register-direct', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            ticketId: ticketId,
+                            eventData: eventData
+                        })
+                    });
+                } catch (e) {
+                    console.error("Background Save Failed:", e);
+                    // Continue anyway to not block payment
+                }
+
+                // 4. Open Payment Link in New Tab
                 // Using generic link handle, hoping user can enter amount or it's pre-configured to 10 by user
-                // Appending ?amount=10 just in case it works for this handle type
                 window.open('https://razorpay.me/@heydenbjohn?amount=10', '_blank');
 
-                // 4. Redirect to Success Page (Optimistic)
+                // 5. Redirect to Success Page (Optimistic)
                 setTimeout(() => {
                     window.location.href = 'registration_success.html';
                 }, 1000);

@@ -431,6 +431,47 @@ app.get("/api/get-razorpay-key", (req, res) => {
     res.json({ key: process.env.RAZORPAY_KEY_ID || 'rzp_test_SFZWAVjpbUiAMd' });
 });
 
+// --- DIRECT REGISTRATION ENDPOINT (For Payment Links) ---
+app.post("/api/register-direct", async (req, res) => {
+    try {
+        await connectDB();
+        const { eventData, ticketId } = req.body;
+
+        if (!eventData || !ticketId) {
+            return res.status(400).json({ error: "Missing registration details" });
+        }
+
+        // Check for duplicates
+        const existing = await Registration.findOne({ ticketId });
+        if (existing) {
+            return res.json({ success: true, message: "Already registered" });
+        }
+
+        const registration = new Registration({
+            ...eventData,
+            ticketId,
+            date: new Date(),
+            paymentStatus: "PENDING_VERIFICATION", // Mark as pending initially
+            paymentId: "DIRECT_LINK_" + Date.now()
+        });
+
+        await registration.save();
+
+        // Try to append to Excel
+        try {
+            await appendRegistrationToExcel(registration);
+        } catch (e) {
+            console.error("Excel Error:", e);
+        }
+
+        res.json({ success: true });
+
+    } catch (error) {
+        console.error("Direct Registration Error:", error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 app.get("/api/ticket/:ticketId", async (req, res) => {
     try {
         await connectDB();
