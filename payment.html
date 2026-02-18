@@ -146,14 +146,15 @@
             <p>Complete your registration or support Vortex Innovators through our secure Razorpay gateway. All
                 transactions are encrypted and safe.</p>
 
-            <div class="razorpay-container" style="display: flex; justify-content: center; margin-bottom: 32px;">
+            <div class="razorpay-container"
+                style="display: flex; justify-content: center; margin-bottom: 32px; min-height: 100px; align-items: center;">
                 <div class="razorpay-embed-btn" data-url="https://pages.razorpay.com/pl_SHZjJpZKGdfufH/view"
                     data-text="Pay Now" data-color="#8B0000" data-size="large">
-                    <script>
+                    <script id="razorpay-script">
                         (function () {
                             var d = document; var x = !d.getElementById('razorpay-embed-btn-js')
                             if (x) {
-                                var s = d.createElement('script'); s.id = 'razorpay-embed-btn-js';
+                                var s = d.createElement('script'); s.defer = !0; s.id = 'razorpay-embed-btn-js';
                                 s.src = 'https://cdn.razorpay.com/static/embed_btn/bundle.js'; d.body.appendChild(s);
                             } else {
                                 var rzp = window['__rzp__'];
