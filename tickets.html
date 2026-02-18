@@ -129,7 +129,13 @@
             }
 
             try {
-                const res = await fetch(`/api/my-tickets?email=${encodeURIComponent(user.email)}`);
+                // Determine API URL (Handle Dev Environment)
+                const API_URL = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost')
+                    && window.location.port !== '5000'
+                    ? "http://127.0.0.1:5000/api"
+                    : "/api";
+
+                const res = await fetch(`${API_URL}/my-tickets?email=${encodeURIComponent(user.email)}`);
                 const tickets = await res.json();
 
                 console.log("Fetched Tickets:", tickets); // USER DEBUG LOG
