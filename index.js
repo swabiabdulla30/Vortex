@@ -267,6 +267,44 @@ app.post("/api/create-order", async (req, res) => {
     }
 });
 
+// Manual Payment Endpoint (UPI / Direct)
+app.post("/api/manual-payment", async (req, res) => {
+    try {
+        await connectDB();
+        const { ticketId, transactionId, eventData } = req.body;
+
+        if (!ticketId || !transactionId || !eventData) {
+            return res.status(400).json({ error: "Missing details" });
+        }
+
+        // Check for duplicate transaction ID (Basic check)
+        const existing = await Registration.findOne({ paymentId: transactionId });
+        if (existing) {
+            return res.status(400).json({ error: "Transaction ID already used" });
+        }
+
+        const registration = new Registration({
+            ...eventData,
+            ticketId,
+            date: new Date(),
+            paymentStatus: "PENDING_VERIFICATION", // Mark as pending
+            eventId: "MANUAL_ENTRY",
+            paymentId: transactionId
+        });
+
+        await registration.save();
+
+        // Note: We are NOT saving to Excel yet, as it's not verified.
+        // Or we could save it with a "PENDING" status in Excel if needed.
+        // For now, let's keep it only in DB until admin verifies.
+
+        res.json({ success: true, message: "Registration submitted for verification" });
+    } catch (error) {
+        console.error("Manual payment error:", error);
+        res.status(500).json({ error: "Submission failed" });
+    }
+});
+
 // Payment Success Endpoint (With Verification)
 // Payment Success Endpoint (With Verification & Finalization)
 app.post("/api/payment-success", async (req, res) => {
@@ -382,7 +420,6 @@ app.delete("/api/admin/registration/:id", authenticateToken, async (req, res) =>
     }
 });
 
-// --- Serve Frontend for any other route ---
 // --- Serve Frontend for any other route ---
 app.get(/(.*)/, (req, res) => {
     res.sendFile(path.join(process.cwd(), 'index.html'));
