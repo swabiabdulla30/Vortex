@@ -146,9 +146,23 @@
             <p>Complete your registration or support Vortex Innovators through our secure Razorpay gateway. All
                 transactions are encrypted and safe.</p>
 
-            <a href="https://rzp.io/rzp/ntvCzgcl" class="pay-button" target="_blank">
-                <i class="fas fa-credit-card"></i> PROCEED TO PAY
-            </a>
+            <div class="razorpay-container" style="display: flex; justify-content: center; margin-bottom: 32px;">
+                <div class="razorpay-embed-btn" data-url="https://pages.razorpay.com/pl_SHZjJpZKGdfufH/view"
+                    data-text="Pay Now" data-color="#8B0000" data-size="large">
+                    <script>
+                        (function () {
+                            var d = document; var x = !d.getElementById('razorpay-embed-btn-js')
+                            if (x) {
+                                var s = d.createElement('script'); s.id = 'razorpay-embed-btn-js';
+                                s.src = 'https://cdn.razorpay.com/static/embed_btn/bundle.js'; d.body.appendChild(s);
+                            } else {
+                                var rzp = window['__rzp__'];
+                                rzp && rzp.init && rzp.init()
+                            }
+                        })();
+                    </script>
+                </div>
+            </div>
 
             <div class="payment-methods">
                 <i class="fab fa-cc-visa"></i>
