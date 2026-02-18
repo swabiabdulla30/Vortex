@@ -624,6 +624,10 @@
             // Hide button in capture
             saveBtn.style.visibility = 'hidden';
 
+            // Hide Navbar
+            const nav = document.querySelector('nav');
+            if (nav) nav.style.display = 'none';
+
             if (typeof html2canvas === 'undefined') {
                 alert("Error: Canvas library not loaded.");
                 restoreStyles(ticketElement, originalStyles, saveBtn, originalContent);
@@ -663,6 +667,10 @@
         }
 
         function restoreStyles(el, originals, btn, originalText) {
+            // Restore Navbar
+            const nav = document.querySelector('nav');
+            if (nav) nav.style.display = '';
+
             el.style.backdropFilter = originals.backdropFilter;
             el.style.background = originals.background;
             el.style.transform = originals.transform;
@@ -671,12 +679,7 @@
             el.style.border = originals.border;
 
             btn.style.visibility = 'visible';
-
-            if (btn.innerHTML !== '<i class="fas fa-check"></i> Saved!') {
-                btn.innerHTML = originalText;
-            } else {
-                setTimeout(() => { btn.innerHTML = originalText; btn.disabled = false; }, 1000);
-            }
+            btn.innerHTML = originalText;
             btn.disabled = false;
         }
     </script>

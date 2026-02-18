@@ -168,7 +168,7 @@
                         Policy</a>
                 </div>
 
-                <button type="submit" class="submit-btn" style="width: 100%;">SECURED MY SPOT</button>
+                <button type="submit" class="submit-btn" style="width: 100%;">PAY ₹10 & SECURE SPOT</button>
             </form>
         </div>
     </section>
@@ -210,7 +210,7 @@
                 submitBtn.textContent = 'PROCEED TO PAYMENT';
             } else {
                 instamojoSection.style.display = 'none';
-                submitBtn.textContent = 'SECURED MY SPOT';
+                submitBtn.textContent = 'PAY ₹10 & SECURE SPOT';
             }
         }
 
@@ -227,19 +227,24 @@
             const urlParams = new URLSearchParams(window.location.search);
             const eventName = urlParams.get('event');
             if (eventName) {
-                const decodedName = decodeURIComponent(eventName);
-                const eventField = document.getElementById('event-name');
-                if (eventField) {
-                    eventField.value = decodedName;
-                } else {
-                    console.error("Event Name field not found!");
-                }
+                document.getElementById('event-name').value = decodeURIComponent(eventName);
             }
         });
 
-        // Handle Registration & Direct Payment
-        document.getElementById('registration-form').addEventListener('submit', async function (e) {
+        // Handle Registration
+        window.handleRegistration = async function (e) {
             e.preventDefault();
+            const submitBtn = document.querySelector('.submit-btn');
+            const originalText = submitBtn.textContent;
+
+            // 1. Basic Validation
+            const requiredIds = ['name', 'email', 'department', 'phone', 'year'];
+            for (const id of requiredIds) {
+                if (!document.getElementById(id).value.trim()) {
+                    alert(`Please fill in your ${id}`);
+                    return;
+                }
+            }
 
             const eventNameField = document.getElementById('event-name');
             if (!eventNameField.value || eventNameField.value.trim() === "") {
@@ -247,17 +252,15 @@
                 return;
             }
 
-            const submitBtn = this.querySelector('.submit-btn');
-            const originalText = submitBtn.textContent;
-            submitBtn.textContent = 'Processing Registration...';
             submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Processing...';
 
             // Get user email
             const userStr = localStorage.getItem('vortexCurrentUser');
             const user = userStr ? JSON.parse(userStr) : null;
             const userEmail = user ? user.email : '';
 
-            // Get form values
+            // 2. Collect Data
             const eventData = {
                 name: document.getElementById('name').value,
                 email: document.getElementById('email').value,
@@ -265,18 +268,21 @@
                 department: document.getElementById('department').value,
                 phone: document.getElementById('phone').value,
                 year: document.getElementById('year').value,
-                college: document.getElementById('college').value,
+                college: document.getElementById('college').value || 'KMCT',
                 location: "Main Auditorium",
                 date: new Date().toISOString()
             };
-            // 1. Check Payment Method
-            const paymentMethod = document.querySelector('input[name="payment-method"]:checked').value;
+
+            // 3. Determine Payment Method
+            const paymentMethodInput = document.querySelector('input[name="payment-method"]:checked');
+            const paymentMethod = paymentMethodInput ? paymentMethodInput.value : 'razorpay';
+
+            console.log("Selected Method:", paymentMethod);
 
             if (paymentMethod === 'instamojo') {
                 // --- INSTAMOJO FLOW ---
-                submitBtn.textContent = 'Redirecting to Instamojo...';
-
                 try {
+                    submitBtn.textContent = 'Redirecting...';
                     const ticketId = "VTX-" + Date.now();
 
                     const response = await fetch('/api/instamojo/create-payment', {
@@ -323,7 +329,9 @@
                 sessionStorage.setItem('regId', ticketId);
 
                 // 3. Open Payment Link in New Tab
-                window.open('https://razorpay.me/@heydenbjohn', '_blank');
+                // Using generic link handle, hoping user can enter amount or it's pre-configured to 10 by user
+                // Appending ?amount=10 just in case it works for this handle type
+                window.open('https://razorpay.me/@heydenbjohn?amount=10', '_blank');
 
                 // 4. Redirect to Success Page (Optimistic)
                 setTimeout(() => {
@@ -336,7 +344,9 @@
                 submitBtn.textContent = originalText;
                 submitBtn.disabled = false;
             }
-        });
+        };
+
+        document.getElementById('registration-form').addEventListener('submit', window.handleRegistration);
     </script>
 </body>
 

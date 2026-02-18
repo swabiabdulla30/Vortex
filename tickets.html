@@ -43,6 +43,10 @@
             // Hide the download button in the screenshot
             btn.style.visibility = 'hidden';
 
+            // Hide Navbar for cleaner capture
+            const nav = document.querySelector('nav');
+            if (nav) nav.style.display = 'none';
+
             const ticketId = card.id.replace('card-', '');
 
             // Check Library
@@ -89,21 +93,25 @@
             });
         };
 
-        function restoreStyles(card, originals, btn, originalText) {
-            card.style.backdropFilter = originals.backdropFilter;
-            card.style.background = originals.background;
-            card.style.transform = originals.transform;
-            card.style.boxShadow = originals.boxShadow;
-            card.style.transition = originals.transition;
-            card.style.border = originals.border;
+        function restoreStyles(card, originalStyles, btn, originalText) {
+            // Restore Navbar
+            const nav = document.querySelector('nav');
+            if (nav) nav.style.display = '';
+
+            card.style.backdropFilter = originalStyles.backdropFilter;
+            card.style.background = originalStyles.background;
+            card.style.transform = originalStyles.transform;
+            card.style.boxShadow = originalStyles.boxShadow;
+            card.style.transition = originalStyles.transition;
+            card.style.border = originalStyles.border;
 
             btn.style.visibility = 'visible';
 
-            if (btn.innerHTML !== '<i class="fas fa-check"></i> Saved!') {
+            // Only revert text if it wasn't a success (which sets its own timeout)
+            // or we can force it here if we want consistent behavior.
+            // Let's check if the button currently says "Processing..."
+            if (btn.innerHTML.includes('Processing')) {
                 btn.innerHTML = originalText;
-            } else {
-                // Revert 'Saved!' text after delay
-                setTimeout(() => { btn.innerHTML = originalText; btn.disabled = false; }, 1000);
             }
             btn.disabled = false;
         }
