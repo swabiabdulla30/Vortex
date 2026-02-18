@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - Vortex Innovators</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=2.7">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .payment-hero {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 20px 60px;
+            background: radial-gradient(circle at center, rgba(139, 0, 0, 0.15) 0%, transparent 70%);
+        }
+
+        .payment-card {
+            background: rgba(10, 10, 10, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 50px;
+            border-radius: 24px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .payment-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, var(--primary-red), transparent);
+        }
+
+        .payment-icon {
+            font-size: 4rem;
+            color: var(--primary-red);
+            margin-bottom: 24px;
+            text-shadow: 0 0 20px rgba(139, 0, 0, 0.5);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+
+        p {
+            color: #888;
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+
+        .pay-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--primary-red);
+            color: #fff;
+            padding: 16px 40px;
+            border-radius: 12px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(139, 0, 0, 0.3);
+            font-size: 1.1rem;
+        }
+
+        .pay-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(139, 0, 0, 0.5);
+            background: #a00000;
+        }
+
+        .payment-methods {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            filter: grayscale(1) opacity(0.5);
+        }
+
+        .payment-methods i {
+            font-size: 1.5rem;
+        }
+
+        /* Nav Adjustment */
+        .glass-nav {
+            background: rgba(0, 0, 0, 0.8);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="glass-nav">
+        <div class="nav-content">
+            <div class="brand-container">
+                <a href="index.html">
+                    <img src="https://image2url.com/r2/default/images/1771323328076-73754ca7-5637-40c3-9e39-77832d8f5a18.jpeg"
+                        alt="Vortex Logo" class="nav-logo-img">
+                </a>
+                <a href="index.html" class="logo">VORTEX</a>
+            </div>
+
+            <div class="nav-links">
+                <a href="index.html" class="nav-item">Home</a>
+                <a href="about.html" class="nav-item">About</a>
+                <a href="events.html" class="nav-item">Events</a>
+                <a href="gallery.html" class="nav-item">Gallery</a>
+                <a href="payment.html" class="nav-item active">Payment</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="payment-hero">
+        <div class="payment-card">
+            <div class="payment-icon">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h1>SECURE PAYMENT</h1>
+            <p>Complete your registration or support Vortex Innovators through our secure Razorpay gateway. All
+                transactions are encrypted and safe.</p>
+
+            <a href="https://rzp.io/rzp/ntvCzgcl" class="pay-button" target="_blank">
+                <i class="fas fa-credit-card"></i> PROCEED TO PAY
+            </a>
+
+            <div class="payment-methods">
+                <i class="fab fa-cc-visa"></i>
+                <i class="fab fa-cc-mastercard"></i>
+                <i class="fab fa-google-pay"></i>
+                <i class="fas fa-mobile-alt"></i> <!-- UPI -->
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="contact-section">
+            <p class="copyright">© 2026 VORTEX INNOVATORS. SYSTEM_STATUS: ONLINE</p>
+            <p class="copyright" style="margin-top: 5px; font-size: 0.7rem;">
+                <a href="privacy_policy.html" style="color: #666; text-decoration: none;">Privacy Policy</a> |
+                <a href="terms.html" style="color: #666; text-decoration: none;">Terms & Conditions</a> |
+                <a href="refund_policy.html" style="color: #666; text-decoration: none;">Refund Policy</a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
