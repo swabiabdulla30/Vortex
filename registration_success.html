@@ -582,6 +582,13 @@
             document.getElementById('ticket-id').innerText = 'ID: #' + id;
             document.getElementById('ticket-date').innerText = currentDate;
 
+            // Populate HIDDEN DOWNLOAD Ticket
+            document.getElementById('dl-name').innerText = name;
+            document.getElementById('dl-event').innerText = event;
+            document.getElementById('dl-dept').innerText = dept;
+            document.getElementById('dl-id').innerText = 'ID: #' + id;
+            document.getElementById('dl-date').innerText = currentDate;
+
             // Generate QR Code for Screen
             const qrContainer = document.querySelector('.ticket-right .qr-placeholder');
             qrContainer.innerHTML = ''; // Clear icon
@@ -593,52 +600,56 @@
                 colorLight: "#ffffff",
                 correctLevel: QRCode.CorrectLevel.H
             });
+
+            // Generate QR Code for Download Ticket (High Res)
+            const dlQrContainer = document.querySelector('.downloadable-ticket .fa-qrcode').parentElement;
+            dlQrContainer.innerHTML = ''; // Clear icon replacement
+            new QRCode(dlQrContainer, {
+                text: id,
+                width: 180, // Match the larger placeholder
+                height: 180,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
         }
 
         window.downloadTicket = function () {
             const saveBtn = document.querySelector('.save-btn');
             const originalContent = saveBtn.innerHTML;
-            const ticketElement = document.querySelector('.digital-ticket'); // Capture the visible ticket
+
+            // Target the hidden high-res ticket
+            const ticketElement = document.querySelector('#download-container');
 
             saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
             saveBtn.disabled = true;
 
-            // 1. Prepare Styles for Capture
-            const originalStyles = {
-                backdropFilter: ticketElement.style.backdropFilter,
-                background: ticketElement.style.background,
-                transform: ticketElement.style.transform,
-                boxShadow: ticketElement.style.boxShadow,
-                transition: ticketElement.style.transition,
-                border: ticketElement.style.border
-            };
-
-            // Apply "Safe" Styles
-            ticketElement.style.backdropFilter = 'none';
-            ticketElement.style.background = '#050505';
-            ticketElement.style.transform = 'none';
-            ticketElement.style.boxShadow = 'none';
-            ticketElement.style.transition = 'none';
-            ticketElement.style.border = '2px solid #8B0000';
-
-            // Hide button in capture
-            saveBtn.style.visibility = 'hidden';
-
             if (typeof html2canvas === 'undefined') {
                 alert("Error: Canvas library not loaded.");
-                restoreStyles(ticketElement, originalStyles, saveBtn, originalContent);
+                saveBtn.innerHTML = originalContent;
+                saveBtn.disabled = false;
                 return;
             }
 
-            html2canvas(ticketElement, {
+            // Temporarily make it visible for capture if needed, 
+            // but since it's "fixed" off-screen, it should be renderable.
+            // However, html2canvas sometimes struggles with "fixed" and negative coordinates.
+            // Let's position it on screen but behind everything using z-index if duplicate issue occurs.
+            // For now, let's try capturing the off-screen element directly.
+
+            html2canvas(document.querySelector('.downloadable-ticket'), {
                 backgroundColor: '#050505',
-                scale: 3,
+                scale: 2, // 2x scale for better quality
                 useCORS: true,
                 logging: false,
-                allowTaint: true
+                allowTaint: true,
+                windowWidth: 1200, // Ensure it treats the window as wide enough
+                windowHeight: 630
             }).then(canvas => {
                 try {
+                    // Generate filename
                     const id = document.getElementById('ticket-id').innerText.replace('ID: #', '') || 'TICKET';
+
                     const link = document.createElement('a');
                     link.download = `Vortex_Pass_${id}.png`;
                     link.href = canvas.toDataURL('image/png');
@@ -648,36 +659,21 @@
 
                     saveBtn.innerHTML = '<i class="fas fa-check"></i> Saved!';
                     setTimeout(() => {
-                        restoreStyles(ticketElement, originalStyles, saveBtn, originalContent);
+                        saveBtn.innerHTML = originalContent;
+                        saveBtn.disabled = false;
                     }, 2000);
                 } catch (e) {
                     console.error("Download Error:", e);
                     alert("Browser blocked download. Please screenshot.");
-                    restoreStyles(ticketElement, originalStyles, saveBtn, originalContent);
+                    saveBtn.innerHTML = originalContent;
+                    saveBtn.disabled = false;
                 }
             }).catch(err => {
                 console.error("Capture Error:", err);
                 alert("Failed to generate image: " + err.message);
-                restoreStyles(ticketElement, originalStyles, saveBtn, originalContent);
+                saveBtn.innerHTML = originalContent;
+                saveBtn.disabled = false;
             });
-        }
-
-        function restoreStyles(el, originals, btn, originalText) {
-            el.style.backdropFilter = originals.backdropFilter;
-            el.style.background = originals.background;
-            el.style.transform = originals.transform;
-            el.style.boxShadow = originals.boxShadow;
-            el.style.transition = originals.transition;
-            el.style.border = originals.border;
-
-            btn.style.visibility = 'visible';
-
-            if (btn.innerHTML !== '<i class="fas fa-check"></i> Saved!') {
-                btn.innerHTML = originalText;
-            } else {
-                setTimeout(() => { btn.innerHTML = originalText; btn.disabled = false; }, 1000);
-            }
-            btn.disabled = false;
         }
     </script>
 </body>
