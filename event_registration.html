@@ -196,6 +196,30 @@
     </div>
     </footer>
 
+    <!-- Payment Modal -->
+    <div id="payment-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Complete Registration</h2>
+            </div>
+            <div class="modal-body">
+                <img src="images/payment_qr.jpg" alt="Scan to Pay" class="qr-image">
+                <p style="color: #ccc; margin-bottom: 20px; font-size: 0.9rem;">Scan QR or click below to pay</p>
+                <div class="payment-options">
+                    <button class="modal-btn btn-pay-link" onclick="openPaymentLink()">
+                        <i class="fas fa-external-link-alt"></i> Pay via Link
+                    </button>
+                    <button class="modal-btn btn-confirm" onclick="confirmPayment()">
+                        <i class="fas fa-check-circle"></i> I Have Paid
+                    </button>
+                    <button class="modal-btn btn-cancel" onclick="closePaymentModal()">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="script.js"></script>
     <script>
@@ -310,11 +334,10 @@
                 return;
             }
 
-            // --- DIRECT PAYMENT LINK FLOW ---
+            // --- DIRECT PAYMENT LINK & QR FLOW ---
             try {
                 // 1. Generate Ticket ID Locally
                 const ticketId = "VTX-" + Date.now();
-                submitBtn.textContent = 'Redirecting to Payment...';
 
                 // 2. Save Registration Data for Success Page
                 sessionStorage.setItem('regName', eventData.name);
@@ -322,13 +345,11 @@
                 sessionStorage.setItem('regDept', eventData.department);
                 sessionStorage.setItem('regId', ticketId);
 
-                // 3. Open Payment Link in New Tab
-                window.open('https://razorpay.me/@heydenbjohn', '_blank');
+                // 3. Show Payment Modal
+                document.getElementById('payment-modal').style.display = 'flex';
 
-                // 4. Redirect to Success Page (Optimistic)
-                setTimeout(() => {
-                    window.location.href = 'registration_success.html';
-                }, 1000);
+                submitBtn.textContent = 'Please Complete Payment';
+                submitBtn.disabled = false;
 
             } catch (error) {
                 console.error("Process error:", error);
@@ -337,6 +358,21 @@
                 submitBtn.disabled = false;
             }
         });
+
+        // Payment Modal Functions
+        function openPaymentLink() {
+            window.open('https://razorpay.me/@heydenbjohn', '_blank');
+        }
+
+        function confirmPayment() {
+            window.location.href = 'registration_success.html';
+        }
+
+        function closePaymentModal() {
+            document.getElementById('payment-modal').style.display = 'none';
+            const submitBtn = document.querySelector('.submit-btn');
+            submitBtn.textContent = 'SECURE MY SPOT';
+        }
     </script>
 </body>
 
