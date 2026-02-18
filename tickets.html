@@ -11,58 +11,103 @@
     <link rel="stylesheet" href="style.css?v=2.7">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-</head>
-
-<body>
-    <!-- Navigation -->
-    <nav class="glass-nav">
-        <div class="nav-content">
-            <div class="brand-container">
-                <a href="index.html">
-                    <img src="https://image2url.com/r2/default/images/1771323328076-73754ca7-5637-40c3-9e39-77832d8f5a18.jpeg" alt="Vortex Logo"
-                        class="nav-logo-img">
-                </a>
-                <a href="index.html" class="logo">VORTEX</a>
-            </div>
-
-            <a href="login.html" class="login-btn">
-                <span class="icon">🔒</span> LOGIN
-            </a>
-
-            <div class="hamburger">
-                <div class="line1"></div>
-                <div class="line2"></div>
-                <div class="line3"></div>
-            </div>
-            <div class="nav-links">
-                <!-- Mobile Only Header -->
-                <div class="mobile-nav-header mobile-only">
-                    <div class="shield-icon"><i class="fas fa-shield-alt"></i></div>
-                    <div class="close-menu">&times;</div>
-                </div>
-
-                <a href="index.html" class="nav-item">Home</a>
-                <a href="events.html" class="nav-item">Events</a>
-
-                <!-- Mobile Login Button (Shows in Overlay) -->
-                <a href="login.html" class="login-btn mobile-only">
-                    <span class="icon">🔒</span> LOGIN
-                </a>
-            </div>
-        </div>
-    </nav>
-
-    <div class="tickets-section"
-        style="padding-top: 150px; max-width: 1200px; margin: 0 auto; padding-bottom: 50px; min-height: 80vh;">
-        <h1 class="glow-text" style="text-align: center; margin-bottom: 40px;">MY TICKETS</h1>
-
-        <div id="tickets-container"
-            style="display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; padding: 20px;">
-            <div style="color: white; font-size: 1.2rem;">Loading your tickets...</div>
-        </div>
-    </div>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script>
+        // Move downloadTicket to global scope
+        window.downloadTicket = function (btn) {
+            const card = btn.closest('.ticket-card');
+            const originalText = btn.innerHTML;
+
+            // UI Feedback
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Processing...';
+            btn.disabled = true;
+
+            // 1. Prepare for Capture (Remove complex styles that confuse html2canvas)
+            const originalStyles = {
+                backdropFilter: card.style.backdropFilter,
+                background: card.style.background,
+                transform: card.style.transform,
+                boxShadow: card.style.boxShadow,
+                transition: card.style.transition,
+                border: card.style.border
+            };
+
+            // Apply "Safe" Styles for Capture
+            card.style.backdropFilter = 'none';
+            card.style.background = '#1a1a1a'; // Solid dark grey background
+            card.style.transform = 'none';
+            card.style.boxShadow = 'none';
+            card.style.transition = 'none';
+            card.style.border = '2px solid #00ffd5'; // Crisp border
+
+            // Hide the download button in the screenshot
+            btn.style.visibility = 'hidden';
+
+            const ticketId = card.id.replace('card-', '');
+
+            // Check Library
+            if (typeof html2canvas === 'undefined') {
+                alert("System Error: Canvas library missing. Please reload the page.");
+                restoreStyles(card, originalStyles, btn, originalText);
+                return;
+            }
+
+            // 2. Capture
+            html2canvas(card, {
+                backgroundColor: '#1a1a1a', // Match card background
+                scale: 3, // Higher resolution
+                useCORS: true,
+                allowTaint: true,
+                logging: false, // Reduce console noise unless debugging
+                ignoreElements: (element) => element === btn // Double ensure button is ignored
+            }).then(canvas => {
+                try {
+                    // 3. Download
+                    const image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+                    const link = document.createElement('a');
+                    link.download = `Vortex_Ticket_${ticketId}.png`;
+                    link.href = image;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    // Success Feedback
+                    btn.innerHTML = '<i class="fas fa-check"></i> Saved!';
+                    setTimeout(() => {
+                        restoreStyles(card, originalStyles, btn, originalText);
+                    }, 2000);
+
+                } catch (e) {
+                    console.error("Save Error:", e);
+                    alert("Browser blocked the download. Please try taking a screenshot instead.");
+                    restoreStyles(card, originalStyles, btn, originalText);
+                }
+            }).catch(err => {
+                console.error("Capture Error:", err);
+                alert("Failed to generate ticket image: " + err.message);
+                restoreStyles(card, originalStyles, btn, originalText);
+            });
+        };
+
+        function restoreStyles(card, originals, btn, originalText) {
+            card.style.backdropFilter = originals.backdropFilter;
+            card.style.background = originals.background;
+            card.style.transform = originals.transform;
+            card.style.boxShadow = originals.boxShadow;
+            card.style.transition = originals.transition;
+            card.style.border = originals.border;
+
+            btn.style.visibility = 'visible';
+
+            if (btn.innerHTML !== '<i class="fas fa-check"></i> Saved!') {
+                btn.innerHTML = originalText;
+            } else {
+                // Revert 'Saved!' text after delay
+                setTimeout(() => { btn.innerHTML = originalText; btn.disabled = false; }, 1000);
+            }
+            btn.disabled = false;
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
             const container = document.getElementById('tickets-container');
             const userStr = localStorage.getItem('vortexCurrentUser');
@@ -174,64 +219,13 @@
                     }
                 });
 
-                window.downloadTicket = function (btn) {
-                    const card = btn.closest('.ticket-card');
-                    const originalText = btn.innerHTML;
-                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
-                    btn.disabled = true;
-
-                    // html2canvas doesn't like backdrop-filter, temporary remove it
-                    const originalBackdrop = card.style.backdropFilter;
-                    card.style.backdropFilter = 'none';
-                    card.style.background = '#111'; // Solid fallback
-
-                    const ticketId = card.id.replace('card-', '');
-
-                    html2canvas(card, {
-                        backgroundColor: '#111',
-                        scale: 2,
-                        useCORS: true,
-                        logging: true
-                    }).then(canvas => {
-                        try {
-                            const link = document.createElement('a');
-                            link.download = `Vortex_Ticket_${ticketId}.png`;
-                            link.href = canvas.toDataURL("image/png");
-                            document.body.appendChild(link);
-                            link.click();
-                            document.body.removeChild(link);
-                        } catch (e) {
-                            alert("Security blocking download. Please screenshot.");
-                        }
-
-                        // Restore styles
-                        card.style.backdropFilter = originalBackdrop;
-                        card.style.background = 'rgba(255, 255, 255, 0.05)';
-
-                        btn.innerHTML = originalText;
-                        btn.disabled = false;
-                    }).catch(err => {
-                        console.error("Download Error:", err);
-                        alert("Failed to download: " + err.message);
-
-                        // Restore styles
-                        card.style.backdropFilter = originalBackdrop;
-                        card.style.background = 'rgba(255, 255, 255, 0.05)';
-
-                        btn.innerHTML = originalText;
-                        btn.disabled = false;
-                    });
-                };
-
             } catch (error) {
                 console.error(error);
                 container.innerHTML = '<p style="color: #ff4444;">Failed to load tickets. Is the server running?</p>';
             }
         });
     </script>
-
     <script src="script.js"></script>
-    <script src="script.js"></script>
-</body>
+    </body>
 
 </html>
