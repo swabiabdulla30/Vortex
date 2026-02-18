@@ -89,6 +89,12 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required class="form-control"
+                        placeholder="Enter your email">
+                </div>
+
+                <div class="form-group">
                     <label for="department">Department</label>
                     <select id="department" name="department" required class="form-control">
                         <option value="" disabled selected>Select Department</option>
@@ -144,26 +150,26 @@
                         <span>Pay via Instamojo (UPI/Cards)</span>
                     </label>
                 </div>
-        </div>
 
-        <!-- Instamojo Info Section -->
-        <div id="instamojo-section"
-            style="display: none; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 1px solid var(--glass-border);">
-            <p style="color: #ccc; margin-bottom: 10px; text-align: center;">You will be redirected to Instamojo
-                securely to complete your payment.</p>
-        </div>
 
-        <div class="form-group" style="text-align: center; margin-bottom: 20px;">
-            <a href="terms.html" target="_blank"
-                style="color: rgba(255, 255, 255, 0.7); text-decoration: underline; font-size: 0.9rem; margin-right: 15px;">Terms
-                and Conditions</a>
-            <a href="refund_policy.html" target="_blank"
-                style="color: rgba(255, 255, 255, 0.7); text-decoration: underline; font-size: 0.9rem;">Refund
-                Policy</a>
-        </div>
+                <!-- Instamojo Info Section -->
+                <div id="instamojo-section"
+                    style="display: none; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 1px solid var(--glass-border);">
+                    <p style="color: #ccc; margin-bottom: 10px; text-align: center;">You will be redirected to Instamojo
+                        securely to complete your payment.</p>
+                </div>
 
-        <button type="submit" class="submit-btn" style="width: 100%;">SECURED MY SPOT</button>
-        </form>
+                <div class="form-group" style="text-align: center; margin-bottom: 20px;">
+                    <a href="terms.html" target="_blank"
+                        style="color: rgba(255, 255, 255, 0.7); text-decoration: underline; font-size: 0.9rem; margin-right: 15px;">Terms
+                        and Conditions</a>
+                    <a href="refund_policy.html" target="_blank"
+                        style="color: rgba(255, 255, 255, 0.7); text-decoration: underline; font-size: 0.9rem;">Refund
+                        Policy</a>
+                </div>
+
+                <button type="submit" class="submit-btn" style="width: 100%;">SECURED MY SPOT</button>
+            </form>
         </div>
     </section>
 
@@ -200,6 +206,14 @@
 
         // Auto-fill event name from URL
         document.addEventListener('DOMContentLoaded', function () {
+            // Auto-fill User Data
+            const userStr = localStorage.getItem('vortexCurrentUser');
+            if (userStr) {
+                const user = JSON.parse(userStr);
+                if (user.name) document.getElementById('name').value = user.name;
+                if (user.email) document.getElementById('email').value = user.email;
+            }
+
             const urlParams = new URLSearchParams(window.location.search);
             const eventName = urlParams.get('event');
             if (eventName) {
@@ -236,7 +250,7 @@
             // Get form values
             const eventData = {
                 name: document.getElementById('name').value,
-                email: userEmail,
+                email: document.getElementById('email').value,
                 event: document.getElementById('event-name').value,
                 department: document.getElementById('department').value,
                 phone: document.getElementById('phone').value,
