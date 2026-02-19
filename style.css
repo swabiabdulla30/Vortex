@@ -842,6 +842,70 @@ section {
     bottom: -70px;
 }
 
+/* Event Info Badge (Global Styles) */
+.event-info-text {
+    font-family: var(--font-main);
+    color: #fff;
+    margin-bottom: 30px;
+    letter-spacing: 2px;
+    font-size: 1.1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 15px;
+    background: linear-gradient(90deg, rgba(80, 0, 0, 0.8), rgba(0, 0, 0, 0.9));
+    border: 2px solid var(--primary-red);
+    padding: 12px 35px;
+    border-radius: 50px;
+    text-transform: uppercase;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
+    animation: eventPulse 2s infinite;
+    position: relative;
+    z-index: 10;
+}
+
+.event-info-text:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 40px rgba(255, 0, 0, 0.8);
+    border-color: #ff1a1a;
+}
+
+.event-info-text .highlight {
+    color: #fff;
+    font-weight: 900;
+    font-size: 1.4rem;
+    text-shadow: 0 0 10px #ff0000;
+    letter-spacing: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 5px 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    margin-right: 5px;
+}
+
+.event-info-text .separator {
+    color: var(--primary-red);
+    font-size: 1.4rem;
+    font-weight: 300;
+    opacity: 0.8;
+}
+
+@keyframes eventPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.4);
+        border-color: rgba(139, 0, 0, 1);
+    }
+
+    70% {
+        box-shadow: 0 0 20px 10px rgba(255, 0, 0, 0);
+        border-color: #ff1a1a;
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
+        border-color: rgba(139, 0, 0, 1);
+    }
+}
+
 @media (max-width: 768px) {
     .glass-nav {
         width: 100%;
@@ -886,68 +950,7 @@ section {
         margin-bottom: 30px;
     }
 
-    .event-info-text {
-        font-family: var(--font-main);
-        color: #fff;
-        margin-bottom: 30px;
-        letter-spacing: 2px;
-        font-size: 1.1rem;
-        display: inline-flex;
-        align-items: center;
-        gap: 15px;
-        background: linear-gradient(90deg, rgba(80, 0, 0, 0.8), rgba(0, 0, 0, 0.9));
-        border: 2px solid var(--primary-red);
-        padding: 12px 35px;
-        border-radius: 50px;
-        text-transform: uppercase;
-        box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
-        animation: eventPulse 2s infinite;
-        position: relative;
-        z-index: 10;
-    }
 
-    .event-info-text:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 40px rgba(255, 0, 0, 0.8);
-        border-color: #ff1a1a;
-    }
-
-    .event-info-text .highlight {
-        color: #fff;
-        font-weight: 900;
-        font-size: 1.4rem;
-        text-shadow: 0 0 10px #ff0000;
-        letter-spacing: 4px;
-        background: rgba(255, 255, 255, 0.1);
-        padding: 5px 15px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 8px;
-        margin-right: 5px;
-    }
-
-    .event-info-text .separator {
-        color: var(--primary-red);
-        font-size: 1.4rem;
-        font-weight: 300;
-        opacity: 0.8;
-    }
-
-    @keyframes eventPulse {
-        0% {
-            box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.4);
-            border-color: rgba(139, 0, 0, 1);
-        }
-
-        70% {
-            box-shadow: 0 0 20px 10px rgba(255, 0, 0, 0);
-            border-color: #ff1a1a;
-        }
-
-        100% {
-            box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
-            border-color: rgba(139, 0, 0, 1);
-        }
-    }
 
     /* Hamburger Menu Icon */
     .hamburger {
@@ -998,6 +1001,24 @@ section {
 
     .mobile-profile-card {
         display: flex !important;
+    }
+
+    /* Mobile overrides for Event Badge */
+    .event-info-text {
+        padding: 8px 20px;
+        font-size: 0.9rem;
+        gap: 8px;
+        border-width: 1px;
+    }
+
+    .event-info-text .highlight {
+        font-size: 1.1rem;
+        letter-spacing: 2px;
+        padding: 3px 10px;
+    }
+
+    .event-info-text .separator {
+        font-size: 1.1rem;
     }
 
     .mobile-bottom-actions {
