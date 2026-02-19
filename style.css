@@ -1246,6 +1246,20 @@ section {
     .gallery-container {
         display: none !important;
     }
+
+    /* Mobile: Force Color Images in Events & Operative Network */
+    .mini-card img {
+        filter: grayscale(0%) !important;
+    }
+
+    .card-image img {
+        filter: saturate(1) !important;
+    }
+
+    /* Ensure gallery images are also color if they had filters (safety) */
+    .gallery-item img {
+        filter: none !important;
+    }
 }
 
 /* Default padding for desktop gallery (since inline style was removed) */
