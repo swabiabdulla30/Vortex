@@ -886,6 +886,19 @@ section {
         margin-bottom: 30px;
     }
 
+    .event-info-text {
+        font-family: monospace;
+        color: #ccc;
+        margin-bottom: 15px;
+        letter-spacing: 2px;
+        font-size: 0.9rem;
+    }
+
+    .event-info-text .highlight {
+        color: var(--primary-red);
+        font-weight: 700;
+    }
+
     /* Hamburger Menu Icon */
     .hamburger {
         display: block;
