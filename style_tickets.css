@@ -1,0 +1,47 @@
+/* Premium Ticket Styling from Registration Success */
+.digital-ticket {
+    background: #050505;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    overflow: hidden;
+    width: 100%;
+    max-width: 850px;
+    display: flex;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    position: relative;
+    background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 30px 30px;
+}
+
+.ticket-left {
+    flex: 2;
+    padding: 40px;
+    border-right: 2px dashed rgba(255, 255, 255, 0.15);
+    position: relative;
+    background: rgba(5, 5, 5, 0.8);
+    backdrop-filter: blur(5px);
+}
+
+.ticket-right {
+    flex: 0.8;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(139, 0, 0, 0.1), rgba(0, 0, 0, 0.4));
+    border-left: 1px solid rgba(255, 0, 0, 0.1);
+    position: relative;
+    text-align: center;
+}
+
+/* Hidden Downloadable Ticket Template (High Res) */
+#download-container {
+    position: fixed;
+    left: -9999px;
+    top: 0;
+    width: 1200px;
+    height: 630px;
+    z-index: -1;
+}
