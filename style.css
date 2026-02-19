@@ -847,14 +847,14 @@ section {
     display: inline-flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px;
+    gap: 15px;
     background: linear-gradient(135deg, rgba(80, 0, 0, 0.9), rgba(10, 0, 0, 0.95));
     border: 3px solid var(--primary-red);
-    padding: 30px 50px;
-    border-radius: 20px;
-    box-shadow: 0 0 30px rgba(255, 0, 0, 0.3);
+    padding: 20px 40px;
+    border-radius: 15px;
+    box-shadow: 0 0 25px rgba(255, 0, 0, 0.3);
     animation: eventPulse 2s infinite;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
     position: relative;
     z-index: 10;
     transition: transform 0.3s ease;
@@ -1041,10 +1041,11 @@ section {
 
     /* Mobile overrides for Event Card */
     .event-card {
-        padding: 20px 25px;
-        width: 90%;
+        padding: 15px 20px;
+        width: 85%;
         margin-left: auto;
         margin-right: auto;
+        margin-bottom: 25px;
     }
 
     .event-info-text {
