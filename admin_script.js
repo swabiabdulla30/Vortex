@@ -216,17 +216,34 @@ async function deleteRegistration(identifier) {
             alert("Error: " + data.error);
         }
     } catch (error) {
-        const data = await res.json();
-        alert(data.message);
-        fetchData();
-    } else {
-        const data = await res.json();
-        alert("Error: " + data.error);
+        console.error(error);
+        alert("Failed to delete.");
     }
-} catch (error) {
-    console.error("Delete All Error:", error);
-    alert("Failed to delete all registrations.");
 }
+
+async function deleteAllRegistrations() {
+    if (!confirm("WARNING: You are about to DELETE ALL registrations. This action cannot be undone.")) return;
+    if (!confirm("Are you ABSOLUTELY SURE? This will wipe the entire database.")) return;
+
+    const token = localStorage.getItem('vortexToken');
+    try {
+        const res = await fetch('/api/admin/registrations', {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            alert(data.message);
+            fetchData();
+        } else {
+            const data = await res.json();
+            alert("Error: " + data.error);
+        }
+    } catch (error) {
+        console.error("Delete All Error:", error);
+        alert("Failed to delete all registrations.");
+    }
 }
 
 function logout() {
