@@ -324,7 +324,7 @@
                         ${!isPaid ?
                         `<button onclick="verifyPayment('${item.ticketId}', 'approve')" class="action-btn" style="background:#00ff88; color:black; margin-bottom:5px;">Approve</button>` :
                         ''}
-                        <button onclick="deleteRegistration('${item.ticketId}')" class="action-btn delete-btn">Delete</button>
+                        <button onclick="deleteRegistration('${item.ticketId || item._id}')" class="action-btn delete-btn">Delete</button>
                     </td>
                 </tr>
             `}).join('');
@@ -357,13 +357,13 @@
             }
         }
 
-        async function deleteRegistration(ticketId) {
-            console.log("Attempting to delete Ticket ID:", ticketId);
-            if (!confirm(`Are you sure you want to delete registration ${ticketId}?`)) return;
+        async function deleteRegistration(identifier) {
+            console.log("Attempting to delete:", identifier);
+            if (!confirm(`Are you sure you want to delete registration?`)) return;
 
             const token = localStorage.getItem('vortexToken');
             try {
-                const res = await fetch(`/api/admin/registration/${ticketId}`, {
+                const res = await fetch(`/api/admin/registration/${identifier}`, {
                     method: 'DELETE',
                     headers: { 'Authorization': `Bearer ${token}` }
                 });

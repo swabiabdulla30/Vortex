@@ -409,11 +409,24 @@ app.post("/api/admin/verify-payment", authenticateToken, async (req, res) => {
     }
 });
 
-app.delete("/api/admin/registration/:ticketId", authenticateToken, async (req, res) => {
+app.delete("/api/admin/registration/:identifier", authenticateToken, async (req, res) => {
     if (req.user.role !== 'admin') return res.status(403).json({ error: "Access denied" });
     try {
         await connectDB();
-        const result = await Registration.findOneAndDelete({ ticketId: req.params.ticketId });
+        const { identifier } = req.params;
+        let result;
+
+        if (identifier.startsWith('VTX-')) {
+            result = await Registration.findOneAndDelete({ ticketId: identifier });
+        } else {
+            // Assume it's a Mongo _id
+            if (mongoose.Types.ObjectId.isValid(identifier)) {
+                result = await Registration.findByIdAndDelete(identifier);
+            } else {
+                return res.status(400).json({ error: "Invalid ID format" });
+            }
+        }
+
         if (!result) return res.status(404).json({ error: "Registration not found" });
         res.json({ message: "Registration deleted successfully" });
     } catch (error) {
