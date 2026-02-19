@@ -842,31 +842,67 @@ section {
     bottom: -70px;
 }
 
-/* Event Info Badge (Global Styles) */
+/* Event Card (Container) */
+.event-card {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    background: linear-gradient(135deg, rgba(80, 0, 0, 0.9), rgba(10, 0, 0, 0.95));
+    border: 3px solid var(--primary-red);
+    padding: 30px 50px;
+    border-radius: 20px;
+    box-shadow: 0 0 30px rgba(255, 0, 0, 0.3);
+    animation: eventPulse 2s infinite;
+    margin-bottom: 40px;
+    position: relative;
+    z-index: 10;
+    transition: transform 0.3s ease;
+}
+
+.event-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 50px rgba(255, 0, 0, 0.6);
+}
+
+/* Event Info Text (Inside Card) */
 .event-info-text {
     font-family: var(--font-main);
     color: #fff;
-    margin-bottom: 30px;
+    margin-bottom: 0;
     letter-spacing: 2px;
-    font-size: 1.1rem;
-    display: inline-flex;
+    font-size: 1.3rem;
+    display: flex;
     align-items: center;
     gap: 15px;
-    background: linear-gradient(90deg, rgba(80, 0, 0, 0.8), rgba(0, 0, 0, 0.9));
-    border: 2px solid var(--primary-red);
-    padding: 12px 35px;
-    border-radius: 50px;
+    padding: 0;
+    background: none;
+    border: none;
+    box-shadow: none;
+    animation: none;
     text-transform: uppercase;
-    box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
-    animation: eventPulse 2s infinite;
-    position: relative;
-    z-index: 10;
 }
 
 .event-info-text:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 40px rgba(255, 0, 0, 0.8);
-    border-color: #ff1a1a;
+    transform: none;
+    box-shadow: none;
+    border-color: transparent;
+}
+
+/* Register Button (Inside Card) */
+.hero-btn {
+    margin-bottom: 0;
+    width: 100%;
+    text-align: center;
+    background: linear-gradient(90deg, #ff0000, #b30000);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.hero-btn:hover {
+    background: linear-gradient(90deg, #ff3333, #ff0000);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 0, 0, 0.4);
 }
 
 .event-info-text .highlight {
@@ -1003,22 +1039,32 @@ section {
         display: flex !important;
     }
 
-    /* Mobile overrides for Event Badge */
+    /* Mobile overrides for Event Card */
+    .event-card {
+        padding: 20px 25px;
+        width: 90%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
     .event-info-text {
-        padding: 8px 20px;
-        font-size: 0.9rem;
-        gap: 8px;
-        border-width: 1px;
+        font-size: 1rem;
+        flex-direction: column;
+        gap: 10px;
     }
 
     .event-info-text .highlight {
-        font-size: 1.1rem;
-        letter-spacing: 2px;
-        padding: 3px 10px;
+        font-size: 1.2rem;
+        margin-right: 0;
     }
 
     .event-info-text .separator {
-        font-size: 1.1rem;
+        display: none;
+    }
+
+    .hero-btn {
+        padding: 12px 20px;
+        font-size: 0.9rem;
     }
 
     .mobile-bottom-actions {
