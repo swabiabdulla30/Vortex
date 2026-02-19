@@ -177,6 +177,7 @@ window.addEventListener('load', function () {
         const dlImage = document.getElementById('dl-event-image');
         if (dlImage) dlImage.src = imageUrl;
 
+    } catch (e) {
         console.error("Error in window.onload:", e);
     }
 });
