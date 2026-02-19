@@ -2,6 +2,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     const container = document.getElementById('tickets-container');
     const userStr = localStorage.getItem('vortexCurrentUser');
 
+    const eventImages = {
+        "CODE RED: NIGHT": "https://image2url.com/r2/default/images/1771322980849-6dd25143-dab6-410b-a737-504b63aceea0.jpeg",
+        "ELEVATE": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80",
+        "DEBUGGING SPRINT": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&q=80",
+        "ALGO MASTERS": "https://images.unsplash.com/photo-1555099962-4199c345e5dd?auto=format&fit=crop&q=80",
+        "REACT DEEP DIVE": "https://images.unsplash.com/photo-1507721999472-8ed4421c4af2?auto=format&fit=crop&q=80",
+        "TECH TRIVIA": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&q=80",
+        "UI/UX DASH": "https://images.unsplash.com/photo-1550439062-609e1531270e?auto=format&fit=crop&q=80",
+        "CYBER DEFENSE": "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&q=80",
+        "AI FRONTIERS": "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&q=80"
+    };
+    const defaultImage = "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80";
+
     // Define downloadTicket function
     function downloadTicket(btn) {
         const card = btn.closest('.ticket-card');
@@ -28,17 +41,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('dl-date').innerText = date;
         document.getElementById('dl-id').innerText = 'ID: #' + ticketId;
 
-        // Generate New QR for Template
+        // Render Event Image instead of QR
         const dlQrContainer = document.getElementById('dl-qrcode');
-        dlQrContainer.innerHTML = '';
-        new QRCode(dlQrContainer, {
-            text: ticketId,
-            width: 180,
-            height: 180,
-            colorDark: "#000000",
-            colorLight: "#ffffff",
-            correctLevel: QRCode.CorrectLevel.H
-        });
+        const imageUrl = eventImages[eventName.trim()] || defaultImage;
+        dlQrContainer.innerHTML = `<img src="${imageUrl}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;" crossorigin="anonymous">`;
 
         // Target the template
         const originalTicket = document.querySelector('.downloadable-ticket');
@@ -48,16 +54,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         clone.id = 'temp-capture-target';
         document.body.appendChild(clone);
 
-        // Styling for capture
+        // Styling for capture - OFF SCREEN TO PREVENT FLICKER
         clone.style.position = 'fixed';
         clone.style.top = '0';
-        clone.style.left = '-9999px';
+        clone.style.left = '-9999px'; // Hidden from view
         clone.style.width = '1200px';
         clone.style.height = '630px';
         clone.style.zIndex = '-9999';
         clone.style.visibility = 'visible'; // Visible to html2canvas
 
-        // Short delay for QR code to render
+        // Short delay for image to render
         setTimeout(() => {
             html2canvas(clone, {
                 backgroundColor: '#050505',
@@ -101,7 +107,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 btn.disabled = false;
                 if (document.body.contains(clone)) document.body.removeChild(clone);
             });
-        }, 300);
+        }, 500); // Increased delay slightly for image loading
     }
 
     // Event Delegation for Download Buttons
@@ -155,7 +161,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        container.innerHTML = tickets.map(ticket => `
+        container.innerHTML = tickets.map(ticket => {
+            const imageUrl = eventImages[ticket.event.trim()] || defaultImage;
+            return `
             <div class="ticket-card" id="card-${ticket.ticketId}" style="
                 background: rgba(255, 255, 255, 0.05);
                 border: 1px solid rgba(255, 255, 255, 0.1);
@@ -199,35 +207,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <span style="color: #888;">Department:</span>
                         <span>${ticket.department || 'General'}</span>
                     </div>
-                    <div style="text-align: center; margin-top: 20px; background: white; padding: 10px; border-radius: 8px; width: 120px; margin-left: auto; margin-right: auto;">
-                        <div id="qrcode-${ticket.ticketId}"></div>
+                    <div style="text-align: center; margin-top: 20px; background: white; padding: 5px; border-radius: 8px; width: 150px; height: 100px; margin-left: auto; margin-right: auto; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                        <img src="${imageUrl}" alt="Event Image" style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px;">
                     </div>
                     <button class="submit-btn download-ticket-btn" style="width: 100%; margin-top: 15px; background: rgba(0, 255, 213, 0.2); border: 1px solid #00ffd5;">
                         <i class="fas fa-download"></i> Download Ticket
                     </button>
                 </div>
             </div>
-        `).join('');
-
-        // Initialize standard QR codes
-        tickets.forEach(ticket => {
-            const qrContainer = document.getElementById(`qrcode-${ticket.ticketId}`);
-            if (qrContainer) {
-                try {
-                    new QRCode(qrContainer, {
-                        text: ticket.ticketId,
-                        width: 100,
-                        height: 100,
-                        colorDark: "#000000",
-                        colorLight: "#ffffff",
-                        correctLevel: QRCode.CorrectLevel.H
-                    });
-                } catch (e) {
-                    console.error("QR Code Error:", e);
-                    qrContainer.innerHTML = "QR Error";
-                }
-            }
-        });
+        `}).join('');
 
     } catch (error) {
         console.error(error);
