@@ -847,14 +847,16 @@ section {
     display: inline-flex;
     flex-direction: column;
     align-items: center;
-    gap: 15px;
-    background: linear-gradient(135deg, rgba(80, 0, 0, 0.9), rgba(10, 0, 0, 0.95));
-    border: 3px solid var(--primary-red);
-    padding: 20px 40px;
+    gap: 10px;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border: 2px solid var(--primary-red);
+    padding: 15px 30px;
     border-radius: 15px;
-    box-shadow: 0 0 25px rgba(255, 0, 0, 0.3);
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
     animation: eventPulse 2s infinite;
-    margin-bottom: 30px;
+    margin-bottom: 25px;
     position: relative;
     z-index: 10;
     transition: transform 0.3s ease;
@@ -1041,11 +1043,12 @@ section {
 
     /* Mobile overrides for Event Card */
     .event-card {
-        padding: 15px 20px;
-        width: 85%;
+        padding: 10px 15px;
+        width: 80%;
         margin-left: auto;
         margin-right: auto;
-        margin-bottom: 25px;
+        margin-bottom: 20px;
+        background: rgba(0, 0, 0, 0.5);
     }
 
     .event-info-text {
