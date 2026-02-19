@@ -394,8 +394,8 @@
         <div class="nav-content">
             <div class="brand-container">
                 <a href="index.html">
-                    <img src="https://image2url.com/r2/default/images/1771323328076-73754ca7-5637-40c3-9e39-77832d8f5a18.jpeg" alt="Vortex Logo"
-                        class="nav-logo-img">
+                    <img src="https://image2url.com/r2/default/images/1771323328076-73754ca7-5637-40c3-9e39-77832d8f5a18.jpeg"
+                        alt="Vortex Logo" class="nav-logo-img">
                 </a>
                 <a href="index.html" class="logo">VORTEX</a>
             </div>
@@ -451,7 +451,7 @@
 
                     <div class="action-buttons">
                         <a href="index.html" class="btn-outline">Back to Home</a>
-                        <button onclick="downloadTicket()" class="btn-outline save-btn"><i class="fas fa-download"></i>
+                        <button class="btn-outline save-btn"><i class="fas fa-download"></i>
                             SAVE OFFICIAL PASS</button>
                     </div>
                 </div>
@@ -559,95 +559,7 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
-    <!-- html2canvas Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script>
-        // Populate Ticket Data
-        window.onload = function () {
-            // Retrieve data from sessionStorage
-            const name = sessionStorage.getItem('regName') || 'Guest';
-            const event = sessionStorage.getItem('regEvent') || 'Vortex Event';
-            const dept = sessionStorage.getItem('regDept') || 'General';
-            const id = sessionStorage.getItem('regId') || 'VI-' + Math.floor(Math.random() * 10000);
-
-            // Generate current date
-            const now = new Date();
-            const dateOptions = { month: 'short', day: '2-digit', year: 'numeric' };
-            const currentDate = now.toLocaleDateString('en-US', dateOptions).toUpperCase();
-
-            // Populate ON-SCREEN Ticket
-            document.getElementById('ticket-name').innerText = name;
-            document.getElementById('ticket-event').innerText = event;
-            document.getElementById('ticket-dept').innerText = dept;
-            document.getElementById('ticket-id').innerText = 'ID: #' + id;
-            document.getElementById('ticket-date').innerText = currentDate;
-
-            // Populate HIDDEN DOWNLOAD Ticket
-            document.getElementById('dl-name').innerText = name;
-            document.getElementById('dl-event').innerText = event;
-            document.getElementById('dl-dept').innerText = dept;
-            document.getElementById('dl-id').innerText = 'ID: #' + id;
-            document.getElementById('dl-date').innerText = currentDate;
-        }
-
-        function downloadTicket() {
-            const saveBtn = document.querySelector('.save-btn');
-            const originalContent = saveBtn.innerHTML;
-
-            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-            saveBtn.disabled = true;
-
-            const ticketElement = document.getElementById('download-container');
-
-            // Temporary Make Visible for Capture (but obscured)
-            ticketElement.style.zIndex = '9999';
-            ticketElement.style.left = '0';
-            ticketElement.style.top = '0';
-            ticketElement.style.background = '#050505'; // Ensure background
-
-            html2canvas(ticketElement, {
-                useCORS: true,
-                scale: 1.5, // Reduced slightly for better mobile compatibility while keeping quality
-                logging: true,
-                allowTaint: true,
-                backgroundColor: '#050505'
-            }).then(canvas => {
-                // Re-hide
-                ticketElement.style.zIndex = '-1';
-                ticketElement.style.left = '-9999px';
-
-                try {
-                    const ticketId = document.getElementById('dl-id').innerText.replace('ID: #', '') || 'TICKET';
-                    const link = document.createElement('a');
-                    link.download = `Vortex_Pass_${ticketId}.png`;
-                    link.href = canvas.toDataURL('image/png');
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-
-                    saveBtn.innerHTML = '<i class="fas fa-check"></i> Saved!';
-                    setTimeout(() => {
-                        saveBtn.innerHTML = originalContent;
-                        saveBtn.disabled = false;
-                    }, 2000);
-                } catch (e) {
-                    console.error("DataURL Error:", e);
-                    alert("Download failed due to browser security (CORS). Please screenshot the ticket instead.");
-                    saveBtn.innerHTML = originalContent;
-                    saveBtn.disabled = false;
-                }
-            }).catch(err => {
-                console.error("Capture Error:", err);
-
-                // Re-hide on error
-                ticketElement.style.zIndex = '-1';
-                ticketElement.style.left = '-9999px';
-
-                alert("Error generating ticket image: " + err.message);
-                saveBtn.innerHTML = originalContent;
-                saveBtn.disabled = false;
-            });
-        }
-    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="success_script.js"></script>
 </body>

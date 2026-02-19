@@ -137,27 +137,7 @@
                         value="KMCT Institute of Emerging Technology and Management" readonly class="form-control">
                 </div>
 
-                <!-- Payment Method Selection -->
-                <div class="form-group" style="margin-top: 20px;">
-                    <label style="margin-bottom: 15px; display: block;">Payment Method</label>
-                    <label class="radio-label" style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
-                        <input type="radio" name="payment-method" value="razorpay" checked
-                            onchange="togglePaymentMethod()">
-                        <span>Online Payment (Razorpay)</span>
-                    </label>
-                    <label class="radio-label" style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
-                        <input type="radio" name="payment-method" value="instamojo" onchange="togglePaymentMethod()">
-                        <span>Pay via Instamojo (UPI/Cards)</span>
-                    </label>
-                </div>
 
-
-                <!-- Instamojo Info Section -->
-                <div id="instamojo-section"
-                    style="display: none; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 1px solid var(--glass-border);">
-                    <p style="color: #ccc; margin-bottom: 10px; text-align: center;">You will be redirected to Instamojo
-                        securely to complete your payment.</p>
-                </div>
 
                 <div class="form-group" style="text-align: center; margin-bottom: 20px;">
                     <a href="terms.html" target="_blank"
@@ -176,34 +156,29 @@
     <!-- Contact Section -->
     <footer>
         <div class="contact-section">
-            <h3>CONNECT WITH US</h3>
+            <h3 style="margin-top: 0;">CONNECT WITH US</h3>
             <div class="social-links">
                 <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
                 <a href="mailto:vortexinnovators2k24@gmail.com" class="social-icon"><i class="fas fa-envelope"></i></a>
                 <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
             </div>
             <p class="copyright">© 2026 VORTEX INNOVATORS. SYSTEM_STATUS: ONLINE</p>
+            <p class="copyright" style="margin-top: 5px; font-size: 0.7rem;">
+                <a href="privacy_policy.html" target="_blank" style="color: #666; text-decoration: none;">Privacy
+                    Policy</a> |
+                <a href="terms.html" target="_blank" style="color: #666; text-decoration: none;">Terms & Conditions</a>
+                |
+                <a href="refund_policy.html" target="_blank" style="color: #666; text-decoration: none;">Refund
+                    Policy</a>
+            </p>
         </div>
+    </footer>
+    </div>
     </footer>
 
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="script.js"></script>
     <script>
-        // UPI Support
-        function togglePaymentMethod() {
-            const method = document.querySelector('input[name="payment-method"]:checked').value;
-            const instamojoSection = document.getElementById('instamojo-section');
-            const submitBtn = document.querySelector('.submit-btn');
-
-            if (method === 'instamojo') {
-                instamojoSection.style.display = 'block';
-                submitBtn.textContent = 'PROCEED TO PAYMENT';
-            } else {
-                instamojoSection.style.display = 'none';
-                submitBtn.textContent = 'SECURED MY SPOT';
-            }
-        }
-
         // Auto-fill event name from URL
         document.addEventListener('DOMContentLoaded', function () {
             // Auto-fill User Data
@@ -259,137 +234,26 @@
                 location: "Main Auditorium",
                 date: new Date().toISOString()
             };
-            // 1. Check Payment Method
-            const paymentMethod = document.querySelector('input[name="payment-method"]:checked').value;
 
-            if (paymentMethod === 'instamojo') {
-                // --- INSTAMOJO FLOW ---
-                submitBtn.textContent = 'Redirecting to Instamojo...';
-
-                try {
-                    const ticketId = "VTX-" + Date.now();
-
-                    const response = await fetch('/api/instamojo/create-payment', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            ticketId: ticketId,
-                            eventData: eventData
-                        })
-                    });
-
-                    const result = await response.json();
-
-                    if (response.ok && result.success) {
-                        // Save details just in case
-                        sessionStorage.setItem('regName', eventData.name);
-                        sessionStorage.setItem('regTicketId', ticketId);
-
-                        // Redirect user
-                        window.location.href = result.longurl;
-                    } else {
-                        throw new Error(result.error || result.details || "Payment initiation failed");
-                    }
-
-                } catch (error) {
-                    console.error("Instamojo Error:", error);
-                    alert("Error: " + error.message);
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = "PROCEED TO PAYMENT";
-                }
-                return;
-            }
-
-            // --- ORIGINAL RAZORPAY FLOW ---
+            // --- DIRECT PAYMENT LINK FLOW ---
             try {
                 // 1. Generate Ticket ID Locally
                 const ticketId = "VTX-" + Date.now();
+                submitBtn.textContent = 'Redirecting to Payment...';
 
-                submitBtn.textContent = 'Initiating Payment...';
+                // 2. Save Registration Data for Success Page
+                sessionStorage.setItem('regName', eventData.name);
+                sessionStorage.setItem('regEvent', eventData.event);
+                sessionStorage.setItem('regDept', eventData.department);
+                sessionStorage.setItem('regId', ticketId);
 
-                // Save details (Legacy/Backup) - strictly for session reference if needed
-                sessionStorage.setItem('pendingTicketId', ticketId);
+                // 3. Open Payment Link in New Tab
+                window.open('https://razorpay.me/@heydenbjohn', '_blank');
 
-                // 2. Create Razorpay Order
-                const orderRes = await fetch('/api/create-order', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ ticketId: ticketId, type: 'event' })
-                });
-
-                const order = await orderRes.json();
-                if (!orderRes.ok) throw new Error(order.error || "Payment initiation failed");
-
-                // 3. Open Razorpay
-                const options = {
-                    "key": "rzp_test_SFZWAVjpbUiAMd",
-                    "amount": order.amount,
-                    "currency": "INR",
-                    "name": "Vortex Innovators",
-                    "description": "Event Registration Fee",
-                    "image": "images/logo.jpg",
-                    "order_id": order.id,
-                    "handler": async function (response) {
-                        try {
-                            submitBtn.textContent = 'Verifying & Registering...';
-
-                            // 4. Verify Payment & Finalize Registration
-                            const verifyRes = await fetch('/api/payment-success', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({
-                                    ticketId: ticketId,
-                                    razorpay_payment_id: response.razorpay_payment_id,
-                                    razorpay_order_id: response.razorpay_order_id,
-                                    razorpay_signature: response.razorpay_signature,
-                                    eventData: eventData // Pass registration data here!
-                                })
-                            });
-
-                            const verifyData = await verifyRes.json();
-                            if (verifyRes.ok) {
-                                // Save details for the success page ticket
-                                sessionStorage.setItem('regName', eventData.name);
-                                sessionStorage.setItem('regEvent', eventData.event);
-                                sessionStorage.setItem('regDept', eventData.department);
-                                sessionStorage.setItem('regId', ticketId);
-
-                                window.location.href = 'registration_success.html';
-                            } else {
-                                alert("Payment verification failed: " + verifyData.error);
-                                submitBtn.textContent = "Retry Payment";
-                                submitBtn.disabled = false;
-                            }
-                        } catch (err) {
-                            console.error(err);
-                            alert("Verification error. Please contact support.");
-                            submitBtn.textContent = "Retry Payment";
-                            submitBtn.disabled = false;
-                        }
-                    },
-                    "prefill": {
-                        "name": eventData.name,
-                        "email": eventData.email || "guest@example.com",
-                        "contact": eventData.phone
-                    },
-                    "theme": {
-                        "color": "#00d2ff"
-                    },
-                    "modal": {
-                        "ondismiss": function () {
-                            alert('Payment cancelled. You can retry payment later.');
-                            submitBtn.textContent = "Proceed to Payment";
-                            submitBtn.disabled = false;
-                        }
-                    }
-                };
-
-                const rzp1 = new Razorpay(options);
-                rzp1.on('payment.failed', function (response) {
-                    alert("Payment Failed: " + response.error.description);
-                    submitBtn.disabled = false;
-                });
-                rzp1.open();
+                // 4. Redirect to Success Page (Optimistic)
+                setTimeout(() => {
+                    window.location.href = 'registration_success.html';
+                }, 1000);
 
             } catch (error) {
                 console.error("Process error:", error);
