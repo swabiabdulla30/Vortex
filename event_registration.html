@@ -74,6 +74,29 @@
             <span class="section-tag">JOIN NOW</span>
             <h2 class="section-title">EVENT REGISTRATION</h2>
         </div>
+
+        <!-- Dynamic Event Details -->
+        <div id="event-info-container" class="section-container"
+            style="max-width: 800px; margin-bottom: 40px; text-align: left; display: none;">
+            <div
+                style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 30px; backdrop-filter: blur(10px);">
+                <h3
+                    style="color: #00ffd5; margin-top: 0; font-size: 1.5rem; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 20px;">
+                    <i class="fas fa-info-circle"></i> About Event
+                </h3>
+                <div id="event-about-content" style="color: #ddd; line-height: 1.6; margin-bottom: 30px;">
+                    <!-- Content injected via JS -->
+                </div>
+
+                <h3
+                    style="color: #ff4444; font-size: 1.5rem; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 20px;">
+                    <i class="fas fa-gavel"></i> Rules & Regulations
+                </h3>
+                <ul id="event-rules-content" style="color: #ddd; line-height: 1.6; padding-left: 20px;">
+                    <!-- Content injected via JS -->
+                </ul>
+            </div>
+        </div>
         <div class="section-container" style="max-width: 600px;">
             <form id="registration-form" class="glass-form">
                 <div class="form-group">
@@ -180,7 +203,90 @@
     <script src="script.js"></script>
     <script>
         // Auto-fill event name from URL
+        // Auto-fill event name from URL
         document.addEventListener('DOMContentLoaded', function () {
+            // Event Data Mapping
+            const eventDetails = {
+                "CODE RED: NIGHT": {
+                    about: "An intense 24-hour coding marathon where participants will solve real-world problems. Test your endurance, creativity, and coding skills in this overnight hackathon.",
+                    rules: [
+                        "Teams must consist of 2-4 members.",
+                        "Participants must bring their own laptops and chargers.",
+                        "Use of AI tools is allowed but must be disclosed.",
+                        "Code plagiarism will lead to immediate disqualification.",
+                        "Judging criteria: Innovation, Functionality, and Presentation."
+                    ]
+                },
+                "DEBUGGING SPRINT": {
+                    about: "Race against the clock to find and fix bugs in a provided codebase. Speed and accuracy are key in this high-pressure challenge.",
+                    rules: [
+                        "Individual participation only.",
+                        "Access to internet is restricted during the sprint.",
+                        "Points are awarded for each bug fixed and time taken.",
+                        "Any attempt to modify the test cases will lead to disqualification."
+                    ]
+                },
+                "ALGO MASTERS": {
+                    about: "A competitive programming contest designed to test your algorithmic thinking and problem-solving skills against the best coders.",
+                    rules: [
+                        "Individual participation.",
+                        "Languages allowed: C++, Java, Python.",
+                        "No external libraries or pre-written code allowed.",
+                        "Time limit per problem will be strictly enforced."
+                    ]
+                },
+                "REACT DEEP DIVE": {
+                    about: "A hands-on workshop exploring advanced concepts in React.js, including hooks, state management, and performance optimization.",
+                    rules: [
+                        "Participants should have basic knowledge of HTML, CSS, and JS.",
+                        "Laptop is mandatory.",
+                        "Software requirements: VS Code, Node.js installed."
+                    ]
+                },
+                "TECH TRIVIA": {
+                    about: "Test your knowledge of the tech world! From history of computing to latest trends, this quiz covers it all.",
+                    rules: [
+                        "Teams of 2 members.",
+                        "No use of mobile phones during the quiz.",
+                        "The quiz master's decision is final.",
+                        "There will be 3 rounds: Elimination, Visual, and Rapid Fire."
+                    ]
+                },
+                "UI/UX DASH": {
+                    about: "A rapid prototyping challenge where you design a user interface for a given problem statement within a limited time.",
+                    rules: [
+                        "Individual or team of 2.",
+                        "Tools allowed: Figma, Adobe XD, or Sketch.",
+                        "Submission must include a working prototype link.",
+                        "Focus on User Experience and Visual Design."
+                    ]
+                },
+                "ELEVATE": {
+                    about: "A flagship event focusing on career development, soft skills, and industry insights from experts.",
+                    rules: [
+                        "Open to all departments.",
+                        "Registration is mandatory for entry.",
+                        "Professional attire is recommended."
+                    ]
+                },
+                "CYBER DEFENSE": {
+                    about: "Introduction to ethical hacking and cybersecurity defense mechanisms. Learn how to protect systems from vulnerabilities.",
+                    rules: [
+                        "Laptop required (Kali Linux preferred but not mandatory).",
+                        "Any unauthorized testing on college network is strictly prohibited.",
+                        "Workshop material is for educational purposes only."
+                    ]
+                },
+                "AI FRONTIERS": {
+                    about: "Explore the cutting-edge of Artificial Intelligence and Generative models. Understand the future of AI technology.",
+                    rules: [
+                        "Open to all students.",
+                        "Q&A session will follow the talk.",
+                        "Notes and resources will be shared after the session."
+                    ]
+                }
+            };
+
             // Auto-fill User Data
             const userStr = localStorage.getItem('vortexCurrentUser');
             if (userStr) {
@@ -198,6 +304,20 @@
                     eventField.value = decodedName;
                 } else {
                     console.error("Event Name field not found!");
+                }
+
+                // Populate Dynamic Content
+                const infoContainer = document.getElementById('event-info-container');
+                const cleanName = decodedName.trim();
+                const details = eventDetails[cleanName];
+
+                if (details && infoContainer) {
+                    document.getElementById('event-about-content').innerText = details.about;
+
+                    const rulesList = document.getElementById('event-rules-content');
+                    rulesList.innerHTML = details.rules.map(rule => `<li>${rule}</li>`).join('');
+
+                    infoContainer.style.display = 'block';
                 }
             }
         });
