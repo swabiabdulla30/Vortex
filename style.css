@@ -916,8 +916,13 @@ section {
         color: #fff;
         font-weight: 900;
         font-size: 1.4rem;
-        text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000;
+        text-shadow: 0 0 10px #ff0000;
         letter-spacing: 4px;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 5px 15px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        margin-right: 5px;
     }
 
     .event-info-text .separator {
