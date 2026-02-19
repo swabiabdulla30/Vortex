@@ -163,21 +163,24 @@
 
         /* Right Side Styling */
         .qr-placeholder {
-            width: 140px;
+            width: 100%;
             height: 140px;
-            background: #fff;
-            padding: 5px;
+            /* Landscapeish */
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 8px;
             margin-bottom: 20px;
-            box-shadow: 0 0 20px rgba(139, 0, 0, 0.2);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .qr-placeholder i {
-            font-size: 120px;
-            color: #000;
+        .qr-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .ticket-id {
@@ -457,8 +460,9 @@
                 </div>
 
                 <div class="ticket-right">
-                    <div class="qr-placeholder">
-                        <i class="fas fa-qrcode"></i>
+                    <div class="qr-placeholder" style="padding: 0; overflow: hidden; border: none;">
+                        <img id="ticket-event-image" src="" alt="Event"
+                            style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
                     </div>
                     <div class="ticket-id" id="ticket-id">ID: #000000</div>
                     <div class="admit-one">ADMIT ONE</div>
@@ -544,12 +548,14 @@
                 </div>
             </div>
 
-            <!-- Right Side (QR & ID) -->
+            <!-- Right Side (Image & ID) -->
             <div
                 style="flex: 0.8; background: linear-gradient(135deg, rgba(139, 0, 0, 0.2), rgba(0, 0, 0, 0.9)); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; border-left: 2px solid rgba(255, 255, 255, 0.05);">
                 <div
-                    style="background: #fff; padding: 10px; border-radius: 15px; width: 200px; height: 200px; display: flex; align-items: center; justify-content: center; margin-bottom: 30px;">
-                    <i class="fas fa-qrcode" style="font-size: 180px; color: #000;"></i>
+                    style="background: rgba(255,255,255,0.1); padding: 5px; border-radius: 15px; width: 300px; height: 180px; display: flex; align-items: center; justify-content: center; margin-bottom: 30px; overflow: hidden; border: 1px solid rgba(255,255,255,0.2);">
+                    <img id="dl-event-image" src=""
+                        style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;"
+                        crossorigin="anonymous">
                 </div>
                 <div id="dl-id"
                     style="font-family: monospace; color: #fff; background: rgba(255, 255, 255, 0.1); padding: 10px 20px; border-radius: 8px; font-size: 1.2rem; letter-spacing: 2px; border: 1px solid rgba(255, 255, 255, 0.2);">
@@ -560,6 +566,5 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="success_script.js"></script>
 </body>

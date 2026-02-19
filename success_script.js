@@ -139,50 +139,44 @@ window.addEventListener('load', function () {
         setText('ticket-name', name);
         setText('ticket-event', event);
         setText('ticket-dept', dept);
-        setText('ticket-id', 'ID: #' + id);
+
+        // Use a temporary ID for display since DB hasn't assigned a sequential number yet
+        // In a real app, you might want to fetch the next sequence number or just show "PENDING"
+        // For now, we'll strip the "VTX-" and show a random 2 digit number for aesthetics or "01"
+        const displayId = "01"; // Defaulting to 01 for the success view as a preview
+        setText('ticket-id', 'NO: #' + displayId);
         setText('ticket-date', currentDate);
 
         // Populate HIDDEN DOWNLOAD Ticket
         setText('dl-name', name);
         setText('dl-event', event);
         setText('dl-dept', dept);
-        setText('dl-id', 'ID: #' + id);
+        setText('dl-id', 'NO: #' + displayId);
         setText('dl-date', currentDate);
 
-        // Generate QR Code for Screen
-        const qrContainer = document.querySelector('.ticket-right .qr-placeholder');
-        if (qrContainer && typeof QRCode !== 'undefined') {
-            qrContainer.innerHTML = '';
-            new QRCode(qrContainer, {
-                text: id,
-                width: 120,
-                height: 120,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-        } else {
-            console.warn("QR Container missing or QRCode library not loaded");
-        }
+        // Event Images Map
+        const eventImages = {
+            "CODE RED: NIGHT": "https://image2url.com/r2/default/images/1771322980849-6dd25143-dab6-410b-a737-504b63aceea0.jpeg",
+            "ELEVATE": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80",
+            "DEBUGGING SPRINT": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&q=80",
+            "ALGO MASTERS": "https://images.unsplash.com/photo-1555099962-4199c345e5dd?auto=format&fit=crop&q=80",
+            "REACT DEEP DIVE": "https://images.unsplash.com/photo-1507721999472-8ed4421c4af2?auto=format&fit=crop&q=80",
+            "TECH TRIVIA": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&q=80",
+            "UI/UX DASH": "https://images.unsplash.com/photo-1550439062-609e1531270e?auto=format&fit=crop&q=80",
+            "CYBER DEFENSE": "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&q=80",
+            "AI FRONTIERS": "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&q=80"
+        };
+        const defaultImage = "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80";
 
-        // Generate QR Code for Download Ticket (High Res)
-        const dlQrContainerWrapper = document.querySelector('.downloadable-ticket .fa-qrcode');
-        const dlQrContainer = dlQrContainerWrapper ? dlQrContainerWrapper.parentElement : null;
+        const imageUrl = eventImages[event.trim()] || defaultImage;
 
-        if (dlQrContainer && typeof QRCode !== 'undefined') {
-            dlQrContainer.innerHTML = '';
-            new QRCode(dlQrContainer, {
-                text: id,
-                width: 180,
-                height: 180,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-        } else {
-            console.warn("Download QR Container missing or QRCode library not loaded");
-        }
-    } catch (e) {
+        // Set Images
+        const ticketImage = document.getElementById('ticket-event-image');
+        if (ticketImage) ticketImage.src = imageUrl;
+
+        const dlImage = document.getElementById('dl-event-image');
+        if (dlImage) dlImage.src = imageUrl;
+
         console.error("Error in window.onload:", e);
     }
 });
