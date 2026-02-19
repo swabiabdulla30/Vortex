@@ -207,7 +207,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <span style="color: #888;">Department:</span>
                         <span>${ticket.department || 'General'}</span>
                     </div>
-                    <div style="text-align: center; margin-top: 20px; background: white; padding: 5px; border-radius: 8px; width: 150px; height: 100px; margin-left: auto; margin-right: auto; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                    <div style="text-align: center; margin-top: 20px; background: white; padding: 5px; border-radius: 8px; width: 150px; height: 150px; margin-left: auto; margin-right: auto; overflow: hidden; display: flex; align-items: center; justify-content: center;">
                         <img src="${imageUrl}" alt="Event Image" style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px;">
                     </div>
                     <button class="submit-btn download-ticket-btn" style="width: 100%; margin-top: 15px; background: rgba(0, 255, 213, 0.2); border: 1px solid #00ffd5;">
