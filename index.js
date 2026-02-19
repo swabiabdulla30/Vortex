@@ -435,6 +435,18 @@ app.delete("/api/admin/registration/:identifier", authenticateToken, async (req,
     }
 });
 
+app.delete("/api/admin/registrations", authenticateToken, async (req, res) => {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: "Access denied" });
+    try {
+        await connectDB();
+        const result = await Registration.deleteMany({});
+        res.json({ message: `Deleted ${result.deletedCount} registrations.` });
+    } catch (error) {
+        console.error("Delete All error:", error);
+        res.status(500).json({ error: "Delete All failed" });
+    }
+});
+
 // --- Serve Frontend for any other route ---
 app.get(/(.*)/, (req, res) => {
     res.sendFile(path.join(process.cwd(), 'index.html'));

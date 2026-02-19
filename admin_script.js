@@ -216,9 +216,17 @@ async function deleteRegistration(identifier) {
             alert("Error: " + data.error);
         }
     } catch (error) {
-        console.error(error);
-        alert("Failed to delete.");
+        const data = await res.json();
+        alert(data.message);
+        fetchData();
+    } else {
+        const data = await res.json();
+        alert("Error: " + data.error);
     }
+} catch (error) {
+    console.error("Delete All Error:", error);
+    alert("Failed to delete all registrations.");
+}
 }
 
 function logout() {
@@ -244,6 +252,9 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         logout();
     });
+
+    const deleteAllBtn = document.getElementById('delete-all-btn');
+    if (deleteAllBtn) deleteAllBtn.addEventListener('click', deleteAllRegistrations);
 
     // Filters
     document.getElementById('event-filter').addEventListener('change', filterAndRender);
