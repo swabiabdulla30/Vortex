@@ -1,3 +1,6 @@
+// Event Details Data
+// Edit this file to update "About" and "Rules" for events.
+
 const eventDetails = {
     "CODE RED: NIGHT": {
         about: "An intense 24-hour coding marathon where participants will solve real-world problems. Test your endurance, creativity, and coding skills in this overnight hackathon.",
@@ -78,3 +81,8 @@ const eventDetails = {
         ]
     }
 };
+
+// Make it available globally if needed, though script inclusion does this automatically in browser.
+if (typeof module !== 'undefined') {
+    module.exports = eventDetails;
+}

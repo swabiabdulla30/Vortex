@@ -111,11 +111,7 @@
                         placeholder="Enter your full name">
                 </div>
 
-                <div class="form-group">
-                    <label for="email">Email Address</label>
-                    <input type="email" id="email" name="email" required class="form-control"
-                        placeholder="Enter your email">
-                </div>
+
 
                 <div class="form-group">
                     <label for="department">Department</label>
@@ -200,9 +196,10 @@
     </footer>
 
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-    <script src="script.js"></script>
     <script src="events_data.js"></script>
+    <script src="script.js"></script>
     <script>
+        // Auto-fill event name from URL
         // Auto-fill event name from URL
         document.addEventListener('DOMContentLoaded', function () {
             // Auto-fill User Data
@@ -210,7 +207,7 @@
             if (userStr) {
                 const user = JSON.parse(userStr);
                 if (user.name) document.getElementById('name').value = user.name;
-                if (user.email) document.getElementById('email').value = user.email;
+                // Email field removed, email is handled on submission
             }
 
             const urlParams = new URLSearchParams(window.location.search);
@@ -227,7 +224,9 @@
                 // Populate Dynamic Content
                 const infoContainer = document.getElementById('event-info-container');
                 const cleanName = decodedName.trim();
-                const details = eventDetails[cleanName];
+
+                // details are loaded from events_data.js
+                const details = (typeof eventDetails !== 'undefined') ? eventDetails[cleanName] : null;
 
                 if (details && infoContainer) {
                     document.getElementById('event-about-content').innerText = details.about;
@@ -255,15 +254,21 @@
             submitBtn.textContent = 'Processing Registration...';
             submitBtn.disabled = true;
 
-            // Get user email
+            // Get user email from session (localStorage) since field is removed
             const userStr = localStorage.getItem('vortexCurrentUser');
             const user = userStr ? JSON.parse(userStr) : null;
             const userEmail = user ? user.email : '';
 
+            if (!userEmail) {
+                alert("Error: User email not found. Please login again.");
+                window.location.href = 'login.html';
+                return;
+            }
+
             // Get form values
             const eventData = {
                 name: document.getElementById('name').value,
-                email: document.getElementById('email').value,
+                email: userEmail, // Use trusted email from session
                 event: document.getElementById('event-name').value,
                 department: document.getElementById('department').value,
                 phone: document.getElementById('phone').value,
