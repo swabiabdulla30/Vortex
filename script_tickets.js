@@ -26,20 +26,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Data Extraction from DOM
         const ticketId = card.id.replace('card-', '');
+        const ticketNumber = card.dataset.number; // Get numbered index
         const eventName = card.querySelector('.ticket-header span:first-child').innerText;
         // Selectors based on structure
         const name = card.querySelector('.ticket-body > div:nth-child(3) > span:nth-child(2)').innerText;
         const date = card.querySelector('.ticket-body > div:nth-child(2) > span:nth-child(2)').innerText;
         const dept = card.querySelector('.ticket-body > div:nth-child(4) > span:nth-child(2)').innerText;
 
-        console.log("Preparing download for:", { ticketId, eventName, name, date, dept });
+        console.log("Preparing download for:", { ticketId, ticketNumber, eventName, name, date, dept });
 
         // Populate Hidden High-Res Template
         document.getElementById('dl-event').innerText = eventName;
         document.getElementById('dl-name').innerText = name;
         document.getElementById('dl-dept').innerText = dept;
         document.getElementById('dl-date').innerText = date;
-        document.getElementById('dl-id').innerText = 'ID: #' + ticketId;
+        document.getElementById('dl-id').innerText = 'NO: #' + ticketNumber;
 
         // Render Event Image instead of QR
         const dlQrContainer = document.getElementById('dl-qrcode');
@@ -161,10 +162,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        container.innerHTML = tickets.map(ticket => {
+        container.innerHTML = tickets.map((ticket, index) => {
             const imageUrl = eventImages[ticket.event.trim()] || defaultImage;
+            const ticketNumber = (index + 1).toString().padStart(2, '0');
+
             return `
-            <div class="ticket-card" id="card-${ticket.ticketId}" style="
+            <div class="ticket-card" id="card-${ticket.ticketId}" data-number="${ticketNumber}" style="
                 background: rgba(255, 255, 255, 0.05);
                 border: 1px solid rgba(255, 255, 255, 0.1);
                 border-radius: 15px;
@@ -192,8 +195,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 
                 <div class="ticket-body" style="padding: 20px; color: white;">
                     <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                        <span style="color: #888;">Ticket ID:</span>
-                        <span style="color: #00ffd5; font-family: monospace;">${ticket.ticketId}</span>
+                        <span style="color: #888;">Ticket No:</span>
+                        <span style="color: #00ffd5; font-family: monospace; font-size: 1.2rem; font-weight: bold;">#${ticketNumber}</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
                         <span style="color: #888;">Date:</span>
