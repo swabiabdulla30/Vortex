@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Styling for capture
         clone.style.position = 'fixed';
         clone.style.top = '0';
-        clone.style.left = '0';
+        clone.style.left = '-9999px';
         clone.style.width = '1200px';
         clone.style.height = '630px';
         clone.style.zIndex = '-9999';
