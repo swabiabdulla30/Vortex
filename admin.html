@@ -218,18 +218,7 @@
             }
         }
 
-        if (res.ok) {
-            alert("Registration deleted.");
-            fetchData(); // Refresh table
-        } else {
-            const data = await res.json();
-            alert("Error: " + data.error);
-        }
-            } catch (error) {
-            console.error(error);
-            alert("Failed to delete.");
-        }
-        }
+
 
 
         function logout() {
