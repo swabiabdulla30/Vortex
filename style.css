@@ -880,6 +880,12 @@ section {
         padding: 0 20px;
     }
 
+    .hero-btn {
+        padding: 12px 30px;
+        font-size: 1rem;
+        margin-bottom: 30px;
+    }
+
     /* Hamburger Menu Icon */
     .hamburger {
         display: block;

@@ -71,3 +71,27 @@
     color: #fff;
     border: 1px solid #ffaa00;
 }
+
+@media (max-width: 768px) {
+    .admin-header {
+        flex-direction: column;
+        gap: 20px;
+        align-items: stretch;
+    }
+
+    .header-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .data-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .admin-container {
+        padding: 100px 15px 30px;
+    }
+}
