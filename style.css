@@ -842,69 +842,58 @@ section {
     bottom: -70px;
 }
 
-/* Event Card (Container) */
-.event-card {
-    display: inline-flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-    border: 2px solid var(--primary-red);
-    padding: 15px 30px;
-    border-radius: 15px;
-    box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
-    animation: eventPulse 2s infinite;
-    margin-bottom: 25px;
-    position: relative;
-    z-index: 10;
-    transition: transform 0.3s ease;
-}
-
-.event-card:hover {
-    transform: scale(1.02);
-    box-shadow: 0 0 50px rgba(255, 0, 0, 0.6);
-}
-
-/* Event Info Text (Inside Card) */
+/* Event Info Badge (Global Styles) */
 .event-info-text {
     font-family: var(--font-main);
     color: #fff;
-    margin-bottom: 0;
+    margin-bottom: 30px;
     letter-spacing: 2px;
-    font-size: 1.3rem;
-    display: flex;
+    font-size: 1.1rem;
+    display: inline-flex;
     align-items: center;
     gap: 15px;
-    padding: 0;
-    background: none;
-    border: none;
-    box-shadow: none;
-    animation: none;
+    background: linear-gradient(90deg, rgba(80, 0, 0, 0.9), rgba(0, 0, 0, 0.95));
+    border: 2px solid var(--primary-red);
+    padding: 10px 25px;
+    border-radius: 50px;
     text-transform: uppercase;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
+    animation: eventPulse 2s infinite;
+    position: relative;
+    z-index: 10;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.event-info-link {
+    text-decoration: none;
+}
+
+.register-action {
+    background: var(--primary-red);
+    color: #fff;
+    padding: 8px 20px;
+    border-radius: 30px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-left: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+}
+
+.event-info-text:hover .register-action {
+    background: #ff1a1a;
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
 }
 
 .event-info-text:hover {
-    transform: none;
-    box-shadow: none;
-    border-color: transparent;
-}
-
-/* Register Button (Inside Card) */
-.hero-btn {
-    margin-bottom: 0;
-    width: 100%;
-    text-align: center;
-    background: linear-gradient(90deg, #ff0000, #b30000);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.hero-btn:hover {
-    background: linear-gradient(90deg, #ff3333, #ff0000);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(255, 0, 0, 0.4);
+    transform: scale(1.05);
+    box-shadow: 0 0 40px rgba(255, 0, 0, 0.8);
+    border-color: #ff1a1a;
 }
 
 .event-info-text .highlight {
@@ -1041,34 +1030,34 @@ section {
         display: flex !important;
     }
 
-    /* Mobile overrides for Event Card */
-    .event-card {
-        padding: 10px 15px;
-        width: 80%;
-        margin-left: auto;
-        margin-right: auto;
-        margin-bottom: 20px;
-        background: rgba(0, 0, 0, 0.5);
-    }
-
+    /* Mobile overrides for Event Badge */
     .event-info-text {
-        font-size: 1rem;
-        flex-direction: column;
+        padding: 15px 20px;
+        font-size: 0.9rem;
         gap: 10px;
+        border-width: 1px;
+        flex-direction: column;
+        text-align: center;
+        width: 80%;
+        margin: 0 auto 30px;
     }
 
     .event-info-text .highlight {
         font-size: 1.2rem;
-        margin-right: 0;
+        letter-spacing: 2px;
+        padding: 5px 15px;
+        margin: 0;
     }
 
     .event-info-text .separator {
         display: none;
     }
 
-    .hero-btn {
-        padding: 12px 20px;
-        font-size: 0.9rem;
+    .register-action {
+        margin-left: 0;
+        margin-top: 5px;
+        width: 100%;
+        justify-content: center;
     }
 
     .mobile-bottom-actions {
