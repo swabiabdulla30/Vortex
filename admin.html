@@ -132,7 +132,7 @@
                         <th>Date</th>
                         <th>Name</th>
                         <th>Event</th>
-                        <!-- Transaction ID removed -->
+                        <th>Transaction ID</th>
                         <th>Details</th>
                         <th>Status</th>
                         <th>Actions</th>
@@ -140,7 +140,7 @@
                 </thead>
                 <tbody id="data-body">
                     <tr>
-                        <td colspan="6">Loading...</td>
+                        <td colspan="7">Loading...</td>
                     </tr>
                 </tbody>
             </table>
@@ -149,18 +149,158 @@
 
 
     <script>
-        // ... (existing code) ...
+        let allRegistrations = [];
+
+        async function fetchData() {
+            const token = localStorage.getItem('vortexToken');
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/admin/registrations', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (res.status === 401) {
+                    const errorText = await res.text(); // Get error details from server
+                    console.error("Session Expired (401):", errorText);
+                    alert("Session expired. Please login again.\nReason: " + errorText);
+                    localStorage.removeItem('vortexToken');
+                    localStorage.removeItem('vortexCurrentUser');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                if (res.status === 403) {
+                    alert("Access Denied: Admin privileges required.");
+                    window.location.href = 'index.html';
+                    return;
+                }
+
+                if (!res.ok) {
+                    const errorText = await res.text();
+                    throw new Error(`Server Error (${res.status}): ${errorText}`);
+                }
+
+                allRegistrations = await res.json();
+                populateEventFilter(allRegistrations);
+
+                // Default to PENDING loop for manual verification focus, or keep PAID
+                // document.getElementById('status-filter').value = 'PENDING'; 
+                filterAndRender();
+            } catch (error) {
+                console.error("Fetch Error:", error);
+                document.getElementById('data-body').innerHTML = `
+                    <tr>
+                        <td colspan="8" style="color:red; text-align:center; padding: 20px;">
+                            <strong>Error loading data:</strong> ${error.message}<br>
+                            <small>Check console for details. Ensure you are logged in as Admin.</small>
+                            <button onclick="fetchData()" class="action-btn" style="margin-top:10px;">Retry</button>
+                        </td>
+                    </tr>`;
+            }
+        }
+
+        function exportExcel() {
+            if (!allRegistrations || allRegistrations.length === 0) {
+                alert("No data available to export.");
+                return;
+            }
+
+            try {
+                // Convert to simple CSV
+                const headers = ["Ticket ID", "Name", "Event", "Email", "Phone", "Department", "Year", "College", "Date", "Payment Status", "Transaction ID"];
+
+                // Map data to array of arrays
+                const rows = allRegistrations.map(r => [
+                    r.ticketId || '',
+                    `"${(r.name || '').replace(/"/g, '""')}"`, // Escape quotes
+                    `"${(r.event || '').replace(/"/g, '""')}"`,
+                    r.email || '',
+                    r.phone || '',
+                    r.department || '',
+                    r.year || '',
+                    `"${(r.college || '').replace(/"/g, '""')}"`,
+                    r.date ? new Date(r.date).toLocaleDateString() : '',
+                    r.paymentStatus || 'PENDING',
+                    r.transactionId || r.paymentId || '' // Use verification field
+                ]);
+
+                // Combine headers and rows
+                const csvContent = [
+                    headers.join(','),
+                    ...rows.map(row => row.join(','))
+                ].join('\n');
+
+                // Create blob and download
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.setAttribute('href', url);
+                link.setAttribute('download', `vortex_registrations_${new Date().toISOString().slice(0, 10)}.csv`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } catch (error) {
+                console.error("Export error:", error);
+                alert("Failed to export data: " + error.message);
+            }
+        }
+
+        function populateEventFilter(data) {
+            const filter = document.getElementById('event-filter');
+            const currentSelection = filter.value;
+            const events = [...new Set(data.map(item => item.event).filter(Boolean))];
+
+            filter.innerHTML = '<option value="all" style="background: #333; color: white;">All Events</option>' +
+                events.map(event => `<option value="${event}" style="background: #333; color: white;">${event}</option>`).join('');
+
+            if (events.includes(currentSelection)) {
+                filter.value = currentSelection;
+            }
+        }
+
+        document.getElementById('event-filter').addEventListener('change', filterAndRender);
+        document.getElementById('status-filter').addEventListener('change', filterAndRender);
+
+        function filterAndRender() {
+            const eventFilter = document.getElementById('event-filter').value;
+            const statusFilter = document.getElementById('status-filter').value;
+
+            let filteredData = allRegistrations;
+
+            // Filter by Event
+            if (eventFilter !== 'all') {
+                filteredData = filteredData.filter(item => item.event === eventFilter);
+            }
+
+            // Filter by Status
+            if (statusFilter !== 'all') {
+                // If filtering by PAID, match "PAID". If PENDING, match anything else or specific "PENDING"
+                if (statusFilter === 'PAID') {
+                    filteredData = filteredData.filter(item => item.paymentStatus === 'PAID');
+                } else {
+                    filteredData = filteredData.filter(item => item.paymentStatus !== 'PAID');
+                }
+            }
+
+            renderTable(filteredData);
+        }
 
         function renderTable(data) {
             const tbody = document.getElementById('data-body');
             if (data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6">No registrations found.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="8">No registrations found.</td></tr>';
                 return;
             }
 
             tbody.innerHTML = data.map(item => {
                 const isPaid = item.paymentStatus === 'PAID';
-                // Transaction ID removed from display
+                // Use transactionId from manual flow or paymentId from Razorpay
+                const transId = item.transactionId || item.paymentId || '-';
 
                 return `
                 <tr>
@@ -171,7 +311,7 @@
                         <div style="font-size:0.8em; color:#aaa;">${item.phone}</div>
                     </td>
                     <td>${item.event}</td>
-                    <!-- Trans ID col removed -->
+                    <td style="font-family:monospace; color: #00d2ff;">${transId}</td>
                     <td>
                         <div style="font-size:0.85em;">
                             ${item.department}<br>
@@ -185,40 +325,62 @@
                         ${!isPaid ?
                         `<button onclick="verifyPayment('${item.ticketId}', 'approve')" class="action-btn" style="background:#00ff88; color:black; margin-bottom:5px;">Approve</button>` :
                         ''}
-                        <button onclick="deleteRegistration('${item._id}')" class="action-btn delete-btn">Delete</button>
+                        <button onclick="deleteRegistration('${item.ticketId}')" class="action-btn delete-btn">Delete</button>
                     </td>
                 </tr>
             `}).join('');
         }
 
-        // ... verifyPayment ...
-
-        async function deleteRegistration(id) {
-            console.log("Attempting to delete MongoDB ID:", id);
-            if (!confirm("Are you sure you want to PERMANENTLY delete this registration?")) return;
+        async function verifyPayment(ticketId, action) {
+            if (!confirm(`Are you sure you want to ${action.toUpperCase()} this payment?`)) return;
 
             const token = localStorage.getItem('vortexToken');
             try {
-                // Reverted to using ID driven delete
-                const res = await fetch(`/api/admin/registration/${id}`, {
+                const res = await fetch('/api/admin/verify-payment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ ticketId, action })
+                });
+
+                const data = await res.json();
+                if (res.ok) {
+                    alert("Success: " + data.message);
+                    fetchData(); // Refresh table
+                } else {
+                    alert("Error: " + data.error);
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Failed to verify payment.");
+            }
+        }
+
+        async function deleteRegistration(ticketId) {
+            console.log("Attempting to delete Ticket ID:", ticketId);
+            if (!confirm(`Are you sure you want to delete registration ${ticketId}?`)) return;
+
+            const token = localStorage.getItem('vortexToken');
+            try {
+                const res = await fetch(`/api/admin/registration/${ticketId}`, {
                     method: 'DELETE',
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
 
                 if (res.ok) {
-                    alert("Registration deleted successfully.");
+                    alert("Registration deleted.");
                     fetchData(); // Refresh table
                 } else {
                     const data = await res.json();
-                    alert("Delete Failed: " + (data.error || res.statusText));
+                    alert("Error: " + data.error);
                 }
             } catch (error) {
-                console.error("Delete Network Error:", error);
-                alert("Network error: Failed to reach server.");
+                console.error(error);
+                alert("Failed to delete.");
             }
         }
-
-
 
 
         function logout() {

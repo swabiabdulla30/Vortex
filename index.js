@@ -409,16 +409,16 @@ app.post("/api/admin/verify-payment", authenticateToken, async (req, res) => {
     }
 });
 
-app.delete("/api/admin/registration/:id", authenticateToken, async (req, res) => {
+app.delete("/api/admin/registration/:ticketId", authenticateToken, async (req, res) => {
     if (req.user.role !== 'admin') return res.status(403).json({ error: "Access denied" });
     try {
         await connectDB();
-        const result = await Registration.findByIdAndDelete(req.params.id);
+        const result = await Registration.findOneAndDelete({ ticketId: req.params.ticketId });
         if (!result) return res.status(404).json({ error: "Registration not found" });
         res.json({ message: "Registration deleted successfully" });
     } catch (error) {
-        console.error("Delete error:", error); // Log the actual error
-        res.status(500).json({ error: "Delete failed: " + error.message });
+        console.error("Delete error:", error);
+        res.status(500).json({ error: "Delete failed" });
     }
 });
 
