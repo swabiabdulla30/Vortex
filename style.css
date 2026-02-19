@@ -887,16 +887,26 @@ section {
     }
 
     .event-info-text {
-        font-family: monospace;
-        color: #ccc;
-        margin-bottom: 15px;
+        font-family: var(--font-main);
+        color: #ddd;
+        margin-bottom: 25px;
         letter-spacing: 2px;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
+        display: inline-block;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 8px 20px;
+        border-radius: 30px;
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        text-transform: uppercase;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     }
 
     .event-info-text .highlight {
         color: var(--primary-red);
         font-weight: 700;
+        text-shadow: 0 0 10px rgba(139, 0, 0, 0.5);
     }
 
     /* Hamburger Menu Icon */
