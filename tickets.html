@@ -9,7 +9,55 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=2.7">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Premium Ticket Styling from Registration Success */
+        .digital-ticket {
+            background: #050505;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            width: 100%;
+            max-width: 850px;
+            display: flex;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            position: relative;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        .ticket-left {
+            flex: 2;
+            padding: 40px;
+            border-right: 2px dashed rgba(255, 255, 255, 0.15);
+            position: relative;
+            background: rgba(5, 5, 5, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .ticket-right {
+            flex: 0.8;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(139, 0, 0, 0.1), rgba(0, 0, 0, 0.4));
+            border-left: 1px solid rgba(255, 0, 0, 0.1);
+            position: relative;
+            text-align: center;
+        }
+
+        /* Hidden Downloadable Ticket Template (High Res) */
+        #download-container {
+            position: fixed;
+            left: -9999px;
+            top: 0;
+            width: 1200px;
+            height: 630px;
+            z-index: -1;
+        }
+    </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
@@ -93,6 +141,84 @@
         </div>
     </footer>
 
+    <!-- Hidden Downloadable Ticket Template (High Res matches registration_success.html) -->
+    <div id="download-container">
+        <div class="downloadable-ticket"
+            style="width: 100%; height: 100%; background: #050505; display: flex; overflow: hidden; position: relative; border: 4px solid #8B0000;">
+
+            <!-- Background Patterns -->
+            <div
+                style="position: absolute; inset: 0; background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px); background-size: 40px 40px;">
+            </div>
+            <div
+                style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg); font-size: 15rem; font-weight: 900; color: rgba(255, 255, 255, 0.02); white-space: nowrap;">
+                VORTEX</div>
+
+            <!-- Left Side (Details) -->
+            <div
+                style="flex: 2; padding: 60px; border-right: 4px dashed rgba(255, 255, 255, 0.15); display: flex; flex-direction: column; justify-content: center; position: relative; z-index: 1;">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 2px solid rgba(255, 255, 255, 0.1); padding-bottom: 20px;">
+                    <div style="font-size: 2.5rem; font-weight: 900; color: #fff; letter-spacing: 4px;">VORTEX <span
+                            style="color: #8B0000;">INNOVATORS</span></div>
+                    <div
+                        style="background: rgba(139, 0, 0, 0.2); border: 2px solid #8B0000; color: #fff; padding: 10px 25px; border-radius: 50px; font-weight: 700; letter-spacing: 2px;">
+                        OFFICIAL ENTRY PASS</div>
+                </div>
+
+                <h1 id="dl-event"
+                    style="font-size: 4rem; font-weight: 900; color: #fff; text-transform: uppercase; line-height: 1; margin-bottom: 40px; text-shadow: 0 0 30px rgba(139, 0, 0, 0.5);">
+                    EVENT NAME</h1>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                    <div>
+                        <div
+                            style="color: #8B0000; font-size: 1rem; font-weight: 700; letter-spacing: 2px; margin-bottom: 10px;">
+                            ATTENDEE</div>
+                        <div id="dl-name"
+                            style="color: #fff; font-size: 1.8rem; font-weight: 600; font-family: monospace;">Student
+                            Name</div>
+                    </div>
+                    <div>
+                        <div
+                            style="color: #8B0000; font-size: 1rem; font-weight: 700; letter-spacing: 2px; margin-bottom: 10px;">
+                            DEPARTMENT</div>
+                        <div id="dl-dept"
+                            style="color: #fff; font-size: 1.8rem; font-weight: 600; font-family: monospace;">CSE</div>
+                    </div>
+                    <div>
+                        <div
+                            style="color: #8B0000; font-size: 1rem; font-weight: 700; letter-spacing: 2px; margin-bottom: 10px;">
+                            DATE</div>
+                        <div id="dl-date"
+                            style="color: #fff; font-size: 1.8rem; font-weight: 600; font-family: monospace;">FEB 15,
+                            2026</div>
+                    </div>
+                    <div>
+                        <div
+                            style="color: #8B0000; font-size: 1rem; font-weight: 700; letter-spacing: 2px; margin-bottom: 10px;">
+                            LOCATION</div>
+                        <div style="color: #fff; font-size: 1.8rem; font-weight: 600; font-family: monospace;">KMCT
+                            CAMPUS</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side (QR & ID) -->
+            <div
+                style="flex: 0.8; background: linear-gradient(135deg, rgba(139, 0, 0, 0.2), rgba(0, 0, 0, 0.9)); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; border-left: 2px solid rgba(255, 255, 255, 0.05);">
+                <div
+                    style="background: #fff; padding: 10px; border-radius: 15px; width: 200px; height: 200px; display: flex; align-items: center; justify-content: center; margin-bottom: 30px;">
+                    <div id="dl-qrcode"></div> <!-- Converted to div for safety -->
+                </div>
+                <div id="dl-id"
+                    style="font-family: monospace; color: #fff; background: rgba(255, 255, 255, 0.1); padding: 10px 20px; border-radius: 8px; font-size: 1.2rem; letter-spacing: 2px; border: 1px solid rgba(255, 255, 255, 0.2);">
+                    ID: #000000</div>
+            </div>
+
+        </div>
+    </div>
+
     <script>
         // Move downloadTicket to global scope
         window.downloadTicket = function (btn) {
@@ -103,91 +229,98 @@
             btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Processing...';
             btn.disabled = true;
 
-            // 1. Prepare for Capture (Remove complex styles that confuse html2canvas)
-            const originalStyles = {
-                backdropFilter: card.style.backdropFilter,
-                background: card.style.background,
-                transform: card.style.transform,
-                boxShadow: card.style.boxShadow,
-                transition: card.style.transition,
-                border: card.style.border
-            };
-
-            // Apply "Safe" Styles for Capture
-            card.style.backdropFilter = 'none';
-            card.style.background = '#1a1a1a'; // Solid dark grey background
-            card.style.transform = 'none';
-            card.style.boxShadow = 'none';
-            card.style.transition = 'none';
-            card.style.border = '2px solid #00ffd5'; // Crisp border
-
-            // Hide the download button in the screenshot
-            btn.style.visibility = 'hidden';
-
+            // Data Extraction from DOM
             const ticketId = card.id.replace('card-', '');
+            const eventName = card.querySelector('.ticket-header span:first-child').innerText;
+            // Selectors based on structure
+            const name = card.querySelector('.ticket-body > div:nth-child(3) > span:nth-child(2)').innerText;
+            const date = card.querySelector('.ticket-body > div:nth-child(2) > span:nth-child(2)').innerText;
+            const dept = card.querySelector('.ticket-body > div:nth-child(4) > span:nth-child(2)').innerText;
 
-            // Check Library
-            if (typeof html2canvas === 'undefined') {
-                alert("System Error: Canvas library missing. Please reload the page.");
-                restoreStyles(card, originalStyles, btn, originalText);
-                return;
-            }
+            console.log("Preparing download for:", { ticketId, eventName, name, date, dept });
 
-            // 2. Capture
-            html2canvas(card, {
-                backgroundColor: '#1a1a1a', // Match card background
-                scale: 3, // Higher resolution
-                useCORS: true,
-                allowTaint: true,
-                logging: false, // Reduce console noise unless debugging
-                ignoreElements: (element) => element === btn // Double ensure button is ignored
-            }).then(canvas => {
-                try {
-                    // 3. Download
-                    const image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
-                    const link = document.createElement('a');
-                    link.download = `Vortex_Ticket_${ticketId}.png`;
-                    link.href = image;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
+            // Populate Hidden High-Res Template
+            document.getElementById('dl-event').innerText = eventName;
+            document.getElementById('dl-name').innerText = name;
+            document.getElementById('dl-dept').innerText = dept;
+            document.getElementById('dl-date').innerText = date;
+            document.getElementById('dl-id').innerText = 'ID: #' + ticketId;
 
-                    // Success Feedback
-                    btn.innerHTML = '<i class="fas fa-check"></i> Saved!';
-                    setTimeout(() => {
-                        restoreStyles(card, originalStyles, btn, originalText);
-                    }, 2000);
-
-                } catch (e) {
-                    console.error("Save Error:", e);
-                    alert("Browser blocked the download. Please try taking a screenshot instead.");
-                    restoreStyles(card, originalStyles, btn, originalText);
-                }
-            }).catch(err => {
-                console.error("Capture Error:", err);
-                alert("Failed to generate ticket image: " + err.message);
-                restoreStyles(card, originalStyles, btn, originalText);
+            // Generate New QR for Template
+            const dlQrContainer = document.getElementById('dl-qrcode');
+            dlQrContainer.innerHTML = '';
+            new QRCode(dlQrContainer, {
+                text: ticketId,
+                width: 180,
+                height: 180,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
             });
+
+            // Target the template
+            const originalTicket = document.querySelector('.downloadable-ticket');
+
+            // Clone strategy to ensure clean capture
+            const clone = originalTicket.cloneNode(true);
+            clone.id = 'temp-capture-target';
+            document.body.appendChild(clone);
+
+            // Styling for capture
+            clone.style.position = 'fixed';
+            clone.style.top = '0';
+            clone.style.left = '0';
+            clone.style.width = '1200px';
+            clone.style.height = '630px';
+            clone.style.zIndex = '-9999';
+            clone.style.visibility = 'visible'; // Visible to html2canvas
+
+            // Short delay for QR code to render
+            setTimeout(() => {
+                html2canvas(clone, {
+                    backgroundColor: '#050505',
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: true,
+                    logging: false,
+                    width: 1200,
+                    height: 630,
+                    windowWidth: 1200,
+                    windowHeight: 630
+                }).then(canvas => {
+                    try {
+                        const image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+                        const link = document.createElement('a');
+                        link.download = `Vortex_Official_Pass_${ticketId}.png`;
+                        link.href = image;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+
+                        // Success Feedback
+                        btn.innerHTML = '<i class="fas fa-check"></i> Saved!';
+                        setTimeout(() => {
+                            btn.innerHTML = originalText;
+                            btn.disabled = false;
+                        }, 2000);
+
+                    } catch (e) {
+                        console.error("Save Error:", e);
+                        alert("Browser blocked the download.");
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                    } finally {
+                        if (document.body.contains(clone)) document.body.removeChild(clone);
+                    }
+                }).catch(err => {
+                    console.error("Capture Error:", err);
+                    alert("Failed to generate ticket image.");
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                    if (document.body.contains(clone)) document.body.removeChild(clone);
+                });
+            }, 300);
         };
-
-        function restoreStyles(card, originals, btn, originalText) {
-            card.style.backdropFilter = originals.backdropFilter;
-            card.style.background = originals.background;
-            card.style.transform = originals.transform;
-            card.style.boxShadow = originals.boxShadow;
-            card.style.transition = originals.transition;
-            card.style.border = originals.border;
-
-            btn.style.visibility = 'visible';
-
-            if (btn.innerHTML !== '<i class="fas fa-check"></i> Saved!') {
-                btn.innerHTML = originalText;
-            } else {
-                // Revert 'Saved!' text after delay
-                setTimeout(() => { btn.innerHTML = originalText; btn.disabled = false; }, 1000);
-            }
-            btn.disabled = false;
-        }
 
         document.addEventListener('DOMContentLoaded', async () => {
             const container = document.getElementById('tickets-container');
