@@ -90,7 +90,7 @@
 .ticket-dl-details {
     flex: 2;
     padding: 60px;
-    border-right: 4px dashed rgba(255, 255, 255, 0.15);
+    border-right: 4px dashed rgba(255, 255, 255, 0.6);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -167,7 +167,7 @@
     align-items: center;
     justify-content: center;
     padding: 40px;
-    border-left: 2px solid rgba(255, 255, 255, 0.05);
+    border-left: 4px dashed rgba(255, 255, 255, 0.6);
 }
 
 .ticket-dl-image-box {
