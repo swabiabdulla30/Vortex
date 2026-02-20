@@ -901,24 +901,26 @@ section {
     }
 }
 
-/* 2. Border glow pulses between dim and bright red */
+/* 2. Glowing border pulses brighter/dimmer */
 @keyframes borderPulse {
 
     0%,
     100% {
         box-shadow:
-            0 0 0 1px rgba(180, 0, 0, 0.8),
-            0 0 0 3px rgba(6, 6, 6, 0.95),
-            0 0 0 4px rgba(100, 0, 0, 0.25),
-            0 20px 60px rgba(100, 0, 0, 0.2);
+            0 0 8px rgba(180, 0, 0, 0.5),
+            0 0 20px rgba(180, 0, 0, 0.3),
+            0 0 40px rgba(100, 0, 0, 0.15),
+            inset 0 0 20px rgba(80, 0, 0, 0.1);
+        border-color: rgba(160, 0, 0, 0.6);
     }
 
     50% {
         box-shadow:
-            0 0 0 1px rgba(220, 0, 0, 1),
-            0 0 0 3px rgba(6, 6, 6, 0.95),
-            0 0 0 5px rgba(160, 0, 0, 0.5),
-            0 20px 80px rgba(160, 0, 0, 0.45);
+            0 0 15px rgba(220, 0, 0, 0.9),
+            0 0 40px rgba(200, 0, 0, 0.6),
+            0 0 80px rgba(150, 0, 0, 0.35),
+            inset 0 0 30px rgba(120, 0, 0, 0.2);
+        border-color: rgba(220, 0, 0, 1);
     }
 }
 
@@ -965,7 +967,8 @@ section {
     background:
         radial-gradient(ellipse at top, rgba(100, 0, 0, 0.25) 0%, transparent 65%),
         linear-gradient(160deg, rgba(18, 0, 0, 0.95) 0%, rgba(4, 4, 4, 0.98) 100%);
-    /* Combined: floating + pulsing border */
+    /* Glowing border */
+    border: 1px solid rgba(160, 0, 0, 0.6);
     animation:
         elevateFloat 5s ease-in-out infinite,
         borderPulse 3s ease-in-out infinite,
@@ -1027,26 +1030,7 @@ section {
     }
 }
 
-/* Staggered entrance for child elements */
-.featured-event-block .event-label {
-    animation: elevateEnter 0.7s 0s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
 
-.featured-event-block hr {
-    animation: elevateEnter 0.7s 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-.featured-event-desc {
-    animation: elevateEnter 0.7s 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-.highlight-date {
-    animation: elevateEnter 0.7s 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-.theme-grid-btn {
-    animation: elevateEnter 0.7s 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
 
 /* Thin divider */
 .featured-event-block hr {
