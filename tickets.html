@@ -65,16 +65,15 @@
     </div>
 
     <!-- Tickets Section -->
-    <section id="tickets" class="content-section" style="padding-top: 120px; padding-bottom: 50px; min-height: 80vh;">
+    <section id="tickets" class="content-section tickets-section">
         <div class="section-header">
             <span class="section-tag">USER ACCESS</span>
             <h2 class="section-title">MY TICKETS</h2>
         </div>
 
-        <div id="tickets-container" class="section-container"
-            style="display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; padding: 20px;">
+        <div id="tickets-container" class="section-container tickets-flex-container">
             <!-- Tickets will be injected here by JS -->
-            <div style="color: rgba(255,255,255,0.5); text-align: center; width: 100%;">
+            <div class="loading-secure-data">
                 <i class="fas fa-circle-notch fa-spin"></i> Loading secure data...
             </div>
         </div>
@@ -93,79 +92,49 @@
         </div>
     </footer>
 
-    <!-- Hidden Downloadable Ticket Template (High Res matches registration_success.html) -->
+    <!-- Hidden Downloadable Ticket Template (High Res) -->
     <div id="download-container">
-        <div class="downloadable-ticket"
-            style="width: 100%; height: 100%; background: #050505; display: flex; overflow: hidden; position: relative; border: 4px solid #8B0000;">
+        <div class="downloadable-ticket downloadable-ticket-container">
 
             <!-- Background Patterns -->
-            <div
-                style="position: absolute; inset: 0; background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px); background-size: 40px 40px;">
-            </div>
-            <div
-                style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg); font-size: 15rem; font-weight: 900; color: rgba(255, 255, 255, 0.02); white-space: nowrap;">
-                VORTEX</div>
+            <div class="ticket-bg-pattern-grid"></div>
+            <div class="ticket-bg-watermark">VORTEX</div>
 
             <!-- Left Side (Details) -->
-            <div
-                style="flex: 2; padding: 60px; border-right: 4px dashed rgba(255, 255, 255, 0.15); display: flex; flex-direction: column; justify-content: center; position: relative; z-index: 1;">
-                <div
-                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 2px solid rgba(255, 255, 255, 0.1); padding-bottom: 20px;">
-                    <div style="font-size: 2.5rem; font-weight: 900; color: #fff; letter-spacing: 4px;">VORTEX <span
-                            style="color: #8B0000;">INNOVATORS</span></div>
-                    <div
-                        style="background: rgba(139, 0, 0, 0.2); border: 2px solid #8B0000; color: #fff; padding: 10px 25px; border-radius: 50px; font-weight: 700; letter-spacing: 2px;">
-                        OFFICIAL ENTRY PASS</div>
+            <div class="ticket-dl-details">
+                <div class="ticket-dl-header">
+                    <div class="ticket-dl-brand">VORTEX <span>INNOVATORS</span></div>
+                    <div class="ticket-dl-badge">OFFICIAL ENTRY PASS</div>
                 </div>
 
-                <h1 id="dl-event"
-                    style="font-size: 4rem; font-weight: 900; color: #fff; text-transform: uppercase; line-height: 1; margin-bottom: 40px; text-shadow: 0 0 30px rgba(139, 0, 0, 0.5);">
-                    EVENT NAME</h1>
+                <h1 id="dl-event" class="ticket-dl-event-title">EVENT NAME</h1>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                <div class="ticket-dl-grid">
                     <div>
-                        <div
-                            style="color: #8B0000; font-size: 1rem; font-weight: 700; letter-spacing: 2px; margin-bottom: 10px;">
-                            ATTENDEE</div>
-                        <div id="dl-name"
-                            style="color: #fff; font-size: 1.8rem; font-weight: 600; font-family: monospace;">Student
-                            Name</div>
+                        <div class="ticket-dl-label">ATTENDEE</div>
+                        <div id="dl-name" class="ticket-dl-value">Student Name</div>
                     </div>
                     <div>
-                        <div
-                            style="color: #8B0000; font-size: 1rem; font-weight: 700; letter-spacing: 2px; margin-bottom: 10px;">
-                            DEPARTMENT</div>
-                        <div id="dl-dept"
-                            style="color: #fff; font-size: 1.8rem; font-weight: 600; font-family: monospace;">CSE</div>
+                        <div class="ticket-dl-label">DEPARTMENT</div>
+                        <div id="dl-dept" class="ticket-dl-value">CSE</div>
                     </div>
                     <div>
-                        <div
-                            style="color: #8B0000; font-size: 1rem; font-weight: 700; letter-spacing: 2px; margin-bottom: 10px;">
-                            DATE</div>
-                        <div id="dl-date"
-                            style="color: #fff; font-size: 1.8rem; font-weight: 600; font-family: monospace;">FEB 15,
-                            2026</div>
+                        <div class="ticket-dl-label">DATE</div>
+                        <div id="dl-date" class="ticket-dl-value">FEB 15, 2026</div>
                     </div>
                     <div>
-                        <div
-                            style="color: #8B0000; font-size: 1rem; font-weight: 700; letter-spacing: 2px; margin-bottom: 10px;">
-                            LOCATION</div>
-                        <div style="color: #fff; font-size: 1.8rem; font-weight: 600; font-family: monospace;">KMCT
-                            CAMPUS</div>
+                        <div class="ticket-dl-label">LOCATION</div>
+                        <div class="ticket-dl-value">KMCT CAMPUS</div>
                     </div>
                 </div>
             </div>
 
             <!-- Right Side (QR & ID) -->
-            <div
-                style="flex: 0.8; background: linear-gradient(135deg, rgba(139, 0, 0, 0.2), rgba(0, 0, 0, 0.9)); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; border-left: 2px solid rgba(255, 255, 255, 0.05);">
-                <div
-                    style="background: rgba(255,255,255,0.1); padding: 5px; border-radius: 15px; width: 300px; height: 180px; display: flex; align-items: center; justify-content: center; margin-bottom: 30px; overflow: hidden; border: 1px solid rgba(255,255,255,0.2);">
-                    <div id="dl-qrcode" style="width: 100%; height: 100%;"></div> <!-- Converted to div for safety -->
+            <div class="ticket-dl-sidebar">
+                <div class="ticket-dl-image-box">
+                    <div id="dl-qrcode" style="width: 100%; height: 100%;"></div>
                 </div>
-                <div id="dl-id"
-                    style="font-family: monospace; color: #fff; background: rgba(255, 255, 255, 0.1); padding: 10px 20px; border-radius: 8px; font-size: 1.2rem; letter-spacing: 2px; border: 1px solid rgba(255, 255, 255, 0.2);">
-                    ID: #000000</div>
+                <div id="dl-id" class="ticket-dl-id-box">ID: #000000</div>
             </div>
 
         </div>
@@ -176,4 +145,3 @@
 </body>
 
 </html>
-

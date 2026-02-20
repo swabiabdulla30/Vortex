@@ -1,4 +1,25 @@
-/* Premium Ticket Styling from Registration Success */
+/* Tickets Section Styling */
+.tickets-section {
+    padding-top: 120px;
+    padding-bottom: 50px;
+    min-height: 80vh;
+}
+
+.tickets-flex-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: center;
+    padding: 20px;
+}
+
+.loading-secure-data {
+    color: rgba(255, 255, 255, 0.5);
+    text-align: center;
+    width: 100%;
+}
+
+/* Base Digital Ticket Styling */
 .digital-ticket {
     background: #050505;
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -36,7 +57,298 @@
     text-align: center;
 }
 
-/* Hidden Downloadable Ticket Template (High Res) */
+/* High-resolution Downloadable Template Styling */
+.downloadable-ticket-container {
+    width: 100%;
+    height: 100%;
+    background: #050505;
+    display: flex;
+    overflow: hidden;
+    position: relative;
+    border: 4px solid #8B0000;
+}
+
+.ticket-bg-pattern-grid {
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+}
+
+.ticket-bg-watermark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-30deg);
+    font-size: 15rem;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.02);
+    white-space: nowrap;
+}
+
+.ticket-dl-details {
+    flex: 2;
+    padding: 60px;
+    border-right: 4px dashed rgba(255, 255, 255, 0.15);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+}
+
+.ticket-dl-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 20px;
+}
+
+.ticket-dl-brand {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: 4px;
+}
+
+.ticket-dl-brand span {
+    color: #8B0000;
+}
+
+.ticket-dl-badge {
+    background: rgba(139, 0, 0, 0.2);
+    border: 2px solid #8B0000;
+    color: #fff;
+    padding: 10px 25px;
+    border-radius: 50px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.ticket-dl-event-title {
+    font-size: 4rem;
+    font-weight: 900;
+    color: #fff;
+    text-transform: uppercase;
+    line-height: 1;
+    margin-bottom: 40px;
+    text-shadow: 0 0 30px rgba(139, 0, 0, 0.5);
+}
+
+.ticket-dl-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+}
+
+.ticket-dl-label {
+    color: #8B0000;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+}
+
+.ticket-dl-value {
+    color: #fff;
+    font-size: 1.8rem;
+    font-weight: 600;
+    font-family: monospace;
+}
+
+.ticket-dl-sidebar {
+    flex: 0.8;
+    background: linear-gradient(135deg, rgba(139, 0, 0, 0.2), rgba(0, 0, 0, 0.9));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    border-left: 2px solid rgba(255, 255, 255, 0.05);
+}
+
+.ticket-dl-image-box {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 5px;
+    border-radius: 15px;
+    width: 300px;
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 30px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.ticket-dl-image-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.ticket-dl-id-box {
+    font-family: monospace;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Card Styling for dynamic tickets */
+.ticket-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    width: 350px;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    margin: 10px;
+}
+
+.ticket-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 30px rgba(0, 255, 213, 0.2);
+}
+
+.ticket-header-dynamic {
+    background: linear-gradient(90deg, #00C9FF 0%, #92FE9D 100%);
+    padding: 15px;
+    color: #000;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ticket-status-dynamic {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+.ticket-body-dynamic {
+    padding: 20px;
+    color: white;
+}
+
+.ticket-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.ticket-label-muted {
+    color: #888;
+}
+
+.ticket-no-value {
+    color: #00ffd5;
+    font-family: monospace;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.ticket-brand-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 15px;
+}
+
+.ticket-brand-text {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: 2px;
+}
+
+.ticket-status-badge {
+    background: rgba(139, 0, 0, 0.2);
+    border: 1px solid #8B0000;
+    color: #fff;
+    padding: 5px 15px;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.ticket-status-dot {
+    width: 6px;
+    height: 6px;
+    background: #fff;
+    border-radius: 50%;
+}
+
+.ticket-event-name {
+    font-size: clamp(1.8rem, 6vw, 2.8rem);
+    font-weight: 900;
+    color: #fff;
+    text-transform: uppercase;
+    line-height: 1.1;
+    margin-bottom: 30px;
+    text-shadow: 0 0 20px rgba(139, 0, 0, 0.5);
+}
+
+.ticket-grid-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.ticket-detail-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.ticket-detail-label {
+    color: #888;
+    font-size: 0.9rem;
+}
+
+.ticket-detail-val {
+    font-weight: bold;
+    color: #fff;
+}
+
+.ticket-image-container {
+    text-align: center;
+    margin-top: 20px;
+    border-radius: 10px;
+    width: 100%;
+    height: 180px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ticket-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.download-btn-dynamic {
+    width: 100%;
+    margin-top: 15px;
+    background: rgba(0, 255, 213, 0.2);
+    border: 1px solid #00ffd5;
+}
+
+/* Hidden Downloadable Ticket Template wrapper */
 #download-container {
     position: fixed;
     left: -9999px;

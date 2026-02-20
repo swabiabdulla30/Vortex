@@ -15,33 +15,25 @@ function handleTicketDownload() {
     }
 
     saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-    saveBtn.style.pointerEvents = 'none'; // Prevent double clicks
+    saveBtn.classList.add('btn-disabled-state');
 
     if (typeof html2canvas === 'undefined') {
         console.error("html2canvas is undefined");
         alert("Error: Canvas library not loaded. Please allow the page to load fully.");
         saveBtn.innerHTML = originalContent;
-        saveBtn.style.pointerEvents = 'auto';
+        saveBtn.classList.remove('btn-disabled-state');
         return;
     }
 
     try {
         // CLONE STRATEGY:
         const clone = originalTicket.cloneNode(true);
-        // Add a unique ID for safe retrieval in onclone
+        // Add a unique ID for safe retrieval
         clone.id = 'temp-capture-target';
-        document.body.appendChild(clone);
 
-        // Set styles to ensure it renders correctly for capture but is HIDDEN from user
-        clone.style.position = 'fixed';
-        clone.style.top = '0';
-        clone.style.left = '0';
-        clone.style.width = '1200px';
-        clone.style.height = '630px';
-        clone.style.zIndex = '-9999';
-        clone.style.display = 'flex';
-        // VISIBILITY HACK: Opacity 0 makes it invisible to user, but html2canvas captures it if we toggle it back in onclone
-        clone.style.opacity = '0';
+        // Use CSS class for hidden capture target instead of inline styles
+        clone.classList.add('capture-target-hidden');
+        document.body.appendChild(clone);
 
         // Wait a moment for DOM to settle
         setTimeout(() => {
@@ -49,18 +41,18 @@ function handleTicketDownload() {
                 backgroundColor: '#050505',
                 scale: 2,
                 useCORS: true,
-                logging: false, // Reduced logging
+                logging: false,
                 allowTaint: true,
                 width: 1200,
                 height: 630,
                 windowWidth: 1200,
                 windowHeight: 630,
                 onclone: (clonedDoc) => {
-                    // Make it visible to the renderer
+                    // Make it visible to the renderer via class
                     const el = clonedDoc.getElementById('temp-capture-target');
                     if (el) {
-                        el.style.opacity = '1';
-                        el.style.visibility = 'visible';
+                        el.classList.remove('capture-target-hidden');
+                        el.classList.add('capture-target-visible');
                     }
                     console.log("Ticket cloned for capture");
                 }
@@ -79,14 +71,14 @@ function handleTicketDownload() {
                     saveBtn.innerHTML = '<i class="fas fa-check"></i> Saved!';
                     setTimeout(() => {
                         saveBtn.innerHTML = originalContent;
-                        saveBtn.style.pointerEvents = 'auto';
+                        saveBtn.classList.remove('btn-disabled-state');
                     }, 2000);
 
                 } catch (e) {
                     console.error("Download handling error:", e);
                     alert("Browser blocked download. Please screenshot.");
                     saveBtn.innerHTML = originalContent;
-                    saveBtn.style.pointerEvents = 'auto';
+                    saveBtn.classList.remove('btn-disabled-state');
                 } finally {
                     if (document.body.contains(clone)) document.body.removeChild(clone);
                 }
@@ -94,14 +86,14 @@ function handleTicketDownload() {
                 console.error("Capture Error:", err);
                 alert("Failed to generate image: " + err.message);
                 saveBtn.innerHTML = originalContent;
-                saveBtn.style.pointerEvents = 'auto';
+                saveBtn.classList.remove('btn-disabled-state');
                 if (document.body.contains(clone)) document.body.removeChild(clone);
             });
         }, 100);
     } catch (e) {
         console.error("Setup Error:", e);
         saveBtn.innerHTML = originalContent;
-        saveBtn.style.pointerEvents = 'auto';
+        saveBtn.classList.remove('btn-disabled-state');
     }
 }
 
@@ -140,10 +132,8 @@ window.addEventListener('load', function () {
         setText('ticket-event', event);
         setText('ticket-dept', dept);
 
-        // Use a temporary ID for display since DB hasn't assigned a sequential number yet
-        // In a real app, you might want to fetch the next sequence number or just show "PENDING"
-        // For now, we'll strip the "VTX-" and show a random 2 digit number for aesthetics or "01"
-        const displayId = "01"; // Defaulting to 01 for the success view as a preview
+        // Preview ID
+        const displayId = "01";
         setText('ticket-id', 'NO: #' + displayId);
         setText('ticket-date', currentDate);
 
