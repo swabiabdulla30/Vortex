@@ -1031,6 +1031,12 @@ section {
     }
 
     /* Mobile overrides for Event Badge */
+    .event-info-link {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+
     .event-info-text {
         padding: 15px 20px;
         font-size: 0.9rem;
