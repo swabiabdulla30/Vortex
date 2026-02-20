@@ -1004,12 +1004,12 @@ section {
     letter-spacing: -1px;
     margin-bottom: 24px;
     line-height: 0.9;
-    /* Sweeping light streak through the text */
+    /* Sweeping dark streak through the text */
     background: linear-gradient(105deg,
             #cc0000 15%,
-            #ffffff 30%,
-            #ff4444 40%,
-            #ffffff 50%,
+            #000000 30%,
+            #330000 40%,
+            #000000 50%,
             #cc0000 65%,
             #660000 100%);
     background-size: 250% auto;
@@ -1072,7 +1072,13 @@ section {
     justify-content: center;
     gap: 10px;
     padding: 16px 48px;
-    background: linear-gradient(135deg, #8B0000 0%, #cc0000 100%);
+    background: linear-gradient(105deg,
+            #8B0000 20%,
+            #ff4d4d 40%,
+            #ffffff 50%,
+            #ff4d4d 60%,
+            #cc0000 80%);
+    background-size: 200% auto;
     color: #fff;
     text-decoration: none;
     font-weight: 800;
@@ -1085,6 +1091,17 @@ section {
         box-shadow 0.3s ease;
     overflow: hidden;
     box-shadow: 0 4px 20px rgba(139, 0, 0, 0.5);
+    animation: btnShimmer 3s linear infinite;
+}
+
+@keyframes btnShimmer {
+    0% {
+        background-position: 100% center;
+    }
+
+    100% {
+        background-position: -100% center;
+    }
 }
 
 /* The Grid Pattern Background */
