@@ -1022,12 +1022,25 @@ section {
         pointer-events: all;
     }
 
-    .mobile-only {
-        display: block !important;
-    }
-
     .mobile-profile-card {
         display: flex !important;
+    }
+
+    /* Mobile alignment fixes */
+    .hero-stats {
+        gap: 30px;
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .hero-description {
+        font-size: 0.95rem;
+        padding: 0 20px;
+    }
+
+    .cards-grid {
+        grid-template-columns: 1fr !important;
     }
 
     /* Mobile overrides for Event Badge */
