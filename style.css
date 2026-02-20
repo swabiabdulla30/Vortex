@@ -285,18 +285,18 @@ section {
     flex-direction: column;
     align-items: center;
     font-size: 6rem;
-    line-height: 0.85;
+    line-height: 1;
     letter-spacing: -3px;
     font-weight: 900;
     text-transform: uppercase;
     margin-bottom: 30px;
+    padding-top: 20px;
+    /* Ensure clear of nav */
 }
 
 .hero-title .line {
-    background: linear-gradient(180deg, #fff 20%, rgba(255, 255, 255, 0.4) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #fff;
+    -webkit-text-fill-color: #fff;
 }
 
 .hero-title .highlight-text {
