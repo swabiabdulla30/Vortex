@@ -290,8 +290,7 @@ section {
     font-weight: 900;
     text-transform: uppercase;
     margin-bottom: 30px;
-    padding-top: 20px;
-    /* Ensure clear of nav */
+    padding-top: 60px;
 }
 
 .hero-title .line {
