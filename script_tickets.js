@@ -2,17 +2,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     const container = document.getElementById('tickets-container');
     const userStr = localStorage.getItem('vortexCurrentUser');
 
-    const eventImages = {
-        "PUBG": "https://image2url.com/r2/default/images/1771322980849-6dd25143-dab6-410b-a737-504b63aceea0.jpeg",
-        "TECH HUNT": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&q=80",
-        "WEBSITE DESIGNING COMPETITION": "https://images.unsplash.com/photo-1555099962-4199c345e5dd?auto=format&fit=crop&q=80",
-        "CO-OP E-FOOTBALL TOURNAMENT": "https://images.unsplash.com/photo-1507721999472-8ed4421c4af2?auto=format&fit=crop&q=80",
-        "DEVIL'S MAP": "https://image2url.com/r2/default/images/1771567367713-43840ddf-0d00-429a-b9ae-d5a329392290.jpeg",
-        "ELEVATE": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80",
-        "CYBER DEFENSE": "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&q=80",
-        "AI FRONTIERS": "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&q=80"
-    };
+    // Images and details are read dynamically from events_data.js (single source of truth).
+    // To update an event image, just change the `image` field in events_data.js.
     const defaultImage = "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80";
+
+    function getEventImage(eventName) {
+        if (typeof eventDetails !== 'undefined' && eventDetails[eventName.trim()]) {
+            return eventDetails[eventName.trim()].image || defaultImage;
+        }
+        return defaultImage;
+    }
 
     // Define downloadTicket function
     function downloadTicket(btn) {
@@ -44,7 +43,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Render Event Image
         const dlQrContainer = document.getElementById('dl-qrcode');
-        const imageUrl = eventImages[eventName.trim()] || defaultImage;
+        const imageUrl = getEventImage(eventName.trim());
         dlQrContainer.innerHTML = `<img src="${imageUrl}" crossorigin="anonymous">`;
 
         const originalTicket = document.querySelector('.downloadable-ticket');
@@ -157,7 +156,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         container.innerHTML = tickets.map((ticket, index) => {
-            const imageUrl = eventImages[ticket.event.trim()] || defaultImage;
+            const imageUrl = getEventImage(ticket.event.trim());
             const ticketNumber = (index + 1).toString().padStart(2, '0');
 
             return `
