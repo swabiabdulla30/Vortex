@@ -970,8 +970,8 @@ section {
     /* Glowing border */
     border: 1px solid rgba(160, 0, 0, 0.6);
     animation:
-        elevateFloat 5s ease-in-out infinite,
-        borderPulse 3s ease-in-out infinite,
+        elevateFloat 10s ease-in-out infinite,
+        borderPulse 6s ease-in-out infinite,
         elevateEnter 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
@@ -1016,7 +1016,7 @@ section {
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: textSweep 2.5s linear infinite,
+    animation: textSweep 5s linear infinite,
         elevateEnter 0.8s 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
