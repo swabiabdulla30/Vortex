@@ -59,13 +59,14 @@
 
 /* High-resolution Downloadable Template Styling */
 .downloadable-ticket-container {
-    width: 100%;
-    height: 100%;
+    width: 1200px;
+    height: 630px;
     background: #050505;
     display: flex;
     overflow: hidden;
     position: relative;
     border: 4px solid #8B0000;
+    align-items: stretch;
 }
 
 .ticket-bg-pattern-grid {
@@ -96,6 +97,8 @@
     justify-content: center;
     position: relative;
     z-index: 1;
+    min-height: 630px;
+    align-self: stretch;
 }
 
 .ticket-dl-header {
@@ -168,6 +171,8 @@
     justify-content: center;
     padding: 40px;
     border-left: 4px dashed rgba(255, 255, 255, 0.6);
+    min-height: 630px;
+    align-self: stretch;
 }
 
 .ticket-dl-image-box {
