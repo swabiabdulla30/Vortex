@@ -939,19 +939,6 @@ section {
     }
 }
 
-/* 4. Entrance: fade in + slide up */
-@keyframes elevateEnter {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
 /* ===== FEATURED EVENT BLOCK - PREMIUM ===== */
 .featured-event-block {
     text-align: center;
@@ -971,8 +958,7 @@ section {
     border: 1px solid rgba(160, 0, 0, 0.6);
     animation:
         elevateFloat 10s ease-in-out infinite,
-        borderPulse 6s ease-in-out infinite,
-        elevateEnter 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+        borderPulse 6s ease-in-out infinite;
 }
 
 /* Subtle internal decorative line at top */
@@ -1016,8 +1002,7 @@ section {
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: textSweep 5s linear infinite,
-        elevateEnter 0.8s 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: textSweep 5s linear infinite;
 }
 
 @keyframes textSweep {

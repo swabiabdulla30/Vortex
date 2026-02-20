@@ -146,26 +146,7 @@
 
     <script src="script.js"></script>
 
-    <!-- ELEVATE letter animation -->
-    <script>
-        (function () {
-            const el = document.getElementById('elevate-title');
-            if (!el) return;
-            const text = el.textContent.trim();
-            el.textContent = '';
-            text.split('').forEach((ch, i) => {
-                const span = document.createElement('span');
-                span.textContent = ch;
-                span.style.cssText = [
-                    'display:inline-block',
-                    'opacity:0',
-                    'animation:letterDrop 0.6s cubic-bezier(0.22,1,0.36,1) forwards',
-                    'animation-delay:' + (i * 80) + 'ms'
-                ].join(';');
-                el.appendChild(span);
-            });
-        })();
-    </script>
+
 </body>
 
 </html>
