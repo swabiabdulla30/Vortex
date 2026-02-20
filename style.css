@@ -854,6 +854,70 @@ section {
     bottom: -70px;
 }
 
+/* ===== ELEVATE BLOCK ANIMATIONS ===== */
+
+/* 1. Block floats up and down gently */
+@keyframes elevateFloat {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+/* 2. Border glow pulses between dim and bright red */
+@keyframes borderPulse {
+
+    0%,
+    100% {
+        box-shadow:
+            0 0 0 1px rgba(180, 0, 0, 0.8),
+            0 0 0 3px rgba(6, 6, 6, 0.95),
+            0 0 0 4px rgba(100, 0, 0, 0.25),
+            0 20px 60px rgba(100, 0, 0, 0.2);
+    }
+
+    50% {
+        box-shadow:
+            0 0 0 1px rgba(220, 0, 0, 1),
+            0 0 0 3px rgba(6, 6, 6, 0.95),
+            0 0 0 5px rgba(160, 0, 0, 0.5),
+            0 20px 80px rgba(160, 0, 0, 0.45);
+    }
+}
+
+/* 3. Shimmer sweep on the title */
+@keyframes titleShimmer {
+    0% {
+        filter: drop-shadow(0 0 10px rgba(180, 0, 0, 0.3));
+    }
+
+    50% {
+        filter: drop-shadow(0 0 30px rgba(220, 0, 0, 0.8));
+    }
+
+    100% {
+        filter: drop-shadow(0 0 10px rgba(180, 0, 0, 0.3));
+    }
+}
+
+/* 4. Entrance: fade in + slide up */
+@keyframes elevateEnter {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* ===== FEATURED EVENT BLOCK - PREMIUM ===== */
 .featured-event-block {
     text-align: center;
@@ -866,16 +930,14 @@ section {
     border-radius: 20px;
     position: relative;
     overflow: hidden;
-    /* Premium layered background */
     background:
         radial-gradient(ellipse at top, rgba(100, 0, 0, 0.25) 0%, transparent 65%),
         linear-gradient(160deg, rgba(18, 0, 0, 0.95) 0%, rgba(4, 4, 4, 0.98) 100%);
-    /* Crisp red-black layered border */
-    box-shadow:
-        0 0 0 1px rgba(180, 0, 0, 0.8),
-        0 0 0 3px rgba(6, 6, 6, 0.95),
-        0 0 0 4px rgba(100, 0, 0, 0.25),
-        0 20px 60px rgba(100, 0, 0, 0.2);
+    /* Combined: floating + pulsing border */
+    animation:
+        elevateFloat 5s ease-in-out infinite,
+        borderPulse 3s ease-in-out infinite,
+        elevateEnter 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 /* Subtle internal decorative line at top */
@@ -907,13 +969,34 @@ section {
     letter-spacing: -1px;
     margin-bottom: 24px;
     line-height: 0.9;
-    /* White-to-red gradient text */
     background: linear-gradient(180deg, #ffffff 30%, #cc0000 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     text-shadow: none;
-    filter: drop-shadow(0 0 20px rgba(180, 0, 0, 0.4));
+    animation: titleShimmer 4s ease-in-out infinite,
+        elevateEnter 0.8s 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Staggered entrance for child elements */
+.featured-event-block .event-label {
+    animation: elevateEnter 0.7s 0s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.featured-event-block hr {
+    animation: elevateEnter 0.7s 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.featured-event-desc {
+    animation: elevateEnter 0.7s 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.highlight-date {
+    animation: elevateEnter 0.7s 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.theme-grid-btn {
+    animation: elevateEnter 0.7s 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 /* Thin divider */
