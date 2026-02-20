@@ -844,15 +844,13 @@ section {
 
 /* Featured Event Block (Screenshot Match) */
 .featured-event-block {
-    text-align: left;
-    /* Align like the screenshot */
+    text-align: center;
     margin: 40px auto 60px;
     max-width: 800px;
     padding: 0 20px;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    /* Left align contents */
+    align-items: center;
 }
 
 .featured-event-title {
@@ -888,14 +886,14 @@ section {
     align-items: center;
     justify-content: center;
     padding: 15px 40px;
-    background: #000;
+    background: var(--primary-red);
     color: #fff;
     text-decoration: none;
     font-weight: 700;
     font-size: 1rem;
     letter-spacing: 2px;
     position: relative;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     transition: all 0.3s ease;
     overflow: hidden;
 }
@@ -924,10 +922,10 @@ section {
     right: 0;
     bottom: 0;
     background: linear-gradient(90deg,
-            rgba(0, 0, 0, 1) 0%,
-            rgba(255, 0, 0, 0.1) 50%,
-            /* Subtle red tint in middle */
-            rgba(0, 0, 0, 1) 100%);
+            rgba(139, 0, 0, 0.9) 0%,
+            transparent 40%,
+            transparent 60%,
+            rgba(139, 0, 0, 0.9) 100%);
     z-index: 2;
     pointer-events: none;
 }
@@ -940,13 +938,13 @@ section {
 }
 
 .theme-grid-btn:hover {
-    border-color: rgba(255, 0, 0, 0.5);
-    box-shadow: 0 0 20px rgba(139, 0, 0, 0.4);
+    background: #b30000;
+    border-color: rgba(255, 80, 80, 0.6);
+    box-shadow: 0 0 25px rgba(139, 0, 0, 0.6);
 }
 
 .theme-grid-btn:hover span {
-    transform: scale(1.05);
-    color: var(--primary-red);
+    transform: scale(1.04);
 }
 
 @keyframes eventPulse {
