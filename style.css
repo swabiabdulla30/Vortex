@@ -1001,13 +1001,30 @@ section {
     letter-spacing: -1px;
     margin-bottom: 24px;
     line-height: 0.9;
-    background: linear-gradient(180deg, #ffffff 30%, #cc0000 100%);
+    /* Sweeping light streak through the text */
+    background: linear-gradient(105deg,
+            #cc0000 15%,
+            #ffffff 30%,
+            #ff4444 40%,
+            #ffffff 50%,
+            #cc0000 65%,
+            #660000 100%);
+    background-size: 250% auto;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: none;
-    animation: titleShimmer 4s ease-in-out infinite,
+    animation: textSweep 2.5s linear infinite,
         elevateEnter 0.8s 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes textSweep {
+    0% {
+        background-position: 200% center;
+    }
+
+    100% {
+        background-position: -100% center;
+    }
 }
 
 /* Staggered entrance for child elements */
