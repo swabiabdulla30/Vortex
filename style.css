@@ -1004,12 +1004,12 @@ section {
     letter-spacing: -1px;
     margin-bottom: 24px;
     line-height: 0.9;
-    /* Sweeping dark streak through the text */
+    /* Sweeping light streak through the text */
     background: linear-gradient(105deg,
             #cc0000 15%,
-            #000000 30%,
-            #330000 40%,
-            #000000 50%,
+            #ffffff 30%,
+            #ff4444 40%,
+            #ffffff 50%,
             #cc0000 65%,
             #660000 100%);
     background-size: 250% auto;
@@ -1072,13 +1072,7 @@ section {
     justify-content: center;
     gap: 10px;
     padding: 16px 48px;
-    background: linear-gradient(105deg,
-            #8B0000 20%,
-            #ff4d4d 40%,
-            #ffffff 50%,
-            #ff4d4d 60%,
-            #cc0000 80%);
-    background-size: 200% auto;
+    background: linear-gradient(135deg, #8B0000 0%, #cc0000 100%);
     color: #fff;
     text-decoration: none;
     font-weight: 800;
@@ -1091,17 +1085,6 @@ section {
         box-shadow 0.3s ease;
     overflow: hidden;
     box-shadow: 0 4px 20px rgba(139, 0, 0, 0.5);
-    animation: btnShimmer 3s linear infinite;
-}
-
-@keyframes btnShimmer {
-    0% {
-        background-position: 100% center;
-    }
-
-    100% {
-        background-position: -100% center;
-    }
 }
 
 /* The Grid Pattern Background */
@@ -1140,6 +1123,35 @@ section {
     position: relative;
     z-index: 3;
     transition: letter-spacing 0.3s ease;
+}
+
+/* White light sweep effect */
+.theme-grid-btn span::after {
+    content: '';
+    position: absolute;
+    top: -100%;
+    left: -200%;
+    width: 60px;
+    height: 300%;
+    background: rgba(255, 255, 255, 0.4);
+    transform: rotate(20deg);
+    animation: btnShimmer 4s infinite;
+    z-index: -1;
+    filter: blur(5px);
+}
+
+@keyframes btnShimmer {
+    0% {
+        left: -200%;
+    }
+
+    40% {
+        left: 200%;
+    }
+
+    100% {
+        left: 200%;
+    }
 }
 
 .theme-grid-btn:hover {
