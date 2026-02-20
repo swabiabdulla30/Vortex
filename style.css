@@ -842,73 +842,111 @@ section {
     bottom: -70px;
 }
 
-/* Event Info Badge (Global Styles) */
-.event-info-link {
-    text-decoration: none;
-    display: inline-block;
-    margin-bottom: 30px;
-}
-
-.event-info-text {
-    font-family: var(--font-main);
-    color: #fff;
-    font-size: 1rem;
+/* Featured Event Block (Screenshot Match) */
+.featured-event-block {
+    text-align: left;
+    /* Align like the screenshot */
+    margin: 40px auto 60px;
+    max-width: 800px;
+    padding: 0 20px;
     display: flex;
-    align-items: center;
-    background: rgba(15, 15, 15, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 6px 6px 6px 20px;
-    /* Asymmetric padding to fit flush button */
-    border-radius: 50px;
-    text-transform: uppercase;
-    backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
-    cursor: pointer;
+    flex-direction: column;
+    align-items: flex-start;
+    /* Left align contents */
 }
 
-.event-info-text:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(255, 0, 0, 0.2);
-    border-color: rgba(255, 255, 255, 0.2);
-}
-
-.event-info-text .highlight {
-    color: #fff;
+.featured-event-title {
+    font-size: 5rem;
     font-weight: 900;
-    font-size: 1.1rem;
+    color: #fff;
+    text-transform: uppercase;
     letter-spacing: 2px;
-    margin-right: 15px;
+    margin-bottom: 20px;
+    line-height: 1;
 }
 
-.event-info-text .separator {
-    color: rgba(255, 255, 255, 0.3);
-    font-size: 1rem;
-    margin-right: 15px;
-}
-
-.event-info-text .date {
+.featured-event-desc {
+    font-size: 1.1rem;
     color: #ccc;
-    font-weight: 500;
+    line-height: 1.6;
+    margin-bottom: 40px;
+    max-width: 600px;
+    font-weight: 300;
+}
+
+.highlight-date {
+    display: inline-block;
+    margin-top: 10px;
+    color: var(--primary-red);
+    font-weight: 700;
     letter-spacing: 1px;
 }
 
-.register-action {
-    background: var(--primary-red);
-    color: #fff;
-    padding: 10px 24px;
-    border-radius: 40px;
-    font-size: 0.9rem;
-    font-weight: 700;
-    margin-left: 20px;
-    display: flex;
+/* Screenshot-Style Grid Button */
+.theme-grid-btn {
+    display: inline-flex;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
+    padding: 15px 40px;
+    background: #000;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 2px;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     transition: all 0.3s ease;
+    overflow: hidden;
 }
 
-.event-info-text:hover .register-action {
-    background: #ff1a1a;
-    box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+/* The Grid Pattern Background */
+.theme-grid-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+        radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px);
+    background-size: 8px 8px;
+    /* Small dots */
+    z-index: 1;
+}
+
+/* The Faded Edges (Glow/Fade Effect) */
+.theme-grid-btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg,
+            rgba(0, 0, 0, 1) 0%,
+            rgba(255, 0, 0, 0.1) 50%,
+            /* Subtle red tint in middle */
+            rgba(0, 0, 0, 1) 100%);
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* Ensure text is above overlays */
+.theme-grid-btn span {
+    position: relative;
+    z-index: 3;
+    transition: transform 0.3s ease;
+}
+
+.theme-grid-btn:hover {
+    border-color: rgba(255, 0, 0, 0.5);
+    box-shadow: 0 0 20px rgba(139, 0, 0, 0.4);
+}
+
+.theme-grid-btn:hover span {
+    transform: scale(1.05);
+    color: var(--primary-red);
 }
 
 @keyframes eventPulse {
@@ -1044,47 +1082,19 @@ section {
         grid-template-columns: 1fr !important;
     }
 
-    /* Mobile overrides for Event Badge */
-    .event-info-link {
-        display: flex;
-        justify-content: center;
-        width: 100%;
-        margin-bottom: 25px;
+    /* Mobile overrides for Featured Event Block */
+    .featured-event-block {
+        align-items: center;
+        text-align: center;
+        margin: 20px auto 40px;
     }
 
-    .event-info-text {
-        padding: 5px 5px 5px 15px;
-        font-size: 0.8rem;
-        flex-direction: row;
-        /* Keep horizontal */
-        width: auto;
-        max-width: 100%;
-        margin: 0;
+    .featured-event-title {
+        font-size: 3.5rem;
     }
 
-    .event-info-text .highlight {
+    .featured-event-desc {
         font-size: 0.95rem;
-        margin-right: 8px;
-    }
-
-    .event-info-text .separator {
-        display: block;
-        /* Show separator again */
-        margin-right: 8px;
-        font-size: 0.9rem;
-    }
-
-    .event-info-text .date {
-        font-size: 0.8rem;
-    }
-
-    .register-action {
-        margin-left: 10px;
-        margin-top: 0;
-        width: auto;
-        padding: 8px 16px;
-        font-size: 0.8rem;
-        border-radius: 30px;
     }
 
     .mobile-bottom-actions {
