@@ -1022,6 +1022,12 @@ section {
         pointer-events: all;
     }
 
+    /* Mobile typography scaling */
+    .section-title {
+        font-size: 2.2rem !important;
+        line-height: 1.1;
+    }
+
     .mobile-profile-card {
         display: flex !important;
     }
@@ -1051,14 +1057,15 @@ section {
     }
 
     .event-info-text {
-        padding: 15px 20px;
+        padding: 10px 15px;
         font-size: 0.9rem;
-        gap: 10px;
+        gap: 8px;
         border-width: 1px;
         flex-direction: column;
         text-align: center;
-        width: 80%;
-        margin: 0 auto 30px;
+        width: 90%;
+        max-width: 300px;
+        margin: 0 auto 15px;
     }
 
     .event-info-text .highlight {

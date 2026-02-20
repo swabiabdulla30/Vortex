@@ -206,10 +206,26 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <span style="color: #888;">Attendee:</span>
                         <span>${ticket.name || 'Participant'}</span>
                     </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                        <span style="color: #888;">Department:</span>
-                        <span>${ticket.department || 'General'}</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 15px;">
+                        <div style="font-size: 1.8rem; font-weight: 900; color: #fff; letter-spacing: 2px;">VORTEX</div>
+                        <div class="status-badge" style="background: rgba(139, 0, 0, 0.2); border: 1px solid #8B0000; color: #fff; padding: 5px 15px; border-radius: 5px; font-size: 0.8rem; display: flex; align-items: center; gap: 5px;">
+                            <div style="width: 6px; height: 6px; background: #fff; border-radius: 50%;"></div> CONFIRMED
+                        </div>
                     </div>
+
+                    <h2 style="font-size: clamp(1.8rem, 6vw, 2.8rem); font-weight: 900; color: #fff; text-transform: uppercase; line-height: 1.1; margin-bottom: 30px; text-shadow: 0 0 20px rgba(139, 0, 0, 0.5);">${ticket.event}</h2>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div style="display: flex; flex-direction: column;">
+                            <span style="color: #888; font-size: 0.9rem;">Department:</span>
+                            <span style="font-weight: bold; color: #fff;">${ticket.department || 'General'}</span>
+                        </div>
+                        <div style="display: flex; flex-direction: column;">
+                            <span style="color: #888; font-size: 0.9rem;">Ticket ID:</span>
+                            <span style="font-weight: bold; color: #fff;">${ticket.ticketId}</span>
+                        </div>
+                    </div>
+
                     <div style="text-align: center; margin-top: 20px; border-radius: 10px; width: 100%; height: 180px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
                         <img src="${imageUrl}" alt="Event Image" style="width: 100%; height: 100%; object-fit: cover;">
                     </div>
