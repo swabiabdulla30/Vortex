@@ -99,6 +99,7 @@ function exportExcel() {
 
 function populateEventFilter(data) {
     const filter = document.getElementById('event-filter');
+    if (!filter) return;
     const currentSelection = filter.value;
     const events = [...new Set(data.map(item => item.event).filter(Boolean))];
 
@@ -111,8 +112,12 @@ function populateEventFilter(data) {
 }
 
 function filterAndRender() {
-    const eventFilter = document.getElementById('event-filter').value;
-    const statusFilter = document.getElementById('status-filter').value;
+    const eventFilterEl = document.getElementById('event-filter');
+    const statusFilterEl = document.getElementById('status-filter');
+    if (!eventFilterEl || !statusFilterEl) return;
+
+    const eventFilter = eventFilterEl.value;
+    const statusFilter = statusFilterEl.value;
 
     let filteredData = allRegistrations;
 
@@ -274,8 +279,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (deleteAllBtn) deleteAllBtn.addEventListener('click', deleteAllRegistrations);
 
     // Filters
-    document.getElementById('event-filter').addEventListener('change', filterAndRender);
-    document.getElementById('status-filter').addEventListener('change', filterAndRender);
+    const evFilt = document.getElementById('event-filter');
+    if (evFilt) evFilt.addEventListener('change', filterAndRender);
+
+    const stFilt = document.getElementById('status-filter');
+    if (stFilt) stFilt.addEventListener('change', filterAndRender);
 
     // Event Delegation for Table Actions
     const dataBody = document.getElementById('data-body');

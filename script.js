@@ -2,6 +2,16 @@
 window.addEventListener('load', function () {
     const loadingScreen = document.getElementById('loading-screen');
 
+    // --- Global Client Error Handler (Stability) ---
+    window.onerror = function (message, source, lineno, colno, error) {
+        console.error(`[VORTEX_CLIENT_ERROR] ${message} at ${source}:${lineno}:${colno}`);
+        // Optional: Send to server log
+    };
+
+    window.onunhandledrejection = function (event) {
+        console.error('[VORTEX_CLIENT_REJECTION]', event.reason);
+    };
+
     try {
         // Check User Session (Authenticated Logic)
         const currentUserData = localStorage.getItem('vortexCurrentUser');
@@ -145,8 +155,6 @@ document.addEventListener('mousemove', function (e) {
 
 // Gallery Slider Logic matched to index.html structure
 document.addEventListener('DOMContentLoaded', function () {
-    const nextBtn = document.getElementById('next');
-    const prevBtn = document.getElementById('prev');
     const slide = document.querySelector('.slide');
 
     if (nextBtn && prevBtn && slide) {
@@ -406,7 +414,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         lightbox.addEventListener('click', (e) => {
-            if (e.target !== lightboxImg) {
+            if (lightboxImg && e.target !== lightboxImg) {
                 closeLightbox();
             }
         });

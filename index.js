@@ -40,6 +40,18 @@ app.use("/api/", limiter); // Apply to API routes
 // Serve static files from the current directory
 app.use(express.static(path.join(process.cwd())));
 
+// --- Request Logger (Stability/Monitoring) ---
+app.use((req, res, next) => {
+    const start = Date.now();
+    res.on('finish', () => {
+        const duration = Date.now() - start;
+        if (res.statusCode >= 400) {
+            console.error(`[SERVER] ${req.method} ${req.url} -> ${res.statusCode} (${duration}ms)`);
+        }
+    });
+    next();
+});
+
 app.get('/debug-info', (req, res) => {
     try {
         const cwd = process.cwd();
@@ -91,9 +103,15 @@ if (require.main === module) {
     startExcelService();
 }
 
-process.on('unhandledRejection', (err) => {
-    console.error('Unhandled Rejection:', err);
-    // Don't exit the process in serverless env
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('CRITICAL: Unhandled Rejection at:', promise, 'reason:', reason);
+    // In a production app, you might want to log this to a service (e.g., Sentry)
+});
+
+process.on('uncaughtException', (err) => {
+    console.error('CRITICAL: Uncaught Exception:', err);
+    // Optional: Graceful shutdown logic here if NOT in serverless
+    // if (require.main === module) process.exit(1);
 });
 
 // --- Schemas ---

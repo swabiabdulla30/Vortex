@@ -48,11 +48,17 @@ const appendRegistrationToExcel = async (registration) => {
         const newWorksheet = xlsx.utils.json_to_sheet(currentData);
         workbook.Sheets["Registrations"] = newWorksheet;
 
-        xlsx.writeFile(workbook, EXCEL_FILE);
-        console.log(`[Excel Service] Saved registration for ${registration.email}`);
+        // Wrap in another try-catch for file locking issues
+        try {
+            xlsx.writeFile(workbook, EXCEL_FILE);
+            console.log(`[Excel Service] Saved registration for ${registration.email}`);
+        } catch (writeErr) {
+            console.error("[Excel Service] CRITICAL: Failed to write to file (is it open?):", writeErr.message);
+            // Non-fatal for the server, but should be logged
+        }
         return { success: true };
     } catch (error) {
-        console.error("[Excel Service] Error writing to Excel:", error);
+        console.error("[Excel Service] Error processing Excel data:", error);
         return { success: false, error: error.message };
     }
 };

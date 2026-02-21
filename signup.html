@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Vortex Innovators</title>
-    <meta name="description" content="Login to Vortex Innovators - College Innovation Event.">
+    <title>Sign Up - Vortex Innovators</title>
+    <meta name="description" content="Create your Vortex Innovators account and join the innovation community.">
     <meta name="referrer" content="no-referrer-when-downgrade">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,10 +25,12 @@
             overflow: hidden auto;
             background: radial-gradient(circle at center, #1a0000 0%, #050505 100%);
             scrollbar-width: none;
+            /* Firefox */
         }
 
         body::-webkit-scrollbar {
             display: none;
+            /* Chrome/Safari */
         }
 
         .split-layout {
@@ -38,14 +40,14 @@
             position: relative;
             z-index: 10;
             perspective: 1500px;
-            animation: flipInTopLeft 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-            transform-origin: top left;
+            animation: flipInBottomRight 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            transform-origin: bottom right;
         }
 
-        @keyframes flipInTopLeft {
+        @keyframes flipInBottomRight {
             from {
                 opacity: 0;
-                transform: translate(-50%, -50%) rotateY(-90deg) rotateX(45deg) scale(0.5);
+                transform: translate(50%, 50%) rotateY(90deg) rotateX(-45deg) scale(0.5);
                 filter: blur(20px);
             }
 
@@ -57,12 +59,12 @@
         }
 
         .split-layout.flip-out {
-            animation: flipOutTopLeft 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            animation: flipOutBottomRight 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
             pointer-events: none;
-            transform-origin: top left;
+            transform-origin: bottom right;
         }
 
-        @keyframes flipOutTopLeft {
+        @keyframes flipOutBottomRight {
             from {
                 opacity: 1;
                 transform: translate(0, 0) rotateY(0) rotateX(0) scale(1);
@@ -71,7 +73,7 @@
 
             to {
                 opacity: 0;
-                transform: translate(-50%, -50%) rotateY(-90deg) rotateX(45deg) scale(0.5);
+                transform: translate(50%, 50%) rotateY(90deg) rotateX(-45deg) scale(0.5);
                 filter: blur(20px);
             }
         }
@@ -117,28 +119,8 @@
             }
         }
 
-        /* Left Side: The Form Container */
+        /* Left Side: The Visual Element */
         .left-panel {
-            flex: 1;
-            max-width: 500px;
-            background: transparent;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 70px 40px 20px 40px;
-            /* 70px top clears the fixed nav */
-            position: relative;
-            z-index: 20;
-            overflow-y: auto;
-            scrollbar-width: none;
-        }
-
-        .left-panel::-webkit-scrollbar {
-            display: none;
-        }
-
-        /* Right Side: The Visual Element */
-        .right-panel {
             flex: 2;
             position: relative;
             background: transparent;
@@ -150,13 +132,13 @@
         }
 
         /* Abstract glowing grid/logo for the college event */
-        .right-panel-content {
+        .left-panel-content {
             text-align: center;
             color: white;
             z-index: 2;
         }
 
-        .right-panel-content h1 {
+        .left-panel-content h1 {
             font-family: 'Cinzel', serif;
             font-size: 5rem;
             letter-spacing: 15px;
@@ -169,7 +151,7 @@
             animation: pulseGlow 4s infinite alternate;
         }
 
-        .right-panel-content p {
+        .left-panel-content p {
             font-family: 'Montserrat', sans-serif;
             font-size: 1.2rem;
             letter-spacing: 5px;
@@ -190,45 +172,25 @@
             }
         }
 
-        /* Decorative glowing lines on right panel */
-        .glow-line {
-            position: absolute;
-            background: linear-gradient(90deg, transparent, rgba(255, 26, 26, 0.8), transparent);
-            height: 1px;
-            width: 150%;
-            left: -25%;
-            transform: rotate(-35deg);
-            opacity: 0.3;
+        /* Right Side: The Form Container */
+        .right-panel-form {
+            flex: 1;
+            max-width: 500px;
+            background: transparent;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 70px 40px 20px 40px;
+            /* 70px top clears the fixed nav */
+            position: relative;
+            z-index: 20;
+            overflow-y: auto;
+            scrollbar-width: none;
         }
 
-        .glow-line:nth-child(1) {
-            top: 20%;
-            animation: drift 10s infinite linear;
+        .right-panel-form::-webkit-scrollbar {
+            display: none;
         }
-
-        .glow-line:nth-child(2) {
-            top: 50%;
-            opacity: 0.5;
-            height: 2px;
-            box-shadow: 0 0 20px #ff1a1a;
-            animation: drift 15s infinite linear reverse;
-        }
-
-        .glow-line:nth-child(3) {
-            top: 80%;
-            animation: drift 12s infinite linear;
-        }
-
-        @keyframes drift {
-            from {
-                transform: rotate(-35deg) translateY(-50px);
-            }
-
-            to {
-                transform: rotate(-35deg) translateY(50px);
-            }
-        }
-
 
         /* ── Premium Form Styling (No Box) ── */
         .form-wrapper {
@@ -402,7 +364,12 @@
                 min-height: 100vh;
             }
 
+            /* Hide left graphic panel on mobile */
             .left-panel {
+                display: none;
+            }
+
+            .right-panel-form {
                 max-width: 100%;
                 width: 100%;
                 min-height: 100dvh;
@@ -419,11 +386,6 @@
 
             .login-header h2 {
                 font-size: 1.7rem;
-            }
-
-            /* Hide graphic panel on mobile */
-            .right-panel {
-                display: none;
             }
 
             body {
@@ -488,23 +450,34 @@
         <div class="glow-line line2"></div>
         <div class="glow-line line3"></div>
 
-        <!-- Left Panel: Form -->
+        <!-- Left Panel: Visuals -->
         <div class="left-panel">
+            <div class="left-panel-content">
+                <h1>VORTEX</h1>
+                <p>Innovators 2k24</p>
+            </div>
+        </div>
+
+        <!-- Right Panel: Form (Mirrors Login.html to slide from other side) -->
+        <div class="right-panel-form">
             <div class="form-wrapper">
                 <div class="login-header">
-                    <h2>SYSTEM ACCESS</h2>
-                    <p>Authenticate with your identity provider</p>
+                    <h2>CREATE IDENTITY</h2>
+                    <p>Register a new account to get started</p>
                 </div>
 
-                <!-- Login Form -->
-                <form id="std-login-form" class="auth-form">
+                <!-- Signup Form -->
+                <form id="std-signup-form" class="auth-form">
                     <div class="form-group">
-                        <input type="email" id="login-email" placeholder="Email Address" required>
+                        <input type="text" id="signup-name" placeholder="Full Name" required>
                     </div>
                     <div class="form-group">
-                        <input type="password" id="login-password" placeholder="Password" required>
+                        <input type="email" id="signup-email" placeholder="Email Address" required>
                     </div>
-                    <button type="submit" class="submit-btn full-width">ACCESS SYSTEM</button>
+                    <div class="form-group">
+                        <input type="password" id="signup-password" placeholder="Password" required>
+                    </div>
+                    <button type="submit" class="submit-btn full-width">REGISTER ID</button>
                 </form>
 
                 <div id="auth-message"></div>
@@ -512,29 +485,31 @@
                 <!-- Divider -->
                 <div class="or-divider"><span>OR</span></div>
 
-                <!-- Google Sign-In Configuration -->
+                <!-- Google Sign-In Config -->
                 <div id="g_id_onload"
                     data-client_id="239875271846-pamr47sh20r4ccm0lihdi1k73jgg6g6a.apps.googleusercontent.com"
-                    data-callback="handleCredentialResponse" data-auto_prompt="false" data-context="signin"
-                    data-ux_mode="popup" data-auto_select="true">
+                    data-callback="handleCredentialResponse" data-auto_prompt="false" data-context="signup"
+                    data-ux_mode="popup" data-auto_select="false">
                 </div>
 
-                <!-- Custom Google Button -->
+                <!-- Custom Google Sign-Up Button -->
                 <div id="gsi-container" style="margin-bottom: 10px; width: 100%;">
                     <button id="custom-google-btn" type="button" class="google-btn-custom">
                         <img src="https://image2url.com/r2/default/images/1771475892216-8e96624f-122a-4124-b40f-69365e0e8667.png"
                             alt="Google Logo">
-                        <span>Sign in with Google</span>
+                        <span>Sign up with Google</span>
                     </button>
                 </div>
+
                 <div id="gsi-status"
                     style="font-size: 0.8rem; color: #ffeb3b; display: none; margin-bottom: 10px; text-align: center;">
-                    Google Library loading...</div>
+                    Google Library loading...
+                </div>
 
-                <!-- Navigate to Signup -->
-                <div class="switch-page-row" style="margin-top: 10px;">
-                    <span>Don't have an account?</span>
-                    <button class="switch-page-btn" id="go-to-signup">CREATE ACCOUNT →</button>
+                <!-- Navigate to Login -->
+                <div class="switch-page-row" style="margin-top: 10px; padding-bottom: 50px;">
+                    <span>Already have an account?</span>
+                    <button class="switch-page-btn" id="go-to-login">LOGIN</button>
                     <div style="margin-top: 15px;">
                         <a href="mailto:vortexinnovators2k24@gmail.com"
                             style="color: #666; text-decoration: none; font-size: 0.8rem; transition: color 0.3s;">Having
@@ -552,139 +527,141 @@
                         SYSTEM_STATUS: ONLINE</span>
                 </div>
             </div>
+
         </div>
 
-        <!-- Right Panel: Visuals -->
-        <div class="right-panel">
-            <div class="right-panel-content">
-                <h1>VORTEX</h1>
-                <p>Innovators 2k24</p>
-            </div>
-        </div>
+        <script src="script.js"></script>
+        <script src="https://accounts.google.com/gsi/client" async defer></script>
+        <script>
+            // ── Page Transition ──────────────────────────────────────────────
+            function navigateWithTransition(url) {
+                document.querySelector('.split-layout').classList.add('flip-out');
+                setTimeout(() => { window.location.href = url; }, 550);
+            }
 
-    </div>
+            document.getElementById('go-to-login').addEventListener('click', () => {
+                navigateWithTransition('login.html');
+            });
 
-    <script src="script.js"></script>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script>
-        // ── Page Transition ──────────────────────────────────────────────
-        function navigateWithTransition(url) {
-            document.querySelector('.split-layout').classList.add('flip-out');
-            setTimeout(() => { window.location.href = url; }, 550);
-        }
+            // ── Google Sign-In/Up ─────────────────────────────────────────────
+            function handleCredentialResponse(response) {
+                function decodeJwtResponse(token) {
+                    try {
+                        var base64Url = token.split('.')[1];
+                        var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                        var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function (c) {
+                            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                        }).join(''));
+                        return JSON.parse(jsonPayload);
+                    } catch (e) { console.error("JWT Decode Error", e); return {}; }
+                }
 
-        document.getElementById('go-to-signup').addEventListener('click', () => {
-            navigateWithTransition('signup.html');
-        });
+                const responsePayload = decodeJwtResponse(response.credential);
+                const googleUser = {
+                    name: responsePayload.name,
+                    email: responsePayload.email,
+                    picture: responsePayload.picture,
+                    provider: "google",
+                    id: responsePayload.sub,
+                    isPaid: false
+                };
+                const storedUsers = JSON.parse(localStorage.getItem('vortexUsers')) || [];
+                const existingUser = storedUsers.find(u => u.email === googleUser.email);
+                if (existingUser) googleUser.isPaid = existingUser.isPaid || false;
+                else { storedUsers.push(googleUser); localStorage.setItem('vortexUsers', JSON.stringify(storedUsers)); }
+                localStorage.setItem('vortexCurrentUser', JSON.stringify(googleUser));
+                const redirectUrl = sessionStorage.getItem('loginRedirectUrl');
+                if (redirectUrl) { sessionStorage.removeItem('loginRedirectUrl'); window.location.href = redirectUrl; }
+                else { window.location.href = 'index.html'; }
+            }
 
-        // ── Google Sign-In ────────────────────────────────────────────────
-        function handleCredentialResponse(response) {
-            const responsePayload = decodeJwtResponse(response.credential);
-            const googleUser = {
-                name: responsePayload.name,
-                email: responsePayload.email,
-                picture: responsePayload.picture,
-                provider: "google",
-                id: responsePayload.sub,
-                isPaid: false
-            };
-            const storedUsers = JSON.parse(localStorage.getItem('vortexUsers')) || [];
-            const existingUser = storedUsers.find(u => u.email === googleUser.email);
-            if (existingUser) googleUser.isPaid = existingUser.isPaid || false;
-            else { storedUsers.push(googleUser); localStorage.setItem('vortexUsers', JSON.stringify(storedUsers)); }
-            localStorage.setItem('vortexCurrentUser', JSON.stringify(googleUser));
-            const redirectUrl = sessionStorage.getItem('loginRedirectUrl');
-            if (redirectUrl) { sessionStorage.removeItem('loginRedirectUrl'); window.location.href = redirectUrl; }
-            else { window.location.href = 'index.html'; }
-        }
+            // ── Signup Handler ────────────────────────────────────────────────
+            document.getElementById('std-signup-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const name = document.getElementById('signup-name').value;
+                const email = document.getElementById('signup-email').value;
+                const password = document.getElementById('signup-password').value;
+                const msg = document.getElementById('auth-message');
 
-        function decodeJwtResponse(token) {
-            try {
-                var base64Url = token.split('.')[1];
-                var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function (c) {
-                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-                }).join(''));
-                return JSON.parse(jsonPayload);
-            } catch (e) { console.error("JWT Decode Error", e); return {}; }
-        }
+                msg.textContent = 'Registering Identity...';
+                msg.style.color = '#fff';
 
-        // ── Login Handler ─────────────────────────────────────────────────
-        document.getElementById('std-login-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-            const msg = document.getElementById('auth-message');
-            msg.textContent = 'Authenticating...';
-            msg.style.color = '#fff';
-            try {
-                const result = await loginUser(email, password);
-                if (result.success) {
-                    msg.textContent = 'Access Granted. Redirecting...';
-                    msg.style.color = '#ff1a1a';
-                    setTimeout(() => {
-                        const redirectUrl = sessionStorage.getItem('loginRedirectUrl');
-                        window.location.href = redirectUrl || 'index.html';
-                    }, 1000);
-                } else {
-                    msg.textContent = 'Error: ' + result.message;
+                try {
+                    const result = await registerUser(name, email, password);
+                    if (result.success) {
+                        msg.textContent = 'Registration Successful. Logging you in...';
+                        msg.style.color = '#ff1a1a';
+                        try {
+                            const loginResult = await loginUser(email, password);
+                            if (loginResult.success) {
+                                setTimeout(() => {
+                                    const redirectUrl = sessionStorage.getItem('loginRedirectUrl');
+                                    window.location.href = redirectUrl || 'index.html';
+                                }, 1000);
+                            } else { throw new Error(loginResult.message); }
+                        } catch (loginErr) {
+                            console.error("Auto-login failed:", loginErr);
+                            msg.textContent = 'Registration Successful. Please sign in.';
+                            setTimeout(() => { navigateWithTransition('login.html'); }, 1500);
+                        }
+                    } else {
+                        msg.textContent = 'Error: ' + result.message;
+                        msg.style.color = '#ff4444';
+                    }
+                } catch (err) {
+                    console.error(err);
+                    msg.textContent = 'Network Error during Registration';
                     msg.style.color = '#ff4444';
                 }
-            } catch (err) {
-                msg.textContent = 'System Error: ' + err.message;
-                msg.style.color = '#ff4444';
-            }
-        });
+            });
 
-        // ── Custom Google Button ──────────────────────────────────────────
-        window.addEventListener('load', () => {
-            const fragmentString = window.location.hash.substring(1);
-            const params = new URLSearchParams(fragmentString);
-            const idToken = params.get('id_token');
-            if (idToken) {
-                history.replaceState(null, null, ' ');
-                handleCredentialResponse({ credential: idToken });
-                return;
-            }
-
-            const statusDiv = document.getElementById('gsi-status');
-            const customBtn = document.getElementById('custom-google-btn');
-            if (customBtn) {
-                customBtn.addEventListener('click', () => {
-                    if (typeof google !== 'undefined' && google.accounts) {
-                        google.accounts.id.prompt((notification) => {
-                            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-                                fallbackToRedirect(statusDiv);
-                            }
-                        });
-                    } else {
-                        fallbackToRedirect(statusDiv);
-                    }
-                });
-            }
-
-            function fallbackToRedirect(statusDisplay) {
-                if (statusDisplay) {
-                    statusDisplay.style.display = 'block';
-                    statusDisplay.innerHTML = 'Redirecting to Google...';
-                    statusDisplay.style.color = '#ff1a1a';
+            // ── Custom Google Button ──────────────────────────────────────────
+            window.addEventListener('load', () => {
+                const fragmentString = window.location.hash.substring(1);
+                const params = new URLSearchParams(fragmentString);
+                const idToken = params.get('id_token');
+                if (idToken) {
+                    history.replaceState(null, null, ' ');
+                    handleCredentialResponse({ credential: idToken });
+                    return;
                 }
-                const clientId = "239875271846-pamr47sh20r4ccm0lihdi1k73jgg6g6a.apps.googleusercontent.com";
-                const redirectUri = window.location.origin + window.location.pathname;
-                const scope = "email profile openid";
-                const responseType = "id_token";
-                const nonce = "vortex_" + Date.now();
-                const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=${responseType}&scope=${encodeURIComponent(scope)}&nonce=${nonce}`;
-                window.location.href = authUrl;
-            }
 
-            if (window.self !== window.top) {
-                statusDiv.style.display = 'block';
-                statusDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Running in Iframe. Google Login disabled.';
-                statusDiv.style.color = '#ff9800';
-            }
-        });
-    </script>
+                const statusDiv = document.getElementById('gsi-status');
+                const customBtn = document.getElementById('custom-google-btn');
+                if (customBtn) {
+                    customBtn.addEventListener('click', () => {
+                        if (typeof google !== 'undefined' && google.accounts) {
+                            google.accounts.id.prompt((notification) => {
+                                if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+                                    fallbackToRedirect(statusDiv);
+                                }
+                            });
+                        } else { fallbackToRedirect(statusDiv); }
+                    });
+                }
+
+                function fallbackToRedirect(statusDisplay) {
+                    if (statusDisplay) {
+                        statusDisplay.style.display = 'block';
+                        statusDisplay.innerHTML = 'Redirecting to Google...';
+                        statusDisplay.style.color = '#ff1a1a';
+                    }
+                    const clientId = "239875271846-pamr47sh20r4ccm0lihdi1k73jgg6g6a.apps.googleusercontent.com";
+                    const redirectUri = window.location.origin + window.location.pathname;
+                    const scope = "email profile openid";
+                    const responseType = "id_token";
+                    const nonce = "vortex_" + Date.now();
+                    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=${responseType}&scope=${encodeURIComponent(scope)}&nonce=${nonce}`;
+                    window.location.href = authUrl;
+                }
+
+                if (window.self !== window.top) {
+                    statusDiv.style.display = 'block';
+                    statusDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Running in Iframe. Google Login disabled.';
+                    statusDiv.style.color = '#ff9800';
+                }
+            });
+        </script>
 </body>
 
 </html>
