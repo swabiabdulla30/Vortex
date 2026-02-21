@@ -55,15 +55,38 @@ async function fetchData() {
     }
 }
 
+function getFilteredRegistrations() {
+    const eventFilter = document.getElementById('event-filter')?.value || 'all';
+    const statusFilter = document.getElementById('status-filter')?.value || 'all';
+
+    let filtered = allRegistrations;
+
+    if (eventFilter !== 'all') {
+        filtered = filtered.filter(item => item.event === eventFilter);
+    }
+
+    if (statusFilter !== 'all') {
+        if (statusFilter === 'PAID') {
+            filtered = filtered.filter(item => item.paymentStatus === 'PAID');
+        } else {
+            filtered = filtered.filter(item => item.paymentStatus !== 'PAID');
+        }
+    }
+
+    return { filtered, eventFilter, statusFilter };
+}
+
 function exportExcel() {
-    if (!allRegistrations || allRegistrations.length === 0) {
+    const { filtered, eventFilter, statusFilter } = getFilteredRegistrations();
+
+    if (!filtered || filtered.length === 0) {
         alert("No data available to export.");
         return;
     }
 
     try {
         const headers = ["Ticket ID", "Name", "Event", "Email", "Phone", "Department", "Year", "College", "Date", "Payment Status", "Transaction ID"];
-        const rows = allRegistrations.map(r => [
+        const rows = filtered.map(r => [
             r.ticketId || '',
             `"${(r.name || '').replace(/"/g, '""')}"`,
             `"${(r.event || '').replace(/"/g, '""')}"`,
@@ -82,11 +105,17 @@ function exportExcel() {
             ...rows.map(row => row.join(','))
         ].join('\n');
 
+        // Build descriptive filename based on active filters
+        const datePart = new Date().toISOString().slice(0, 10);
+        const eventPart = eventFilter !== 'all' ? `_${eventFilter.replace(/\s+/g, '_')}` : '_AllEvents';
+        const statusPart = statusFilter !== 'all' ? `_${statusFilter}` : '';
+        const filename = `vortex${eventPart}${statusPart}_${datePart}.csv`;
+
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.setAttribute('href', url);
-        link.setAttribute('download', `vortex_registrations_${new Date().toISOString().slice(0, 10)}.csv`);
+        link.setAttribute('download', filename);
         link.style.visibility = 'hidden';
         document.body.appendChild(link);
         link.click();
@@ -96,6 +125,7 @@ function exportExcel() {
         alert("Failed to export data: " + error.message);
     }
 }
+
 
 function populateEventFilter(data) {
     const filter = document.getElementById('event-filter');
