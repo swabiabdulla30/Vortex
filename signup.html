@@ -620,14 +620,10 @@
                 const statusDiv = document.getElementById('gsi-status');
                 const customBtn = document.getElementById('custom-google-btn');
                 if (customBtn) {
+                    // Always use redirect flow on signup page — Google One Tap popup
+                    // is suppressed in "signup" context due to Google's UX policies.
                     customBtn.addEventListener('click', () => {
-                        if (typeof google !== 'undefined' && google.accounts) {
-                            google.accounts.id.prompt((notification) => {
-                                if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-                                    fallbackToRedirect(statusDiv);
-                                }
-                            });
-                        } else { fallbackToRedirect(statusDiv); }
+                        fallbackToRedirect(statusDiv);
                     });
                 }
 
