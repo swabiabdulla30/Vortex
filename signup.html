@@ -640,7 +640,8 @@
                         statusDisplay.style.color = '#ff1a1a';
                     }
                     const clientId = "239875271846-pamr47sh20r4ccm0lihdi1k73jgg6g6a.apps.googleusercontent.com";
-                    const redirectUri = window.location.origin + window.location.pathname;
+                    // Use login.html as redirect URI — it's already registered in Google Cloud Console
+                    const redirectUri = window.location.origin + '/login.html';
                     const scope = "email profile openid";
                     const responseType = "id_token";
                     const nonce = "vortex_" + Date.now();
