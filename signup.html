@@ -479,8 +479,8 @@
                 <!-- Google Sign-In Config -->
                 <div id="g_id_onload"
                     data-client_id="239875271846-pamr47sh20r4ccm0lihdi1k73jgg6g6a.apps.googleusercontent.com"
-                    data-callback="handleCredentialResponse" data-auto_prompt="false" data-context="signup"
-                    data-ux_mode="popup" data-auto_select="false">
+                    data-callback="handleCredentialResponse" data-auto_prompt="false" data-context="signin"
+                    data-ux_mode="popup" data-auto_select="true">
                 </div>
 
                 <!-- Custom Google Sign-Up Button -->
@@ -620,10 +620,16 @@
                 const statusDiv = document.getElementById('gsi-status');
                 const customBtn = document.getElementById('custom-google-btn');
                 if (customBtn) {
-                    // Always use redirect flow on signup page — Google One Tap popup
-                    // is suppressed in "signup" context due to Google's UX policies.
                     customBtn.addEventListener('click', () => {
-                        fallbackToRedirect(statusDiv);
+                        if (typeof google !== 'undefined' && google.accounts) {
+                            google.accounts.id.prompt((notification) => {
+                                if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+                                    fallbackToRedirect(statusDiv);
+                                }
+                            });
+                        } else {
+                            fallbackToRedirect(statusDiv);
+                        }
                     });
                 }
 
