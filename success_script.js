@@ -147,8 +147,9 @@ window.addEventListener('load', function () {
         // Event image is read from events_data.js (single source of truth).
         // To update, just change the `image` field in events_data.js.
         const defaultImage = "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80";
-        const imageUrl = (typeof eventDetails !== 'undefined' && eventDetails[event.trim()])
-            ? (eventDetails[event.trim()].image || defaultImage)
+        const cleanEventName = event ? event.trim().toUpperCase() : '';
+        const imageUrl = (typeof eventDetails !== 'undefined' && eventDetails[cleanEventName])
+            ? (eventDetails[cleanEventName].image || defaultImage)
             : defaultImage;
 
         // Set Images

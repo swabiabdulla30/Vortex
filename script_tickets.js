@@ -7,8 +7,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const defaultImage = "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80";
 
     function getEventImage(eventName) {
-        if (typeof eventDetails !== 'undefined' && eventDetails[eventName.trim()]) {
-            return eventDetails[eventName.trim()].image || defaultImage;
+        if (!eventName) return defaultImage;
+        const cleanName = eventName.trim().toUpperCase();
+        if (typeof eventDetails !== 'undefined' && eventDetails[cleanName]) {
+            return eventDetails[cleanName].image || defaultImage;
         }
         return defaultImage;
     }
