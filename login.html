@@ -4,12 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Vortex Innovators</title>
-    <meta name="description" content="Login to Vortex Innovators - College Innovation Event.">
+    <title>Login / Sign Up - Vortex Innovators</title>
+    <meta name="description" content="Login or create your Vortex Innovators account.">
     <meta name="referrer" content="no-referrer-when-downgrade">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Premium Fonts: Cinzel for headers, Montserrat for text -->
     <link
         href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Montserrat:wght@300;400;600&display=swap"
         rel="stylesheet">
@@ -19,66 +18,25 @@
         integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
-        /* ── Split Screen Layout ── */
+        /* ── Base ── */
         body {
             margin: 0;
             overflow: hidden auto;
             background: radial-gradient(circle at center, #1a0000 0%, #050505 100%);
             scrollbar-width: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
         }
 
         body::-webkit-scrollbar {
             display: none;
         }
 
-        .split-layout {
-            display: flex;
-            height: 100vh;
-            width: 100vw;
-            position: relative;
-            z-index: 10;
-            perspective: 1500px;
-            animation: flipInTopLeft 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-            transform-origin: top left;
-        }
-
-        @keyframes flipInTopLeft {
-            from {
-                opacity: 0;
-                transform: translate(-50%, -50%) rotateY(-90deg) rotateX(45deg) scale(0.5);
-                filter: blur(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translate(0, 0) rotateY(0) rotateX(0) scale(1);
-                filter: blur(0);
-            }
-        }
-
-        .split-layout.flip-out {
-            animation: flipOutTopLeft 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-            pointer-events: none;
-            transform-origin: top left;
-        }
-
-        @keyframes flipOutTopLeft {
-            from {
-                opacity: 1;
-                transform: translate(0, 0) rotateY(0) rotateX(0) scale(1);
-                filter: blur(0);
-            }
-
-            to {
-                opacity: 0;
-                transform: translate(-50%, -50%) rotateY(-90deg) rotateX(45deg) scale(0.5);
-                filter: blur(20px);
-            }
-        }
-
-        /* Decorative glowing lines on the background */
+        /* ── Ambient background lines ── */
         .glow-line {
-            position: absolute;
+            position: fixed;
             background: linear-gradient(90deg, transparent, rgba(255, 26, 26, 0.8), transparent);
             height: 1px;
             width: 150%;
@@ -117,122 +75,175 @@
             }
         }
 
-        /* Left Side: The Form Container */
-        .left-panel {
-            flex: 1;
-            max-width: 500px;
+        /* ── Main Container (The Wipe Area) ── */
+        .auth-container {
+            position: relative;
+            width: 95vw;
+            max-width: 1100px;
+            min-height: 85vh;
+            max-height: 750px;
             background: transparent;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+            z-index: 10;
+            display: flex;
+            align-items: stretch;
+            animation: containerEntrance 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            border: 1px solid rgba(255, 26, 26, 0.1);
+        }
+
+        @keyframes containerEntrance {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(20px);
+                filter: blur(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+                filter: blur(0);
+            }
+        }
+
+        /* ── Forms Background (Dark base layer) ── */
+        .forms-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: rgba(10, 0, 0, 0.4);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            z-index: 1;
+        }
+
+        .form-panel {
+            width: 100%;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 70px 40px 20px 40px;
-            /* 70px top clears the fixed nav */
-            position: relative;
-            z-index: 20;
-            overflow-y: auto;
-            scrollbar-width: none;
+            align-items: center;
+            padding: 40px;
+            z-index: 2;
+            transition: opacity 0.4s ease-in-out, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
-        .left-panel::-webkit-scrollbar {
-            display: none;
+        .form-panel.login {
+            padding: 0 20px;
         }
 
-        /* Right Side: The Visual Element */
-        .right-panel {
-            flex: 2;
-            position: relative;
-            background: transparent;
+        .form-panel.signup {
+            padding: 0 20px;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(30px);
+        }
+
+        /* ── Overlay Curtain Layer (The bright sliding panel) ── */
+        .overlay-layer {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 50%;
+            height: 100%;
+            z-index: 5;
+            overflow: hidden;
+            /* Premium cubic bezier for the sliding wipe */
+            transition: transform 0.9s cubic-bezier(0.77, 0, 0.175, 1);
+            background: linear-gradient(135deg, rgba(160, 0, 0, 0.85) 0%, rgba(230, 20, 20, 0.9) 100%);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-left: 1px solid rgba(255, 100, 100, 0.2);
+            box-shadow: -15px 0 50px rgba(255, 26, 26, 0.25);
+            /* A gentler 8% diagonal cut */
+            clip-path: polygon(8% 0, 100% 0, 100% 100%, 0% 100%);
+        }
+
+        /* The inner content of the overlay that counter-slides to stay centered */
+        .overlay-inner {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            /* Spans 200% width of the half-panel */
+            width: 200%;
+            height: 100%;
             display: flex;
+            transition: transform 0.9s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+
+        .overlay-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            z-index: 20;
-            pointer-events: none;
-        }
-
-        /* Abstract glowing grid/logo for the college event */
-        .right-panel-content {
             text-align: center;
             color: white;
-            z-index: 2;
+            padding: 0 40px;
         }
 
-        .right-panel-content h1 {
+        .overlay-panel h1 {
             font-family: 'Cinzel', serif;
-            font-size: 5rem;
-            letter-spacing: 15px;
+            font-size: 3.5rem;
+            letter-spacing: 12px;
             margin: 0;
-            background: linear-gradient(to right, #ff4d4d, #ffffff, #ff4d4d);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 40px rgba(255, 0, 0, 0.4);
-            animation: pulseGlow 4s infinite alternate;
+            text-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            animation: floatGlow 4s infinite alternate ease-in-out;
         }
 
-        .right-panel-content p {
+        .overlay-panel p {
             font-family: 'Montserrat', sans-serif;
-            font-size: 1.2rem;
-            letter-spacing: 5px;
-            color: #ccc;
+            font-size: 1.1rem;
+            letter-spacing: 4px;
+            color: rgba(255, 255, 255, 0.9);
             margin-top: 10px;
             text-transform: uppercase;
         }
 
-
-
-        @keyframes pulseGlow {
+        @keyframes floatGlow {
             0% {
-                filter: drop-shadow(0 0 20px rgba(255, 26, 26, 0.3));
+                filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.4));
+                transform: translateY(0);
             }
 
             100% {
-                filter: drop-shadow(0 0 40px rgba(255, 26, 26, 0.6));
+                filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.6));
+                transform: translateY(-8px);
             }
         }
 
-        /* Decorative glowing lines on right panel */
-        .glow-line {
-            position: absolute;
-            background: linear-gradient(90deg, transparent, rgba(255, 26, 26, 0.8), transparent);
-            height: 1px;
-            width: 150%;
-            left: -25%;
-            transform: rotate(-35deg);
-            opacity: 0.3;
+        /* ── State: RIGHT PANEL ACTIVE (Signup mode) ── */
+        .auth-container.right-panel-active .overlay-layer {
+            transform: translateX(-100%);
+            /* Flip the clip-path angle for the left side (100 - 8 = 92%) */
+            clip-path: polygon(0 0, 92% 0, 100% 100%, 0% 100%);
+            box-shadow: 10px 0 50px rgba(255, 26, 26, 0.3);
         }
 
-        .glow-line:nth-child(1) {
-            top: 20%;
-            animation: drift 10s infinite linear;
+        .auth-container.right-panel-active .overlay-inner {
+            transform: translateX(50%);
         }
 
-        .glow-line:nth-child(2) {
-            top: 50%;
-            opacity: 0.5;
-            height: 2px;
-            box-shadow: 0 0 20px #ff1a1a;
-            animation: drift 15s infinite linear reverse;
+        .auth-container.right-panel-active .form-panel.login {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(-30px);
         }
 
-        .glow-line:nth-child(3) {
-            top: 80%;
-            animation: drift 12s infinite linear;
+        .auth-container.right-panel-active .form-panel.signup {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(0);
         }
 
-        @keyframes drift {
-            from {
-                transform: rotate(-35deg) translateY(-50px);
-            }
-
-            to {
-                transform: rotate(-35deg) translateY(50px);
-            }
-        }
-
-
-        /* ── Premium Form Styling (No Box) ── */
+        /* ── Form Styles ── */
         .form-wrapper {
-            max-width: 360px;
+            max-width: 320px;
             width: 100%;
             margin: 0 auto;
         }
@@ -240,14 +251,13 @@
         .login-header h2 {
             font-family: 'Cinzel', serif;
             font-weight: 700;
-            font-size: 1.9rem;
+            font-size: 1.8rem;
             letter-spacing: 2px;
             background: linear-gradient(to right, #ffffff, #ff4d4d);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 3px;
-            text-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
         }
 
         .login-header p {
@@ -255,23 +265,22 @@
             color: #999;
             font-size: 0.85rem;
             letter-spacing: 1px;
-            margin-bottom: 12px;
+            margin-bottom: 25px;
         }
 
         .auth-form {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 12px;
             width: 100%;
         }
 
         .form-group input {
             width: 100%;
-            padding: 10px 14px;
-            background: transparent;
-            border: none;
-            border-bottom: 1px solid rgba(100, 100, 100, 0.5);
-            border-radius: 0;
+            padding: 12px 14px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(100, 100, 100, 0.3);
+            border-radius: 4px;
             color: #fff;
             font-family: 'Montserrat', sans-serif;
             font-size: 0.95rem;
@@ -282,18 +291,18 @@
 
         .form-group input:focus {
             border-color: #ff1a1a;
-            box-shadow: 0 10px 10px -10px rgba(255, 26, 26, 0.5);
+            background: rgba(255, 26, 26, 0.05);
+            box-shadow: 0 0 15px rgba(255, 26, 26, 0.2);
         }
 
-        /* ── Metallic Red Button ── */
-        .submit-btn.full-width {
+        /* ── Clean White/Glass Button for the Form ── */
+        .submit-btn {
             width: 100%;
             margin-top: 10px;
-            background: linear-gradient(135deg, #8b0000, #ff1a1a, #8b0000);
-            background-size: 200% auto;
-            border: none;
+            background: transparent;
+            border: 1px solid #ff1a1a;
             padding: 12px;
-            color: #fff;
+            color: #ff1a1a;
             font-weight: 700;
             font-family: 'Cinzel', serif;
             border-radius: 4px;
@@ -302,22 +311,41 @@
             letter-spacing: 3px;
             font-size: 0.9rem;
             transition: 0.4s;
-            box-shadow: 0 4px 15px rgba(255, 26, 26, 0.3);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
         }
 
-        .submit-btn.full-width:hover {
-            background-position: right center;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(255, 26, 26, 0.5);
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 100%;
+            background: #ff1a1a;
+            transition: width 0.4s ease;
+            z-index: -1;
         }
 
-        /* ── Switch page button ── */
+        .submit-btn:hover::before {
+            width: 100%;
+        }
+
+        .submit-btn:hover {
+            color: #fff;
+            box-shadow: 0 0 20px rgba(255, 26, 26, 0.5);
+        }
+
+        /* ── Switch buttons ── */
         .switch-page-row {
-            margin-top: 15px;
-            text-align: left;
+            margin-top: 25px;
+            text-align: center;
             font-family: 'Montserrat', sans-serif;
             font-size: 0.85rem;
-            color: #888;
+            color: #ccc;
+            position: relative;
+            z-index: 10;
         }
 
         .switch-page-btn {
@@ -326,26 +354,25 @@
             color: #ff4d4d;
             padding: 0;
             cursor: pointer;
-            font-family: 'Cinzel', serif;
-            font-size: 1rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-            margin-top: 8px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-left: 5px;
             transition: all 0.3s ease;
-            text-transform: uppercase;
+            text-decoration: underline;
+            text-decoration-color: transparent;
         }
 
         .switch-page-btn:hover {
             color: #fff;
-            text-shadow: 0 0 10px rgba(255, 26, 26, 0.8);
-            transform: translateX(5px);
+            text-decoration-color: #ff1a1a;
         }
 
         /* ── Divider ── */
         .or-divider {
             display: flex;
             align-items: center;
-            margin: 10px 0;
+            margin: 15px 0;
             color: #555;
             width: 100%;
         }
@@ -368,25 +395,25 @@
         /* ── Google button ── */
         .google-btn-custom {
             width: 100%;
-            background: transparent;
+            background: rgba(255, 255, 255, 0.05);
             color: #eee;
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 4px;
-            padding: 12px 15px;
+            padding: 10px 15px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 12px;
             font-family: 'Montserrat', sans-serif;
             font-weight: 500;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             cursor: pointer;
             transition: all 0.3s;
         }
 
         .google-btn-custom:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.5);
         }
 
         .google-btn-custom img {
@@ -394,44 +421,42 @@
             height: 20px;
         }
 
-        /* ── Mobile Responsiveness ── */
-        @media (max-width: 900px) {
-            .split-layout {
-                flex-direction: column;
-                height: auto;
-                min-height: 100vh;
-            }
-
-            .left-panel {
-                max-width: 100%;
-                width: 100%;
-                min-height: 100dvh;
-                padding: 80px 24px 40px 24px;
-                /* top clears the fixed nav */
-                justify-content: flex-start;
-                overflow-y: auto;
-            }
-
-            .form-wrapper {
-                max-width: 420px;
-                margin: 0 auto;
-            }
-
-            .login-header h2 {
-                font-size: 1.7rem;
-            }
-
-            /* Hide graphic panel on mobile */
-            .right-panel {
-                display: none;
-            }
-
-            body {
-                overflow: auto;
-            }
+        .auth-message {
+            margin-top: 10px;
+            font-size: 0.85rem;
+            min-height: 20px;
+            font-family: 'Montserrat', sans-serif;
+            color: #ff4444;
+            text-align: center;
         }
 
-        /* ── Nav Override for Split Screen ── */
+        /* ── Status bar ── */
+        .status-bar {
+            position: fixed;
+            bottom: 20px;
+            left: 40px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 100;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ff1a1a;
+            box-shadow: 0 0 10px #ff1a1a;
+        }
+
+        .status-text {
+            color: #ff4d4d;
+            font-family: monospace;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+        }
+
+        /* ── Nav ── */
         .glass-nav {
             position: fixed;
             top: 0;
@@ -446,12 +471,73 @@
             backdrop-filter: none;
         }
 
-        #auth-message {
-            margin-top: 15px;
-            font-size: 0.9rem;
-            min-height: 20px;
-            font-family: 'Montserrat', sans-serif;
-            color: #ff4444;
+        /* ── Mobile Fallback (Stacking) ── */
+        @media (max-width: 900px) {
+            body {
+                align-items: flex-start;
+            }
+
+            .auth-container {
+                width: 100%;
+                height: auto;
+                max-height: none;
+                border-radius: 0;
+                border: none;
+                box-shadow: none;
+                overflow: visible;
+                padding-top: 80px;
+                /* nav clearance */
+            }
+
+            .overlay-layer {
+                display: none;
+            }
+
+            /* Hide overlay on mobile */
+            .forms-layer {
+                position: relative;
+                flex-direction: column;
+                background: transparent;
+                backdrop-filter: none;
+            }
+
+            .form-panel {
+                padding: 20px;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .form-panel.login,
+            .form-panel.signup {
+                padding: 20px !important;
+                opacity: 1;
+                pointer-events: auto;
+                transform: none !important;
+                display: flex;
+            }
+
+            /* Toggle display on mobile using JS class */
+            .auth-container.right-panel-active .form-panel.login {
+                display: none;
+            }
+
+            .auth-container.right-panel-active .form-panel.signup {
+                display: flex;
+                opacity: 1;
+                transform: none;
+            }
+
+            .auth-container:not(.right-panel-active) .form-panel.signup {
+                display: none;
+            }
+
+            .auth-container:not(.right-panel-active) .form-panel.login {
+                display: flex;
+            }
+
+            .switch-page-row {
+                display: block;
+            }
         }
     </style>
 </head>
@@ -471,105 +557,179 @@
         </div>
     </nav>
 
-    <!-- Split Layout Container -->
-    <div class="split-layout">
+    <!-- Ambient Lines -->
+    <div class="glow-line line1"></div>
+    <div class="glow-line line2"></div>
+    <div class="glow-line line3"></div>
 
-        <!-- Ambient Background Lines -->
-        <div class="glow-line line1"></div>
-        <div class="glow-line line2"></div>
-        <div class="glow-line line3"></div>
+    <!-- Main Auth Container (Replaces Flip Card) -->
+    <div class="auth-container" id="auth-container">
 
-        <!-- Left Panel: Form -->
-        <div class="left-panel">
-            <div class="form-wrapper">
-                <div class="login-header">
-                    <h2>SYSTEM ACCESS</h2>
-                    <p>Authenticate with your identity provider</p>
-                </div>
+        <!-- Forms Layer (Static background, elements fade/slide in place) -->
+        <div class="forms-layer">
 
-                <!-- Login Form -->
-                <form id="std-login-form" class="auth-form">
-                    <div class="form-group">
-                        <input type="email" id="login-email" placeholder="Email Address" required>
+            <!-- LOGIN FORM (Left Side) -->
+            <div class="form-panel login">
+                <div class="form-wrapper">
+                    <div class="login-header">
+                        <h2>SYSTEM ACCESS</h2>
+                        <p>Authenticate with your identity provider</p>
                     </div>
-                    <div class="form-group">
-                        <input type="password" id="login-password" placeholder="Password" required>
+
+                    <form id="std-login-form" class="auth-form">
+                        <div class="form-group">
+                            <input type="email" id="login-email" placeholder="Email Address" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" id="login-password" placeholder="Password" required>
+                        </div>
+                        <button type="submit" class="submit-btn full-width">ACCESS SYSTEM</button>
+                    </form>
+
+                    <div id="login-auth-message" class="auth-message"></div>
+
+                    <div class="or-divider"><span>OR</span></div>
+
+                    <div id="g_id_onload"
+                        data-client_id="239875271846-pamr47sh20r4ccm0lihdi1k73jgg6g6a.apps.googleusercontent.com"
+                        data-callback="handleCredentialResponse" data-auto_prompt="false" data-context="signin"
+                        data-ux_mode="popup" data-auto_select="true">
                     </div>
-                    <button type="submit" class="submit-btn full-width">ACCESS SYSTEM</button>
-                </form>
-
-                <div id="auth-message"></div>
-
-                <!-- Divider -->
-                <div class="or-divider"><span>OR</span></div>
-
-                <!-- Google Sign-In Configuration -->
-                <div id="g_id_onload"
-                    data-client_id="239875271846-pamr47sh20r4ccm0lihdi1k73jgg6g6a.apps.googleusercontent.com"
-                    data-callback="handleCredentialResponse" data-auto_prompt="false" data-context="signin"
-                    data-ux_mode="popup" data-auto_select="true">
-                </div>
-
-                <!-- Custom Google Button -->
-                <div id="gsi-container" style="margin-bottom: 10px; width: 100%;">
-                    <button id="custom-google-btn" type="button" class="google-btn-custom">
-                        <img src="https://image2url.com/r2/default/images/1771475892216-8e96624f-122a-4124-b40f-69365e0e8667.png"
-                            alt="Google Logo">
-                        <span>Sign in with Google</span>
-                    </button>
-                </div>
-                <div id="gsi-status"
-                    style="font-size: 0.8rem; color: #ffeb3b; display: none; margin-bottom: 10px; text-align: center;">
-                    Google Library loading...</div>
-
-                <!-- Navigate to Signup -->
-                <div class="switch-page-row" style="margin-top: 10px;">
-                    <span>Don't have an account?</span>
-                    <button class="switch-page-btn" id="go-to-signup">CREATE ACCOUNT →</button>
-                    <div style="margin-top: 15px;">
-                        <a href="mailto:vortexinnovators2k24@gmail.com"
-                            style="color: #666; text-decoration: none; font-size: 0.8rem; transition: color 0.3s;">Having
-                            trouble? Contact Support</a>
+                    <div id="gsi-container-login" style="margin-bottom:10px;width:100%;">
+                        <button id="custom-google-btn-login" type="button" class="google-btn-custom">
+                            <img src="https://image2url.com/r2/default/images/1771475892216-8e96624f-122a-4124-b40f-69365e0e8667.png"
+                                alt="Google Logo">
+                            <span>Sign in with Google</span>
+                        </button>
                     </div>
-                </div>
 
-                <!-- System Status Bar -->
-                <div
-                    style="position: fixed; bottom: 20px; left: 40px; display: flex; align-items: center; gap: 8px; z-index: 100;">
-                    <div
-                        style="width: 8px; height: 8px; border-radius: 50%; background: #ff1a1a; box-shadow: 0 0 10px #ff1a1a;">
+                    <div class="switch-page-row">
+                        <span>Don't have an account?</span>
+                        <button class="switch-page-btn" id="go-to-signup">Sign Up</button>
                     </div>
-                    <span style="color: #ff4d4d; font-family: monospace; font-size: 0.75rem; letter-spacing: 1px;">>
-                        SYSTEM_STATUS: ONLINE</span>
                 </div>
             </div>
-        </div>
 
-        <!-- Right Panel: Visuals -->
-        <div class="right-panel">
-            <div class="right-panel-content">
-                <h1>VORTEX</h1>
-                <p>Innovators 2k24</p>
+            <!-- SIGNUP FORM (Right Side) -->
+            <div class="form-panel signup">
+                <div class="form-wrapper">
+                    <div class="login-header">
+                        <h2>CREATE IDENTITY</h2>
+                        <p>Register a new account to get started</p>
+                    </div>
+
+                    <form id="std-signup-form" class="auth-form">
+                        <div class="form-group">
+                            <input type="text" id="signup-name" placeholder="Full Name" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" id="signup-email" placeholder="Email Address" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" id="signup-password" placeholder="Password" required>
+                        </div>
+                        <button type="submit" class="submit-btn full-width">REGISTER ID</button>
+                    </form>
+
+                    <div id="signup-auth-message" class="auth-message"></div>
+
+                    <div class="or-divider"><span>OR</span></div>
+
+                    <div id="gsi-container-signup" style="margin-bottom:10px;width:100%;">
+                        <button id="custom-google-btn-signup" type="button" class="google-btn-custom">
+                            <img src="https://image2url.com/r2/default/images/1771475892216-8e96624f-122a-4124-b40f-69365e0e8667.png"
+                                alt="Google Logo">
+                            <span>Sign up with Google</span>
+                        </button>
+                    </div>
+
+                    <div class="switch-page-row">
+                        <span>Already have an account?</span>
+                        <button class="switch-page-btn" id="go-to-login">Log In</button>
+                    </div>
+                </div>
+            </div>
+
+        </div> <!-- /forms-layer -->
+
+        <!-- Overlay Curtain Layer (The red sliding part) -->
+        <div class="overlay-layer">
+            <div class="overlay-inner">
+
+                <!-- Left Overlay Panel (Visible when overlay is on left/signup mode) -->
+                <div class="overlay-panel overlay-left">
+                    <h1>WELCOME BACK</h1>
+                    <p>Continue your innovation journey</p>
+                </div>
+
+                <!-- Right Overlay Panel (Visible when overlay is on right/login mode) -->
+                <div class="overlay-panel overlay-right">
+                    <h1>VORTEX</h1>
+                    <p>Innovators 2k24</p>
+                </div>
+
             </div>
         </div>
 
     </div>
 
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <div class="status-dot"></div>
+        <span class="status-text">> SYSTEM_STATUS: ONLINE</span>
+    </div>
+
     <script src="script.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script>
-        // ── Page Transition ──────────────────────────────────────────────
-        function navigateWithTransition(url) {
-            document.querySelector('.split-layout').classList.add('flip-out');
-            setTimeout(() => { window.location.href = url; }, 550);
+        // ── Wipe/Sliding Logic ────────────────────────────────────────────
+        const authContainer = document.getElementById('auth-container');
+
+        function switchToSignup() {
+            authContainer.classList.add('right-panel-active');
+            history.replaceState(null, '', '?mode=signup');
+        }
+        function switchToLogin() {
+            authContainer.classList.remove('right-panel-active');
+            history.replaceState(null, '', '?mode=login');
         }
 
-        document.getElementById('go-to-signup').addEventListener('click', () => {
-            navigateWithTransition('signup.html');
-        });
+        // Form links
+        document.getElementById('go-to-signup').addEventListener('click', switchToSignup);
+        document.getElementById('go-to-login').addEventListener('click', switchToLogin);
 
-        // ── Google Sign-In ────────────────────────────────────────────────
+        // Auto-slide if URL param says signup
+        if (new URLSearchParams(window.location.search).get('mode') === 'signup') {
+            // Disable transition for initial load so it snaps correctly
+            const overlayLayer = document.querySelector('.overlay-layer');
+            const overlayInner = document.querySelector('.overlay-inner');
+            overlayLayer.style.transition = 'none';
+            overlayInner.style.transition = 'none';
+
+            authContainer.classList.add('right-panel-active');
+
+            // Re-enable gently
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    overlayLayer.style.transition = '';
+                    overlayInner.style.transition = '';
+                });
+            });
+        }
+
+        // ── Google Credential Handler ─────────────────────────────────────
         function handleCredentialResponse(response) {
+            function decodeJwtResponse(token) {
+                try {
+                    var base64Url = token.split('.')[1];
+                    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                    var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function (c) {
+                        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                    }).join(''));
+                    return JSON.parse(jsonPayload);
+                } catch (e) { return {}; }
+            }
+
             const responsePayload = decodeJwtResponse(response.credential);
             const googleUser = {
                 name: responsePayload.name,
@@ -589,23 +749,12 @@
             else { window.location.href = 'index.html'; }
         }
 
-        function decodeJwtResponse(token) {
-            try {
-                var base64Url = token.split('.')[1];
-                var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function (c) {
-                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-                }).join(''));
-                return JSON.parse(jsonPayload);
-            } catch (e) { console.error("JWT Decode Error", e); return {}; }
-        }
-
-        // ── Login Handler ─────────────────────────────────────────────────
+        // ── Standard Auth Handlers ─────────────────────────────────────────
         document.getElementById('std-login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
-            const msg = document.getElementById('auth-message');
+            const msg = document.getElementById('login-auth-message');
             msg.textContent = 'Authenticating...';
             msg.style.color = '#fff';
             try {
@@ -614,66 +763,73 @@
                     msg.textContent = 'Access Granted. Redirecting...';
                     msg.style.color = '#ff1a1a';
                     setTimeout(() => {
-                        const redirectUrl = sessionStorage.getItem('loginRedirectUrl');
-                        window.location.href = redirectUrl || 'index.html';
+                        window.location.href = sessionStorage.getItem('loginRedirectUrl') || 'index.html';
                     }, 1000);
                 } else {
                     msg.textContent = 'Error: ' + result.message;
                     msg.style.color = '#ff4444';
                 }
-            } catch (err) {
-                msg.textContent = 'System Error: ' + err.message;
-                msg.style.color = '#ff4444';
-            }
+            } catch (err) { msg.textContent = 'System Error: ' + err.message; msg.style.color = '#ff4444'; }
         });
 
-        // ── Custom Google Button ──────────────────────────────────────────
+        document.getElementById('std-signup-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            const msg = document.getElementById('signup-auth-message');
+            msg.textContent = 'Registering Identity...';
+            msg.style.color = '#fff';
+            try {
+                const result = await registerUser(name, email, password);
+                if (result.success) {
+                    msg.textContent = 'Registration Successful. Logging you in...';
+                    msg.style.color = '#ff1a1a';
+                    try {
+                        const loginResult = await loginUser(email, password);
+                        if (loginResult.success) {
+                            setTimeout(() => {
+                                window.location.href = sessionStorage.getItem('loginRedirectUrl') || 'index.html';
+                            }, 1000);
+                        }
+                    } catch (loginErr) {
+                        msg.textContent = 'Registration Successful. Please sign in.';
+                        setTimeout(() => switchToLogin(), 1500);
+                    }
+                } else {
+                    msg.textContent = 'Error: ' + result.message;
+                    msg.style.color = '#ff4444';
+                }
+            } catch (err) { msg.textContent = 'Network Error during Registration'; msg.style.color = '#ff4444'; }
+        });
+
+        // ── Google Button Logic ───────────────────────────────────────────
         window.addEventListener('load', () => {
-            const fragmentString = window.location.hash.substring(1);
-            const params = new URLSearchParams(fragmentString);
-            const idToken = params.get('id_token');
-            if (idToken) {
+            if (window.location.hash.includes('id_token=')) {
+                const idToken = new URLSearchParams(window.location.hash.substring(1)).get('id_token');
                 history.replaceState(null, null, ' ');
                 handleCredentialResponse({ credential: idToken });
                 return;
             }
 
-            const statusDiv = document.getElementById('gsi-status');
-            const customBtn = document.getElementById('custom-google-btn');
-            if (customBtn) {
-                customBtn.addEventListener('click', () => {
+            function setupGBtn(btnId) {
+                const btn = document.getElementById(btnId);
+                if (!btn) return;
+                btn.addEventListener('click', () => {
                     if (typeof google !== 'undefined' && google.accounts) {
                         google.accounts.id.prompt((notification) => {
                             if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-                                fallbackToRedirect(statusDiv);
+                                const clientId = "239875271846-pamr47sh20r4ccm0lihdi1k73jgg6g6a.apps.googleusercontent.com";
+                                const redirectUri = window.location.origin + window.location.pathname;
+                                const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=id_token&scope=${encodeURIComponent("email profile openid")}&nonce=vortex_${Date.now()}`;
+                                window.location.href = url;
                             }
                         });
-                    } else {
-                        fallbackToRedirect(statusDiv);
                     }
                 });
             }
-
-            function fallbackToRedirect(statusDisplay) {
-                if (statusDisplay) {
-                    statusDisplay.style.display = 'block';
-                    statusDisplay.innerHTML = 'Redirecting to Google...';
-                    statusDisplay.style.color = '#ff1a1a';
-                }
-                const clientId = "239875271846-pamr47sh20r4ccm0lihdi1k73jgg6g6a.apps.googleusercontent.com";
-                const redirectUri = window.location.origin + window.location.pathname;
-                const scope = "email profile openid";
-                const responseType = "id_token";
-                const nonce = "vortex_" + Date.now();
-                const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=${responseType}&scope=${encodeURIComponent(scope)}&nonce=${nonce}`;
-                window.location.href = authUrl;
-            }
-
-            if (window.self !== window.top) {
-                statusDiv.style.display = 'block';
-                statusDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Running in Iframe. Google Login disabled.';
-                statusDiv.style.color = '#ff9800';
-            }
+            setupGBtn('custom-google-btn-login');
+            setupGBtn('custom-google-btn-signup');
         });
     </script>
 </body>
