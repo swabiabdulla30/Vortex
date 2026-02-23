@@ -18,7 +18,7 @@ const eventDetails = {
         ]
     },
     "TECH HUNT": {
-        image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&q=80",
+        image: "https://image2url.com/r2/default/images/1771854942793-76bd228b-3cf4-4872-8ebc-baf2e40e9465.jpeg",
         about: "Hunt through the web, decode clues, and race your team to the finish! A digital treasure hunt where participants solve tech-themed riddles and puzzles to find the final prize.",
         rules: [
             "Teams of 2 members.",
@@ -30,7 +30,7 @@ const eventDetails = {
         ]
     },
     "WEBSITE DESIGNING COMPETITION": {
-        image: "https://images.unsplash.com/photo-1555099962-4199c345e5dd?auto=format&fit=crop&q=80",
+        image: "https://image2url.com/r2/default/images/1771863896078-ef98fc6d-f9d8-41ef-89d5-cac3231e8f7c.jpeg",
         about: "Design your way to the top! Participants will create a fully functional and visually stunning website based on a given theme within a limited time. Judged on creativity, design, and technical execution.",
         rules: [
             "Individual or teams of 2 members.",
@@ -54,7 +54,7 @@ const eventDetails = {
         ]
     },
     "DEVIL'S MAP": {
-        image: "https://image2url.com/r2/default/images/1771567367713-43840ddf-0d00-429a-b9ae-d5a329392290.jpeg",
+        image: "https://image2url.com/r2/default/images/1771856961478-f6e45cb8-2c8f-42d2-b332-b7289aece099.jpeg",
         about: "Follow the clues, claim the crown! Devil's Map is a thrilling campus-wide treasure hunt where participants solve riddles and navigate through checkpoints to uncover the final prize.",
         rules: [
             "Teams of 2-3 members.",
