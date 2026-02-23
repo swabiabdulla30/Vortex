@@ -40,7 +40,9 @@ const appendRegistrationToExcel = async (registration) => {
             "Year": registration.year || '',
             "Event": registration.event || '',
             "Date": registration.date ? new Date(registration.date).toLocaleString() : '',
-            "Payment Status": registration.paymentStatus || 'PENDING'
+            "Payment Status": registration.paymentStatus || 'PENDING',
+            "Teammate Name": registration.teammateName || '',
+            "Teammate Phone": registration.teammatePhone || ''
         };
 
         currentData.push(newRow);
@@ -89,7 +91,9 @@ function generateExcelBuffer(registrations) {
         "Year": r.year || '',
         "Event": r.event || '',
         "Date": r.date ? new Date(r.date).toLocaleString() : '',
-        "Payment Status": r.paymentStatus || 'PENDING'
+        "Payment Status": r.paymentStatus || 'PENDING',
+        "Teammate Name": r.teammateName || '',
+        "Teammate Phone": r.teammatePhone || ''
     }));
 
     const worksheet = xlsx.utils.json_to_sheet(data);

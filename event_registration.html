@@ -156,6 +156,22 @@
                         value="KMCT Institute of Emerging Technology and Management" readonly class="form-control">
                 </div>
 
+                <!-- Teammate Fields (Hidden by default, shown for eFootball) -->
+                <div id="teammate-section"
+                    style="display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                    <h4 style="color: #00ffd5; margin-bottom: 15px; text-transform: uppercase;">Teammate Details</h4>
+                    <div class="form-group">
+                        <label for="teammate-name">Teammate Full Name</label>
+                        <input type="text" id="teammate-name" name="teammate-name" class="form-control"
+                            placeholder="Enter teammate's full name">
+                    </div>
+                    <div class="form-group">
+                        <label for="teammate-phone">Teammate Phone Number</label>
+                        <input type="tel" id="teammate-phone" name="teammate-phone" class="form-control"
+                            placeholder="Enter teammate's phone number">
+                    </div>
+                </div>
+
 
 
                 <div class="form-group" style="text-align: center; margin-bottom: 20px;">
@@ -236,6 +252,21 @@
                     rulesList.innerHTML = details.rules.map(rule => `<li>${rule}</li>`).join('');
 
                     infoContainer.style.display = 'block';
+
+                    // Show Teammate fields if eFootball
+                    const teammateSection = document.getElementById('teammate-section');
+                    const teammateName = document.getElementById('teammate-name');
+                    const teammatePhone = document.getElementById('teammate-phone');
+
+                    if (cleanName === "CO-OP E-FOOTBALL TOURNAMENT") {
+                        teammateSection.style.display = 'block';
+                        teammateName.required = true;
+                        teammatePhone.required = true;
+                    } else {
+                        teammateSection.style.display = 'none';
+                        teammateName.required = false;
+                        teammatePhone.required = false;
+                    }
                 }
             }
         });
@@ -278,6 +309,13 @@
                 location: "Main Auditorium",
                 date: new Date().toISOString()
             };
+
+            // Add teammate data if fields are visible and filled
+            const teammateSection = document.getElementById('teammate-section');
+            if (teammateSection.style.display !== 'none') {
+                eventData.teammateName = document.getElementById('teammate-name').value;
+                eventData.teammatePhone = document.getElementById('teammate-phone').value;
+            }
 
             // --- RAZORPAY API FLOW ---
             try {

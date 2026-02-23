@@ -138,7 +138,9 @@ const RegistrationSchema = new mongoose.Schema({
     location: String,
     ticketId: String,
     paymentId: String,
-    paymentStatus: { type: String, default: "PENDING" }
+    paymentStatus: { type: String, default: "PENDING" },
+    teammateName: String,
+    teammatePhone: String
 }, {
     autoCreate: false // Disable auto-creation of collection
 });
