@@ -156,6 +156,8 @@ document.addEventListener('mousemove', function (e) {
 // Gallery Slider Logic matched to index.html structure
 document.addEventListener('DOMContentLoaded', function () {
     const slide = document.querySelector('.slide');
+    const nextBtn = document.getElementById('next');
+    const prevBtn = document.getElementById('prev');
 
     if (nextBtn && prevBtn && slide) {
         let isAnimating = false;
