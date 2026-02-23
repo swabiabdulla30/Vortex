@@ -814,15 +814,25 @@
                 const btn = document.getElementById(btnId);
                 if (!btn) return;
                 btn.addEventListener('click', () => {
+                    const executeRedirect = () => {
+                        const clientId = "239875271846-pamr47sh20r4ccm0lihdi1k73jgg6g6a.apps.googleusercontent.com";
+                        const redirectUri = window.location.origin + window.location.pathname;
+                        const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=id_token&scope=${encodeURIComponent("email profile openid")}&nonce=vortex_${Date.now()}`;
+                        window.location.href = url;
+                    };
+
                     if (typeof google !== 'undefined' && google.accounts) {
-                        google.accounts.id.prompt((notification) => {
-                            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-                                const clientId = "239875271846-pamr47sh20r4ccm0lihdi1k73jgg6g6a.apps.googleusercontent.com";
-                                const redirectUri = window.location.origin + window.location.pathname;
-                                const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=id_token&scope=${encodeURIComponent("email profile openid")}&nonce=vortex_${Date.now()}`;
-                                window.location.href = url;
-                            }
-                        });
+                        try {
+                            google.accounts.id.prompt((notification) => {
+                                if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+                                    executeRedirect();
+                                }
+                            });
+                        } catch (e) {
+                            executeRedirect();
+                        }
+                    } else {
+                        executeRedirect();
                     }
                 });
             }
