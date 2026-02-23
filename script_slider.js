@@ -13,5 +13,11 @@ document.addEventListener('DOMContentLoaded', function () {
             const items = document.querySelectorAll('.item');
             slide.prepend(items[items.length - 1]);
         });
+
+        // Auto-slide every 3.5 seconds
+        setInterval(() => {
+            const items = document.querySelectorAll('.item');
+            slide.appendChild(items[0]);
+        }, 3500);
     }
 });
