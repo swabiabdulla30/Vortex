@@ -97,8 +97,7 @@
     font-size: 1.5rem;
     margin-bottom: 5px;
     letter-spacing: 2px;
-    font-family: 'Orbitron', sans-serif;
-    text-transform: uppercase;
+    font-family: var(--font-operative);
 }
 
 .lead-slide .member-info p {
