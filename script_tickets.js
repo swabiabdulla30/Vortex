@@ -44,10 +44,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('dl-id').innerText = 'NO: #' + ticketNumber;
 
         // Render Event Image
-        const dlImageContainer = document.getElementById('dl-event-image');
+        const dlQrContainer = document.getElementById('dl-qrcode');
         const imageUrl = getEventImage(eventName.trim());
-        dlImageContainer.src = imageUrl;
-        dlImageContainer.crossOrigin = "anonymous";
+        dlQrContainer.innerHTML = `<img src="${imageUrl}" crossorigin="anonymous">`;
 
         const originalTicket = document.querySelector('.downloadable-ticket');
         const clone = originalTicket.cloneNode(true);
@@ -159,53 +158,56 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         container.innerHTML = tickets.map((ticket, index) => {
-            const eventName = (ticket.event || "UNKNOWN EVENT").trim();
-            const imageUrl = getEventImage(eventName);
+            const imageUrl = getEventImage(ticket.event.trim());
             const ticketNumber = (index + 1).toString().padStart(2, '0');
-            const displayDate = ticket.date ? new Date(ticket.date).toLocaleDateString() : 'TBA';
 
             return `
-            <div class="ticket-card digital-ticket" id="card-${ticket.ticketId}" data-number="${ticketNumber}">
-                <div class="ticket-left">
-                    <div class="ticket-header-dynamic">
-                        <div class="ticket-brand-text">VORTEX</div>
-                        <span class="ticket-status-dynamic">${ticket.paymentStatus || 'PAID'}</span>
+            <div class="ticket-card" id="card-${ticket.ticketId}" data-number="${ticketNumber}">
+                
+                <div class="ticket-header-dynamic">
+                    <span>${ticket.event || 'Unknown Event'}</span>
+                    <span class="ticket-status-dynamic">${ticket.paymentStatus || 'PAID'}</span>
+                </div>
+                
+                <div class="ticket-body-dynamic">
+                    <div class="ticket-row">
+                        <span class="ticket-label-muted">Ticket No:</span>
+                        <span class="ticket-no-value">#${ticketNumber}</span>
                     </div>
-                    
-                    <h2 class="ticket-event-name">${eventName}</h2>
-                    
+                    <div class="ticket-row">
+                        <span class="ticket-label-muted">Date:</span>
+                        <span class="ticket-date-val">${ticket.date ? new Date(ticket.date).toLocaleDateString() : 'N/A'}</span>
+                    </div>
+                    <div class="ticket-row">
+                        <span class="ticket-label-muted">Attendee:</span>
+                        <span class="ticket-name-val">${ticket.name || 'Participant'}</span>
+                    </div>
+                    <div class="ticket-brand-footer">
+                        <div class="ticket-brand-text">VORTEX</div>
+                        <div class="ticket-status-badge">
+                            <div class="ticket-status-dot"></div> CONFIRMED
+                        </div>
+                    </div>
+
+                    <h2 class="ticket-event-name">${ticket.event}</h2>
+
                     <div class="ticket-grid-details">
                         <div class="ticket-detail-col">
-                            <span class="ticket-detail-label">ATTENDEE</span>
-                            <span class="ticket-detail-val ticket-name-val">${ticket.name || 'Participant'}</span>
-                        </div>
-                        <div class="ticket-detail-col">
-                            <span class="ticket-detail-label">DEPARTMENT</span>
+                            <span class="ticket-detail-label">Department:</span>
                             <span class="ticket-detail-val ticket-dept-val">${ticket.department || 'General'}</span>
                         </div>
                         <div class="ticket-detail-col">
-                            <span class="ticket-detail-label">DATE</span>
-                            <span class="ticket-detail-val ticket-date-val">${displayDate}</span>
-                        </div>
-                        <div class="ticket-detail-col">
-                            <span class="ticket-detail-label">TICKET NO</span>
-                            <span class="ticket-detail-val ticket-no-value">#${ticketNumber}</span>
+                            <span class="ticket-detail-label">Ticket ID:</span>
+                            <span class="ticket-detail-val">${ticket.ticketId}</span>
                         </div>
                     </div>
 
-                    <div class="ticket-footer-action">
-                        <button class="submit-btn download-ticket-btn download-btn-dynamic">
-                            <i class="fas fa-download"></i> SAVE OFFICIAL PASS
-                        </button>
-                    </div>
-                </div>
-
-                <div class="ticket-right">
                     <div class="ticket-image-container">
-                        <img src="${imageUrl}" alt="${eventName}" class="ticket-event-image-full">
+                        <img src="${imageUrl}" alt="Event Image">
                     </div>
-                    <div class="ticket-id-badge">ID: #${ticket.ticketId}</div>
-                    <div class="admit-one">ADMIT ONE</div>
+                    <button class="submit-btn download-ticket-btn download-btn-dynamic">
+                        <i class="fas fa-download"></i> Download Ticket
+                    </button>
                 </div>
             </div>
             `}).join('');
