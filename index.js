@@ -37,8 +37,10 @@ const limiter = rateLimit({
 });
 app.use("/api/", limiter); // Apply to API routes
 
-// Serve static files from the current directory
-app.use(express.static(path.join(process.cwd())));
+// Serve static files from the current directory with support for clean URLs
+app.use(express.static(path.join(process.cwd()), {
+    extensions: ['html']
+}));
 
 // --- Request Logger (Stability/Monitoring) ---
 app.use((req, res, next) => {
