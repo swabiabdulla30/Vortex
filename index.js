@@ -260,8 +260,8 @@ const crypto = require('crypto');
 
 // Razorpay Instance
 const razorpay = new Razorpay({
-    key_id: process.env.RAZORPAY_KEY_ID || 'rzp_test_SHuxeqRe0AoMNs',
-    key_secret: process.env.RAZORPAY_KEY_SECRET || 'CxYBxcNKucrlnIIX9KmnKe5Q'
+    key_id: process.env.RAZORPAY_KEY_ID || 'rzp_live_SJz7RWMxYKfeql',
+    key_secret: process.env.RAZORPAY_KEY_SECRET || '8jmHAACAjQuLncfHcHrxgotN'
 });
 
 
@@ -305,7 +305,7 @@ app.post("/api/payment-success", async (req, res) => {
 
         // Verify Signature
         const body = razorpay_order_id + "|" + razorpay_payment_id;
-        const secret = process.env.RAZORPAY_KEY_SECRET || 'CxYBxcNKucrlnIIX9KmnKe5Q'; // Use Env or Fallback to Test Secret
+        const secret = process.env.RAZORPAY_KEY_SECRET || '8jmHAACAjQuLncfHcHrxgotN'; // Use Env or Fallback to Live Secret
         const expectedSignature = crypto
             .createHmac('sha256', secret)
             .update(body.toString())
@@ -348,7 +348,7 @@ app.post("/api/payment-success", async (req, res) => {
 
 // Endpoint to get Razorpay Key ID safely
 app.get("/api/get-razorpay-key", (req, res) => {
-    res.json({ key: process.env.RAZORPAY_KEY_ID || 'rzp_test_SHuxeqRe0AoMNs' });
+    res.json({ key: process.env.RAZORPAY_KEY_ID || 'rzp_live_SJz7RWMxYKfeql' });
 });
 
 app.get("/api/ticket/:ticketId", async (req, res) => {
