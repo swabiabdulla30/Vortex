@@ -207,6 +207,13 @@
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+/* Download template specific additions */
+.dl-event-image-rounded {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 /* Card Styling for dynamic tickets */
 .ticket-card {
     background: rgba(255, 255, 255, 0.05);
@@ -236,15 +243,127 @@
 }
 
 .ticket-status-dynamic {
-    background: rgba(0, 0, 0, 0.2);
-    padding: 4px 8px;
-    border-radius: 4px;
+    background: rgba(0, 255, 213, 0.1);
+    color: #00ffd5;
+    padding: 6px 15px;
+    border-radius: 50px;
     font-size: 0.8rem;
+    font-weight: 700;
+    border: 1px solid rgba(0, 255, 213, 0.3);
 }
 
-.ticket-body-dynamic {
-    padding: 20px;
-    color: white;
+.ticket-header-dynamic {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 15px;
+    background: transparent;
+    /* Remove the old gradient */
+}
+
+/* New Premium Layout within digital-ticket */
+.digital-ticket {
+    display: flex;
+    flex-wrap: wrap;
+    /* For mobile support */
+    min-height: 400px;
+    background: #050505;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+}
+
+.ticket-left {
+    flex: 2;
+    padding: 40px;
+    border-right: 2px dashed rgba(255, 255, 255, 0.2);
+    display: flex;
+    flex-direction: column;
+}
+
+.ticket-right {
+    flex: 1;
+    background: linear-gradient(135deg, rgba(139, 0, 0, 0.1), rgba(0, 0, 0, 0.6));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    min-width: 280px;
+}
+
+.ticket-event-name {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #fff;
+    text-transform: uppercase;
+    margin-bottom: 30px;
+    line-height: 1.1;
+    text-shadow: 0 0 20px rgba(139, 0, 0, 0.3);
+}
+
+.ticket-grid-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.ticket-detail-label {
+    color: #8B0000;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+}
+
+.ticket-detail-val {
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.ticket-footer-action {
+    margin-top: auto;
+}
+
+.ticket-image-container {
+    width: 220px;
+    height: 140px;
+    border-radius: 15px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.ticket-event-image-full {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.ticket-id-badge {
+    font-family: monospace;
+    color: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.05);
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+
+.admit-one {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    color: rgba(255, 255, 255, 0.1);
+    font-size: 2rem;
+    font-weight: 900;
+    letter-spacing: 5px;
+    pointer-events: none;
 }
 
 .ticket-row {
