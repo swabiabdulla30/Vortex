@@ -11,17 +11,12 @@
                     "*.css",
                     "*.js",
                     "*.json",
-                    "*.svg",
-                    "photos/**"
+                    "*.svg"
                 ]
             }
         }
     ],
     "routes": [
-        {
-            "src": "/api/(.*)",
-            "dest": "/index.js"
-        },
         {
             "handle": "filesystem"
         },
