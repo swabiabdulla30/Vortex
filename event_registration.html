@@ -20,7 +20,7 @@
     if (!currentUser) {
         // Save current URL to redirect back after login
         sessionStorage.setItem('loginRedirectUrl', window.location.href);
-        window.location.href = 'login';
+        window.location.href = 'login.html';
     }
 </script>
 
@@ -33,14 +33,14 @@
     <nav class="glass-nav">
         <div class="nav-content">
             <div class="brand-container">
-                <a href="index">
+                <a href="index.html">
                     <img src="https://image2url.com/r2/default/images/1771323328076-73754ca7-5637-40c3-9e39-77832d8f5a18.jpeg"
                         alt="Vortex Logo" class="nav-logo-img">
                 </a>
-                <a href="index" class="logo">VORTEX</a>
+                <a href="index.html" class="logo">VORTEX</a>
             </div>
 
-            <a href="login" class="login-btn">
+            <a href="login.html" class="login-btn">
                 <span class="icon">🔒</span> LOGIN
             </a>
 
@@ -56,12 +56,12 @@
                     <div class="close-menu">&times;</div>
                 </div>
 
-                <a href="index" class="nav-item">Home</a>
-                <a href="about" class="nav-item">About</a>
-                <a href="events" class="nav-item">Events</a>
-                <a href="gallery" class="nav-item">Gallery</a>
+                <a href="index.html" class="nav-item">Home</a>
+                <a href="about.html" class="nav-item">About</a>
+                <a href="events.html" class="nav-item">Events</a>
+                <a href="gallery.html" class="nav-item">Gallery</a>
 
-                <a href="login" class="login-btn mobile-only">
+                <a href="login.html" class="login-btn mobile-only">
                     <span class="icon">🔒</span> LOGIN
                 </a>
             </div>
@@ -175,10 +175,10 @@
 
 
                 <div class="form-group" style="text-align: center; margin-bottom: 20px;">
-                    <a href="terms" target="_blank"
+                    <a href="terms.html" target="_blank"
                         style="color: rgba(255, 255, 255, 0.7); text-decoration: underline; font-size: 0.9rem; margin-right: 15px;">Terms
                         and Conditions</a>
-                    <a href="refund_policy" target="_blank"
+                    <a href="refund_policy.html" target="_blank"
                         style="color: rgba(255, 255, 255, 0.7); text-decoration: underline; font-size: 0.9rem;">Refund
                         Policy</a>
                 </div>
@@ -199,11 +199,11 @@
             </div>
             <p class="copyright">© 2026 VORTEX INNOVATORS. SYSTEM_STATUS: ONLINE</p>
             <p class="copyright" style="margin-top: 5px; font-size: 0.7rem;">
-                <a href="privacy_policy" target="_blank" style="color: #666; text-decoration: none;">Privacy
+                <a href="privacy_policy.html" target="_blank" style="color: #666; text-decoration: none;">Privacy
                     Policy</a> |
-                <a href="terms" target="_blank" style="color: #666; text-decoration: none;">Terms & Conditions</a>
+                <a href="terms.html" target="_blank" style="color: #666; text-decoration: none;">Terms & Conditions</a>
                 |
-                <a href="refund_policy" target="_blank" style="color: #666; text-decoration: none;">Refund
+                <a href="refund_policy.html" target="_blank" style="color: #666; text-decoration: none;">Refund
                     Policy</a>
             </p>
         </div>
@@ -293,7 +293,7 @@
 
             if (!userEmail) {
                 alert("Error: User email not found. Please login again.");
-                window.location.href = 'login';
+                window.location.href = 'login.html';
                 return;
             }
 
@@ -375,7 +375,7 @@
                                 sessionStorage.setItem('regDept', eventData.department);
                                 sessionStorage.setItem('regId', ticketId);
 
-                                window.location.href = 'registration_success';
+                                window.location.href = 'registration_success.html';
                             } else {
                                 throw new Error(verifyData.error || "Payment verification failed.");
                             }

@@ -547,11 +547,11 @@
     <nav class="glass-nav">
         <div class="nav-content">
             <div class="brand-container">
-                <a href="index">
+                <a href="index.html">
                     <img src="https://image2url.com/r2/default/images/1771323328076-73754ca7-5637-40c3-9e39-77832d8f5a18.jpeg"
                         alt="Vortex Logo" class="nav-logo-img">
                 </a>
-                <a href="index" class="logo" style="font-family: 'Cinzel', serif;">VORTEX</a>
+                <a href="index.html" class="logo" style="font-family: 'Cinzel', serif;">VORTEX</a>
             </div>
         </div>
     </nav>
@@ -745,7 +745,7 @@
             localStorage.setItem('vortexCurrentUser', JSON.stringify(googleUser));
             const redirectUrl = sessionStorage.getItem('loginRedirectUrl');
             if (redirectUrl) { sessionStorage.removeItem('loginRedirectUrl'); window.location.href = redirectUrl; }
-            else { window.location.href = 'index'; }
+            else { window.location.href = 'index.html'; }
         }
 
         // ── Standard Auth Handlers ─────────────────────────────────────────
@@ -762,7 +762,7 @@
                     msg.textContent = 'Access Granted. Redirecting...';
                     msg.style.color = '#ff1a1a';
                     setTimeout(() => {
-                        window.location.href = sessionStorage.getItem('loginRedirectUrl') || 'index';
+                        window.location.href = sessionStorage.getItem('loginRedirectUrl') || 'index.html';
                     }, 1000);
                 } else {
                     msg.textContent = 'Error: ' + result.message;
@@ -788,7 +788,7 @@
                         const loginResult = await loginUser(email, password);
                         if (loginResult.success) {
                             setTimeout(() => {
-                                window.location.href = sessionStorage.getItem('loginRedirectUrl') || 'index';
+                                window.location.href = sessionStorage.getItem('loginRedirectUrl') || 'index.html';
                             }, 1000);
                         }
                     } catch (loginErr) {
