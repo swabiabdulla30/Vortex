@@ -37,24 +37,8 @@ const limiter = rateLimit({
 });
 app.use("/api/", limiter); // Apply to API routes
 
-const staticPath = path.resolve(__dirname);
-
-// Serve static files from the current directory with support for clean URLs
-app.use(express.static(staticPath, {
-    extensions: ['html']
-}));
-
-// Fail-safe for Vercel static assets
-app.use((req, res, next) => {
-    const cleanPath = req.path;
-    if (cleanPath.endsWith('.css') || cleanPath.endsWith('.js') || cleanPath.endsWith('.svg') || cleanPath.endsWith('.png') || cleanPath.endsWith('.jpg') || cleanPath.endsWith('.jpeg')) {
-        const filePath = path.join(staticPath, cleanPath);
-        if (fs.existsSync(filePath)) {
-            return res.sendFile(filePath);
-        }
-    }
-    next();
-});
+// Serve static files from the current directory
+app.use(express.static(path.join(process.cwd())));
 
 // --- Request Logger (Stability/Monitoring) ---
 app.use((req, res, next) => {
@@ -273,10 +257,6 @@ const Razorpay = require('razorpay');
 const crypto = require('crypto');
 
 // Razorpay Instance
-if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
-    console.error("CRITICAL: Razorpay keys are missing from environment variables.");
-}
-
 const razorpay = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID,
     key_secret: process.env.RAZORPAY_KEY_SECRET
@@ -323,11 +303,7 @@ app.post("/api/payment-success", async (req, res) => {
 
         // Verify Signature
         const body = razorpay_order_id + "|" + razorpay_payment_id;
-        const secret = process.env.RAZORPAY_KEY_SECRET;
-        if (!secret) {
-            console.error("Razorpay secret missing during verification");
-            return res.status(500).json({ error: "Payment verification failed: Configuration error" });
-        }
+        const secret = process.env.RAZORPAY_KEY_SECRET; // Strictly use Env Secret
         const expectedSignature = crypto
             .createHmac('sha256', secret)
             .update(body.toString())
@@ -370,11 +346,7 @@ app.post("/api/payment-success", async (req, res) => {
 
 // Endpoint to get Razorpay Key ID safely
 app.get("/api/get-razorpay-key", (req, res) => {
-    const key = process.env.RAZORPAY_KEY_ID;
-    if (!key) {
-        return res.status(500).json({ error: "Razorpay key not configured" });
-    }
-    res.json({ key });
+    res.json({ key: process.env.RAZORPAY_KEY_ID });
 });
 
 app.get("/api/ticket/:ticketId", async (req, res) => {
@@ -497,7 +469,7 @@ app.delete("/api/admin/registrations", authenticateToken, async (req, res) => {
 
 // --- Serve Frontend for any other route ---
 app.get(/(.*)/, (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(process.cwd(), 'index.html'));
 });
 
 // Explicitly export for Vercel
