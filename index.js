@@ -38,7 +38,7 @@ const limiter = rateLimit({
 app.use("/api/", limiter); // Apply to API routes
 
 // Serve static files from the current directory with support for clean URLs
-app.use(express.static(path.join(process.cwd()), {
+app.use(express.static(__dirname, {
     extensions: ['html']
 }));
 
@@ -483,7 +483,7 @@ app.delete("/api/admin/registrations", authenticateToken, async (req, res) => {
 
 // --- Serve Frontend for any other route ---
 app.get(/(.*)/, (req, res) => {
-    res.sendFile(path.join(process.cwd(), 'index.html'));
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // Explicitly export for Vercel
