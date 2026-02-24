@@ -14,10 +14,10 @@ document.addEventListener('DOMContentLoaded', function () {
             slide.prepend(items[items.length - 1]);
         });
 
-        // Auto-slide every 3.5 seconds
+        // Auto-slide every 5 seconds
         setInterval(() => {
             const items = document.querySelectorAll('.item');
             slide.appendChild(items[0]);
-        }, 3500);
+        }, 5000);
     }
 });
