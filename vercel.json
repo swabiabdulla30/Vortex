@@ -7,28 +7,22 @@
             "use": "@vercel/node",
             "config": {
                 "includeFiles": [
-                    "**/*.html",
-                    "**/*.css",
-                    "**/*.js",
-                    "**/*.json",
-                    "**/*.svg",
-                    "**/*.png",
-                    "**/*.jpg",
-                    "**/*.jpeg",
-                    "**/*.gif",
-                    "**/*.ico"
+                    "*.html",
+                    "*.css",
+                    "*.js",
+                    "*.json",
+                    "*.svg"
                 ]
             }
         }
     ],
-    "rewrites": [
+    "routes": [
         {
-            "source": "/api/(.*)",
-            "destination": "/index.js"
+            "handle": "filesystem"
         },
         {
-            "source": "/((?!.*\\..*).*)",
-            "destination": "/index.js"
+            "src": "/(.*)",
+            "dest": "/index.js"
         }
     ]
 }
