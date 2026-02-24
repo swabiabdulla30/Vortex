@@ -18,7 +18,7 @@ const eventDetails = {
         ]
     },
     "TECH HUNT": {
-        image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&q=80",
+        image: "https://image2url.com/r2/default/images/1771869172242-e128a3e7-34be-47d7-af3f-2fc32eb7c147.jpeg",
         about: "Hunt through the web, decode clues, and race your team to the finish! A digital treasure hunt where participants solve tech-themed riddles and puzzles to find the final prize.",
         rules: [
             "Teams of 2 members.",
@@ -30,7 +30,7 @@ const eventDetails = {
         ]
     },
     "WEBSITE DESIGNING COMPETITION": {
-        image: "https://images.unsplash.com/photo-1555099962-4199c345e5dd?auto=format&fit=crop&q=80",
+        image: "https://image2url.com/r2/default/images/1771863896078-ef98fc6d-f9d8-41ef-89d5-cac3231e8f7c.jpeg",
         about: "Design your way to the top! Participants will create a fully functional and visually stunning website based on a given theme within a limited time. Judged on creativity, design, and technical execution.",
         rules: [
             "Individual or teams of 2 members.",
