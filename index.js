@@ -37,10 +37,24 @@ const limiter = rateLimit({
 });
 app.use("/api/", limiter); // Apply to API routes
 
+const staticPath = path.resolve(__dirname);
+
 // Serve static files from the current directory with support for clean URLs
-app.use(express.static(__dirname, {
+app.use(express.static(staticPath, {
     extensions: ['html']
 }));
+
+// Fail-safe for Vercel static assets
+app.use((req, res, next) => {
+    const cleanPath = req.path;
+    if (cleanPath.endsWith('.css') || cleanPath.endsWith('.js') || cleanPath.endsWith('.svg') || cleanPath.endsWith('.png') || cleanPath.endsWith('.jpg') || cleanPath.endsWith('.jpeg')) {
+        const filePath = path.join(staticPath, cleanPath);
+        if (fs.existsSync(filePath)) {
+            return res.sendFile(filePath);
+        }
+    }
+    next();
+});
 
 // --- Request Logger (Stability/Monitoring) ---
 app.use((req, res, next) => {
