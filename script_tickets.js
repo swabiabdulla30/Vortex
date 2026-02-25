@@ -24,6 +24,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         return 'N/A';
     }
 
+    function getEventVenue(eventName) {
+        if (!eventName) return 'KMCT CAMPUS';
+        const cleanName = eventName.trim().toUpperCase();
+        if (typeof eventDetails !== 'undefined' && eventDetails[cleanName] && eventDetails[cleanName].venue) {
+            return eventDetails[cleanName].venue;
+        }
+        return 'KMCT CAMPUS';
+    }
+
     // Define downloadTicket function
     function downloadTicket(btn) {
         const card = btn.closest('.ticket-card');
@@ -51,6 +60,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('dl-dept').innerText = dept;
         document.getElementById('dl-date').innerText = date;
         document.getElementById('dl-id').innerText = 'NO: #' + ticketNumber;
+        document.getElementById('dl-location').innerText = getEventVenue(eventName);
 
         // Render Event Image
         const dlQrContainer = document.getElementById('dl-qrcode');
