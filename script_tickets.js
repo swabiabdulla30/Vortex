@@ -62,6 +62,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('dl-id').innerText = 'NO: #' + ticketNumber;
         document.getElementById('dl-location').innerText = getEventVenue(eventName);
 
+        // Populate teammate field for eFootball
+        const teammate = card.dataset.teammate || '';
+        const dlTeammateRow = document.getElementById('dl-teammate-row');
+        const dlTeammateEl = document.getElementById('dl-teammate');
+        if (teammate && eventName.toUpperCase().includes('E-FOOTBALL')) {
+            if (dlTeammateEl) dlTeammateEl.innerText = teammate;
+            if (dlTeammateRow) dlTeammateRow.style.display = '';
+        } else {
+            if (dlTeammateRow) dlTeammateRow.style.display = 'none';
+        }
+
         // Render Event Image
         const dlQrContainer = document.getElementById('dl-qrcode');
         const imageUrl = getEventImage(eventName.trim());
@@ -181,7 +192,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const ticketNumber = (index + 1).toString().padStart(2, '0');
 
             return `
-            <div class="ticket-card" id="card-${ticket.ticketId}" data-number="${ticketNumber}">
+            <div class="ticket-card" id="card-${ticket.ticketId}" data-number="${ticketNumber}" data-teammate="${ticket.teammateName || ''}">
                 
                 <div class="ticket-header-dynamic">
                     <span>${ticket.event || 'Unknown Event'}</span>
