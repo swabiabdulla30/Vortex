@@ -144,9 +144,9 @@ window.addEventListener('load', function () {
         const isEfootball = event.toUpperCase().includes('E-FOOTBALL');
         const teammateRow = document.getElementById('ticket-teammate-row');
         const dlTeammateRow = document.getElementById('dl-teammate-row');
-        if (isEfootball && teammate) {
-            setText('ticket-teammate', teammate);
-            setText('dl-teammate', teammate);
+        if (isEfootball) {
+            setText('ticket-teammate', teammate || '—');
+            setText('dl-teammate', teammate || '—');
             if (teammateRow) teammateRow.style.display = '';
             if (dlTeammateRow) dlTeammateRow.style.display = '';
         } else {
