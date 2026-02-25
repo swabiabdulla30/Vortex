@@ -42,8 +42,8 @@ window.addEventListener('load', function () {
                         const menu = document.createElement('div');
                         menu.className = 'dropdown-menu';
                         menu.innerHTML = `
-                        <a href="tickets.html" class="dropdown-item"><i class="fas fa-ticket-alt"></i> CHECK TICKETS</a>
-                        ${user.role === 'admin' ? '<a href="admin.html" class="dropdown-item"><i class="fas fa-tachometer-alt"></i> DASHBOARD</a>' : ''}
+                        <a href="/tickets" class="dropdown-item"><i class="fas fa-ticket-alt"></i> CHECK TICKETS</a>
+                        ${user.role === 'admin' ? '<a href="/admin" class="dropdown-item"><i class="fas fa-tachometer-alt"></i> DASHBOARD</a>' : ''}
                         <a href="#" class="dropdown-item logout-link"><i class="fas fa-sign-out-alt"></i> LOGOUT</a>
                     `;
 
@@ -94,8 +94,8 @@ window.addEventListener('load', function () {
                                 const bottomActions = document.createElement('div');
                                 bottomActions.className = 'mobile-bottom-actions';
                                 bottomActions.innerHTML = `
-                                <a href="tickets.html" class="action-link"><i class="fas fa-ticket-alt"></i> My Tickets</a>
-                                ${user.role === 'admin' ? '<a href="admin.html" class="action-link"><i class="fas fa-tachometer-alt"></i> Admin</a>' : ''}
+                                <a href="/tickets" class="action-link"><i class="fas fa-ticket-alt"></i> My Tickets</a>
+                                ${user.role === 'admin' ? '<a href="/admin" class="action-link"><i class="fas fa-tachometer-alt"></i> Admin</a>' : ''}
                                 <a href="#" class="action-link logout-link-mobile" style="color: var(--primary-red);"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
                             `;
                                 navLinks.appendChild(bottomActions);
@@ -111,7 +111,7 @@ window.addEventListener('load', function () {
                         if (confirm('Disconnect from Vortex Network?')) {
                             localStorage.removeItem('vortexCurrentUser');
                             localStorage.removeItem('vortexUser');
-                            window.location.href = 'index.html';
+                            window.location.href = '/';
                         }
                     }
                 });

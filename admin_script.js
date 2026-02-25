@@ -3,7 +3,7 @@ let allRegistrations = [];
 async function fetchData() {
     const token = localStorage.getItem('vortexToken');
     if (!token) {
-        window.location.href = 'login.html';
+        window.location.href = '/login';
         return;
     }
 
@@ -18,13 +18,13 @@ async function fetchData() {
             alert("Session expired. Please login again.\nReason: " + errorText);
             localStorage.removeItem('vortexToken');
             localStorage.removeItem('vortexCurrentUser');
-            window.location.href = 'login.html';
+            window.location.href = '/login';
             return;
         }
 
         if (res.status === 403) {
             alert("Access Denied: Admin privileges required.");
-            window.location.href = 'index.html';
+            window.location.href = '/';
             return;
         }
 
@@ -284,7 +284,7 @@ async function deleteAllRegistrations() {
 function logout() {
     localStorage.removeItem('vortexToken');
     localStorage.removeItem('vortexCurrentUser');
-    window.location.href = 'index.html';
+    window.location.href = '/';
 }
 
 // Event Listeners (DOMContentLoaded)
