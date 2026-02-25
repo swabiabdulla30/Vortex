@@ -42,14 +42,18 @@ const eventDetails = {
         date: "Mar 06, 2026",
         venue: "Lab",
         slots: 30,
-        about: "Design your way to the top! Participants will create a fully functional and visually stunning website based on a given theme within a limited time. Judged on creativity, design, and technical execution.",
+        about: "The Website Designing Competition is a creative event where participants showcase their web development and design skills. Participants will be given a theme or topic, and they must design a visually appealing, user-friendly website within the given time. The event focuses on creativity, layout design, responsiveness, and overall presentation.<br><br>This competition provides a great platform to demonstrate your technical and creative abilities.<br><br>Registration Fee: ₹10 per participant<br>Cash Prize: ₹200<br>Total Slots: 30 (Limited entries)",
         rules: [
-            "Individual or teams of 2 members.",
-            "Laptop is mandatory.",
-            "Tools allowed: VS Code, Figma, Adobe XD.",
-            "No use of premium website builders (e.g., Wix, Squarespace).",
-            "Submission must include a working demo link or local preview.",
-            "Judging criteria: Design, Functionality, Creativity, and UX."
+            "Only registered participants are allowed to compete.",
+            "Individual participation only (unless otherwise specified).",
+            "The website must be created during the competition time.",
+            "Pre-made templates or copied designs are not allowed.",
+            "Participants may use HTML, CSS, JavaScript, or any approved tools.",
+            "Internet usage rules will be informed before the event.",
+            "Submission must be completed within the given time limit.",
+            "Judging will be based on design, creativity, responsiveness, and functionality.",
+            "Any form of plagiarism will result in immediate disqualification.",
+            "Organizer’s decision will be final."
         ]
     },
     "CO-OP E-FOOTBALL": {
