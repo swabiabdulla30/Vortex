@@ -116,10 +116,11 @@ window.addEventListener('load', function () {
         const dept = sessionStorage.getItem('regDept') || 'General';
         const id = sessionStorage.getItem('regId') || 'VTX-' + Math.floor(Math.random() * 100000);
 
-        // Generate current date
-        const now = new Date();
-        const dateOptions = { month: 'short', day: '2-digit', year: 'numeric' };
-        const currentDate = now.toLocaleDateString('en-US', dateOptions).toUpperCase();
+        // Get event date and venue from events_data.js (single source of truth)
+        const cleanEventName = event ? event.trim().toUpperCase() : '';
+        const eventData = (typeof eventDetails !== 'undefined' && eventDetails[cleanEventName]) ? eventDetails[cleanEventName] : null;
+        const eventDate = eventData && eventData.date ? eventData.date.toUpperCase() : 'TBA';
+        const eventVenue = eventData && eventData.venue ? eventData.venue : 'KMCT CAMPUS';
 
         // Helper to safely set text
         const setText = (id, text) => {
@@ -135,22 +136,21 @@ window.addEventListener('load', function () {
         // Preview ID
         const displayId = "01";
         setText('ticket-id', 'NO: #' + displayId);
-        setText('ticket-date', currentDate);
+        setText('ticket-date', eventDate);
+        setText('ticket-location', eventVenue);
 
         // Populate HIDDEN DOWNLOAD Ticket
         setText('dl-name', name);
         setText('dl-event', event);
         setText('dl-dept', dept);
         setText('dl-id', 'NO: #' + displayId);
-        setText('dl-date', currentDate);
+        setText('dl-date', eventDate);
+        setText('dl-location', eventVenue);
 
         // Event image is read from events_data.js (single source of truth).
         // To update, just change the `image` field in events_data.js.
         const defaultImage = "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80";
-        const cleanEventName = event ? event.trim().toUpperCase() : '';
-        const imageUrl = (typeof eventDetails !== 'undefined' && eventDetails[cleanEventName])
-            ? (eventDetails[cleanEventName].image || defaultImage)
-            : defaultImage;
+        const imageUrl = eventData ? (eventData.image || defaultImage) : defaultImage;
 
         // Set Images
         const ticketImage = document.getElementById('ticket-event-image');
