@@ -50,7 +50,7 @@ const eventDetails = {
             "Judging criteria: Design, Functionality, Creativity, and UX."
         ]
     },
-    "CO-OP E-FOOTBALL TOURNAMENT": {
+    "CO-OP E-FOOTBALL": {
         image: "https://image2url.com/r2/default/images/1771995899025-6821ca81-aa54-4566-b29d-4fab70571c09.jpeg",
         date: "Mar 06, 2026",
         venue: "Seminar Hall",

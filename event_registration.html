@@ -627,7 +627,7 @@
     </footer>
 
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-    <script src="events_data.js?v=3.0"></script>
+    <script src="events_data.js?v=3.1"></script>
     <script src="tech_bg.js"></script>
     <script src="script.js"></script>
     <script>
@@ -742,7 +742,7 @@
 
             if (!userEmail) {
                 alert('Error: User email not found. Please login again.');
-                window.location.href = '/login';
+                window.location.href = '/login.html';
                 return;
             }
 
@@ -755,7 +755,9 @@
                 year: document.getElementById('year').value,
                 college: document.getElementById('college').value,
                 location: 'Main Auditorium',
-                date: new Date().toISOString()
+                date: new Date().toISOString(),
+                teammateName: document.getElementById('teammate-name') ? document.getElementById('teammate-name').value : '',
+                teammatePhone: document.getElementById('teammate-phone') ? document.getElementById('teammate-phone').value : ''
             };
 
             const teammateSection = document.getElementById('teammate-section');

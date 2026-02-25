@@ -366,7 +366,7 @@ const EVENT_SLOTS = {
     "DEVIL'S MAP": 20,
     "TECH HUNT": 30,
     "WEBSITE DESIGNING COMPETITION": 30,
-    "CO-OP E-FOOTBALL TOURNAMENT": 16
+    "CO-OP E-FOOTBALL": 16
 };
 
 app.get("/api/event-slots", async (req, res) => {
