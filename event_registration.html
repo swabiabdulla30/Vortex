@@ -9,16 +9,420 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=2.7">
+    <link rel="stylesheet" href="style.css?v=2.9">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /* ── Split Layout ─────────────────────────────────── */
+        .reg-split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 100vh;
+            padding-top: 80px;
+        }
+
+        /* LEFT PANEL */
+        .reg-left {
+            position: sticky;
+            top: 80px;
+            height: calc(100vh - 80px);
+            overflow-y: auto;
+            scrollbar-width: none;
+            /* Firefox */
+            -ms-overflow-style: none;
+            /* IE/Edge */
+            background: rgba(8, 8, 8, 0.6);
+            border-right: 1px solid rgba(255, 255, 255, 0.07);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .reg-left::-webkit-scrollbar {
+            display: none;
+            /* Chrome/Safari */
+        }
+
+        .reg-event-hero {
+            position: relative;
+            width: 100%;
+            height: 280px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .reg-event-hero img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.6s ease;
+        }
+
+        .reg-event-hero:hover img {
+            transform: scale(1.04);
+        }
+
+        .reg-hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom,
+                    rgba(0, 0, 0, 0.1) 0%,
+                    rgba(5, 5, 5, 0.85) 100%);
+        }
+
+        .reg-hero-badge {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(139, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 80, 80, 0.4);
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            padding: 5px 14px;
+            border-radius: 20px;
+            text-transform: uppercase;
+        }
+
+        .reg-hero-title {
+            position: absolute;
+            bottom: 20px;
+            left: 24px;
+            right: 24px;
+        }
+
+        .reg-hero-title h1 {
+            font-size: 1.9rem;
+            font-weight: 900;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 0 0 6px;
+            line-height: 1.1;
+        }
+
+        .reg-hero-meta {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .reg-meta-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .reg-meta-pill i {
+            color: #cc0000;
+            font-size: 0.7rem;
+        }
+
+        /* Slot bar */
+        .reg-slot-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 24px;
+            background: rgba(0, 0, 0, 0.4);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            flex-shrink: 0;
+        }
+
+        .reg-slot-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            color: #888;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .reg-slot-track {
+            flex: 1;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .reg-slot-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: linear-gradient(90deg, #8B0000, #cc0000);
+            transition: width 0.8s ease;
+        }
+
+        .reg-slot-count {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #ccc;
+            white-space: nowrap;
+        }
+
+        /* Info body */
+        .reg-left-body {
+            padding: 28px 24px 40px;
+            flex: 1;
+        }
+
+        .reg-section-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #cc0000;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .reg-section-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .reg-about-text {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            line-height: 1.75;
+            margin-bottom: 30px;
+        }
+
+        .reg-rules-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .reg-rules-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        .reg-rules-list li::before {
+            content: '';
+            display: block;
+            width: 6px;
+            height: 6px;
+            min-width: 6px;
+            border-radius: 50%;
+            background: #cc0000;
+            margin-top: 7px;
+        }
+
+        /* RIGHT PANEL */
+        .reg-right {
+            padding: 50px 48px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .reg-form-header {
+            margin-bottom: 36px;
+        }
+
+        .reg-form-tag {
+            display: inline-block;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            color: #cc0000;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .reg-form-title {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 0;
+            line-height: 1.1;
+        }
+
+        .reg-form-sub {
+            color: rgba(255, 255, 255, 0.45);
+            font-size: 0.85rem;
+            margin-top: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Form fields */
+        .reg-form .form-group {
+            margin-bottom: 20px;
+        }
+
+        .reg-form .form-group label {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .reg-form .form-group label i {
+            color: #8B0000;
+            font-size: 0.75rem;
+        }
+
+        .reg-form .form-control {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.95rem;
+            padding: 13px 16px;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+        }
+
+        .reg-form .form-control:focus {
+            background: rgba(139, 0, 0, 0.06);
+            border-color: rgba(204, 0, 0, 0.5);
+            box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.12);
+            outline: none;
+        }
+
+        .reg-form .form-control[readonly] {
+            opacity: 0.55;
+            cursor: default;
+        }
+
+        .reg-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .reg-teammate-section {
+            background: rgba(0, 255, 213, 0.04);
+            border: 1px solid rgba(0, 255, 213, 0.15);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .reg-teammate-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #00ffd5;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        .reg-links {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .reg-links a {
+            font-size: 0.78rem;
+            color: rgba(255, 255, 255, 0.45);
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            transition: color 0.2s;
+        }
+
+        .reg-links a:hover {
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .reg-submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #8B0000 0%, #cc0000 100%);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-family: var(--font-main);
+            font-size: 0.95rem;
+            font-weight: 800;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            box-shadow: 0 4px 24px rgba(139, 0, 0, 0.45);
+        }
+
+        .reg-submit-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.15) 0%, transparent 65%);
+            pointer-events: none;
+        }
+
+        .reg-submit-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 36px rgba(204, 0, 0, 0.6);
+        }
+
+        .reg-submit-btn:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+
+        /* Mobile */
+        @media (max-width: 900px) {
+            .reg-split {
+                grid-template-columns: 1fr;
+                padding-top: 70px;
+            }
+
+            .reg-left {
+                position: static;
+                height: auto;
+            }
+
+            .reg-right {
+                padding: 36px 20px 50px;
+            }
+
+            .reg-row {
+                grid-template-columns: 1fr;
+            }
+
+            .reg-event-hero {
+                height: 220px;
+            }
+        }
+    </style>
 </head>
 <script>
-    // Check if user is logged in
     const currentUser = localStorage.getItem('vortexCurrentUser');
     if (!currentUser) {
-        // Save current URL to redirect back after login
         sessionStorage.setItem('loginRedirectUrl', window.location.href);
         window.location.href = 'login.html';
     }
@@ -50,7 +454,6 @@
                 <div class="line3"></div>
             </div>
             <div class="nav-links">
-                <!-- Mobile Only Header -->
                 <div class="mobile-nav-header mobile-only">
                     <div class="shield-icon"><i class="fas fa-shield-alt"></i></div>
                     <div class="close-menu">&times;</div>
@@ -68,130 +471,144 @@
         </div>
     </nav>
 
-    <!-- Registration Section -->
-    <section id="registration" class="content-section" style="padding-top: 150px;">
-        <div class="section-header">
-            <span class="section-tag">JOIN NOW</span>
-            <h2 class="section-title">EVENT REGISTRATION</h2>
-        </div>
+    <!-- Split Layout -->
+    <div class="reg-split">
 
-        <!-- Dynamic Event Details -->
-        <div id="event-info-container" class="section-container"
-            style="max-width: 800px; margin-bottom: 40px; text-align: left; display: none;">
-            <div
-                style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 30px; backdrop-filter: blur(10px);">
-                <h3
-                    style="color: #00ffd5; margin-top: 0; font-size: 1.5rem; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 20px;">
-                    <i class="fas fa-info-circle"></i> About Event
-                </h3>
-                <div id="event-about-content" style="color: #ddd; line-height: 1.6; margin-bottom: 30px;">
-                    <!-- Content injected via JS -->
+        <!-- LEFT: Event Info Panel -->
+        <div class="reg-left">
+            <div class="reg-event-hero">
+                <img id="reg-event-img" src="" alt="Event">
+                <div class="reg-hero-overlay"></div>
+                <div class="reg-hero-badge">● REGISTRATION OPEN</div>
+                <div class="reg-hero-title">
+                    <h1 id="reg-hero-name">Loading...</h1>
+                    <div class="reg-hero-meta">
+                        <span class="reg-meta-pill" id="reg-date-pill"><i class="fas fa-calendar"></i> —</span>
+                        <span class="reg-meta-pill" id="reg-venue-pill"><i class="fas fa-map-marker-alt"></i> —</span>
+                    </div>
                 </div>
+            </div>
 
-                <h3
-                    style="color: #ff4444; font-size: 1.5rem; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 20px;">
-                    <i class="fas fa-gavel"></i> Rules & Regulations
-                </h3>
-                <ul id="event-rules-content" style="color: #ddd; line-height: 1.6; padding-left: 20px;">
-                    <!-- Content injected via JS -->
-                </ul>
+            <!-- Slot Bar -->
+            <div class="reg-slot-bar">
+                <span class="reg-slot-label">Slots</span>
+                <div class="reg-slot-track">
+                    <div class="reg-slot-fill" id="reg-slot-fill" style="width: 0%"></div>
+                </div>
+                <span class="reg-slot-count" id="reg-slot-count">Loading…</span>
+            </div>
+
+            <div class="reg-left-body">
+                <div class="reg-section-label"><i class="fas fa-info-circle"></i> About Event</div>
+                <p class="reg-about-text" id="reg-about-text">—</p>
+
+                <div class="reg-section-label"><i class="fas fa-gavel"></i> Rules &amp; Regulations</div>
+                <ul class="reg-rules-list" id="reg-rules-list"></ul>
             </div>
         </div>
-        <div class="section-container" style="max-width: 600px;">
-            <form id="registration-form" class="glass-form">
+
+        <!-- RIGHT: Registration Form -->
+        <div class="reg-right">
+            <div class="reg-form-header">
+                <span class="reg-form-tag">Elevate Series</span>
+                <h2 class="reg-form-title">Secure Your Spot</h2>
+                <p class="reg-form-sub">Fill in your details below — your ticket will be issued instantly.</p>
+            </div>
+
+            <form id="registration-form" class="reg-form">
+
                 <div class="form-group">
-                    <label for="event-name">Event Name</label>
+                    <label for="event-name"><i class="fas fa-bolt"></i> Event</label>
                     <input type="text" id="event-name" name="event-name" readonly class="form-control"
                         placeholder="Event Name">
                 </div>
 
-                <div class="form-group">
-                    <label for="name">Full Name</label>
-                    <input type="text" id="name" name="name" required class="form-control"
-                        placeholder="Enter your full name">
+                <div class="reg-row">
+                    <div class="form-group">
+                        <label for="name"><i class="fas fa-user"></i> Full Name</label>
+                        <input type="text" id="name" name="name" required class="form-control"
+                            placeholder="Your full name">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone"><i class="fas fa-phone"></i> Phone</label>
+                        <input type="tel" id="phone" name="phone" required class="form-control"
+                            placeholder="Phone number">
+                    </div>
                 </div>
 
-
-
-                <div class="form-group">
-                    <label for="department">Department</label>
-                    <select id="department" name="department" required class="form-control">
-                        <option value="" disabled selected>Select Department</option>
-                        <option value="CSE A">CSE A</option>
-                        <option value="CSE B">CSE B</option>
-                        <option value="CYBER SECURITY">CYBER SECURITY</option>
-                        <option value="AI/DS">AI/DS</option>
-                        <option value="BBA">BBA</option>
-                        <option value="BCA A">BCA A</option>
-                        <option value="BCA B">BCA B</option>
-                        <option value="BCA">BCA</option>
-                        <option value="MCA">MCA</option>
-                        <option value="MBA">MBA</option>
-                        <option value="DIPLOMA CSE">DIPLOMA CSE</option>
-                        <option value="DIPLOMA AIML">DIPLOMA AIML</option>
-                        <option value="Other">Other</option>
-                    </select>
+                <div class="reg-row">
+                    <div class="form-group">
+                        <label for="department"><i class="fas fa-building"></i> Department</label>
+                        <select id="department" name="department" required class="form-control">
+                            <option value="" disabled selected>Select Department</option>
+                            <option value="CSE A">CSE A</option>
+                            <option value="CSE B">CSE B</option>
+                            <option value="CYBER SECURITY">CYBER SECURITY</option>
+                            <option value="AI/DS">AI/DS</option>
+                            <option value="BBA">BBA</option>
+                            <option value="BCA A">BCA A</option>
+                            <option value="BCA B">BCA B</option>
+                            <option value="BCA">BCA</option>
+                            <option value="MCA">MCA</option>
+                            <option value="MBA">MBA</option>
+                            <option value="DIPLOMA CSE">DIPLOMA CSE</option>
+                            <option value="DIPLOMA AIML">DIPLOMA AIML</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="year"><i class="fas fa-graduation-cap"></i> Year</label>
+                        <select id="year" name="year" required class="form-control">
+                            <option value="" disabled selected>Select Year</option>
+                            <option value="1">1st Year</option>
+                            <option value="2">2nd Year</option>
+                            <option value="3">3rd Year</option>
+                            <option value="4">4th Year</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="phone">Phone Number</label>
-                    <input type="tel" id="phone" name="phone" required class="form-control"
-                        placeholder="Enter your phone number">
-                </div>
-
-                <div class="form-group">
-                    <label for="year">Year</label>
-                    <select id="year" name="year" required class="form-control">
-                        <option value="" disabled selected>Select Year</option>
-                        <option value="1">1st Year</option>
-                        <option value="2">2nd Year</option>
-                        <option value="3">3rd Year</option>
-                        <option value="4">4th Year</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="college">College</label>
+                    <label for="college"><i class="fas fa-university"></i> College</label>
                     <input type="text" id="college" name="college"
                         value="KMCT Institute of Emerging Technology and Management" readonly class="form-control">
                 </div>
 
-                <!-- Teammate Fields (Hidden by default, shown for eFootball) -->
-                <div id="teammate-section"
-                    style="display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-                    <h4 style="color: #00ffd5; margin-bottom: 15px; text-transform: uppercase;">Teammate Details</h4>
-                    <div class="form-group">
-                        <label for="teammate-name">Teammate Full Name</label>
-                        <input type="text" id="teammate-name" name="teammate-name" class="form-control"
-                            placeholder="Enter teammate's full name">
-                    </div>
-                    <div class="form-group">
-                        <label for="teammate-phone">Teammate Phone Number</label>
-                        <input type="tel" id="teammate-phone" name="teammate-phone" class="form-control"
-                            placeholder="Enter teammate's phone number">
+                <!-- Teammate Fields -->
+                <div id="teammate-section" class="reg-teammate-section" style="display:none;">
+                    <div class="reg-teammate-title"><i class="fas fa-users"></i> Teammate Details</div>
+                    <div class="reg-row">
+                        <div class="form-group">
+                            <label for="teammate-name"><i class="fas fa-user"></i> Teammate Name</label>
+                            <input type="text" id="teammate-name" name="teammate-name" class="form-control"
+                                placeholder="Teammate's full name">
+                        </div>
+                        <div class="form-group">
+                            <label for="teammate-phone"><i class="fas fa-phone"></i> Teammate Phone</label>
+                            <input type="tel" id="teammate-phone" name="teammate-phone" class="form-control"
+                                placeholder="Teammate's phone">
+                        </div>
                     </div>
                 </div>
 
-
-
-                <div class="form-group" style="text-align: center; margin-bottom: 20px;">
-                    <a href="terms.html" target="_blank"
-                        style="color: rgba(255, 255, 255, 0.7); text-decoration: underline; font-size: 0.9rem; margin-right: 15px;">Terms
-                        and Conditions</a>
-                    <a href="refund_policy.html" target="_blank"
-                        style="color: rgba(255, 255, 255, 0.7); text-decoration: underline; font-size: 0.9rem;">Refund
-                        Policy</a>
+                <div class="reg-links">
+                    <a href="terms.html" target="_blank">Terms &amp; Conditions</a>
+                    <a href="refund_policy.html" target="_blank">Refund Policy</a>
                 </div>
 
-                <button type="submit" class="submit-btn" style="width: 100%;">SECURED MY SPOT</button>
+                <button type="submit" class="reg-submit-btn" id="reg-submit-btn">
+                    <i class="fas fa-lock"></i> &nbsp;SECURE MY SPOT
+                </button>
+
             </form>
         </div>
-    </section>
 
-    <!-- Contact Section -->
+    </div>
+
+    <!-- Footer -->
     <footer>
         <div class="contact-section">
-            <h3 style="margin-top: 0;">CONNECT WITH US</h3>
+            <h3>CONNECT WITH US</h3>
             <div class="social-links">
                 <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
                 <a href="mailto:vortexinnovators2k24@gmail.com" class="social-icon"><i class="fas fa-envelope"></i></a>
@@ -201,203 +618,211 @@
             <p class="copyright" style="margin-top: 5px; font-size: 0.7rem;">
                 <a href="privacy_policy.html" target="_blank" style="color: #666; text-decoration: none;">Privacy
                     Policy</a> |
-                <a href="terms.html" target="_blank" style="color: #666; text-decoration: none;">Terms & Conditions</a>
-                |
+                <a href="terms.html" target="_blank" style="color: #666; text-decoration: none;">Terms &amp;
+                    Conditions</a> |
                 <a href="refund_policy.html" target="_blank" style="color: #666; text-decoration: none;">Refund
                     Policy</a>
             </p>
         </div>
     </footer>
-    </div>
-    </footer>
 
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-    <script src="events_data.js?v=2.8"></script>
+    <script src="events_data.js?v=2.9"></script>
     <script src="tech_bg.js"></script>
     <script src="script.js"></script>
     <script>
-        // Auto-fill event name from URL
-        // Auto-fill event name from URL
         document.addEventListener('DOMContentLoaded', function () {
             // Auto-fill User Data
             const userStr = localStorage.getItem('vortexCurrentUser');
             if (userStr) {
                 const user = JSON.parse(userStr);
                 if (user.name) document.getElementById('name').value = user.name;
-                // Email field removed, email is handled on submission
             }
 
             const urlParams = new URLSearchParams(window.location.search);
             const eventName = urlParams.get('event');
+
             if (eventName) {
                 const decodedName = decodeURIComponent(eventName);
-                const eventField = document.getElementById('event-name');
-                if (eventField) {
-                    eventField.value = decodedName;
-                } else {
-                    console.error("Event Name field not found!");
-                }
-
-                // Populate Dynamic Content
-                const infoContainer = document.getElementById('event-info-container');
                 const cleanName = decodedName.trim();
 
-                // details are loaded from events_data.js
-                const details = (typeof eventDetails !== 'undefined') ? eventDetails[cleanName] : null;
+                // Fill event field
+                document.getElementById('event-name').value = decodedName;
 
-                if (details && infoContainer) {
-                    document.getElementById('event-about-content').innerText = details.about;
+                // Populate left panel from events_data.js
+                const details = (typeof eventDetails !== 'undefined') ? eventDetails[cleanName.toUpperCase()] || eventDetails[cleanName] : null;
 
-                    const rulesList = document.getElementById('event-rules-content');
-                    rulesList.innerHTML = details.rules.map(rule => `<li>${rule}</li>`).join('');
+                if (details) {
+                    // Hero image
+                    const img = document.getElementById('reg-event-img');
+                    img.src = details.image || '';
+                    img.alt = cleanName;
 
-                    infoContainer.style.display = 'block';
+                    // Hero name
+                    document.getElementById('reg-hero-name').textContent = cleanName;
 
-                    // Show Teammate fields if eFootball
-                    const teammateSection = document.getElementById('teammate-section');
-                    const teammateName = document.getElementById('teammate-name');
-                    const teammatePhone = document.getElementById('teammate-phone');
+                    // Meta pills
+                    if (details.date) document.getElementById('reg-date-pill').innerHTML = `<i class="fas fa-calendar"></i> ${details.date}`;
+                    if (details.venue) document.getElementById('reg-venue-pill').innerHTML = `<i class="fas fa-map-marker-alt"></i> ${details.venue}`;
 
-                    if (cleanName === "CO-OP E-FOOTBALL TOURNAMENT") {
-                        teammateSection.style.display = 'block';
-                        teammateName.required = true;
-                        teammatePhone.required = true;
-                    } else {
-                        teammateSection.style.display = 'none';
-                        teammateName.required = false;
-                        teammatePhone.required = false;
-                    }
+                    // About
+                    document.getElementById('reg-about-text').textContent = details.about || '';
+
+                    // Rules
+                    const rulesList = document.getElementById('reg-rules-list');
+                    rulesList.innerHTML = (details.rules || []).map(r => `<li>${r}</li>`).join('');
+                } else {
+                    document.getElementById('reg-hero-name').textContent = cleanName;
                 }
+
+                // Teammate section
+                const teammateSection = document.getElementById('teammate-section');
+                const teammateName = document.getElementById('teammate-name');
+                const teammatePhone = document.getElementById('teammate-phone');
+                if (cleanName.toUpperCase() === 'CO-OP E-FOOTBALL TOURNAMENT') {
+                    teammateSection.style.display = 'block';
+                    teammateName.required = true;
+                    teammatePhone.required = true;
+                }
+
+                // Slot bar — fetch from API
+                const API_URL = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost')
+                    ? 'http://127.0.0.1:5000/api' : '/api';
+
+                fetch(`${API_URL}/event-slots`)
+                    .then(r => r.json())
+                    .then(slots => {
+                        const match = slots.find(s => s.event.toUpperCase() === cleanName.toUpperCase());
+                        if (!match) return;
+                        const { total, remaining } = match;
+                        const pct = Math.round(((total - remaining) / total) * 100);
+                        document.getElementById('reg-slot-fill').style.width = pct + '%';
+
+                        const countEl = document.getElementById('reg-slot-count');
+                        if (remaining === 0) {
+                            countEl.textContent = 'FULL';
+                            countEl.style.color = '#ff4444';
+                            document.getElementById('reg-slot-fill').style.background = '#cc0000';
+                            document.getElementById('reg-submit-btn').disabled = true;
+                            document.getElementById('reg-submit-btn').textContent = '❌ Registration Full';
+                        } else if (remaining <= 5) {
+                            countEl.textContent = `${remaining} / ${total} left`;
+                            countEl.style.color = '#ff8c42';
+                            document.getElementById('reg-slot-fill').style.background = 'linear-gradient(90deg,#8B0000,#ff6b00)';
+                        } else {
+                            countEl.textContent = `${remaining} / ${total} left`;
+                            countEl.style.color = '#00e05a';
+                            document.getElementById('reg-slot-fill').style.background = 'linear-gradient(90deg,#005820,#00c853)';
+                        }
+                    })
+                    .catch(() => {
+                        document.getElementById('reg-slot-count').textContent = '';
+                    });
             }
         });
 
-        // Handle Registration & Direct Payment
+        // Handle Registration & Payment
         document.getElementById('registration-form').addEventListener('submit', async function (e) {
             e.preventDefault();
 
             const eventNameField = document.getElementById('event-name');
-            if (!eventNameField.value || eventNameField.value.trim() === "") {
-                alert("Error: Event Name is missing. Please go back to the Events page and select an event.");
+            if (!eventNameField.value || eventNameField.value.trim() === '') {
+                alert('Error: Event Name is missing. Please go back to the Events page and select an event.');
                 return;
             }
 
-            const submitBtn = this.querySelector('.submit-btn');
-            const originalText = submitBtn.textContent;
-            submitBtn.textContent = 'Processing...';
+            const submitBtn = document.getElementById('reg-submit-btn');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> &nbsp;Processing...';
             submitBtn.disabled = true;
 
-            // Get user email from session (localStorage) since field is removed
             const userStr = localStorage.getItem('vortexCurrentUser');
             const user = userStr ? JSON.parse(userStr) : null;
             const userEmail = user ? user.email : '';
 
             if (!userEmail) {
-                alert("Error: User email not found. Please login again.");
+                alert('Error: User email not found. Please login again.');
                 window.location.href = 'login.html';
                 return;
             }
 
-            // Get form values
             const eventData = {
                 name: document.getElementById('name').value,
-                email: userEmail, // Use trusted email from session
+                email: userEmail,
                 event: document.getElementById('event-name').value,
                 department: document.getElementById('department').value,
                 phone: document.getElementById('phone').value,
                 year: document.getElementById('year').value,
                 college: document.getElementById('college').value,
-                location: "Main Auditorium",
+                location: 'Main Auditorium',
                 date: new Date().toISOString()
             };
 
-            // Add teammate data if fields are visible and filled
             const teammateSection = document.getElementById('teammate-section');
             if (teammateSection.style.display !== 'none') {
                 eventData.teammateName = document.getElementById('teammate-name').value;
                 eventData.teammatePhone = document.getElementById('teammate-phone').value;
             }
 
-            // --- RAZORPAY API FLOW ---
             try {
-                // 1. Get Razorpay Key ID from backend
                 const keyRes = await fetch('/api/get-razorpay-key');
                 const keyData = await keyRes.json();
                 const RAZORPAY_KEY_ID = keyData.key;
+                if (!RAZORPAY_KEY_ID) throw new Error('Could not retrieve payment configuration.');
 
-                if (!RAZORPAY_KEY_ID) throw new Error("Could not retrieve payment configuration.");
-
-                // 2. Create Order on Backend
-                const ticketId = "VTX-" + Date.now(); // Temp ID for order creation
+                const ticketId = 'VTX-' + Date.now();
                 const orderRes = await fetch('/api/create-order', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        ticketId: ticketId,
-                        type: 'event' // triggers 1.00 INR amount
-                    })
+                    body: JSON.stringify({ ticketId, type: 'event' })
                 });
-
-                if (!orderRes.ok) throw new Error("Failed to create payment order.");
+                if (!orderRes.ok) throw new Error('Failed to create payment order.');
                 const order = await orderRes.json();
 
-                // 3. Initialize Razorpay Checkout
                 const options = {
                     key: RAZORPAY_KEY_ID,
                     amount: order.amount,
                     currency: order.currency,
-                    name: "Vortex Innovators",
-                    description: "Event Registration Fee",
-                    image: "logo.jpeg",
+                    name: 'Vortex Innovators',
+                    description: 'Event Registration Fee',
+                    image: 'logo.jpeg',
                     order_id: order.id,
                     handler: async function (response) {
                         try {
-                            submitBtn.textContent = 'Verifying Payment...';
-
-                            // 4. Verify Payment on Backend
+                            submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> &nbsp;Verifying...';
                             const verifyRes = await fetch('/api/payment-success', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({
-                                    ticketId: ticketId, // Uses the ID we generated
+                                    ticketId,
                                     razorpay_payment_id: response.razorpay_payment_id,
                                     razorpay_order_id: response.razorpay_order_id,
                                     razorpay_signature: response.razorpay_signature,
-                                    eventData: eventData // Send registration data to be saved ONLY after verification
+                                    eventData
                                 })
                             });
-
                             const verifyData = await verifyRes.json();
-
                             if (verifyData.success) {
-                                // 5. Success! Save session for success page and redirect
                                 sessionStorage.setItem('regName', eventData.name);
                                 sessionStorage.setItem('regEvent', eventData.event);
                                 sessionStorage.setItem('regDept', eventData.department);
                                 sessionStorage.setItem('regId', ticketId);
-
                                 window.location.href = 'registration_success.html';
                             } else {
-                                throw new Error(verifyData.error || "Payment verification failed.");
+                                throw new Error(verifyData.error || 'Payment verification failed.');
                             }
-
                         } catch (verifyError) {
-                            console.error("Verification Error:", verifyError);
-                            alert("Payment successful but verification failed: " + verifyError.message);
-                            submitBtn.textContent = originalText;
+                            console.error('Verification Error:', verifyError);
+                            alert('Payment successful but verification failed: ' + verifyError.message);
+                            submitBtn.innerHTML = originalText;
                             submitBtn.disabled = false;
                         }
                     },
-                    prefill: {
-                        name: eventData.name,
-                        email: eventData.email,
-                        contact: eventData.phone
-                    },
-                    theme: {
-                        color: "#00ffd5"
-                    },
+                    prefill: { name: eventData.name, email: eventData.email, contact: eventData.phone },
+                    theme: { color: '#cc0000' },
                     modal: {
                         ondismiss: function () {
-                            submitBtn.textContent = originalText;
+                            submitBtn.innerHTML = originalText;
                             submitBtn.disabled = false;
                         }
                     }
@@ -407,9 +832,9 @@
                 rzp1.open();
 
             } catch (error) {
-                console.error("Process error:", error);
+                console.error('Process error:', error);
                 alert('Error: ' + error.message);
-                submitBtn.textContent = originalText;
+                submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
             }
         });
