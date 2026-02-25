@@ -15,6 +15,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         return defaultImage;
     }
 
+    function getEventDate(eventName) {
+        if (!eventName) return 'N/A';
+        const cleanName = eventName.trim().toUpperCase();
+        if (typeof eventDetails !== 'undefined' && eventDetails[cleanName] && eventDetails[cleanName].date) {
+            return eventDetails[cleanName].date;
+        }
+        return 'N/A';
+    }
+
     // Define downloadTicket function
     function downloadTicket(btn) {
         const card = btn.closest('.ticket-card');
@@ -176,7 +185,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </div>
                     <div class="ticket-row">
                         <span class="ticket-label-muted">Date:</span>
-                        <span class="ticket-date-val">${ticket.date ? new Date(ticket.date).toLocaleDateString() : 'N/A'}</span>
+                        <span class="ticket-date-val">${getEventDate(ticket.event)}</span>
                     </div>
                     <div class="ticket-row">
                         <span class="ticket-label-muted">Attendee:</span>
