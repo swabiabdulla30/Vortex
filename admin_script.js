@@ -3,7 +3,7 @@ let allRegistrations = [];
 async function fetchData() {
     const token = localStorage.getItem('vortexToken');
     if (!token) {
-        window.location.href = '/login';
+        window.location.href = '/login.html';
         return;
     }
 
@@ -18,13 +18,13 @@ async function fetchData() {
             alert("Session expired. Please login again.\nReason: " + errorText);
             localStorage.removeItem('vortexToken');
             localStorage.removeItem('vortexCurrentUser');
-            window.location.href = '/login';
+            window.location.href = '/login.html';
             return;
         }
 
         if (res.status === 403) {
             alert("Access Denied: Admin privileges required.");
-            window.location.href = '/';
+            window.location.href = '/login.html';
             return;
         }
 
@@ -85,7 +85,7 @@ function exportExcel() {
     }
 
     try {
-        const headers = ["Ticket ID", "Name", "Event", "Email", "Phone", "Department", "Year", "College", "Date", "Payment Status", "Transaction ID"];
+        const headers = ["Ticket ID", "Name", "Event", "Email", "Phone", "Department", "Year", "College", "Date", "Payment Status", "Transaction ID", "Teammate Name", "Teammate Phone"];
         const rows = filtered.map(r => [
             r.ticketId || '',
             `"${(r.name || '').replace(/"/g, '""')}"`,
@@ -97,7 +97,9 @@ function exportExcel() {
             `"${(r.college || '').replace(/"/g, '""')}"`,
             r.date ? new Date(r.date).toLocaleDateString() : '',
             r.paymentStatus || 'PENDING',
-            r.transactionId || r.paymentId || ''
+            r.transactionId || r.paymentId || '',
+            `"${(r.teammateName || '').replace(/"/g, '""')}"`,
+            r.teammatePhone || ''
         ]);
 
         const csvContent = [
@@ -190,6 +192,7 @@ function renderTable(data) {
                 <div style="font-size:0.85em;">
                     ${item.department}<br>
                     ${item.year}Yr • ${item.college}
+                    ${item.teammateName ? `<br><span style="color:#ffd700;">👥 ${item.teammateName}${item.teammatePhone ? ' · ' + item.teammatePhone : ''}</span>` : ''}
                 </div>
             </td>
             <td class="${isPaid ? 'status-paid' : 'status-pending'}">
