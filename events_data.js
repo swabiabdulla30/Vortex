@@ -42,7 +42,7 @@ const eventDetails = {
         date: "Mar 06, 2026",
         venue: "Lab",
         slots: 30,
-        about: "The Website Designing Competition is a creative event where participants showcase their web development and design skills. Participants will be given a theme or topic, and they must design a visually appealing, user-friendly website within the given time. The event focuses on creativity, layout design, responsiveness, and overall presentation.<br><br>This competition provides a great platform to demonstrate your technical and creative abilities.<br><br>Registration Fee: ₹10 per participant<br>Cash Prize: ₹200<br>Total Slots: 30 (Limited entries)",
+        about: "The Website Designing Competition is a creative event where participants showcase their web development and design skills. Participants will be given a theme or topic, and they must design a visually appealing, user-friendly website within the given time. The event focuses on creativity, layout design, responsiveness, and overall presentation. This competition provides a great platform to demonstrate your technical and creative abilities.",
         rules: [
             "Only registered participants are allowed to compete.",
             "Individual participation only (unless otherwise specified).",
