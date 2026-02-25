@@ -808,7 +808,7 @@
                                 sessionStorage.setItem('regDept', eventData.department);
                                 sessionStorage.setItem('regId', ticketId);
                                 sessionStorage.setItem('regTeammate', eventData.teammateName || '');
-                                window.location.href = '/registration_success';
+                                window.location.href = '/registration_success.html';
                             } else {
                                 throw new Error(verifyData.error || 'Payment verification failed.');
                             }
