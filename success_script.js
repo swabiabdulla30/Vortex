@@ -115,6 +115,7 @@ window.addEventListener('load', function () {
         const event = sessionStorage.getItem('regEvent') || 'Vortex Event';
         const dept = sessionStorage.getItem('regDept') || 'General';
         const id = sessionStorage.getItem('regId') || 'VTX-' + Math.floor(Math.random() * 100000);
+        const teammate = sessionStorage.getItem('regTeammate') || '';
 
         // Get event date and venue from events_data.js (single source of truth)
         const cleanEventName = event ? event.trim().toUpperCase() : '';
@@ -138,6 +139,20 @@ window.addEventListener('load', function () {
         setText('ticket-id', 'NO: #' + displayId);
         setText('ticket-date', eventDate);
         setText('ticket-location', eventVenue);
+
+        // Show teammate on eFootball ticket
+        const isEfootball = event.toUpperCase().includes('E-FOOTBALL');
+        const teammateRow = document.getElementById('ticket-teammate-row');
+        const dlTeammateRow = document.getElementById('dl-teammate-row');
+        if (isEfootball && teammate) {
+            setText('ticket-teammate', teammate);
+            setText('dl-teammate', teammate);
+            if (teammateRow) teammateRow.style.display = '';
+            if (dlTeammateRow) dlTeammateRow.style.display = '';
+        } else {
+            if (teammateRow) teammateRow.style.display = 'none';
+            if (dlTeammateRow) dlTeammateRow.style.display = 'none';
+        }
 
         // Populate HIDDEN DOWNLOAD Ticket
         setText('dl-name', name);

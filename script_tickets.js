@@ -201,6 +201,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <span class="ticket-label-muted">Attendee:</span>
                         <span class="ticket-name-val">${ticket.name || 'Participant'}</span>
                     </div>
+                    ${(ticket.event && ticket.event.toUpperCase().includes('E-FOOTBALL') && ticket.teammateName) ? `
+                    <div class="ticket-row">
+                        <span class="ticket-label-muted">Teammate:</span>
+                        <span class="ticket-name-val">${ticket.teammateName}</span>
+                    </div>` : ''}
                     <div class="ticket-brand-footer">
                         <div class="ticket-brand-text">VORTEX</div>
                         <div class="ticket-status-badge">
