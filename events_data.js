@@ -25,17 +25,19 @@ const eventDetails = {
         date: "Mar 06, 2026",
         venue: "Lab",
         slots: 30,
-        about: "Hunt through the web, decode clues, and race your team to the finish! A digital treasure hunt where participants solve tech-themed riddles and puzzles to find the final prize.",
+        about: "Tech Hunt is an exciting online puzzle challenge where participants are given a website filled with hidden clues and challenges. Players must carefully explore the website, solve puzzles, and find the correct extension or link to unlock the next level. Each level becomes more challenging, testing your logic, observation, and problem-solving skills. The participant who successfully completes the hunt in the shortest time wins the cash prize.",
         rules: [
-            "Teams of 2 members.",
-            "One device per team allowed during the hunt.",
-            "Clues must not be shared with other teams.",
-            "Any form of cheating leads to disqualification.",
-            "Final answer must be submitted through the provided form.",
-            "Organizers reserve the right to modify clues if needed."
+            "Registration Fee: ₹10 per participant",
+            "Cash Prize: ₹200",
+            "Total Slots: 30 (First come, first serve)",
+            "Participants must register before the event starts.",
+            "Only registered participants are allowed to compete.",
+            "Use of unfair means or malpractice will lead to disqualification.",
+            "Follow all instructions given by the organizers.",
+            "Organizer’s decision will be final."
         ]
     },
-    "WEBSITE DESIGNING COMPETITION": {
+    "WEB-DESIGNING": {
         image: "https://image2url.com/r2/default/images/1771863896078-ef98fc6d-f9d8-41ef-89d5-cac3231e8f7c.jpeg",
         date: "Mar 06, 2026",
         venue: "Lab",
