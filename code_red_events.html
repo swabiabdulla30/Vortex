@@ -74,14 +74,13 @@
         <div class="section-container">
             <div class="cards-grid">
                 <!-- Event 1 -->
-                <a href="event_registration.html?event=PUBG" class="card event-card"
+                <a href="event_registration.html?event=PUBG" class="card event-card" data-event="PUBG"
                     style="text-decoration: none; color: inherit;">
                     <div class="card-status status-active">● REGISTRATION OPEN</div>
                     <div class="card-image">
                         <img src="https://image2url.com/r2/default/images/1771996060307-fe036efe-560f-4a05-82d7-5fa3fec10c88.jpeg"
                             alt="PUBG" loading="lazy">
                     </div>
-                    <!-- Reusing existing class or add new one if needed, using placeholders for now -->
                     <div class="card-content">
                         <div class="date-badge">
                             <span class="month">MAR</span>
@@ -93,13 +92,14 @@
                             <p>Together till the last circle.</p>
                             <div class="card-footer">
                                 <span class="location">📍 SEMINAR HALL</span>
+                                <span class="slots-badge" id="slots-PUBG">⏳</span>
                                 <span class="arrow">↗</span>
                             </div>
                         </div>
                     </div>
                 </a>
                 <!-- Event 2: Devil's Map -->
-                <a href="event_registration.html?event=DEVIL%27S%20MAP" class="card event-card"
+                <a href="event_registration.html?event=DEVIL%27S%20MAP" class="card event-card" data-event="DEVIL'S MAP"
                     style="text-decoration: none; color: inherit;">
                     <div class="card-status status-active">● REGISTRATION OPEN</div>
                     <div class="card-image">
@@ -118,13 +118,14 @@
                             <p>Follow the clues, claim the crown.</p>
                             <div class="card-footer">
                                 <span class="location">📍 DRAWING HALL</span>
+                                <span class="slots-badge" id="slots-DEVIL'S MAP">⏳</span>
                                 <span class="arrow">↗</span>
                             </div>
                         </div>
                     </div>
                 </a>
                 <!-- Event 3 -->
-                <a href="event_registration.html?event=TECH%20HUNT" class="card event-card"
+                <a href="event_registration.html?event=TECH%20HUNT" class="card event-card" data-event="TECH HUNT"
                     style="text-decoration: none; color: inherit;">
                     <div class="card-status status-active">● REGISTRATION OPEN</div>
                     <div class="card-image">
@@ -142,6 +143,7 @@
                             <p>Hunt through the web, find the prize.</p>
                             <div class="card-footer">
                                 <span class="location">📍 LAB</span>
+                                <span class="slots-badge" id="slots-TECH HUNT">⏳</span>
                                 <span class="arrow">↗</span>
                             </div>
                         </div>
@@ -150,7 +152,7 @@
 
                 <!-- Event 3 -->
                 <a href="event_registration.html?event=WEBSITE%20DESIGNING%20COMPETITION" class="card event-card"
-                    style="text-decoration: none; color: inherit;">
+                    data-event="WEBSITE DESIGNING COMPETITION" style="text-decoration: none; color: inherit;">
                     <div class="card-status status-active">● REGISTRATION OPEN</div>
                     <div class="card-image">
                         <img src="https://image2url.com/r2/default/images/1771995989097-15167040-638c-48cd-a3c0-e93ddb26f811.jpeg"
@@ -167,6 +169,7 @@
                             <p>Design your way to the top.</p>
                             <div class="card-footer">
                                 <span class="location">📍 LAB </span>
+                                <span class="slots-badge" id="slots-WEBSITE DESIGNING COMPETITION">⏳</span>
                                 <span class="arrow">↗</span>
                             </div>
                         </div>
@@ -175,7 +178,7 @@
 
                 <!-- Event 4 -->
                 <a href="event_registration.html?event=CO-OP%20E-FOOTBALL%20TOURNAMENT" class="card event-card"
-                    style="text-decoration: none; color: inherit;">
+                    data-event="CO-OP E-FOOTBALL TOURNAMENT" style="text-decoration: none; color: inherit;">
                     <div class="card-status status-active">● REGISTRATION OPEN</div>
                     <div class="card-image">
                         <img src="https://image2url.com/r2/default/images/1771995899025-6821ca81-aa54-4566-b29d-4fab70571c09.jpeg"
@@ -192,6 +195,7 @@
                             <p>Kick off, game on, glory awaits.</p>
                             <div class="card-footer">
                                 <span class="location">📍 SEMINAR HALL</span>
+                                <span class="slots-badge" id="slots-CO-OP E-FOOTBALL TOURNAMENT">⏳</span>
                                 <span class="arrow">↗</span>
                             </div>
                         </div>
@@ -216,6 +220,42 @@
 
     <script src="tech_bg.js"></script>
     <script src="script.js"></script>
+    <script>
+        (async () => {
+            const API_URL = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost')
+                ? 'http://127.0.0.1:5000/api'
+                : '/api';
+            try {
+                const res = await fetch(`${API_URL}/event-slots`);
+                const slots = await res.json();
+                slots.forEach(({ event, remaining, total }) => {
+                    const badge = document.getElementById(`slots-${event}`);
+                    if (!badge) return;
+                    if (remaining === 0) {
+                        badge.textContent = '❌ FULL';
+                        badge.className = 'slots-badge slots-full';
+                        // Disable the card link
+                        const card = badge.closest('.event-card');
+                        if (card && card.tagName === 'A') {
+                            card.style.pointerEvents = 'none';
+                            card.style.opacity = '0.6';
+                            const statusBadge = card.querySelector('.card-status');
+                            if (statusBadge) { statusBadge.textContent = '● REGISTRATION CLOSED'; statusBadge.className = 'card-status status-soon'; }
+                        }
+                    } else if (remaining <= 5) {
+                        badge.textContent = `🔴 ${remaining} left`;
+                        badge.className = 'slots-badge slots-low';
+                    } else {
+                        badge.textContent = `🟢 ${remaining} slots left`;
+                        badge.className = 'slots-badge slots-ok';
+                    }
+                });
+            } catch (e) {
+                console.warn('Could not load slot data:', e);
+                document.querySelectorAll('.slots-badge').forEach(b => b.textContent = '');
+            }
+        })();
+    </script>
 </body>
 
 </html>
