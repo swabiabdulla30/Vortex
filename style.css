@@ -2660,3 +2660,51 @@ footer {
         scroll-behavior: auto;
     }
 }
+
+/* ── Event Slot Badge ──────────────────────────────────── */
+.slots-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #aaa;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+}
+
+.slots-badge.slots-ok {
+    background: rgba(0, 200, 80, 0.12);
+    border-color: rgba(0, 200, 80, 0.35);
+    color: #00e05a;
+}
+
+.slots-badge.slots-low {
+    background: rgba(255, 100, 0, 0.12);
+    border-color: rgba(255, 100, 0, 0.35);
+    color: #ff8c42;
+    animation: slotsPulse 1.4s ease-in-out infinite;
+}
+
+.slots-badge.slots-full {
+    background: rgba(200, 0, 0, 0.15);
+    border-color: rgba(200, 0, 0, 0.4);
+    color: #ff4444;
+}
+
+@keyframes slotsPulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.6;
+    }
+}

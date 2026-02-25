@@ -9,6 +9,7 @@ const eventDetails = {
         image: "https://image2url.com/r2/default/images/1771322980849-6dd25143-dab6-410b-a737-504b63aceea0.jpeg",
         date: "Mar 05, 2026",
         venue: "Seminar Hall",
+        slots: 48,
         about: "Squad up and fight your way to the final circle! An intense PUBG Mobile tournament where teams compete to be the last ones standing. Test your strategy, reflexes, and teamwork in this ultimate battle royale showdown.",
         rules: [
             "Teams must consist of 4 members.",
@@ -23,6 +24,7 @@ const eventDetails = {
         image: "https://image2url.com/r2/default/images/1771869172242-e128a3e7-34be-47d7-af3f-2fc32eb7c147.jpeg",
         date: "Mar 06, 2026",
         venue: "Lab",
+        slots: 30,
         about: "Hunt through the web, decode clues, and race your team to the finish! A digital treasure hunt where participants solve tech-themed riddles and puzzles to find the final prize.",
         rules: [
             "Teams of 2 members.",
@@ -37,6 +39,7 @@ const eventDetails = {
         image: "https://image2url.com/r2/default/images/1771863896078-ef98fc6d-f9d8-41ef-89d5-cac3231e8f7c.jpeg",
         date: "Mar 06, 2026",
         venue: "Lab",
+        slots: 30,
         about: "Design your way to the top! Participants will create a fully functional and visually stunning website based on a given theme within a limited time. Judged on creativity, design, and technical execution.",
         rules: [
             "Individual or teams of 2 members.",
@@ -51,6 +54,7 @@ const eventDetails = {
         image: "https://image2url.com/r2/default/images/1771913280313-be432e9d-361a-41a5-957a-3bba01286137.jpeg",
         date: "Mar 06, 2026",
         venue: "Seminar Hall",
+        slots: 16,
         about: "Kick off, game on, glory awaits! A Co-op eFootball tournament where pairs go head-to-head in competitive matches. Showcase your skills, tactics, and teamwork on the virtual pitch.",
         rules: [
             "Teams of 2 players.",
@@ -65,6 +69,7 @@ const eventDetails = {
         image: "https://image2url.com/r2/default/images/1771567367713-43840ddf-0d00-429a-b9ae-d5a329392290.jpeg",
         date: "Mar 05, 2026",
         venue: "Drawing Hall",
+        slots: 20,
         about: "Follow the clues, claim the crown! Devil's Map is a thrilling campus-wide treasure hunt where participants solve riddles and navigate through checkpoints to uncover the final prize.",
         rules: [
             "Teams of 2-3 members.",

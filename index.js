@@ -360,7 +360,41 @@ app.get("/api/ticket/:ticketId", async (req, res) => {
     }
 });
 
+// --- Public: Event Slot Availability ---
+const EVENT_SLOTS = {
+    "PUBG": 48,
+    "DEVIL'S MAP": 20,
+    "TECH HUNT": 30,
+    "WEBSITE DESIGNING COMPETITION": 30,
+    "CO-OP E-FOOTBALL TOURNAMENT": 16
+};
+
+app.get("/api/event-slots", async (req, res) => {
+    try {
+        await connectDB();
+        const results = await Promise.all(
+            Object.entries(EVENT_SLOTS).map(async ([eventName, total]) => {
+                const registered = await Registration.countDocuments({
+                    event: { $regex: new RegExp(`^${eventName}$`, 'i') },
+                    paymentStatus: "PAID"
+                });
+                return {
+                    event: eventName,
+                    total,
+                    registered,
+                    remaining: Math.max(0, total - registered)
+                };
+            })
+        );
+        res.json(results);
+    } catch (error) {
+        console.error("Event slots error:", error);
+        res.status(500).json({ error: "Failed to fetch slot data" });
+    }
+});
+
 app.get("/api/my-tickets", async (req, res) => {
+
     try {
         await connectDB();
         const { email } = req.query;
