@@ -37,7 +37,7 @@ const eventDetails = {
             "Organizer’s decision will be final."
         ]
     },
-    "WEBSITE DESIGNING COMPETITION": {
+    "WEB-DESIGNING": {
         image: "https://image2url.com/r2/default/images/1771863896078-ef98fc6d-f9d8-41ef-89d5-cac3231e8f7c.jpeg",
         date: "Mar 06, 2026",
         venue: "Lab",
