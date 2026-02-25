@@ -365,7 +365,7 @@ const EVENT_SLOTS = {
     "PUBG": 48,
     "DEVIL'S MAP": 20,
     "TECH HUNT": 30,
-    "WEB-DESIGNING": 30,
+    "WEBSITE DESIGNING COMPETITION": 30,
     "CO-OP E-FOOTBALL": 16
 };
 
