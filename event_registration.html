@@ -175,6 +175,49 @@
             flex: 1;
         }
 
+        /* Fee Banner */
+        .reg-fee-banner {
+            background: linear-gradient(135deg, rgba(204, 0, 0, 0.15), rgba(139, 0, 0, 0.2));
+            border: 1px solid rgba(204, 0, 0, 0.4);
+            border-left: 4px solid #ff3333;
+            border-radius: 12px;
+            padding: 18px 24px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(204, 0, 0, 0.15);
+        }
+
+        .reg-fee-banner.free-entry {
+            background: linear-gradient(135deg, rgba(0, 200, 80, 0.1), rgba(0, 150, 60, 0.15));
+            border-color: rgba(0, 200, 80, 0.3);
+            border-left-color: #00e05a;
+            box-shadow: 0 4px 20px rgba(0, 200, 80, 0.1);
+        }
+
+        .reg-fee-banner .fee-label {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: rgba(255, 255, 255, 0.9);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .reg-fee-banner .fee-amount {
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: #ff4444;
+            letter-spacing: 0.5px;
+        }
+
+        .reg-fee-banner.free-entry .fee-amount {
+            color: #00e05a;
+        }
+
         .reg-section-label {
             display: flex;
             align-items: center;
@@ -500,8 +543,6 @@
                     <div class="reg-hero-meta">
                         <span class="reg-meta-pill" id="reg-date-pill"><i class="fas fa-calendar"></i> —</span>
                         <span class="reg-meta-pill" id="reg-venue-pill"><i class="fas fa-map-marker-alt"></i> —</span>
-                        <span class="reg-meta-pill fee-pill" id="reg-fee-pill"><i class="fas fa-rupee-sign"></i>
-                            Free</span>
                     </div>
                 </div>
             </div>
@@ -516,6 +557,12 @@
             </div>
 
             <div class="reg-left-body">
+                <!-- Highlighted Fee Banner -->
+                <div class="reg-fee-banner" id="reg-fee-banner" style="display: none;">
+                    <div class="fee-label"><i class="fas fa-ticket-alt"></i> Entry Fee</div>
+                    <div class="fee-amount" id="reg-fee-amount">—</div>
+                </div>
+
                 <div class="reg-section-label"><i class="fas fa-info-circle"></i> About Event</div>
                 <p class="reg-about-text" id="reg-about-text">—</p>
 
@@ -682,16 +729,17 @@
                     if (details.date) document.getElementById('reg-date-pill').innerHTML = `<i class="fas fa-calendar"></i> ${details.date}`;
                     if (details.venue) document.getElementById('reg-venue-pill').innerHTML = `<i class="fas fa-map-marker-alt"></i> ${details.venue}`;
 
-                    const feePill = document.getElementById('reg-fee-pill');
+                    const feeBanner = document.getElementById('reg-fee-banner');
+                    const feeAmount = document.getElementById('reg-fee-amount');
+
                     if (details.fee && details.fee.toLowerCase() !== 'free') {
-                        feePill.innerHTML = `<i class="fas fa-ticket-alt"></i> Entry Fee: ${details.fee}`;
-                        feePill.style.background = 'rgba(0, 200, 80, 0.15)';
-                        feePill.style.color = '#00e05a';
-                        feePill.style.borderColor = 'rgba(0, 200, 80, 0.3)';
+                        feeBanner.style.display = 'flex';
+                        feeBanner.className = 'reg-fee-banner';
+                        feeAmount.textContent = details.fee;
                     } else {
-                        feePill.innerHTML = `<i class="fas fa-ticket-alt"></i> Free Entry`;
-                        feePill.style.background = 'rgba(255, 255, 255, 0.05)';
-                        feePill.style.color = '#aaa';
+                        feeBanner.style.display = 'flex';
+                        feeBanner.className = 'reg-fee-banner free-entry';
+                        feeAmount.textContent = 'FREE';
                     }
 
                     // About
