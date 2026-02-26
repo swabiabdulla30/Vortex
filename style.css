@@ -618,12 +618,19 @@ section {
 .card-footer {
     margin-top: auto;
     display: flex;
-    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px 8px;
     align-items: center;
     font-size: 0.8rem;
     color: #888;
     border-top: 1px solid #222;
     padding-top: 15px;
+}
+
+.card-footer .location {
+    flex: 1 1 100%;
+    margin-bottom: 2px;
+    font-weight: 600;
 }
 
 .arrow {
