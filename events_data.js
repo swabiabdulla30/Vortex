@@ -47,7 +47,7 @@ const eventDetails = {
         about: "The Web-Designing is a creative event where participants showcase their web development and design skills. Participants will be given a theme or topic, and they must design a visually appealing, user-friendly website within the given time. The event focuses on creativity, layout design, responsiveness, and overall presentation. This competition provides a great platform to demonstrate your technical and creative abilities.",
         rules: [
             "Only registered participants are allowed to compete.",
-            "Individual participation only (unless otherwise specified).",
+            "Individual participation only  .",
             "The website must be created during the competition time.",
             "Pre-made templates or copied designs are not allowed.",
             "Participants may use HTML, CSS, JavaScript, or any AI tools.",
@@ -88,7 +88,7 @@ const eventDetails = {
             "Each team receives the same starting clue.",
             "Running between zones is allowed but must not disturb other college activities.",
             "Destroying or tampering with clues leads to disqualification.",
-            "Mobile phones allowed only for clue lookup, not GPS tracking.",
+            "Mobile phones are not allowed during the event.",
             "The first team to complete all checkpoints wins."
         ]
     },
