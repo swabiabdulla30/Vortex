@@ -10,8 +10,8 @@ const eventDetails = {
         date: "Mar 05, 2026",
         venue: "Seminar Hall",
         slots: 48,
-        prize: "₹300",
-        fee: "₹10 per player",
+        prize: "₹400",
+        fee: "₹20 per player",
         about: "<strong>🎮 PUBG Mobile Tournament (Livik Map)</strong><br><br><strong>📌 Tournament Details:</strong><br>Map: Livik<br>Mode: Squad (TPP)<br>Total Teams: 12<br>Total Players: 48<br>Registration Fee: ₹10 per player<br>Total Prize Pool: ₹300<br>Duration: 2 Hours",
         rules: [
             "<strong>👥 Team Rules</strong><br>1. Each team must have exactly 4 players.<br>2. No player can join more than one team.<br>3. No team changes after room ID is shared.<br>4. All players must be online 10 minutes before start.<br>5. If a player is absent, the team must play with remaining players (no delay).",
@@ -26,7 +26,7 @@ const eventDetails = {
         venue: "Lab",
         slots: 30,
         prize: "₹200",
-        fee: "Free",
+        fee: "₹10 per participant",
         about: "Tech Hunt is an exciting online puzzle challenge where participants are given a website filled with hidden clues and challenges. Players must carefully explore the website, solve puzzles, and find the correct extension or link to unlock the next level. Each level becomes more challenging, testing your logic, observation, and problem-solving skills. The participant who successfully completes the hunt in the shortest time wins the cash prize.",
         rules: [
             "Participants must register before the event starts.",
@@ -42,8 +42,8 @@ const eventDetails = {
         date: "Mar 06, 2026",
         venue: "Lab",
         slots: 30,
-        prize: "Certificate",
-        fee: "Free",
+        prize: "₹200",
+        fee: "₹10 per participant",
         about: "The Web-Designing is a creative event where participants showcase their web development and design skills. Participants will be given a theme or topic, and they must design a visually appealing, user-friendly website within the given time. The event focuses on creativity, layout design, responsiveness, and overall presentation. This competition provides a great platform to demonstrate your technical and creative abilities.",
         rules: [
             "Only registered participants are allowed to compete.",
