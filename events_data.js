@@ -11,6 +11,7 @@ const eventDetails = {
         venue: "Seminar Hall",
         slots: 48,
         prize: "₹300",
+        fee: "₹10 per player",
         about: "<strong>🎮 PUBG Mobile Tournament (Livik Map)</strong><br><br><strong>📌 Tournament Details:</strong><br>Map: Livik<br>Mode: Squad (TPP)<br>Total Teams: 12<br>Total Players: 48<br>Registration Fee: ₹10 per player<br>Total Prize Pool: ₹300<br>Duration: 2 Hours",
         rules: [
             "<strong>👥 Team Rules</strong><br>1. Each team must have exactly 4 players.<br>2. No player can join more than one team.<br>3. No team changes after room ID is shared.<br>4. All players must be online 10 minutes before start.<br>5. If a player is absent, the team must play with remaining players (no delay).",
@@ -25,6 +26,7 @@ const eventDetails = {
         venue: "Lab",
         slots: 30,
         prize: "₹200",
+        fee: "Free",
         about: "Tech Hunt is an exciting online puzzle challenge where participants are given a website filled with hidden clues and challenges. Players must carefully explore the website, solve puzzles, and find the correct extension or link to unlock the next level. Each level becomes more challenging, testing your logic, observation, and problem-solving skills. The participant who successfully completes the hunt in the shortest time wins the cash prize.",
         rules: [
             "Participants must register before the event starts.",
@@ -41,6 +43,7 @@ const eventDetails = {
         venue: "Lab",
         slots: 30,
         prize: "Certificate",
+        fee: "Free",
         about: "The Web-Designing is a creative event where participants showcase their web development and design skills. Participants will be given a theme or topic, and they must design a visually appealing, user-friendly website within the given time. The event focuses on creativity, layout design, responsiveness, and overall presentation. This competition provides a great platform to demonstrate your technical and creative abilities.",
         rules: [
             "Only registered participants are allowed to compete.",
@@ -61,6 +64,7 @@ const eventDetails = {
         venue: "Seminar Hall",
         slots: 16,
         prize: "₹200",
+        fee: "₹20 per team",
         about: "The E-Football Tournament is a competitive virtual football gaming event where teams of 2 players compete in head-to-head matches to showcase strategy, coordination, and football gaming skills. With 16 teams already formed before the event, players will face off in knockout rounds to advance and ultimately win the prize. The competition promotes fair play, sportsmanship, and an exciting gaming experience for all participants.",
         rules: [
             "<strong>🔹 Registration & Team Details</strong><br>Entry Fee: ₹20 per team (2 players)<br>Cash Prize: ₹200<br>Total Teams: 16 (Teams must be pre-formed before the event)<br>Only registered teams are eligible to participate.",
@@ -77,6 +81,7 @@ const eventDetails = {
         venue: "Drawing Hall",
         slots: 20,
         prize: "Certificate",
+        fee: "Free",
         about: "Follow the clues, claim the crown! Devil's Map is a thrilling campus-wide treasure hunt where participants solve riddles and navigate through checkpoints to uncover the final prize.",
         rules: [
             "Teams must contain 5 members.",

@@ -500,6 +500,8 @@
                     <div class="reg-hero-meta">
                         <span class="reg-meta-pill" id="reg-date-pill"><i class="fas fa-calendar"></i> —</span>
                         <span class="reg-meta-pill" id="reg-venue-pill"><i class="fas fa-map-marker-alt"></i> —</span>
+                        <span class="reg-meta-pill fee-pill" id="reg-fee-pill"><i class="fas fa-rupee-sign"></i>
+                            Free</span>
                     </div>
                 </div>
             </div>
@@ -677,9 +679,20 @@
                     // Hero name
                     document.getElementById('reg-hero-name').textContent = cleanName;
 
-                    // Meta pills
                     if (details.date) document.getElementById('reg-date-pill').innerHTML = `<i class="fas fa-calendar"></i> ${details.date}`;
                     if (details.venue) document.getElementById('reg-venue-pill').innerHTML = `<i class="fas fa-map-marker-alt"></i> ${details.venue}`;
+
+                    const feePill = document.getElementById('reg-fee-pill');
+                    if (details.fee && details.fee.toLowerCase() !== 'free') {
+                        feePill.innerHTML = `<i class="fas fa-ticket-alt"></i> Entry Fee: ${details.fee}`;
+                        feePill.style.background = 'rgba(0, 200, 80, 0.15)';
+                        feePill.style.color = '#00e05a';
+                        feePill.style.borderColor = 'rgba(0, 200, 80, 0.3)';
+                    } else {
+                        feePill.innerHTML = `<i class="fas fa-ticket-alt"></i> Free Entry`;
+                        feePill.style.background = 'rgba(255, 255, 255, 0.05)';
+                        feePill.style.color = '#aaa';
+                    }
 
                     // About
                     document.getElementById('reg-about-text').innerHTML = details.about || '';
