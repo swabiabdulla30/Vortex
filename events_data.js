@@ -10,14 +10,12 @@ const eventDetails = {
         date: "Mar 05, 2026",
         venue: "Seminar Hall",
         slots: 48,
-        about: "Squad up and fight your way to the final circle! An intense PUBG Mobile tournament where teams compete to be the last ones standing. Test your strategy, reflexes, and teamwork in this ultimate battle royale showdown.",
+        about: "<strong>🎮 PUBG Mobile Tournament (Livik Map)</strong><br><br><strong>📌 Tournament Details:</strong><br>Map: Livik<br>Mode: Squad (TPP)<br>Total Teams: 12<br>Total Players: 48<br>Registration Fee: ₹10 per player<br>Total Prize Pool: ₹300<br>Duration: 2 Hours",
         rules: [
-            "Teams must consist of 4 members.",
-            "PUBG Mobile only — PC version not allowed.",
-            "Players must be present in BCA Lab 1 during match time.",
-            "No teaming with opponents or usage of emulators.",
-            "Any use of hacks or cheats leads to immediate disqualification.",
-            "Organizer's decision is final in case of disputes."
+            "<strong>👥 Team Rules</strong><br>1. Each team must have exactly 4 players.<br>2. No player can join more than one team.<br>3. No team changes after room ID is shared.<br>4. All players must be online 10 minutes before start.<br>5. If a player is absent, the team must play with remaining players (no delay).",
+            "<strong>🎯 Match Rules</strong><br>1. Map: Livik(normal)<br>2. Mode: Squad – TPP<br>3. Only one official match will be conducted.<br>4. Custom room ID & password will be shared 10 minutes before match.<br>5. Match will start at scheduled time (No waiting for late players).<br>6. Any use of hacks, glitches, or unfair play will result in immediate disqualification.",
+            "<strong>❌ Disqualification Rules</strong><br>1. No hacking or third-party tools.<br>2. No teaming between squads.<br>3. No abusive language in chat or voice.<br>4. Emulator players not allowed (if mobile-only event).<br>5. Organizers’ decision is final.",
+            "<strong>📶 Technical Rules</strong><br>1. Players are responsible for their own internet connection.<br>2. No restart for personal internet issues.<br>3. If server error happens from organizer side, match will be restarted."
         ]
     },
     "TECH HUNT": {
