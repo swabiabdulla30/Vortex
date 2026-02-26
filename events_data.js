@@ -14,7 +14,7 @@ const eventDetails = {
         rules: [
             "<strong>👥 Team Rules</strong><br>1. Each team must have exactly 4 players.<br>2. No player can join more than one team.<br>3. No team changes after room ID is shared.<br>4. All players must be online 10 minutes before start.<br>5. If a player is absent, the team must play with remaining players (no delay).",
             "<strong>🎯 Match Rules</strong><br>1. Map: Livik(normal)<br>2. Mode: Squad – TPP<br>3. Only one official match will be conducted.<br>4. Custom room ID & password will be shared 10 minutes before match.<br>5. Match will start at scheduled time (No waiting for late players).<br>6. Any use of hacks, glitches, or unfair play will result in immediate disqualification.",
-            "<strong>❌ Disqualification Rules</strong><br>1. No hacking or third-party tools.<br>2. No teaming between squads.<br>3. No abusive language in chat or voice.<br>4. Emulator players not allowed (if mobile-only event).<br>5. Organizers’ decision is final.",
+            "<strong>❌ Disqualification Rules</strong><br>1. No hacking or third-party tools.<br>2. No teaming between squads.<br>3. No abusive language in chat or voice.<br>4. Emulator players not allowed (if mobile-only event).<br>5. Organizers' decision is final.",
             "<strong>📶 Technical Rules</strong><br>1. Players are responsible for their own internet connection.<br>2. No restart for personal internet issues.<br>3. If server error happens from organizer side, match will be restarted."
         ]
     },
@@ -32,7 +32,7 @@ const eventDetails = {
             "Only registered participants are allowed to compete.",
             "Use of unfair means or malpractice will lead to disqualification.",
             "Follow all instructions given by the organizers.",
-            "Organizer’s decision will be final."
+            "Organizer's decision will be final."
         ]
     },
     "WEBSITE DESIGNING COMPETITION": {
@@ -51,7 +51,7 @@ const eventDetails = {
             "Submission must be completed within the given time limit.",
             "Judging will be based on design, creativity, responsiveness, and functionality.",
             "Any form of plagiarism will result in immediate disqualification.",
-            "Organizer’s decision will be final."
+            "Organizer's decision will be final."
         ]
     },
     "CO-OP E-FOOTBALL": {
@@ -66,7 +66,7 @@ const eventDetails = {
             "<strong> Fair Play & Conduct</strong><br>No cheating, hacks, or unfair tools are allowed in any match.<br>Unsportsmanlike behavior (abusive language, intentional disconnects) may lead to disqualification.<br>Respect all participants and follow organizer instructions.",
             "<strong> Technical Requirements</strong><br>Participants must bring their own device with the game installed and updated.<br>Make sure the device is charged and ready for play.<br>Organizers are not responsible for internet issues or device malfunctions.",
             "<strong> Match Results & Prize</strong><br>Match results will be recorded and announced by the organizers.<br>In case of ties (if applicable), tie-breaking rules set by the organizers will apply.<br>Cash prize is awarded to the winning team after final match results are verified.",
-            "<strong> Organizer’s Authority</strong><br>All decisions by the organizers are final and binding.<br>Participants must cooperate with referees and event officials."
+            "<strong> Organizer's Authority</strong><br>All decisions by the organizers are final and binding.<br>Participants must cooperate with referees and event officials."
         ]
     },
     "DEVIL'S MAP": {
@@ -115,6 +115,13 @@ const eventDetails = {
         ]
     }
 };
+
+// Friendly-name aliases — these match the card display names exactly
+// so event_registration.html shows the same name the user sees on the card.
+eventDetails["Tech Hunt"] = eventDetails["TECH HUNT"];
+eventDetails["Web-Designing"] = eventDetails["WEBSITE DESIGNING COMPETITION"];
+eventDetails["Co-op E-Football"] = eventDetails["CO-OP E-FOOTBALL"];
+eventDetails["Devil's Map"] = eventDetails["DEVIL'S MAP"];
 
 // Make it available globally if needed, though script inclusion does this automatically in browser.
 if (typeof module !== 'undefined') {
