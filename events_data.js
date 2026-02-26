@@ -14,7 +14,7 @@ const eventDetails = {
         rules: [
             "<strong>👥 Team Rules</strong><br>1. Each team must have exactly 4 players.<br>2. No player can join more than one team.<br>3. No team changes after room ID is shared.<br>4. All players must be online 10 minutes before start.<br>5. If a player is absent, the team must play with remaining players (no delay).",
             "<strong>🎯 Match Rules</strong><br>1. Map: Livik(normal)<br>2. Mode: Squad – TPP<br>3. Only one official match will be conducted.<br>4. Custom room ID & password will be shared 10 minutes before match.<br>5. Match will start at scheduled time (No waiting for late players).<br>6. Any use of hacks, glitches, or unfair play will result in immediate disqualification.",
-            "<strong>❌ Disqualification Rules</strong><br>1. No hacking or third-party tools.<br>2. No teaming between squads.<br>3. No abusive language in chat or voice.<br>4. Emulator players not allowed (if mobile-only event).<br>5. Organizers' decision is final.",
+            "<strong>❌ Disqualification Rules</strong><br>1. No hacking or third-party tools.<br>2. No teaming between squads.<br>3. No abusive language in chat or voice.<br>4. Emulator players not allowed (if mobile-only event).<br>5. Organizers’ decision is final.",
             "<strong>📶 Technical Rules</strong><br>1. Players are responsible for their own internet connection.<br>2. No restart for personal internet issues.<br>3. If server error happens from organizer side, match will be restarted."
         ]
     },
@@ -25,14 +25,15 @@ const eventDetails = {
         slots: 30,
         about: "Tech Hunt is an exciting online puzzle challenge where participants are given a website filled with hidden clues and challenges. Players must carefully explore the website, solve puzzles, and find the correct extension or link to unlock the next level. Each level becomes more challenging, testing your logic, observation, and problem-solving skills. The participant who successfully completes the hunt in the shortest time wins the cash prize.",
         rules: [
-            "Registration Fee: ₹10 per participant",
-            "Cash Prize: ₹200",
-            "Total Slots: 30 (First come, first serve)",
+            "",
+            "",
+            "",
             "Participants must register before the event starts.",
             "Only registered participants are allowed to compete.",
             "Use of unfair means or malpractice will lead to disqualification.",
             "Follow all instructions given by the organizers.",
-            "Organizer's decision will be final."
+            "Mobile phone are not allowed during the event",
+            "Organizer’s decision will be final."
         ]
     },
     "WEBSITE DESIGNING COMPETITION": {
@@ -40,13 +41,13 @@ const eventDetails = {
         date: "Mar 06, 2026",
         venue: "Lab",
         slots: 30,
-        about: "The Website Designing Competition is a creative event where participants showcase their web development and design skills. Participants will be given a theme or topic, and they must design a visually appealing, user-friendly website within the given time. The event focuses on creativity, layout design, responsiveness, and overall presentation. This competition provides a great platform to demonstrate your technical and creative abilities.",
+        about: "The Web-Designing is a creative event where participants showcase their web development and design skills. Participants will be given a theme or topic, and they must design a visually appealing, user-friendly website within the given time. The event focuses on creativity, layout design, responsiveness, and overall presentation. This competition provides a great platform to demonstrate your technical and creative abilities.",
         rules: [
             "Only registered participants are allowed to compete.",
             "Individual participation only (unless otherwise specified).",
             "The website must be created during the competition time.",
             "Pre-made templates or copied designs are not allowed.",
-            "Participants may use HTML, CSS, JavaScript, or any approved tools.",
+            "Participants may use HTML, CSS, JavaScript, or any AI tools.",
             "Internet usage rules will be informed before the event.",
             "Submission must be completed within the given time limit.",
             "Judging will be based on design, creativity, responsiveness, and functionality.",
@@ -76,7 +77,7 @@ const eventDetails = {
         slots: 20,
         about: "Follow the clues, claim the crown! Devil's Map is a thrilling campus-wide treasure hunt where participants solve riddles and navigate through checkpoints to uncover the final prize.",
         rules: [
-            "Teams of 2-3 members.",
+            "Teams must contain 5 members.",
             "Each team receives the same starting clue.",
             "Running between zones is allowed but must not disturb other college activities.",
             "Destroying or tampering with clues leads to disqualification.",
