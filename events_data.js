@@ -10,11 +10,12 @@ const eventDetails = {
         date: "Mar 05, 2026",
         venue: "Seminar Hall",
         slots: 48,
+        prize: "₹300",
         about: "<strong>🎮 PUBG Mobile Tournament (Livik Map)</strong><br><br><strong>📌 Tournament Details:</strong><br>Map: Livik<br>Mode: Squad (TPP)<br>Total Teams: 12<br>Total Players: 48<br>Registration Fee: ₹10 per player<br>Total Prize Pool: ₹300<br>Duration: 2 Hours",
         rules: [
             "<strong>👥 Team Rules</strong><br>1. Each team must have exactly 4 players.<br>2. No player can join more than one team.<br>3. No team changes after room ID is shared.<br>4. All players must be online 10 minutes before start.<br>5. If a player is absent, the team must play with remaining players (no delay).",
             "<strong>🎯 Match Rules</strong><br>1. Map: Livik(normal)<br>2. Mode: Squad – TPP<br>3. Only one official match will be conducted.<br>4. Custom room ID & password will be shared 10 minutes before match.<br>5. Match will start at scheduled time (No waiting for late players).<br>6. Any use of hacks, glitches, or unfair play will result in immediate disqualification.",
-            "<strong>❌ Disqualification Rules</strong><br>1. No hacking or third-party tools.<br>2. No teaming between squads.<br>3. No abusive language in chat or voice.<br>4. Emulator players not allowed (if mobile-only event).<br>5. Organizers’ decision is final.",
+            "<strong>❌ Disqualification Rules</strong><br>1. No hacking or third-party tools.<br>2. No teaming between squads.<br>3. No abusive language in chat or voice.<br>4. Emulator players not allowed (if mobile-only event).<br>5. Organizers' decision is final.",
             "<strong>📶 Technical Rules</strong><br>1. Players are responsible for their own internet connection.<br>2. No restart for personal internet issues.<br>3. If server error happens from organizer side, match will be restarted."
         ]
     },
@@ -23,17 +24,15 @@ const eventDetails = {
         date: "Mar 06, 2026",
         venue: "Lab",
         slots: 30,
+        prize: "₹200",
         about: "Tech Hunt is an exciting online puzzle challenge where participants are given a website filled with hidden clues and challenges. Players must carefully explore the website, solve puzzles, and find the correct extension or link to unlock the next level. Each level becomes more challenging, testing your logic, observation, and problem-solving skills. The participant who successfully completes the hunt in the shortest time wins the cash prize.",
         rules: [
-            "",
-            "",
-            "",
             "Participants must register before the event starts.",
             "Only registered participants are allowed to compete.",
             "Use of unfair means or malpractice will lead to disqualification.",
             "Follow all instructions given by the organizers.",
-            "Mobile phone are not allowed during the event",
-            "Organizer’s decision will be final."
+            "Mobile phones are not allowed during the event.",
+            "Organizer's decision will be final."
         ]
     },
     "WEBSITE DESIGNING COMPETITION": {
@@ -41,6 +40,7 @@ const eventDetails = {
         date: "Mar 06, 2026",
         venue: "Lab",
         slots: 30,
+        prize: "Certificate",
         about: "The Web-Designing is a creative event where participants showcase their web development and design skills. Participants will be given a theme or topic, and they must design a visually appealing, user-friendly website within the given time. The event focuses on creativity, layout design, responsiveness, and overall presentation. This competition provides a great platform to demonstrate your technical and creative abilities.",
         rules: [
             "Only registered participants are allowed to compete.",
@@ -60,6 +60,7 @@ const eventDetails = {
         date: "Mar 06, 2026",
         venue: "Seminar Hall",
         slots: 16,
+        prize: "₹200",
         about: "The E-Football Tournament is a competitive virtual football gaming event where teams of 2 players compete in head-to-head matches to showcase strategy, coordination, and football gaming skills. With 16 teams already formed before the event, players will face off in knockout rounds to advance and ultimately win the prize. The competition promotes fair play, sportsmanship, and an exciting gaming experience for all participants.",
         rules: [
             "<strong>🔹 Registration & Team Details</strong><br>Entry Fee: ₹20 per team (2 players)<br>Cash Prize: ₹200<br>Total Teams: 16 (Teams must be pre-formed before the event)<br>Only registered teams are eligible to participate.",
@@ -75,6 +76,7 @@ const eventDetails = {
         date: "Mar 05, 2026",
         venue: "Drawing Hall",
         slots: 20,
+        prize: "Certificate",
         about: "Follow the clues, claim the crown! Devil's Map is a thrilling campus-wide treasure hunt where participants solve riddles and navigate through checkpoints to uncover the final prize.",
         rules: [
             "Teams must contain 5 members.",
@@ -117,14 +119,12 @@ const eventDetails = {
     }
 };
 
-// Friendly-name aliases — these match the card display names exactly
-// so event_registration.html shows the same name the user sees on the card.
+// Friendly-name aliases — match exact card display names
 eventDetails["Tech Hunt"] = eventDetails["TECH HUNT"];
 eventDetails["Web-Designing"] = eventDetails["WEBSITE DESIGNING COMPETITION"];
 eventDetails["Co-op E-Football"] = eventDetails["CO-OP E-FOOTBALL"];
 eventDetails["Devil's Map"] = eventDetails["DEVIL'S MAP"];
 
-// Make it available globally if needed, though script inclusion does this automatically in browser.
 if (typeof module !== 'undefined') {
     module.exports = eventDetails;
 }

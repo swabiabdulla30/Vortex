@@ -2661,6 +2661,25 @@ footer {
     }
 }
 
+/* ── Prize Badge ───────────────────────────────────────── */
+.prize-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 140, 0, 0.15));
+    border: 1px solid rgba(255, 215, 0, 0.35);
+    color: #ffd700;
+    /* Gold */
+    white-space: nowrap;
+    margin-right: auto;
+    /* Pushes slots badge to the right if space allows */
+}
+
 /* ── Event Slot Badge ──────────────────────────────────── */
 .slots-badge {
     display: inline-flex;
