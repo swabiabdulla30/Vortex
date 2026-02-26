@@ -80,8 +80,8 @@ const eventDetails = {
         date: "Mar 05, 2026",
         venue: "Drawing Hall",
         slots: 20,
-        prize: "Certificate",
-        fee: "Free",
+        prize: "₹300",
+        fee: "₹20 per head",
         about: "Follow the clues, claim the crown! Devil's Map is a thrilling campus-wide treasure hunt where participants solve riddles and navigate through checkpoints to uncover the final prize.",
         rules: [
             "Teams must contain 5 members.",
