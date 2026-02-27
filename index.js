@@ -37,8 +37,8 @@ const limiter = rateLimit({
 });
 app.use("/api/", limiter); // Apply to API routes
 
-// Serve static files from the current directory (with clean URLs support)
-app.use(express.static(path.join(process.cwd()), { extensions: ['html'] }));
+// Serve static files from the current directory
+app.use(express.static(path.join(process.cwd())));
 
 // --- Request Logger (Stability/Monitoring) ---
 app.use((req, res, next) => {
@@ -263,46 +263,14 @@ const razorpay = new Razorpay({
 });
 
 
-// Require events data logic
-const eventDetails = require('./events_data.js');
-
 // Create Order Endpoint
 app.post("/api/create-order", async (req, res) => {
     try {
-        const { ticketId, type, eventName } = req.body;
+        const { ticketId, type } = req.body;
         let amount = 59000; // Default Membership: 590.00 INR (in paise)
 
-        if (type === 'event' && eventName) {
-            const cleanName = eventName.trim().toUpperCase();
-
-            // 1. Direct key match (uppercase)
-            let details = eventDetails[cleanName];
-
-            // 2. Case-insensitive search through all keys if not found
-            if (!details) {
-                const foundKey = Object.keys(eventDetails).find(k => k.toUpperCase() === cleanName);
-                if (foundKey) details = eventDetails[foundKey];
-            }
-
-            // 3. Fallback to check nested name property if keys don't match
-            if (!details) {
-                details = Object.values(eventDetails).find(e => e.name && e.name.toUpperCase() === cleanName);
-            }
-
-            if (details && details.fee) {
-                // Extract numeric value from fee string like "₹20 per team" or "₹10 per player"
-                const feeMatch = details.fee.match(/₹(\d+)/);
-                if (feeMatch && feeMatch[1]) {
-                    amount = parseInt(feeMatch[1]) * 100; // Event fee in paise
-                } else {
-                    amount = 100; // Default fallback to 1.00 INR if parsing fails but is an event
-                }
-            } else {
-                console.warn(`[PAYMENT] Event details or fee not found for: ${eventName}`);
-                amount = 100; // Default fallback 1.00 INR
-            }
-        } else if (type === 'event') {
-            amount = 100; // Event: 1.00 INR fallback
+        if (type === 'event') {
+            amount = 100; // Event: 1.00 INR
         }
 
         const options = {
