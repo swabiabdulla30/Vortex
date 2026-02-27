@@ -78,7 +78,6 @@ const eventDetails = {
     "DEVIL'S MAP": {
         image: "https://image2url.com/r2/default/images/1771567367713-43840ddf-0d00-429a-b9ae-d5a329392290.jpeg",
         date: "Mar 05, 2026",
-        venue: "Drawing Hall",
         slots: 20,
         prize: "₹300",
         fee: "₹20 per head",
