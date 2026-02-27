@@ -36,8 +36,8 @@ function getAmount(eventName) {
 }
 
 const testCases = [
-    { name: "PUBG", expected: 2000 },
-    { name: "pubg", expected: 2000 },
+    { name: "BGMI", expected: 1000 },
+    { name: "bgmi", expected: 1000 },
     { name: "Web-Designing", expected: 1000 },
     { name: "WEB-DESIGNING", expected: 1000 },
     { name: "WEBSITE DESIGNING COMPETITION", expected: 1000 },
