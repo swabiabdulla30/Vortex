@@ -263,14 +263,35 @@ const razorpay = new Razorpay({
 });
 
 
+// Require events data logic
+const eventDetails = require('./events_data.js');
+
 // Create Order Endpoint
 app.post("/api/create-order", async (req, res) => {
     try {
-        const { ticketId, type } = req.body;
+        const { ticketId, type, eventName } = req.body;
         let amount = 59000; // Default Membership: 590.00 INR (in paise)
 
-        if (type === 'event') {
-            amount = 100; // Event: 1.00 INR
+        if (type === 'event' && eventName) {
+            const cleanName = eventName.trim().toUpperCase();
+
+            // Find event detail case insensitively or by exact match
+            const details = eventDetails[cleanName] ||
+                Object.values(eventDetails).find(e => e.name && e.name.toUpperCase() === cleanName);
+
+            if (details && details.fee) {
+                // Extract numeric value from fee string like "₹20 per team" or "₹10 per player"
+                const feeMatch = details.fee.match(/₹(\d+)/);
+                if (feeMatch && feeMatch[1]) {
+                    amount = parseInt(feeMatch[1]) * 100; // Event fee in paise
+                } else {
+                    amount = 100; // Default fallback to 1.00 INR if parsing fails but is an event
+                }
+            } else {
+                amount = 100; // Default fallback 1.00 INR
+            }
+        } else if (type === 'event') {
+            amount = 100; // Event: 1.00 INR fallback
         }
 
         const options = {

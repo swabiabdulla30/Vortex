@@ -852,7 +852,7 @@
                 const orderRes = await fetch('/api/create-order', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ ticketId, type: 'event' })
+                    body: JSON.stringify({ ticketId, type: 'event', eventName: eventData.event })
                 });
                 if (!orderRes.ok) throw new Error('Failed to create payment order.');
                 const order = await orderRes.json();
