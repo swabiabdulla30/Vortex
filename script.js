@@ -111,7 +111,7 @@ window.addEventListener('load', function () {
                         if (confirm('Disconnect from Vortex Network?')) {
                             localStorage.removeItem('vortexCurrentUser');
                             localStorage.removeItem('vortexUser');
-                            window.location.href = '/';
+                            window.location.href = '/index.html';
                         }
                     }
                 });
