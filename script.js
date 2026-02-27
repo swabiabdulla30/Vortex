@@ -153,53 +153,7 @@ document.addEventListener('mousemove', function (e) {
 
 
 
-// Gallery Slider Logic matched to index.html structure
-document.addEventListener('DOMContentLoaded', function () {
-    const slide = document.querySelector('.slide');
-    const nextBtn = document.getElementById('next');
-    const prevBtn = document.getElementById('prev');
-
-    if (nextBtn && prevBtn && slide) {
-        let isAnimating = false;
-        let autoSlideInterval;
-
-        function startAutoSlide() {
-            clearInterval(autoSlideInterval);
-            autoSlideInterval = setInterval(function () {
-                moveNext();
-            }, 5000);
-        }
-
-        function moveNext() {
-            if (isAnimating) return;
-            isAnimating = true;
-            let items = document.querySelectorAll('.item');
-            document.querySelector('.slide').appendChild(items[0]);
-            setTimeout(() => { isAnimating = false; }, 1000); // Animation duration
-        }
-
-        function movePrev() {
-            if (isAnimating) return;
-            isAnimating = true;
-            let items = document.querySelectorAll('.item');
-            document.querySelector('.slide').prepend(items[items.length - 1]);
-            setTimeout(() => { isAnimating = false; }, 1000);
-        }
-
-        nextBtn.addEventListener('click', () => {
-            moveNext();
-            startAutoSlide(); // Restart timer on manual interaction
-        });
-
-        prevBtn.addEventListener('click', () => {
-            movePrev();
-            startAutoSlide();
-        });
-
-        // Start auto-slide on load
-        startAutoSlide();
-    }
-});
+// Gallery Slider Logic removed to avoid conflict with script_slider.js
 
 
 // Interactive Effects for Cards - REMOVED to prevent conflict with CSS transforms
