@@ -275,9 +275,19 @@ app.post("/api/create-order", async (req, res) => {
         if (type === 'event' && eventName) {
             const cleanName = eventName.trim().toUpperCase();
 
-            // Find event detail case insensitively or by exact match
-            const details = eventDetails[cleanName] ||
-                Object.values(eventDetails).find(e => e.name && e.name.toUpperCase() === cleanName);
+            // 1. Direct key match (uppercase)
+            let details = eventDetails[cleanName];
+
+            // 2. Case-insensitive search through all keys if not found
+            if (!details) {
+                const foundKey = Object.keys(eventDetails).find(k => k.toUpperCase() === cleanName);
+                if (foundKey) details = eventDetails[foundKey];
+            }
+
+            // 3. Fallback to check nested name property if keys don't match
+            if (!details) {
+                details = Object.values(eventDetails).find(e => e.name && e.name.toUpperCase() === cleanName);
+            }
 
             if (details && details.fee) {
                 // Extract numeric value from fee string like "₹20 per team" or "₹10 per player"
@@ -288,6 +298,7 @@ app.post("/api/create-order", async (req, res) => {
                     amount = 100; // Default fallback to 1.00 INR if parsing fails but is an event
                 }
             } else {
+                console.warn(`[PAYMENT] Event details or fee not found for: ${eventName}`);
                 amount = 100; // Default fallback 1.00 INR
             }
         } else if (type === 'event') {

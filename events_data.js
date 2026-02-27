@@ -125,9 +125,14 @@ const eventDetails = {
 };
 
 // Friendly-name aliases — match exact card display names
+eventDetails["TECH HUNT"] = eventDetails["TECH HUNT"];
 eventDetails["Tech Hunt"] = eventDetails["TECH HUNT"];
+eventDetails["WEBSITE DESIGNING COMPETITION"] = eventDetails["WEBSITE DESIGNING COMPETITION"];
 eventDetails["Web-Designing"] = eventDetails["WEBSITE DESIGNING COMPETITION"];
+eventDetails["WEB-DESIGNING"] = eventDetails["WEBSITE DESIGNING COMPETITION"];
+eventDetails["CO-OP E-FOOTBALL"] = eventDetails["CO-OP E-FOOTBALL"];
 eventDetails["Co-op E-Football"] = eventDetails["CO-OP E-FOOTBALL"];
+eventDetails["DEVIL'S MAP"] = eventDetails["DEVIL'S MAP"];
 eventDetails["Devil's Map"] = eventDetails["DEVIL'S MAP"];
 
 if (typeof module !== 'undefined') {
