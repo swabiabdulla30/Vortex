@@ -11,6 +11,7 @@ const eventDetails = {
         venue: "Seminar Hall",
         slots: 100,
         prize: "₹500",
+        fee: "₹10 per player",
         about: "<strong>🎮 PUBG Mobile Tournament (Erangel Map)</strong><br><br><strong>📌 Tournament Details:</strong><br>Map: Erangel(normal)<br>Mode: Squad (TPP)<br>Total Teams: 25<br>Total Players: 100<br>Registration Fee: ₹10 per player<br>Total Prize Pool: ₹500<br>Duration: 2 Hours",
         rules: [
             "<strong>👥 Team Rules</strong><br>1. Each team must have exactly 4 players.<br>2. No player can join more than one team.<br>3. No team changes after room ID is shared.<br>4. All players must be online 10 minutes before start.<br>5. If a player is absent, the team must play with remaining players (no delay).",
