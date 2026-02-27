@@ -121,7 +121,8 @@ window.addEventListener('load', function () {
         const cleanEventName = event ? event.trim().toUpperCase() : '';
         const eventData = (typeof eventDetails !== 'undefined' && eventDetails[cleanEventName]) ? eventDetails[cleanEventName] : null;
         const eventDate = eventData && eventData.date ? eventData.date.toUpperCase() : 'TBA';
-        const eventVenue = eventData && eventData.venue ? eventData.venue : 'KMCT CAMPUS';
+        const isDevilsMap = cleanEventName.includes("DEVIL'S MAP");
+        const eventVenue = isDevilsMap ? null : (eventData && eventData.venue ? eventData.venue : 'KMCT CAMPUS');
 
         // Helper to safely set text
         const setText = (id, text) => {
@@ -138,7 +139,13 @@ window.addEventListener('load', function () {
         const displayId = "01";
         setText('ticket-id', 'NO: #' + displayId);
         setText('ticket-date', eventDate);
-        setText('ticket-location', eventVenue);
+        const locRow = document.getElementById('ticket-location-row');
+        if (eventVenue) {
+            setText('ticket-location', eventVenue);
+            if (locRow) locRow.style.display = '';
+        } else {
+            if (locRow) locRow.style.display = 'none';
+        }
 
         // Show teammate on eFootball ticket
         const isEfootball = event.toUpperCase().includes('E-FOOTBALL');
@@ -160,7 +167,13 @@ window.addEventListener('load', function () {
         setText('dl-dept', dept);
         setText('dl-id', 'NO: #' + displayId);
         setText('dl-date', eventDate);
-        setText('dl-location', eventVenue);
+        const dlLocRow = document.getElementById('dl-location-row');
+        if (eventVenue) {
+            setText('dl-location', eventVenue);
+            if (dlLocRow) dlLocRow.style.display = '';
+        } else {
+            if (dlLocRow) dlLocRow.style.display = 'none';
+        }
 
         // Event image is read from events_data.js (single source of truth).
         // To update, just change the `image` field in events_data.js.

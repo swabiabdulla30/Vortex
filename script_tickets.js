@@ -27,6 +27,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     function getEventVenue(eventName) {
         if (!eventName) return 'KMCT CAMPUS';
         const cleanName = eventName.trim().toUpperCase();
+
+        // Specifically hide venue for Devil's Map
+        if (cleanName.includes("DEVIL'S MAP")) {
+            return null;
+        }
+
         if (typeof eventDetails !== 'undefined' && eventDetails[cleanName] && eventDetails[cleanName].venue) {
             return eventDetails[cleanName].venue;
         }
@@ -60,7 +66,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('dl-dept').innerText = dept;
         document.getElementById('dl-date').innerText = date;
         document.getElementById('dl-id').innerText = 'NO: #' + ticketNumber;
-        document.getElementById('dl-location').innerText = getEventVenue(eventName);
+        const venue = getEventVenue(eventName);
+        const dlLocRow = document.getElementById('dl-location-row');
+        if (venue) {
+            document.getElementById('dl-location').innerText = venue;
+            if (dlLocRow) dlLocRow.style.display = '';
+        } else {
+            if (dlLocRow) dlLocRow.style.display = 'none';
+        }
 
         // Populate teammate field for eFootball
         const teammate = card.dataset.teammate || '';
