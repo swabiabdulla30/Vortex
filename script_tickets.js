@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         container.innerHTML = `
             <div class="loading-secure-data">
                 <p>Please login to view your tickets.</p>
-                <a href="/login" class="submit-btn login-link-tickets">LOGIN NOW</a>
+                <a href="/login.html" class="submit-btn login-link-tickets">LOGIN NOW</a>
             </div>
         `;
         // Add style for login link in style_tickets.css if not there

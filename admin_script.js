@@ -287,7 +287,7 @@ async function deleteAllRegistrations() {
 function logout() {
     localStorage.removeItem('vortexToken');
     localStorage.removeItem('vortexCurrentUser');
-    window.location.href = '/';
+    window.location.href = '/index.html';
 }
 
 // Event Listeners (DOMContentLoaded)

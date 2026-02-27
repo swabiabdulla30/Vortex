@@ -747,7 +747,7 @@
             localStorage.setItem('vortexCurrentUser', JSON.stringify(googleUser));
             const redirectUrl = sessionStorage.getItem('loginRedirectUrl');
             if (redirectUrl) { sessionStorage.removeItem('loginRedirectUrl'); window.location.href = redirectUrl; }
-            else { window.location.href = '/'; }
+            else { window.location.href = '/index.html'; }
         }
 
         // ── Standard Auth Handlers ─────────────────────────────────────────
