@@ -81,7 +81,7 @@ const eventDetails = {
         slots: 20,
         prize: "₹300",
         fee: "₹20 per head",
-        about: "Follow the clues, claim the crown! Devil's Map is a thrilling campus-wide treasure hunt where participants solve riddles and navigate through checkpoints to uncover the final prize.",
+        about: "Follow the clues, claim the crown! Devil's Map is a thrilling dark-room adventure where participants solve riddles and navigate through checkpoints to uncover the final prize.",
         rules: [
             "Teams must contain 5 members.",
             "Each team receives the same starting clue.",
