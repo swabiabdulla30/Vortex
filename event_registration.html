@@ -845,6 +845,26 @@
             }
 
             try {
+                // --- FREE EVENT BYPASS (no Razorpay) ---
+                const isFreeEvent = eventData.event.toUpperCase() === 'TECH QUIZ';
+                if (isFreeEvent) {
+                    const freeRes = await fetch('/api/free-register', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(eventData)
+                    });
+                    const freeData = await freeRes.json();
+                    if (!freeData.success) throw new Error(freeData.error || 'Registration failed.');
+                    sessionStorage.setItem('regName', eventData.name);
+                    sessionStorage.setItem('regEvent', eventData.event);
+                    sessionStorage.setItem('regDept', eventData.department);
+                    sessionStorage.setItem('regId', freeData.ticketId);
+                    sessionStorage.setItem('regTeammate', '');
+                    window.location.href = '/registration_success.html';
+                    return;
+                }
+                // ----------------------------------------
+
                 const keyRes = await fetch('/api/get-razorpay-key');
                 const keyData = await keyRes.json();
                 const RAZORPAY_KEY_ID = keyData.key;

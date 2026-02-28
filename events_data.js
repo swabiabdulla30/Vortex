@@ -96,8 +96,6 @@ const eventDetails = {
         date: "Mar 06, 2026",
         venue: "Lab",
         slots: 30,
-        prize: "₹200",
-        fee: "₹10 per participant",
         about: "Tech Quiz is an exciting knowledge-based competition where participants are tested on their technical know-how across topics like programming, networking, cybersecurity, AI, and general tech. Compete solo and prove your tech mastery through rapid-fire rounds and challenging questions. The fastest and most accurate minds claim the prize!",
         rules: [
             "Individual participation only.",
