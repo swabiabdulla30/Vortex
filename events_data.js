@@ -91,6 +91,24 @@ const eventDetails = {
             "The first team to complete all checkpoints wins."
         ]
     },
+    "TECH QUIZ": {
+        image: "https://image2url.com/r2/default/images/1771869172242-e128a3e7-34be-47d7-af3f-2fc32eb7c147.jpeg",
+        date: "Mar 06, 2026",
+        venue: "Lab",
+        slots: 30,
+        prize: "₹200",
+        fee: "₹10 per participant",
+        about: "Tech Quiz is an exciting knowledge-based competition where participants are tested on their technical know-how across topics like programming, networking, cybersecurity, AI, and general tech. Compete solo and prove your tech mastery through rapid-fire rounds and challenging questions. The fastest and most accurate minds claim the prize!",
+        rules: [
+            "Individual participation only.",
+            "Participants must register before the event starts.",
+            "Only registered participants are allowed to compete.",
+            "Use of mobile phones or any external resources is strictly prohibited.",
+            "Use of unfair means or malpractice will lead to immediate disqualification.",
+            "Follow all instructions given by the organizers.",
+            "Organizer's decision will be final."
+        ]
+    },
     "ELEVATE": {
         image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80",
         about: "A flagship event focusing on career development, soft skills, and industry insights from experts. Elevate yourself with knowledge, networking, and inspiration.",
@@ -133,6 +151,8 @@ eventDetails["CO-OP E-FOOTBALL"] = eventDetails["CO-OP E-FOOTBALL"];
 eventDetails["Co-op E-Football"] = eventDetails["CO-OP E-FOOTBALL"];
 eventDetails["DEVIL'S MAP"] = eventDetails["DEVIL'S MAP"];
 eventDetails["Devil's Map"] = eventDetails["DEVIL'S MAP"];
+eventDetails["TECH QUIZ"] = eventDetails["TECH QUIZ"];
+eventDetails["Tech Quiz"] = eventDetails["TECH QUIZ"];
 
 if (typeof module !== 'undefined') {
     module.exports = eventDetails;
