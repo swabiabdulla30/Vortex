@@ -147,11 +147,11 @@ window.addEventListener('load', function () {
             if (locRow) locRow.style.display = 'none';
         }
 
-        // Show teammate on eFootball ticket
-        const isEfootball = event.toUpperCase().includes('E-FOOTBALL');
+        // Show teammate on team event tickets (E-Football, Tech Quiz)
+        const isTeamEvent = event.toUpperCase().includes('E-FOOTBALL') || event.toUpperCase().includes('TECH QUIZ');
         const teammateRow = document.getElementById('ticket-teammate-row');
         const dlTeammateRow = document.getElementById('dl-teammate-row');
-        if (isEfootball) {
+        if (isTeamEvent) {
             setText('ticket-teammate', teammate || '—');
             setText('dl-teammate', teammate || '—');
             if (teammateRow) teammateRow.style.display = '';
