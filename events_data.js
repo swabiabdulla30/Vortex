@@ -96,13 +96,14 @@ const eventDetails = {
         date: "Mar 06, 2026",
         venue: "Lab",
         slots: 30,
-        about: "Tech Quiz is an exciting knowledge-based competition where participants are tested on their technical know-how across topics like programming, networking, cybersecurity, AI, and general tech. Compete solo and prove your tech mastery through rapid-fire rounds and challenging questions. The fastest and most accurate minds claim the prize!",
+        about: "Tech Quiz is a fun team-based quiz competition for pairs (2 members per team). Test your combined knowledge across a wide range of topics including Technology, Current Affairs, Sports, Science, and General Knowledge. Teams compete through rapid-fire rounds with the smartest and quickest duo taking the glory!",
         rules: [
-            "Individual participation only.",
-            "Participants must register before the event starts.",
-            "Only registered participants are allowed to compete.",
+            "Teams must have exactly 2 members.",
+            "Both team members must be registered participants.",
+            "Topics covered: Technology, Current Affairs, Sports, Science & General Knowledge.",
             "Use of mobile phones or any external resources is strictly prohibited.",
-            "Use of unfair means or malpractice will lead to immediate disqualification.",
+            "Communication between teams is not allowed during the quiz.",
+            "Only registered participants are allowed to compete.",
             "Follow all instructions given by the organizers.",
             "Organizer's decision will be final."
         ]
