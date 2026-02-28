@@ -79,7 +79,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         const teammate = card.dataset.teammate || '';
         const dlTeammateRow = document.getElementById('dl-teammate-row');
         const dlTeammateEl = document.getElementById('dl-teammate');
-        if (teammate && eventName.toUpperCase().includes('E-FOOTBALL')) {
+        const isTeamEvent = eventName.toUpperCase().includes('E-FOOTBALL') || eventName.toUpperCase().includes('TECH QUIZ');
+        if (teammate && isTeamEvent) {
             if (dlTeammateEl) dlTeammateEl.innerText = teammate;
             if (dlTeammateRow) dlTeammateRow.style.display = '';
         } else {
@@ -225,7 +226,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <span class="ticket-label-muted">Attendee:</span>
                         <span class="ticket-name-val">${ticket.name || 'Participant'}</span>
                     </div>
-                    ${(ticket.event && ticket.event.toUpperCase().includes('E-FOOTBALL')) ? `
+                    ${(ticket.event && (ticket.event.toUpperCase().includes('E-FOOTBALL') || ticket.event.toUpperCase().includes('TECH QUIZ'))) ? `
                     <div class="ticket-row">
                         <span class="ticket-label-muted">Teammate:</span>
                         <span class="ticket-name-val">${ticket.teammateName || '—'}</span>
