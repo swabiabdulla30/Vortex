@@ -847,7 +847,8 @@
 
             try {
                 // --- FREE EVENT BYPASS (no Razorpay) ---
-                const isFreeEvent = eventData.event.toUpperCase() === 'TECH QUIZ';
+                const isFreeEvent = eventData.event.toUpperCase() === 'TECH QUIZ'
+                    || eventData.event.toUpperCase() === 'CLASH OF CONCEPTS';
                 if (isFreeEvent) {
                     const freeRes = await fetch('/api/free-register', {
                         method: 'POST',

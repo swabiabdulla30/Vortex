@@ -92,6 +92,21 @@ const eventDetails = {
             "Organizer's decision will be final."
         ]
     },
+    "CLASH OF CONCEPTS": {
+        image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80",
+        date: "Mar 06, 2026",
+        venue: "Seminar Hall",
+        slots: 10,
+        fee: "Free",
+        about: "<strong>🎤 Clash Of Concepts — Paper Presentation Competition</strong><br><br>A premier academic event where participants present original research papers or concept-based presentations on technology, science, and innovation. Clash Of Concepts challenges participants to think critically, communicate ideas effectively, and defend their work in front of a panel of judges. Whether you're exploring emerging tech, proposing a new solution, or reviewing a cutting-edge concept — this is your stage!<br><br><strong>📌 Event Details:</strong><br>Format: Individual Paper Presentation<br>Total Slots: 10 (Limited!)<br>Entry: FREE<br>Venue: Seminar Hall",
+        rules: [
+            "<strong>📄 Submission Rules</strong><br>1. Participants must submit an abstract (max 300 words) before the event.<br>2. Paper topics must be related to Technology, Science, Engineering, or Innovation.<br>3. Plagiarism is strictly prohibited — all papers must be original work.<br>4. Only individual entries are accepted (no team participation).<br>5. Paper must be formatted as per the guidelines shared by organizers.",
+            "<strong>🎤 Presentation Rules</strong><br>1. Each participant will get a maximum of 10 minutes to present.<br>2. A 5-minute Q&A session by judges will follow the presentation.<br>3. Participants must bring their presentation in a USB drive or share via Google Drive before the event.<br>4. PowerPoint / PDF formats are accepted (no videos unless pre-approved).<br>5. Participants must be present at the venue at least 15 minutes before their scheduled slot.",
+            "<strong>⚖️ Judging Criteria</strong><br>1. Content Quality & Originality — 30%<br>2. Clarity of Presentation — 25%<br>3. Depth of Research & Analysis — 25%<br>4. Q&A Response & Confidence — 20%<br>Judges' decision is final and binding.",
+            "<strong>❌ Disqualification Rules</strong><br>1. Plagiarism in any form leads to immediate disqualification.<br>2. No abusive or inappropriate content allowed.<br>3. Failure to appear at the scheduled slot without prior notice will result in disqualification.<br>4. Participants must not exceed the allotted presentation time.",
+            "<strong>📋 General Rules</strong><br>1. Registration is mandatory — only 10 slots available (first-come, first-served).<br>2. Entry is completely FREE.<br>3. Certificates of participation will be provided to all presenters.<br>4. Winners will be awarded during the Vortex closing ceremony.<br>5. Organizer's decision is final in all matters."
+        ]
+    },
     "ELEVATE": {
         image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80",
         about: "A flagship event focusing on career development, soft skills, and industry insights from experts. Elevate yourself with knowledge, networking, and inspiration.",
@@ -134,6 +149,9 @@ eventDetails["CO-OP E-FOOTBALL"] = eventDetails["CO-OP E-FOOTBALL"];
 eventDetails["Co-op E-Football"] = eventDetails["CO-OP E-FOOTBALL"];
 eventDetails["TECH QUIZ"] = eventDetails["TECH QUIZ"];
 eventDetails["Tech Quiz"] = eventDetails["TECH QUIZ"];
+eventDetails["CLASH OF CONCEPTS"] = eventDetails["CLASH OF CONCEPTS"];
+eventDetails["Clash Of Concepts"] = eventDetails["CLASH OF CONCEPTS"];
+eventDetails["Clash of Concepts"] = eventDetails["CLASH OF CONCEPTS"];
 
 if (typeof module !== 'undefined') {
     module.exports = eventDetails;
