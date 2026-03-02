@@ -106,7 +106,7 @@ const eventDetails = {
         fee: "Free",
         about: "<strong>🎤 Clash Of Concepts — Paper Presentation Competition</strong><br><br>A premier academic event where participants present original research papers or concept-based presentations on technology, science, and innovation. Clash Of Concepts challenges participants to think critically, communicate ideas effectively, and defend their work in front of a panel of judges. Whether you're exploring emerging tech, proposing a new solution, or reviewing a cutting-edge concept — this is your stage!<br><br><strong>📌 Event Details:</strong><br>Format: Individual Paper Presentation<br>Total Slots: 10 (Limited!)<br>Entry: FREE<br>Venue: Seminar Hall",
         rules: [
-            "<strong>1. Eligibility</strong><br>• Participation is open to undergraduate and postgraduate students.<br>• This is an individual event — only single participant per paper.",
+            "<strong>1. Eligibility</strong><br>• This is an individual event — only single participant per paper.",
             "<strong>2. Paper Format</strong><br>• Paper must strictly follow the IEEE standard format.<br>• Plagiarism must be below 15%.<br>• Paper should contain: Abstract, Introduction, Methodology, Results, Conclusion, and References.",
             "<strong>3. Submission Guidelines</strong><br>• Paper must be submitted in PDF format before the deadline.<br>• File name format: ParticipantName_CollegeName.pdf<br>• Late submissions will not be accepted.",
             "<strong>4. Presentation Rules</strong><br>• Each participant will get 8–10 minutes for presentation.<br>• Followed by 2–3 minutes of Q&A.<br>• Presentation must be in PPT/PDF format.",
