@@ -121,6 +121,8 @@ window.addEventListener('load', function () {
         const cleanEventName = event ? event.trim().toUpperCase() : '';
         const eventData = (typeof eventDetails !== 'undefined' && eventDetails[cleanEventName]) ? eventDetails[cleanEventName] : null;
         const eventDate = eventData && eventData.date ? eventData.date.toUpperCase() : 'TBA';
+        const eventTime = eventData && eventData.time ? eventData.time : null;
+        const eventDateTime = eventTime ? `${eventDate} · ${eventTime}` : eventDate;
         const isDevilsMap = cleanEventName.includes("DEVIL'S MAP");
         const eventVenue = isDevilsMap ? null : (eventData && eventData.venue ? eventData.venue : 'KMCT CAMPUS');
 
@@ -138,7 +140,7 @@ window.addEventListener('load', function () {
         // Preview ID
         const displayId = "01";
         setText('ticket-id', 'NO: #' + displayId);
-        setText('ticket-date', eventDate);
+        setText('ticket-date', eventDateTime);
         const locRow = document.getElementById('ticket-location-row');
         if (eventVenue) {
             setText('ticket-location', eventVenue);
@@ -166,7 +168,7 @@ window.addEventListener('load', function () {
         setText('dl-event', event);
         setText('dl-dept', dept);
         setText('dl-id', 'NO: #' + displayId);
-        setText('dl-date', eventDate);
+        setText('dl-date', eventDateTime);
         const dlLocRow = document.getElementById('dl-location-row');
         if (eventVenue) {
             setText('dl-location', eventVenue);
