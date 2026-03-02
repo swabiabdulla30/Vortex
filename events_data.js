@@ -76,7 +76,7 @@ const eventDetails = {
         ]
     },
     "TECH QUIZ": {
-        image: "https://image2url.com/r2/default/images/1771869172242-e128a3e7-34be-47d7-af3f-2fc32eb7c147.jpeg",
+        image: "https://image2url.com/r2/default/images/1772440085076-0f0df1c1-a19a-4351-aa02-27f67b111fa8.jpeg",
         date: "Mar 06, 2026",
         venue: "Lab",
         slots: 30,
