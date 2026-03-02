@@ -253,6 +253,30 @@ app.post("/api/register", async (req, res) => {
     }
 });
 
+// Free event registration (no payment required, e.g. Tech Quiz)
+app.post("/api/free-register", async (req, res) => {
+    try {
+        await connectDB();
+        const ticketId = "VTX-" + Date.now();
+        const data = new Registration({
+            ...req.body,
+            ticketId,
+            date: new Date(),
+            paymentStatus: "PAID"
+        });
+        await data.save();
+
+        appendRegistrationToExcel(data).then(result => {
+            if (!result.success) console.error("Excel save failed:", result.error);
+        }).catch(err => console.error("Excel save error:", err));
+
+        res.status(201).json({ success: true, ticketId, data });
+    } catch (error) {
+        console.error("Free registration error:", error);
+        res.status(500).json({ error: "Registration failed", details: error.message });
+    }
+});
+
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
 
@@ -363,10 +387,10 @@ app.get("/api/ticket/:ticketId", async (req, res) => {
 // --- Public: Event Slot Availability ---
 const EVENT_SLOTS = {
     "BGMI": 100,
-    "DEVIL'S MAP": 20,
     "TECH HUNT": 30,
     "WEB-DESIGNING": 30,
-    "CO-OP E-FOOTBALL": 16
+    "CO-OP E-FOOTBALL": 16,
+    "TECH QUIZ": 30
 };
 
 app.get("/api/event-slots", async (req, res) => {

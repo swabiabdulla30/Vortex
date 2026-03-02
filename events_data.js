@@ -75,21 +75,21 @@ const eventDetails = {
             "<strong>🔹 Organizer's Authority</strong><br>All decisions by the organizers are final and binding.<br>Participants must cooperate with referees and event officials."
         ]
     },
-    "DEVIL'S MAP": {
-        image: "https://image2url.com/r2/default/images/1771567367713-43840ddf-0d00-429a-b9ae-d5a329392290.jpeg",
-        date: "Mar 05, 2026",
-        venue: "Drawing Hall",
-        slots: 20,
-        prize: "₹300",
-        fee: "₹20 per head",
-        about: "Follow the clues, claim the crown! Devil's Map is a thrilling campus-wide treasure hunt where participants solve riddles and navigate through checkpoints to uncover the final prize.",
+    "TECH QUIZ": {
+        image: "https://image2url.com/r2/default/images/1771869172242-e128a3e7-34be-47d7-af3f-2fc32eb7c147.jpeg",
+        date: "Mar 06, 2026",
+        venue: "Lab",
+        slots: 30,
+        about: "Tech Quiz is a fun team-based quiz competition for pairs (2 members per team). Test your combined knowledge across a wide range of topics including Technology, Current Affairs, Sports, Science, and General Knowledge. Teams compete through rapid-fire rounds with the smartest and quickest duo taking the glory!",
         rules: [
-            "Teams must contain 5 members.",
-            "Each team receives the same starting clue.",
-            "Running between zones is allowed but must not disturb other college activities.",
-            "Destroying or tampering with clues leads to disqualification.",
-            "Mobile phones are not allowed during the event.",
-            "The first team to complete all checkpoints wins."
+            "Teams must have exactly 2 members.",
+            "Both team members must be registered participants.",
+            "Topics covered: Technology, Current Affairs, Sports, Science & General Knowledge.",
+            "Use of mobile phones or any external resources is strictly prohibited.",
+            "Communication between teams is not allowed during the quiz.",
+            "Only registered participants are allowed to compete.",
+            "Follow all instructions given by the organizers.",
+            "Organizer's decision will be final."
         ]
     },
     "ELEVATE": {
@@ -132,8 +132,8 @@ eventDetails["Web-Designing"] = eventDetails["WEBSITE DESIGNING COMPETITION"];
 eventDetails["WEB-DESIGNING"] = eventDetails["WEBSITE DESIGNING COMPETITION"];
 eventDetails["CO-OP E-FOOTBALL"] = eventDetails["CO-OP E-FOOTBALL"];
 eventDetails["Co-op E-Football"] = eventDetails["CO-OP E-FOOTBALL"];
-eventDetails["DEVIL'S MAP"] = eventDetails["DEVIL'S MAP"];
-eventDetails["Devil's Map"] = eventDetails["DEVIL'S MAP"];
+eventDetails["TECH QUIZ"] = eventDetails["TECH QUIZ"];
+eventDetails["Tech Quiz"] = eventDetails["TECH QUIZ"];
 
 if (typeof module !== 'undefined') {
     module.exports = eventDetails;

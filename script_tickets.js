@@ -27,6 +27,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     function getEventVenue(eventName) {
         if (!eventName) return 'KMCT CAMPUS';
         const cleanName = eventName.trim().toUpperCase();
+
+        // Specifically hide venue for Devil's Map
+        if (cleanName.includes("DEVIL'S MAP")) {
+            return null;
+        }
+
         if (typeof eventDetails !== 'undefined' && eventDetails[cleanName] && eventDetails[cleanName].venue) {
             return eventDetails[cleanName].venue;
         }
@@ -60,13 +66,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('dl-dept').innerText = dept;
         document.getElementById('dl-date').innerText = date;
         document.getElementById('dl-id').innerText = 'NO: #' + ticketNumber;
-        document.getElementById('dl-location').innerText = getEventVenue(eventName);
+        const venue = getEventVenue(eventName);
+        const dlLocRow = document.getElementById('dl-location-row');
+        if (venue) {
+            document.getElementById('dl-location').innerText = venue;
+            if (dlLocRow) dlLocRow.style.display = '';
+        } else {
+            if (dlLocRow) dlLocRow.style.display = 'none';
+        }
 
         // Populate teammate field for eFootball
         const teammate = card.dataset.teammate || '';
         const dlTeammateRow = document.getElementById('dl-teammate-row');
         const dlTeammateEl = document.getElementById('dl-teammate');
-        if (teammate && eventName.toUpperCase().includes('E-FOOTBALL')) {
+        const isTeamEvent = eventName.toUpperCase().includes('E-FOOTBALL') || eventName.toUpperCase().includes('TECH QUIZ');
+        if (teammate && isTeamEvent) {
             if (dlTeammateEl) dlTeammateEl.innerText = teammate;
             if (dlTeammateRow) dlTeammateRow.style.display = '';
         } else {
@@ -212,7 +226,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <span class="ticket-label-muted">Attendee:</span>
                         <span class="ticket-name-val">${ticket.name || 'Participant'}</span>
                     </div>
-                    ${(ticket.event && ticket.event.toUpperCase().includes('E-FOOTBALL')) ? `
+                    ${(ticket.event && (ticket.event.toUpperCase().includes('E-FOOTBALL') || ticket.event.toUpperCase().includes('TECH QUIZ'))) ? `
                     <div class="ticket-row">
                         <span class="ticket-label-muted">Teammate:</span>
                         <span class="ticket-name-val">${ticket.teammateName || '—'}</span>
