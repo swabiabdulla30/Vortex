@@ -13,7 +13,7 @@ const eventDetails = {
         slots: 100,
         prize: "₹500",
         fee: "₹10 per player",
-        about: "<strong>🎮 PUBG Mobile Tournament (Livik Map)</strong><br><br><strong>📌 Tournament Details:</strong><br>Map: Livik<br>Mode: Squad (TPP)<br>Total Teams: 25<br>Total Players: 100<br>Registration Fee: ₹10 per player<br>Total Prize Pool: ₹500<br>Duration: 2 Hours",
+        about: "<strong>🎮 PUBG Mobile Tournament (Livik Map)</strong><br><br><strong>📌 Tournament Details:</strong><br>Map: Livik<br>Mode: Squad (TPP)<br>Total Teams: 25<br>Total Players: 100<br>Registration Fee: ₹10 per player<br>Total Prize Pool: ₹500<br>Duration: 1.5 Hours",
         rules: [
             "<strong>👥 Team Rules</strong><br>1. Each team must have exactly 4 players.<br>2. No player can join more than one team.<br>3. No team changes after room ID is shared.<br>4. All players must be online 10 minutes before start.<br>5. If a player is absent, the team must play with remaining players (no delay).",
             "<strong>🎯 Match Rules</strong><br>1. Map: Erangel(normal)<br>2. Mode: Squad – TPP<br>3. Only one official match will be conducted.<br>4. Custom room ID & password will be shared 10 minutes before match.<br>5. Match will start at scheduled time (No waiting for late players).<br>6. Any use of hacks, glitches, or unfair play will result in immediate disqualification.<br>7.If the total number of registered participants is fewer than 50, the match map will be changed to Livik.",
@@ -23,7 +23,7 @@ const eventDetails = {
     },
     "TECH HUNT": {
         image: "https://image2url.com/r2/default/images/1771869172242-e128a3e7-34be-47d7-af3f-2fc32eb7c147.jpeg",
-        date: "Mar 06, 2026",
+        date: "Mar 05, 2026",
         time: "11:00AM - 12:30PM",
         venue: "Lab",
         slots: 30,
@@ -41,7 +41,7 @@ const eventDetails = {
     },
     "WEBSITE DESIGNING COMPETITION": {
         image: "https://image2url.com/r2/default/images/1771863896078-ef98fc6d-f9d8-41ef-89d5-cac3231e8f7c.jpeg",
-        date: "Mar 06, 2026",
+        date: "Mar 05, 2026",
         time: "1:30PM - 2:15PM",
         venue: "Lab",
         slots: 30,
