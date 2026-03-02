@@ -8,6 +8,7 @@ const eventDetails = {
     "BGMI": {
         image: "https://image2url.com/r2/default/images/1771322980849-6dd25143-dab6-410b-a737-504b63aceea0.jpeg",
         date: "Mar 05, 2026",
+        time: "2:00PM - 3:30PM",
         venue: "Seminar Hall",
         slots: 100,
         prize: "₹500",
@@ -23,6 +24,7 @@ const eventDetails = {
     "TECH HUNT": {
         image: "https://image2url.com/r2/default/images/1771869172242-e128a3e7-34be-47d7-af3f-2fc32eb7c147.jpeg",
         date: "Mar 06, 2026",
+        time: "11:00AM - 12:30PM",
         venue: "Lab",
         slots: 30,
         prize: "₹200",
@@ -40,6 +42,7 @@ const eventDetails = {
     "WEBSITE DESIGNING COMPETITION": {
         image: "https://image2url.com/r2/default/images/1771863896078-ef98fc6d-f9d8-41ef-89d5-cac3231e8f7c.jpeg",
         date: "Mar 06, 2026",
+        time: "1:30PM - 2:15PM",
         venue: "Lab",
         slots: 30,
         prize: "₹200",
@@ -61,6 +64,7 @@ const eventDetails = {
     "CO-OP E-FOOTBALL": {
         image: "https://image2url.com/r2/default/images/1771995899025-6821ca81-aa54-4566-b29d-4fab70571c09.jpeg",
         date: "Mar 06, 2026",
+        time: "2:00PM - 3:00PM",
         venue: "Seminar Hall",
         slots: 16,
         prize: "₹200",
@@ -78,6 +82,7 @@ const eventDetails = {
     "TECH QUIZ": {
         image: "https://image2url.com/r2/default/images/1772440085076-0f0df1c1-a19a-4351-aa02-27f67b111fa8.jpeg",
         date: "Mar 06, 2026",
+        time: "11:00AM - 12:30PM",
         venue: "Lab",
         slots: 10,
         about: "Tech Quiz is a fun team-based quiz competition for pairs (2 members per team). Test your combined knowledge across a wide range of topics including Technology, Current Affairs, Sports, Science, and General Knowledge. Teams compete through rapid-fire rounds with the smartest and quickest duo taking the glory!",
@@ -95,6 +100,7 @@ const eventDetails = {
     "CLASH OF CONCEPTS": {
         image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80",
         date: "Mar 06, 2026",
+        time: "9:30AM - 10:30AM",
         venue: "Seminar Hall",
         slots: 10,
         fee: "Free",

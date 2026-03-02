@@ -24,6 +24,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         return 'N/A';
     }
 
+    function getEventTime(eventName) {
+        if (!eventName) return null;
+        const cleanName = eventName.trim().toUpperCase();
+        if (typeof eventDetails !== 'undefined' && eventDetails[cleanName] && eventDetails[cleanName].time) {
+            return eventDetails[cleanName].time;
+        }
+        return null;
+    }
+
     function getEventVenue(eventName) {
         if (!eventName) return 'KMCT CAMPUS';
         const cleanName = eventName.trim().toUpperCase();
@@ -222,6 +231,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <span class="ticket-label-muted">Date:</span>
                         <span class="ticket-date-val">${getEventDate(ticket.event)}</span>
                     </div>
+                    ${getEventTime(ticket.event) ? `
+                    <div class="ticket-row">
+                        <span class="ticket-label-muted">Time:</span>
+                        <span class="ticket-date-val">${getEventTime(ticket.event)}</span>
+                    </div>` : ''}
                     <div class="ticket-row">
                         <span class="ticket-label-muted">Attendee:</span>
                         <span class="ticket-name-val">${ticket.name || 'Participant'}</span>

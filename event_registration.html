@@ -545,6 +545,8 @@
                     <div class="reg-hero-meta">
                         <span class="reg-meta-pill" id="reg-date-pill"><i class="fas fa-calendar"></i> —</span>
                         <span class="reg-meta-pill" id="reg-venue-pill"><i class="fas fa-map-marker-alt"></i> —</span>
+                        <span class="reg-meta-pill" id="reg-time-pill" style="display:none;"><i
+                                class="fas fa-clock"></i> —</span>
                     </div>
                 </div>
             </div>
@@ -729,6 +731,11 @@
 
                     if (details.date) document.getElementById('reg-date-pill').innerHTML = `<i class="fas fa-calendar"></i> ${details.date}`;
                     if (details.venue) document.getElementById('reg-venue-pill').innerHTML = `<i class="fas fa-map-marker-alt"></i> ${details.venue}`;
+                    if (details.time) {
+                        const timePill = document.getElementById('reg-time-pill');
+                        timePill.innerHTML = `<i class="fas fa-clock"></i> ${details.time}`;
+                        timePill.style.display = 'inline-flex';
+                    }
 
                     const feeBanner = document.getElementById('reg-fee-banner');
                     const feeAmount = document.getElementById('reg-fee-amount');
