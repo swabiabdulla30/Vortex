@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -860,7 +860,7 @@
                     sessionStorage.setItem('regEvent', eventData.event);
                     sessionStorage.setItem('regDept', eventData.department);
                     sessionStorage.setItem('regId', freeData.ticketId);
-                    sessionStorage.setItem('regTeammate', '');
+                    sessionStorage.setItem('regTeammate', eventData.teammateName || '');
                     window.location.href = '/registration_success.html';
                     return;
                 }
