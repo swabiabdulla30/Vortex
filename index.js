@@ -294,7 +294,17 @@ app.post("/api/create-order", async (req, res) => {
         let amount = 59000; // Default Membership: 590.00 INR (in paise)
 
         if (type === 'event') {
-            amount = 100; // Event: 1.00 INR
+            const eventNameUpper = req.body.eventName ? req.body.eventName.toUpperCase() : '';
+
+            if (eventNameUpper.includes('CO-OP E-FOOTBALL')) {
+                amount = 2000; // 20 INR
+            } else if (eventNameUpper.includes('BGMI') ||
+                eventNameUpper.includes('TECH HUNT') ||
+                eventNameUpper.includes('WEB-DESIGNING')) {
+                amount = 1000; // 10 INR
+            } else {
+                amount = 1000; // Default event fallback: 10 INR
+            }
         }
 
         const options = {
