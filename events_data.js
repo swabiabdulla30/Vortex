@@ -156,9 +156,9 @@ eventDetails["CO-OP E-FOOTBALL"] = eventDetails["CO-OP E-FOOTBALL"];
 eventDetails["Co-op E-Football"] = eventDetails["CO-OP E-FOOTBALL"];
 eventDetails["TECH QUIZ"] = eventDetails["TECH QUIZ"];
 eventDetails["Tech Quiz"] = eventDetails["TECH QUIZ"];
-eventDetails["CLASH OF CONCEPTS"] = eventDetails["CLASH OF CONCEPTS"];
-eventDetails["Clash Of Concepts"] = eventDetails["CLASH OF CONCEPTS"];
-eventDetails["Clash of Concepts"] = eventDetails["CLASH OF CONCEPTS"];
+eventDetails["Paper-X"] = eventDetails["PAPER-X"];
+eventDetails["paper-x"] = eventDetails["PAPER-X"];
+eventDetails["PAPER X"] = eventDetails["PAPER-X"];
 
 if (typeof module !== 'undefined') {
     module.exports = eventDetails;
