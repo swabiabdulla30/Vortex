@@ -1505,7 +1505,7 @@ section {
         visibility: visible;
     }
 
-    /* Mobile Header (Shield & Close) */
+    /* Mobile Header (Brand & Close) */
     .mobile-nav-header {
         display: flex;
         justify-content: space-between;
@@ -1516,10 +1516,16 @@ section {
         padding-bottom: 15px;
     }
 
-    .shield-icon {
-        font-size: 1.5rem;
-        color: #fff;
+    .mobile-nav-header .brand-container {
+        pointer-events: none;
+        /* Just for display */
     }
+
+    .mobile-nav-header .nav-logo-img {
+        width: 32px;
+        height: 32px;
+    }
+
 
     .close-menu {
         font-size: 2rem;
