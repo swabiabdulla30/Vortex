@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -20,7 +20,7 @@
         integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
-        /* ── Base ── */
+        /* -- Base -- */
         body {
             margin: 0;
             overflow: hidden auto;
@@ -36,7 +36,7 @@
             display: none;
         }
 
-        /* ── Ambient background lines ── */
+        /* -- Ambient background lines -- */
         .glow-line {
             position: fixed;
             background: linear-gradient(90deg, transparent, rgba(255, 26, 26, 0.8), transparent);
@@ -77,7 +77,7 @@
             }
         }
 
-        /* ── Main Container (The Wipe Area) ── */
+        /* -- Main Container (The Wipe Area) -- */
         .auth-container {
             position: relative;
             width: 95vw;
@@ -107,7 +107,7 @@
             }
         }
 
-        /* ── Forms Background (Dark base layer) ── */
+        /* -- Forms Background (Dark base layer) -- */
         .forms-layer {
             position: absolute;
             top: 0;
@@ -144,7 +144,7 @@
             transform: translateX(30px);
         }
 
-        /* ── Overlay Curtain Layer (The bright sliding panel) ── */
+        /* -- Overlay Curtain Layer (The bright sliding panel) -- */
         .overlay-layer {
             position: absolute;
             top: 0;
@@ -217,7 +217,7 @@
             }
         }
 
-        /* ── State: RIGHT PANEL ACTIVE (Signup mode) ── */
+        /* -- State: RIGHT PANEL ACTIVE (Signup mode) -- */
         .auth-container.right-panel-active .overlay-layer {
             transform: translateX(-100%);
             /* Flip the clip-path angle for the left side (100 - 8 = 92%) */
@@ -241,7 +241,7 @@
             transform: translateX(0);
         }
 
-        /* ── Form Styles ── */
+        /* -- Form Styles -- */
         .form-wrapper {
             max-width: 320px;
             width: 100%;
@@ -295,7 +295,7 @@
             box-shadow: 0 0 15px rgba(255, 26, 26, 0.2);
         }
 
-        /* ── Clean White/Glass Button for the Form ── */
+        /* -- Clean White/Glass Button for the Form -- */
         .submit-btn {
             width: 100%;
             margin-top: 10px;
@@ -337,7 +337,7 @@
             box-shadow: 0 0 20px rgba(255, 26, 26, 0.5);
         }
 
-        /* ── Switch buttons ── */
+        /* -- Switch buttons -- */
         .switch-page-row {
             margin-top: 25px;
             text-align: center;
@@ -368,7 +368,7 @@
             text-decoration-color: #ff1a1a;
         }
 
-        /* ── Divider ── */
+        /* -- Divider -- */
         .or-divider {
             display: flex;
             align-items: center;
@@ -392,7 +392,7 @@
             background: rgba(255, 255, 255, 0.1);
         }
 
-        /* ── Google button ── */
+        /* -- Google button -- */
         .google-btn-custom {
             width: 100%;
             background: rgba(255, 255, 255, 0.05);
@@ -430,7 +430,7 @@
             text-align: center;
         }
 
-        /* ── Status bar ── */
+        /* -- Status bar -- */
         .status-bar {
             position: fixed;
             bottom: 20px;
@@ -456,7 +456,7 @@
             letter-spacing: 1px;
         }
 
-        /* ── Nav ── */
+        /* -- Nav -- */
         .glass-nav {
             position: fixed;
             top: 0;
@@ -471,7 +471,7 @@
             backdrop-filter: none;
         }
 
-        /* ── Mobile Fallback (Stacking) ── */
+        /* -- Mobile Fallback (Stacking) -- */
         @media (max-width: 900px) {
             body {
                 align-items: flex-start;
@@ -683,7 +683,7 @@
     <script src="script.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script>
-        // ── Wipe/Sliding Logic ────────────────────────────────────────────
+        // -- Wipe/Sliding Logic --------------------------------------------
         const authContainer = document.getElementById('auth-container');
 
         function switchToSignup() {
@@ -718,7 +718,7 @@
             });
         }
 
-        // ── Google Credential Handler ─────────────────────────────────────
+        // -- Google Credential Handler -------------------------------------
         function handleCredentialResponse(response) {
             function decodeJwtResponse(token) {
                 try {
@@ -750,7 +750,7 @@
             else { window.location.href = '/index.html'; }
         }
 
-        // ── Standard Auth Handlers ─────────────────────────────────────────
+        // -- Standard Auth Handlers -----------------------------------------
         document.getElementById('std-login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('login-email').value;
@@ -804,7 +804,7 @@
             } catch (err) { msg.textContent = 'Network Error during Registration'; msg.style.color = '#ff4444'; }
         });
 
-        // ── Google Button Logic ───────────────────────────────────────────
+        // -- Google Button Logic -------------------------------------------
         window.addEventListener('load', () => {
             if (window.location.hash.includes('id_token=')) {
                 const idToken = new URLSearchParams(window.location.hash.substring(1)).get('id_token');
@@ -846,3 +846,5 @@
 </body>
 
 </html>
+
+

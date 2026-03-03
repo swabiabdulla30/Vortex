@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -16,7 +16,7 @@
         integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
-        /* ── Split Layout ─────────────────────────────────── */
+        /* -- Split Layout ----------------------------------- */
         .reg-split {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -505,7 +505,7 @@
             </div>
 
             <a href="/login.html" class="login-btn">
-                <span class="icon">🔒</span> LOGIN
+                <span class="icon">??</span> LOGIN
             </a>
 
             <div class="hamburger">
@@ -525,7 +525,7 @@
                 <a href="/gallery.html" class="nav-item">Gallery</a>
 
                 <a href="/login.html" class="login-btn mobile-only">
-                    <span class="icon">🔒</span> LOGIN
+                    <span class="icon">??</span> LOGIN
                 </a>
             </div>
         </div>
@@ -539,14 +539,14 @@
             <div class="reg-event-hero">
                 <img id="reg-event-img" src="" alt="Event">
                 <div class="reg-hero-overlay"></div>
-                <div class="reg-hero-badge">● REGISTRATION OPEN</div>
+                <div class="reg-hero-badge">? REGISTRATION OPEN</div>
                 <div class="reg-hero-title">
                     <h1 id="reg-hero-name">Loading...</h1>
                     <div class="reg-hero-meta">
-                        <span class="reg-meta-pill" id="reg-date-pill"><i class="fas fa-calendar"></i> —</span>
-                        <span class="reg-meta-pill" id="reg-venue-pill"><i class="fas fa-map-marker-alt"></i> —</span>
+                        <span class="reg-meta-pill" id="reg-date-pill"><i class="fas fa-calendar"></i> �</span>
+                        <span class="reg-meta-pill" id="reg-venue-pill"><i class="fas fa-map-marker-alt"></i> �</span>
                         <span class="reg-meta-pill" id="reg-time-pill" style="display:none;"><i
-                                class="fas fa-clock"></i> —</span>
+                                class="fas fa-clock"></i> �</span>
                     </div>
                 </div>
             </div>
@@ -557,18 +557,18 @@
                 <div class="reg-slot-track">
                     <div class="reg-slot-fill" id="reg-slot-fill" style="width: 0%"></div>
                 </div>
-                <span class="reg-slot-count" id="reg-slot-count">Loading…</span>
+                <span class="reg-slot-count" id="reg-slot-count">Loading�</span>
             </div>
 
             <div class="reg-left-body">
                 <!-- Highlighted Fee Banner -->
                 <div class="reg-fee-banner" id="reg-fee-banner" style="display: none;">
                     <div class="fee-label"><i class="fas fa-ticket-alt"></i> Entry Fee</div>
-                    <div class="fee-amount" id="reg-fee-amount">—</div>
+                    <div class="fee-amount" id="reg-fee-amount">�</div>
                 </div>
 
                 <div class="reg-section-label"><i class="fas fa-info-circle"></i> About Event</div>
-                <p class="reg-about-text" id="reg-about-text">—</p>
+                <p class="reg-about-text" id="reg-about-text">�</p>
 
                 <div class="reg-section-label"><i class="fas fa-gavel"></i> Rules &amp; Regulations</div>
                 <ul class="reg-rules-list" id="reg-rules-list"></ul>
@@ -580,7 +580,7 @@
             <div class="reg-form-header">
                 <span class="reg-form-tag">Elevate Series</span>
                 <h2 class="reg-form-title">Secure Your Spot</h2>
-                <p class="reg-form-sub">Fill in your details below — your ticket will be issued instantly.</p>
+                <p class="reg-form-sub">Fill in your details below � your ticket will be issued instantly.</p>
             </div>
 
             <form id="registration-form" class="reg-form">
@@ -682,7 +682,7 @@
                 <a href="https://instagram.com/vortex_innovators" target="_blank" class="social-icon"><i
                         class="fab fa-instagram"></i></a>
             </div>
-            <p class="copyright">© 2026 VORTEX INNOVATORS. SYSTEM_STATUS: ONLINE</p>
+            <p class="copyright">� 2026 VORTEX INNOVATORS. SYSTEM_STATUS: ONLINE</p>
             <p class="copyright" style="margin-top: 5px; font-size: 0.7rem;">
                 <a href="/privacy_policy.html" target="_blank" style="color: #666; text-decoration: none;">Privacy
                     Policy</a> |
@@ -771,7 +771,7 @@
                     teammatePhone.required = true;
                 }
 
-                // Slot bar — fetch from API
+                // Slot bar � fetch from API
                 const API_URL = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost')
                     ? 'http://127.0.0.1:5000/api' : '/api';
 
@@ -790,7 +790,7 @@
                             countEl.style.color = '#ff4444';
                             document.getElementById('reg-slot-fill').style.background = '#cc0000';
                             document.getElementById('reg-submit-btn').disabled = true;
-                            document.getElementById('reg-submit-btn').textContent = '❌ Registration Full';
+                            document.getElementById('reg-submit-btn').textContent = '? Registration Full';
                         } else if (remaining <= 5) {
                             countEl.textContent = `${remaining} / ${total} left`;
                             countEl.style.color = '#ff8c42';
@@ -952,3 +952,5 @@
 </body>
 
 </html>
+
+
