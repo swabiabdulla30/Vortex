@@ -22,6 +22,8 @@
             grid-template-columns: 1fr 1fr;
             min-height: 100vh;
             padding-top: 80px;
+            position: relative;
+            z-index: 1;
         }
 
         /* LEFT PANEL */
@@ -295,7 +297,7 @@
             padding: 50px 48px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
         }
 
         .reg-form-header {
@@ -467,7 +469,8 @@
             }
 
             .reg-right {
-                padding: 36px 20px 50px;
+                padding: 30px 18px 50px;
+                justify-content: flex-start;
             }
 
             .reg-row {
@@ -475,7 +478,47 @@
             }
 
             .reg-event-hero {
-                height: 220px;
+                height: 200px;
+            }
+
+            /* Prevent fee banner overflow on small screens */
+            .reg-fee-banner {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            /* Prevent links from overflowing */
+            .reg-links {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            /* Prevent iOS auto-zoom on input focus */
+            .reg-form .form-control {
+                font-size: 16px !important;
+            }
+
+            .reg-form-title {
+                font-size: 1.6rem;
+            }
+
+            .reg-hero-title h1 {
+                font-size: 1.4rem;
+            }
+        }
+
+        /* Extra small phones */
+        @media (max-width: 400px) {
+            .reg-right {
+                padding: 24px 14px 40px;
+            }
+
+            .reg-fee-banner {
+                padding: 14px 16px;
+            }
+
+            .reg-hero-meta {
+                gap: 8px;
             }
         }
     </style>
@@ -515,7 +558,10 @@
             </div>
             <div class="nav-links">
                 <div class="mobile-nav-header mobile-only">
-                    <div class="brand-container" style="margin-right:auto; gap:10px;"><img src="https://image2url.com/r2/default/images/1771323328076-73754ca7-5637-40c3-9e39-77832d8f5a18.jpeg" alt="Vortex Logo" class="nav-logo-img"><span class="logo" style="font-size:1.5rem;">VORTEX</span></div>
+                    <div class="brand-container" style="margin-right:auto; gap:10px;"><img
+                            src="https://image2url.com/r2/default/images/1771323328076-73754ca7-5637-40c3-9e39-77832d8f5a18.jpeg"
+                            alt="Vortex Logo" class="nav-logo-img"><span class="logo"
+                            style="font-size:1.5rem;">VORTEX</span></div>
                     <div class="close-menu">&times;</div>
                 </div>
 
@@ -539,7 +585,7 @@
             <div class="reg-event-hero">
                 <img id="reg-event-img" src="" alt="Event">
                 <div class="reg-hero-overlay"></div>
-                <div class="reg-hero-badge">? REGISTRATION OPEN</div>
+                <div class="reg-hero-badge">● REGISTRATION OPEN</div>
                 <div class="reg-hero-title">
                     <h1 id="reg-hero-name">Loading...</h1>
                     <div class="reg-hero-meta">
@@ -953,5 +999,3 @@
 </body>
 
 </html>
-
-
