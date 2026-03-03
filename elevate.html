@@ -34,7 +34,7 @@
             </div>
 
             <a href="/login.html" class="login-btn">
-                <span class="icon">??</span> LOGIN
+                <i class="fas fa-user-astronaut icon"></i> LOGIN
             </a>
 
             <div class="hamburger">
@@ -45,7 +45,10 @@
             <div class="nav-links">
                 <!-- Mobile Only Header -->
                 <div class="mobile-nav-header mobile-only">
-                    <div class="brand-container" style="margin-right:auto; gap:10px;"><img src="https://image2url.com/r2/default/images/1771323328076-73754ca7-5637-40c3-9e39-77832d8f5a18.jpeg" alt="Vortex Logo" class="nav-logo-img"><span class="logo" style="font-size:1.5rem;">VORTEX</span></div>
+                    <div class="brand-container" style="margin-right:auto; gap:10px;"><img
+                            src="https://image2url.com/r2/default/images/1771323328076-73754ca7-5637-40c3-9e39-77832d8f5a18.jpeg"
+                            alt="Vortex Logo" class="nav-logo-img"><span class="logo"
+                            style="font-size:1.5rem;">VORTEX</span></div>
                     <div class="close-menu">&times;</div>
                 </div>
 
@@ -55,7 +58,7 @@
                 <a href="/gallery.html" class="nav-item">Gallery</a>
 
                 <a href="/login.html" class="login-btn mobile-only">
-                    <span class="icon">??</span> LOGIN
+                    <i class="fas fa-user-astronaut icon"></i> LOGIN
                 </a>
             </div>
         </div>
@@ -93,8 +96,9 @@
                             <h3>BGMI</h3>
                             <p>Together till the last circle.</p>
                             <div class="card-footer">
-                                <span class="location">?? SEMINAR HALL</span>
-                                <span class="prize-badge">?? ?500</span>
+                                <span class="location"><i class="fas fa-map-marker-alt"></i> SEMINAR HALL</span>
+                                <span class="prize-badge"><i class="fas fa-trophy" style="color: gold;"></i>
+                                    &#8377;500</span>
                                 <span class="slots-badge" id="slots-BGMI">?</span>
                                 <span class="arrow">?</span>
                             </div>
@@ -120,8 +124,9 @@
                             <h3> Tech Hunt</h3>
                             <p>Hunt through the web, find the prize.</p>
                             <div class="card-footer">
-                                <span class="location">?? LAB</span>
-                                <span class="prize-badge">?? ?200</span>
+                                <span class="location"><i class="fas fa-map-marker-alt"></i> LAB</span>
+                                <span class="prize-badge"><i class="fas fa-trophy" style="color: gold;"></i>
+                                    &#8377;200</span>
                                 <span class="slots-badge" id="slots-TECH HUNT">?</span>
                                 <span class="arrow">?</span>
                             </div>
@@ -147,8 +152,9 @@
                             <h3>Web-Designing</h3>
                             <p>Design your way to the top.</p>
                             <div class="card-footer">
-                                <span class="location">?? LAB </span>
-                                <span class="prize-badge">?? ?200</span>
+                                <span class="location"><i class="fas fa-map-marker-alt"></i> LAB </span>
+                                <span class="prize-badge"><i class="fas fa-trophy" style="color: gold;"></i>
+                                    &#8377;200</span>
                                 <span class="slots-badge" id="slots-WEB-DESIGNING">?</span>
                                 <span class="arrow">?</span>
                             </div>
@@ -174,8 +180,9 @@
                             <h3>Co-op E-Football</h3>
                             <p>Kick off, game on, glory awaits.</p>
                             <div class="card-footer">
-                                <span class="location">?? SEMINAR HALL</span>
-                                <span class="prize-badge">?? ?200</span>
+                                <span class="location"><i class="fas fa-map-marker-alt"></i> SEMINAR HALL</span>
+                                <span class="prize-badge"><i class="fas fa-trophy" style="color: gold;"></i>
+                                    &#8377;200</span>
                                 <span class="slots-badge" id="slots-CO-OP E-FOOTBALL">?</span>
                                 <span class="arrow">?</span>
                             </div>
@@ -201,7 +208,7 @@
                             <h3>Tech Quiz</h3>
                             <p>Test your knowledge, claim the prize.</p>
                             <div class="card-footer">
-                                <span class="location">?? LAB</span>
+                                <span class="location"><i class="fas fa-map-marker-alt"></i> LAB</span>
                                 <span class="slots-badge" id="slots-TECH QUIZ">?</span>
                                 <span class="arrow">?</span>
                             </div>
@@ -227,7 +234,7 @@
                             <h3>Paper-X</h3>
                             <p>Think Beyond Circuits</p>
                             <div class="card-footer">
-                                <span class="location">?? SEMINAR HALL</span>
+                                <span class="location"><i class="fas fa-map-marker-alt"></i> SEMINAR HALL</span>
                                 <span class="slots-badge" id="slots-CLASH OF CONCEPTS">?</span>
                                 <span class="arrow">?</span>
                             </div>
@@ -277,10 +284,10 @@
                             if (statusBadge) { statusBadge.textContent = '? REGISTRATION CLOSED'; statusBadge.className = 'card-status status-soon'; }
                         }
                     } else if (remaining <= 5) {
-                        badge.textContent = `?? ${remaining} left`;
+                        badge.textContent = `🔥 ${remaining} left`;
                         badge.className = 'slots-badge slots-low';
                     } else {
-                        badge.textContent = `?? ${remaining} slots left`;
+                        badge.textContent = `🔥 ${remaining} slots left`;
                         badge.className = 'slots-badge slots-ok';
                     }
                 });
@@ -293,5 +300,3 @@
 </body>
 
 </html>
-
-
