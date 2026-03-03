@@ -97,14 +97,14 @@ const eventDetails = {
             "Organizer's decision will be final."
         ]
     },
-    "CLASH OF CONCEPTS": {
+    "PAPER-X": {
         image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80",
         date: "Mar 06, 2026",
         time: "9:30AM - 10:30AM",
         venue: "Seminar Hall",
         slots: 10,
         fee: "Free",
-        about: "<strong>🎤 Clash Of Concepts — Paper Presentation Competition</strong><br><br>A premier academic event where participants present original research papers or concept-based presentations on technology, science, and innovation. Clash Of Concepts challenges participants to think critically, communicate ideas effectively, and defend their work in front of a panel of judges. Whether you're exploring emerging tech, proposing a new solution, or reviewing a cutting-edge concept — this is your stage!<br><br><strong>📌 Event Details:</strong><br>Format: Individual Paper Presentation<br>Total Slots: 10 (Limited!)<br>Entry: FREE<br>Venue: Seminar Hall",
+        about: "<strong>🎤 PAPER-X — Paper Presentation Competition</strong><br><br>A premier academic event where participants present original research papers or concept-based presentations on technology, science, and innovation. Clash Of Concepts challenges participants to think critically, communicate ideas effectively, and defend their work in front of a panel of judges. Whether you're exploring emerging tech, proposing a new solution, or reviewing a cutting-edge concept — this is your stage!<br><br><strong>📌 Event Details:</strong><br>Format: Individual Paper Presentation<br>Total Slots: 10 (Limited!)<br>Entry: FREE<br>Venue: Seminar Hall",
         rules: [
             "<strong>1. Eligibility</strong><br>• This is an individual event — only single participant per paper.",
             "<strong>2. Paper Format</strong><br>• Paper must strictly follow the IEEE standard format.<br>• Plagiarism must be below 15%.<br>• Paper should contain: Abstract, Introduction, Methodology, Results, Conclusion, and References.",
