@@ -22,6 +22,8 @@
             grid-template-columns: 1fr 1fr;
             min-height: 100vh;
             padding-top: 80px;
+            position: relative;
+            z-index: 1;
         }
 
         /* LEFT PANEL */
@@ -295,7 +297,7 @@
             padding: 50px 48px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
         }
 
         .reg-form-header {
@@ -467,7 +469,8 @@
             }
 
             .reg-right {
-                padding: 36px 20px 50px;
+                padding: 30px 18px 50px;
+                justify-content: flex-start;
             }
 
             .reg-row {
@@ -475,7 +478,47 @@
             }
 
             .reg-event-hero {
-                height: 220px;
+                height: 200px;
+            }
+
+            /* Prevent fee banner overflow on small screens */
+            .reg-fee-banner {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            /* Prevent links from overflowing */
+            .reg-links {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            /* Prevent iOS auto-zoom on input focus */
+            .reg-form .form-control {
+                font-size: 16px !important;
+            }
+
+            .reg-form-title {
+                font-size: 1.6rem;
+            }
+
+            .reg-hero-title h1 {
+                font-size: 1.4rem;
+            }
+        }
+
+        /* Extra small phones */
+        @media (max-width: 400px) {
+            .reg-right {
+                padding: 24px 14px 40px;
+            }
+
+            .reg-fee-banner {
+                padding: 14px 16px;
+            }
+
+            .reg-hero-meta {
+                gap: 8px;
             }
         }
     </style>
