@@ -8,7 +8,7 @@ const eventDetails = {
     "BGMI": {
         image: "https://image2url.com/r2/default/images/1771322980849-6dd25143-dab6-410b-a737-504b63aceea0.jpeg",
         date: "Mar 06, 2026",
-        time: "2:00PM - 3:30PM",
+        time: "11:00AM - 12:30PM",
         venue: "Seminar Hall",
         slots: 48,
         prize: "₹300",
@@ -82,7 +82,7 @@ const eventDetails = {
     "TECH QUIZ": {
         image: "https://image2url.com/r2/default/images/1772440085076-0f0df1c1-a19a-4351-aa02-27f67b111fa8.jpeg",
         date: "Mar 05, 2026",
-        time: "11:00AM - 12:30PM",
+        time: "2:00PM - 3:30PM",
         venue: "Lab",
         slots: 10,
         about: "Tech Quiz is a fun team-based quiz competition for pairs (2 members per team). Test your combined knowledge across a wide range of topics including Technology, Current Affairs, Sports, Science, and General Knowledge. Teams compete through rapid-fire rounds with the smartest and quickest duo taking the glory!",
