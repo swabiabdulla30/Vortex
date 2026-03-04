@@ -24,7 +24,7 @@ const eventDetails = {
     "TECH HUNT": {
         image: "https://image2url.com/r2/default/images/1771869172242-e128a3e7-34be-47d7-af3f-2fc32eb7c147.jpeg",
         date: "Mar 05, 2026",
-        time: "11:00AM - 12:30PM",
+        time: "9:30AM - 11:00AM",
         venue: "Lab",
         slots: 30,
         prize: "₹200",
@@ -42,7 +42,7 @@ const eventDetails = {
     "WEBSITE DESIGNING COMPETITION": {
         image: "https://image2url.com/r2/default/images/1771863896078-ef98fc6d-f9d8-41ef-89d5-cac3231e8f7c.jpeg",
         date: "Mar 05, 2026",
-        time: "1:30PM - 2:15PM",
+        time: "11:15AM - 12:30PM",
         venue: "Lab",
         slots: 30,
         prize: "₹200",
@@ -82,7 +82,7 @@ const eventDetails = {
     "TECH QUIZ": {
         image: "https://image2url.com/r2/default/images/1772440085076-0f0df1c1-a19a-4351-aa02-27f67b111fa8.jpeg",
         date: "Mar 05, 2026",
-        time: "2:00PM - 3:30PM",
+        time: "1:45 PM - 3:00 PM",
         venue: "Lab",
         slots: 10,
         about: "Tech Quiz is a fun team-based quiz competition for pairs (2 members per team). Test your combined knowledge across a wide range of topics including Technology, Current Affairs, Sports, Science, and General Knowledge. Teams compete through rapid-fire rounds with the smartest and quickest duo taking the glory!",
