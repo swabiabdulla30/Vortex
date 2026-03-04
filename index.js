@@ -396,7 +396,7 @@ app.get("/api/ticket/:ticketId", async (req, res) => {
 
 // --- Public: Event Slot Availability ---
 const EVENT_SLOTS = {
-    "BGMI": 100,
+    "BGMI": 48,
     "TECH HUNT": 30,
     "WEB-DESIGNING": 30,
     "CO-OP E-FOOTBALL": 16,
