@@ -267,21 +267,30 @@
                 ? 'http://127.0.0.1:5000/api'
                 : '/api';
             try {
+                const userStr = localStorage.getItem('vortexCurrentUser');
+                const user = userStr ? JSON.parse(userStr) : null;
+                const isAdmin = user && user.role === 'admin';
+
                 const res = await fetch(`${API_URL}/event-slots`);
                 const slots = await res.json();
                 slots.forEach(({ event, remaining, total }) => {
                     const badge = document.getElementById(`slots-${event}`);
                     if (!badge) return;
                     if (remaining === 0) {
-                        badge.textContent = '● FULL';
+                        badge.textContent = isAdmin ? '● FULL (ADMIN OPEN)' : '● FULL';
                         badge.className = 'slots-badge slots-full';
                         // Disable the card link
                         const card = badge.closest('.event-card');
                         if (card && card.tagName === 'A') {
-                            card.style.pointerEvents = 'none';
-                            card.style.opacity = '0.6';
-                            const statusBadge = card.querySelector('.card-status');
-                            if (statusBadge) { statusBadge.textContent = '● REGISTRATION CLOSED'; statusBadge.className = 'card-status status-soon'; }
+                            if (!isAdmin) {
+                                card.style.pointerEvents = 'none';
+                                card.style.opacity = '0.6';
+                                const statusBadge = card.querySelector('.card-status');
+                                if (statusBadge) { statusBadge.textContent = '● REGISTRATION CLOSED'; statusBadge.className = 'card-status status-soon'; }
+                            } else {
+                                const statusBadge = card.querySelector('.card-status');
+                                if (statusBadge) { statusBadge.textContent = '● CLOSED (ADMIN OPEN)'; statusBadge.className = 'card-status status-active'; }
+                            }
                         }
                     } else if (remaining <= 5) {
                         badge.textContent = `🔥 ${remaining} left`;

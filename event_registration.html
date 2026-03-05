@@ -836,8 +836,18 @@
                             countEl.textContent = 'FULL';
                             countEl.style.color = '#ff4444';
                             document.getElementById('reg-slot-fill').style.background = '#cc0000';
-                            document.getElementById('reg-submit-btn').disabled = true;
-                            document.getElementById('reg-submit-btn').textContent = '? Registration Full';
+
+                            const userStr = localStorage.getItem('vortexCurrentUser');
+                            const user = userStr ? JSON.parse(userStr) : null;
+                            const isAdmin = user && user.role === 'admin';
+
+                            if (isAdmin) {
+                                document.getElementById('reg-submit-btn').disabled = false;
+                                document.getElementById('reg-submit-btn').innerHTML = '<i class="fas fa-lock-open"></i> &nbsp;REGISTER (ADMIN BYPASS)';
+                            } else {
+                                document.getElementById('reg-submit-btn').disabled = true;
+                                document.getElementById('reg-submit-btn').textContent = '🚫 Registration Full';
+                            }
                         } else if (remaining <= 5) {
                             countEl.textContent = `${remaining} / ${total} left`;
                             countEl.style.color = '#ff8c42';
