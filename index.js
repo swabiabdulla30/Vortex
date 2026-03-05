@@ -400,7 +400,8 @@ const EVENT_SLOTS = {
     "TECH HUNT": 0,
     "WEB-DESIGNING": 0,
     "CO-OP E-FOOTBALL": 16,
-    "TECH QUIZ": 10
+    "TECH QUIZ": 10,
+    "PAPER-X": 0
 };
 
 app.get("/api/event-slots", async (req, res) => {

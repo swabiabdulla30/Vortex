@@ -102,6 +102,7 @@ const eventDetails = {
         date: "Mar 06, 2026",
         time: "9:30AM - 10:30AM",
         venue: "Seminar Hall",
+        slots: 0,
         fee: "Free",
         about: "<strong>🎤 PAPER-X — Paper Presentation Competition</strong><br><br>A premier academic event where participants present original research papers or concept-based presentations on technology, science, and innovation. Paper-X challenges participants to think critically, communicate ideas effectively, and defend their work in front of a panel of judges. Whether you're exploring emerging tech, proposing a new solution, or reviewing a cutting-edge concept — this is your stage!<br><br>📝 <strong>Note:</strong> Participants are also welcome to present IEEE papers that have already been researched and published.<br><br><strong>📌 Event Details:</strong><br>Format: Individual Paper Presentation<br>Entry: FREE<br>Venue: Seminar Hall",
         rules: [
