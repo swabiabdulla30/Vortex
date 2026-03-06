@@ -832,21 +832,33 @@
                         document.getElementById('reg-slot-fill').style.width = pct + '%';
 
                         const countEl = document.getElementById('reg-slot-count');
-                        if (remaining === 0) {
-                            countEl.textContent = 'FULL';
-                            countEl.style.color = '#ff4444';
-                            document.getElementById('reg-slot-fill').style.background = '#cc0000';
 
-                            const userStr = localStorage.getItem('vortexCurrentUser');
-                            const user = userStr ? JSON.parse(userStr) : null;
-                            const isAdmin = user && user.role === 'admin';
+                        const details = (typeof eventDetails !== 'undefined') ? eventDetails[cleanName.toUpperCase()] || eventDetails[cleanName] : null;
+                        const isClosed = details && details.closed;
 
+                        const userStr = localStorage.getItem('vortexCurrentUser');
+                        const user = userStr ? JSON.parse(userStr) : null;
+                        const isAdmin = user && user.role === 'admin';
+
+                        if (remaining === 0 || isClosed) {
                             if (isAdmin) {
+                                if (remaining === 0) {
+                                    countEl.textContent = 'FULL';
+                                    countEl.style.color = '#ff4444';
+                                    document.getElementById('reg-slot-fill').style.background = '#cc0000';
+                                } else {
+                                    countEl.textContent = `${remaining} / ${total} left (CLOSED)`;
+                                    countEl.style.color = '#ff8c42';
+                                    document.getElementById('reg-slot-fill').style.background = 'linear-gradient(90deg,#8B0000,#ff6b00)';
+                                }
                                 document.getElementById('reg-submit-btn').disabled = false;
                                 document.getElementById('reg-submit-btn').innerHTML = '<i class="fas fa-lock-open"></i> &nbsp;REGISTER (ADMIN BYPASS)';
                             } else {
+                                countEl.textContent = remaining === 0 ? 'FULL' : 'CLOSED';
+                                countEl.style.color = '#ff4444';
+                                document.getElementById('reg-slot-fill').style.background = '#cc0000';
                                 document.getElementById('reg-submit-btn').disabled = true;
-                                document.getElementById('reg-submit-btn').textContent = '🚫 Registration Full';
+                                document.getElementById('reg-submit-btn').textContent = remaining === 0 ? '🚫 Registration Full' : '🚫 Registration Closed';
                             }
                         } else if (remaining <= 5) {
                             countEl.textContent = `${remaining} / ${total} left`;

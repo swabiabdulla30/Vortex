@@ -7,8 +7,9 @@
 const eventDetails = {
     "BGMI": {
         image: "https://image2url.com/r2/default/images/1771322980849-6dd25143-dab6-410b-a737-504b63aceea0.jpeg",
+        closed: true,
         date: "Mar 06, 2026",
-        time: "11:00AM - 12:30PM",
+        time: "2:00PM - 3:00PM",
         venue: "Seminar Hall",
         slots: 48,
         prize: "₹300",
@@ -64,7 +65,7 @@ const eventDetails = {
     "CO-OP E-FOOTBALL": {
         image: "https://image2url.com/r2/default/images/1771995899025-6821ca81-aa54-4566-b29d-4fab70571c09.jpeg",
         date: "Mar 06, 2026",
-        time: "2:00PM - 3:00PM",
+        time: "11:00AM - 12:30PM",
         venue: "Seminar Hall",
         slots: 16,
         prize: "₹200",

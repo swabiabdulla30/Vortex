@@ -258,6 +258,7 @@
         </div>
     </footer>
 
+    <script src="events_data.js?v=3.2"></script>
     <script src="tech_bg_alt.js"></script>
     <script src="tech_bg_mobile.js"></script>
     <script src="script.js"></script>
@@ -276,9 +277,19 @@
                 slots.forEach(({ event, remaining, total }) => {
                     const badge = document.getElementById(`slots-${event}`);
                     if (!badge) return;
-                    if (remaining === 0) {
-                        badge.textContent = isAdmin ? '● FULL (ADMIN OPEN)' : '● FULL';
-                        badge.className = 'slots-badge slots-full';
+
+                    const details = (typeof eventDetails !== 'undefined') ? eventDetails[event.toUpperCase()] || eventDetails[event] : null;
+                    const isClosed = details && details.closed;
+
+                    if (remaining === 0 || isClosed) {
+                        if (isAdmin) {
+                            badge.textContent = remaining === 0 ? '● FULL (ADMIN OPEN)' : `🔥 ${remaining} LEFT (CLOSED)`;
+                            badge.className = remaining === 0 ? 'slots-badge slots-full' : 'slots-badge slots-low';
+                        } else {
+                            badge.textContent = remaining === 0 ? '● FULL' : '● CLOSED';
+                            badge.className = 'slots-badge slots-full';
+                        }
+
                         // Disable the card link
                         const card = badge.closest('.event-card');
                         if (card && card.tagName === 'A') {
