@@ -7,13 +7,14 @@
 const eventDetails = {
     "BGMI": {
         image: "https://image2url.com/r2/default/images/1771322980849-6dd25143-dab6-410b-a737-504b63aceea0.jpeg",
-        date: "Mar 05, 2026",
-        time: "2:00PM - 3:30PM",
+        closed: true,
+        date: "Mar 06, 2026",
+        time: "2:00PM - 3:00PM",
         venue: "Seminar Hall",
-        slots: 100,
-        prize: "₹500",
+        slots: 48,
+        prize: "₹300",
         fee: "₹10 per player",
-        about: "<strong>🎮 PUBG Mobile Tournament (Livik Map)</strong><br><br><strong>📌 Tournament Details:</strong><br>Map: Livik<br>Mode: Squad (TPP)<br>Total Teams: 25<br>Total Players: 100<br>Registration Fee: ₹10 per player<br>Total Prize Pool: ₹500<br>Duration: 1.5 Hours",
+        about: "<strong>🎮 PUBG Mobile Tournament (Livik Map)</strong><br><br><strong>📌 Tournament Details:</strong><br>Map: Livik<br>Mode: Squad (TPP)<br>Total Teams: 12<br>Total Players: 48<br>Registration Fee: ₹10 per player<br>Total Prize Pool: ₹300<br>Duration: 1.5 Hours",
         rules: [
             "<strong>👥 Team Rules</strong><br>1. Each team must have exactly 4 players.<br>2. No player can join more than one team.<br>3. No team changes after room ID is shared.<br>4. All players must be online 10 minutes before start.<br>5. If a player is absent, the team must play with remaining players (no delay).",
             "<strong>🎯 Match Rules</strong><br>1. Map: Erangel(normal)<br>2. Mode: Squad – TPP<br>3. Only one official match will be conducted.<br>4. Custom room ID & password will be shared 10 minutes before match.<br>5. Match will start at scheduled time (No waiting for late players).<br>6. Any use of hacks, glitches, or unfair play will result in immediate disqualification.<br>7.If the total number of registered participants is fewer than 50, the match map will be changed to Livik.",
@@ -24,9 +25,9 @@ const eventDetails = {
     "TECH HUNT": {
         image: "https://image2url.com/r2/default/images/1771869172242-e128a3e7-34be-47d7-af3f-2fc32eb7c147.jpeg",
         date: "Mar 05, 2026",
-        time: "11:00AM - 12:30PM",
+        time: "9:30AM - 11:00AM",
         venue: "Lab",
-        slots: 30,
+        slots: 0,
         prize: "₹200",
         fee: "₹10 per participant",
         about: "Tech Hunt is an exciting online puzzle challenge where participants are given a website filled with hidden clues and challenges. Players must carefully explore the website, solve puzzles, and find the correct extension or link to unlock the next level. Each level becomes more challenging, testing your logic, observation, and problem-solving skills. The participant who successfully completes the hunt in the shortest time wins the cash prize.",
@@ -42,9 +43,9 @@ const eventDetails = {
     "WEBSITE DESIGNING COMPETITION": {
         image: "https://image2url.com/r2/default/images/1771863896078-ef98fc6d-f9d8-41ef-89d5-cac3231e8f7c.jpeg",
         date: "Mar 05, 2026",
-        time: "1:30PM - 2:15PM",
+        time: "11:15AM - 12:30PM",
         venue: "Lab",
-        slots: 30,
+        slots: 0,
         prize: "₹200",
         fee: "₹10 per participant",
         about: "The Web-Designing is a creative event where participants showcase their web development and design skills. Participants will be given a theme or topic, and they must design a visually appealing, user-friendly website within the given time. The event focuses on creativity, layout design, responsiveness, and overall presentation. This competition provides a great platform to demonstrate your technical and creative abilities.",
@@ -64,7 +65,7 @@ const eventDetails = {
     "CO-OP E-FOOTBALL": {
         image: "https://image2url.com/r2/default/images/1771995899025-6821ca81-aa54-4566-b29d-4fab70571c09.jpeg",
         date: "Mar 06, 2026",
-        time: "2:00PM - 3:00PM",
+        time: "11:00AM - 12:30PM",
         venue: "Seminar Hall",
         slots: 16,
         prize: "₹200",
@@ -81,8 +82,8 @@ const eventDetails = {
     },
     "TECH QUIZ": {
         image: "https://image2url.com/r2/default/images/1772440085076-0f0df1c1-a19a-4351-aa02-27f67b111fa8.jpeg",
-        date: "Mar 06, 2026",
-        time: "11:00AM - 12:30PM",
+        date: "Mar 05, 2026",
+        time: "1:45 PM - 3:00 PM",
         venue: "Lab",
         slots: 10,
         about: "Tech Quiz is a fun team-based quiz competition for pairs (2 members per team). Test your combined knowledge across a wide range of topics including Technology, Current Affairs, Sports, Science, and General Knowledge. Teams compete through rapid-fire rounds with the smartest and quickest duo taking the glory!",
@@ -97,21 +98,22 @@ const eventDetails = {
             "Organizer's decision will be final."
         ]
     },
-    "CLASH OF CONCEPTS": {
+    "PAPER-X": {
         image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80",
         date: "Mar 06, 2026",
         time: "9:30AM - 10:30AM",
         venue: "Seminar Hall",
-        slots: 10,
+        slots: 0,
         fee: "Free",
-        about: "<strong>🎤 Clash Of Concepts — Paper Presentation Competition</strong><br><br>A premier academic event where participants present original research papers or concept-based presentations on technology, science, and innovation. Clash Of Concepts challenges participants to think critically, communicate ideas effectively, and defend their work in front of a panel of judges. Whether you're exploring emerging tech, proposing a new solution, or reviewing a cutting-edge concept — this is your stage!<br><br><strong>📌 Event Details:</strong><br>Format: Individual Paper Presentation<br>Total Slots: 10 (Limited!)<br>Entry: FREE<br>Venue: Seminar Hall",
+        about: "<strong>🎤 PAPER-X — Paper Presentation Competition</strong><br><br>A premier academic event where participants present original research papers or concept-based presentations on technology, science, and innovation. Paper-X challenges participants to think critically, communicate ideas effectively, and defend their work in front of a panel of judges. Whether you're exploring emerging tech, proposing a new solution, or reviewing a cutting-edge concept — this is your stage!<br><br>📝 <strong>Note:</strong> Participants are also welcome to present IEEE papers that have already been researched and published.<br><br><strong>📌 Event Details:</strong><br>Format: Individual Paper Presentation<br>Entry: FREE<br>Venue: Seminar Hall",
         rules: [
             "<strong>1. Eligibility</strong><br>• This is an individual event — only single participant per paper.",
             "<strong>2. Paper Format</strong><br>• Paper must strictly follow the IEEE standard format.<br>• Plagiarism must be below 15%.<br>• Paper should contain: Abstract, Introduction, Methodology, Results, Conclusion, and References.",
             "<strong>3. Submission Guidelines</strong><br>• Paper must be submitted in PDF format before the deadline.<br>• File name format: ParticipantName_CollegeName.pdf<br>• Late submissions will not be accepted.",
             "<strong>4. Presentation Rules</strong><br>• Each participant will get 8–10 minutes for presentation.<br>• Followed by 2–3 minutes of Q&A.<br>• Presentation must be in PPT/PDF format.",
             "<strong>5. Evaluation Criteria</strong><br>• Originality and Innovation<br>• Technical Depth<br>• Clarity of Presentation<br>• Practical Relevance<br>• Response to Questions",
-            "<strong>6. General Instructions</strong><br>• Participants must report 30 minutes before the event.<br>• Bring your presentation in a pen drive and keep a backup.<br>• Judges' decision will be final and binding.<br>• Any form of plagiarism or malpractice will lead to disqualification."
+            "<strong>6. General Instructions</strong><br>• Participants must report 30 minutes before the event.<br>• Bring your presentation in a pen drive and keep a backup.<br>• Judges' decision will be final and binding.<br>• Any form of plagiarism or malpractice will lead to disqualification.",
+            "<strong>7. PPT Slide Structure</strong><br><br><strong>📌 Structure of PPT Slides:</strong><br><br><strong>1. Title Slide</strong><br>• Title of the paper<br>• Student Name, Department, College Name<br>• Event Name &amp; Date<br><br><strong>2. Introduction</strong><br>• Background of the topic<br>• Why the topic is important<br><br><strong>3. Problem Statement</strong><br>• What problem are you addressing?<br>• Why is it a problem?<br><br><strong>4. Objectives</strong><br>• Main aims of the study/research<br><br><strong>5. Methodology / Approach</strong><br>• How the study was conducted<br>• Tools, techniques, or methods used<br><br><strong>6. Results / Findings</strong><br>• Key outcomes<br>• Charts, graphs, or data (if available)<br><br><strong>7. Discussion</strong><br>• Explanation of results<br>• Analysis<br><br><strong>8. Conclusion</strong><br>• Summary of findings<br>• Final outcome<br><br><strong>9. Future Scope (Optional)</strong><br>• Possible improvements<br>• Future research ideas<br><br><strong>10. References</strong><br>• Books, journals, websites used<br><br><strong>🎯 Important Tips for PPT:</strong><br>• Keep slides simple and clear<br>• Avoid too much text — use bullet points<br>• Use readable font (minimum size 24 for content)<br>• Maximum 10–12 slides for 8–10 minutes presentation<br>• Add relevant images, charts, or diagrams"
         ]
     },
     "ELEVATE": {
@@ -156,9 +158,9 @@ eventDetails["CO-OP E-FOOTBALL"] = eventDetails["CO-OP E-FOOTBALL"];
 eventDetails["Co-op E-Football"] = eventDetails["CO-OP E-FOOTBALL"];
 eventDetails["TECH QUIZ"] = eventDetails["TECH QUIZ"];
 eventDetails["Tech Quiz"] = eventDetails["TECH QUIZ"];
-eventDetails["CLASH OF CONCEPTS"] = eventDetails["CLASH OF CONCEPTS"];
-eventDetails["Clash Of Concepts"] = eventDetails["CLASH OF CONCEPTS"];
-eventDetails["Clash of Concepts"] = eventDetails["CLASH OF CONCEPTS"];
+eventDetails["Paper-X"] = eventDetails["PAPER-X"];
+eventDetails["paper-x"] = eventDetails["PAPER-X"];
+eventDetails["PAPER X"] = eventDetails["PAPER-X"];
 
 if (typeof module !== 'undefined') {
     module.exports = eventDetails;

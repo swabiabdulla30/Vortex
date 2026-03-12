@@ -89,7 +89,7 @@
                     <div class="card-content">
                         <div class="date-badge">
                             <span class="month">MAR</span>
-                            <span class="day">05</span>
+                            <span class="day">06</span>
                         </div>
                         <div class="event-details">
                             <span class="event-type"></span>
@@ -98,7 +98,7 @@
                             <div class="card-footer">
                                 <span class="location"><i class="fas fa-map-marker-alt"></i> SEMINAR HALL</span>
                                 <span class="prize-badge"><i class="fas fa-trophy" style="color: gold;"></i>
-                                    &#8377;500</span>
+                                    &#8377;300</span>
                                 <span class="slots-badge" id="slots-BGMI">→</span>
                                 <span class="arrow">→</span>
                             </div>
@@ -201,7 +201,7 @@
                     <div class="card-content">
                         <div class="date-badge">
                             <span class="month">MAR</span>
-                            <span class="day">06</span>
+                            <span class="day">05</span>
                         </div>
                         <div class="event-details">
                             <span class="event-type"></span>
@@ -216,13 +216,13 @@
                     </div>
                 </a>
 
-                <!-- Event 7: Clash Of Concepts -->
-                <a href="/event_registration.html?event=Clash%20Of%20Concepts" class="card event-card"
-                    data-event="Clash Of Concepts" style="text-decoration: none; color: inherit;">
+                <!-- Event 7: Paper-X -->
+                <a href="/event_registration.html?event=Paper-X" class="card event-card" data-event="Paper-X"
+                    style="text-decoration: none; color: inherit;">
                     <div class="card-status status-active">● REGISTRATION OPEN</div>
                     <div class="card-image">
                         <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80"
-                            alt="Clash Of Concepts" loading="lazy">
+                            alt="Paper-X" loading="lazy">
                     </div>
                     <div class="card-content">
                         <div class="date-badge">
@@ -235,7 +235,7 @@
                             <p>Think Beyond Circuits</p>
                             <div class="card-footer">
                                 <span class="location"><i class="fas fa-map-marker-alt"></i> SEMINAR HALL</span>
-                                <span class="slots-badge" id="slots-CLASH OF CONCEPTS">→</span>
+                                <span class="slots-badge" id="slots-PAPER-X">→</span>
                                 <span class="arrow">→</span>
                             </div>
                         </div>
@@ -258,6 +258,7 @@
         </div>
     </footer>
 
+    <script src="events_data.js?v=3.2"></script>
     <script src="tech_bg_alt.js"></script>
     <script src="tech_bg_mobile.js"></script>
     <script src="script.js"></script>
@@ -267,21 +268,40 @@
                 ? 'http://127.0.0.1:5000/api'
                 : '/api';
             try {
+                const userStr = localStorage.getItem('vortexCurrentUser');
+                const user = userStr ? JSON.parse(userStr) : null;
+                const isAdmin = user && user.role === 'admin';
+
                 const res = await fetch(`${API_URL}/event-slots`);
                 const slots = await res.json();
                 slots.forEach(({ event, remaining, total }) => {
                     const badge = document.getElementById(`slots-${event}`);
                     if (!badge) return;
-                    if (remaining === 0) {
-                        badge.textContent = '● FULL';
-                        badge.className = 'slots-badge slots-full';
+
+                    const details = (typeof eventDetails !== 'undefined') ? eventDetails[event.toUpperCase()] || eventDetails[event] : null;
+                    const isClosed = details && details.closed;
+
+                    if (remaining === 0 || isClosed) {
+                        if (isAdmin) {
+                            badge.textContent = remaining === 0 ? '● FULL (ADMIN OPEN)' : `🔥 ${remaining} LEFT (CLOSED)`;
+                            badge.className = remaining === 0 ? 'slots-badge slots-full' : 'slots-badge slots-low';
+                        } else {
+                            badge.textContent = remaining === 0 ? '● FULL' : '● CLOSED';
+                            badge.className = 'slots-badge slots-full';
+                        }
+
                         // Disable the card link
                         const card = badge.closest('.event-card');
                         if (card && card.tagName === 'A') {
-                            card.style.pointerEvents = 'none';
-                            card.style.opacity = '0.6';
-                            const statusBadge = card.querySelector('.card-status');
-                            if (statusBadge) { statusBadge.textContent = '● REGISTRATION CLOSED'; statusBadge.className = 'card-status status-soon'; }
+                            if (!isAdmin) {
+                                card.style.pointerEvents = 'none';
+                                card.style.opacity = '0.6';
+                                const statusBadge = card.querySelector('.card-status');
+                                if (statusBadge) { statusBadge.textContent = '● REGISTRATION CLOSED'; statusBadge.className = 'card-status status-soon'; }
+                            } else {
+                                const statusBadge = card.querySelector('.card-status');
+                                if (statusBadge) { statusBadge.textContent = '● CLOSED (ADMIN OPEN)'; statusBadge.className = 'card-status status-active'; }
+                            }
                         }
                     } else if (remaining <= 5) {
                         badge.textContent = `🔥 ${remaining} left`;
