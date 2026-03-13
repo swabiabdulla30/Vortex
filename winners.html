@@ -49,29 +49,35 @@
             font-weight: 300;
         }
 
-        /* ── Champion Card Layout ── */
-        .champion-container {
-            max-width: 800px;
+        /* ── Poster Display Layout ── */
+        .poster-container {
+            max-width: 900px;
             margin: 0 auto;
             position: relative;
             z-index: 2;
             padding: 0 20px;
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
         }
 
-        .champion-card {
-            background: rgba(20, 20, 20, 0.8);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 215, 0, 0.4);
-            border-radius: 24px;
-            padding: 50px 30px 40px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-            box-shadow: 0 20px 50px rgba(255, 215, 0, 0.15), inset 0 0 40px rgba(255, 215, 0, 0.05);
+        .winner-poster {
+            width: 100%;
+            height: auto;
+            max-height: 80vh;
+            object-fit: contain;
+            border-radius: 16px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 40px rgba(255, 215, 0, 0.2);
+            border: 2px solid rgba(255, 215, 0, 0.3);
             animation: slideUp 0.8s ease-out backwards;
-            margin-top: 40px;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            cursor: pointer;
+        }
+
+        .winner-poster:hover {
+            transform: scale(1.02);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 60px rgba(255, 215, 0, 0.4);
+            border-color: rgba(255, 215, 0, 0.6);
         }
 
         /* ── Special Crown ── */
@@ -87,93 +93,6 @@
             z-index: 10;
         }
 
-        /* ── Team/Solo Wrap ── */
-        .members-wrap {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 30px;
-            width: 100%;
-            margin-bottom: 20px;
-        }
-
-        .member-profile {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 160px;
-            transition: transform 0.3s ease;
-        }
-
-        .member-profile:hover {
-            transform: translateY(-8px);
-        }
-
-        /* ── Avatar Images ── */
-        .member-avatar-box {
-            position: relative;
-            margin-bottom: 15px;
-        }
-
-        .member-avatar {
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid #f1c40f;
-            box-shadow: 0 0 20px rgba(241, 196, 15, 0.3);
-            background: #2d3436;
-        }
-
-        /* ── Details ── */
-        .member-name {
-            font-size: 1.3rem;
-            font-weight: 800;
-            color: #fff;
-            margin-bottom: 5px;
-            text-align: center;
-            line-height: 1.2;
-        }
-
-        .member-class {
-            font-size: 0.85rem;
-            color: #f1c40f;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            text-align: center;
-        }
-
-        .champion-desc {
-            font-size: 1.1rem;
-            color: #b2bec3;
-            margin-top: 25px;
-            line-height: 1.6;
-            max-width: 600px;
-            text-align: center;
-            font-style: italic;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            padding-top: 25px;
-        }
-
-        /* ── Winner Banner ── */
-        .winner-banner {
-            position: absolute;
-            bottom: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(135deg, #f1c40f, #f39c12);
-            color: #000;
-            padding: 8px 30px;
-            border-radius: 30px;
-            font-weight: 900;
-            font-size: 1.1rem;
-            letter-spacing: 2px;
-            box-shadow: 0 10px 20px rgba(241, 196, 15, 0.4);
-            white-space: nowrap;
-            text-transform: uppercase;
-        }
-
         /* ── Empty State ── */
         .pending-container {
             max-width: 600px;
@@ -184,6 +103,7 @@
             border-radius: 20px;
             padding: 60px 40px;
             animation: fadeIn 0.8s ease-out;
+            text-align: center;
         }
         
         .pending-container i {
@@ -250,10 +170,6 @@
         /* ── Responsive ── */
         @media (max-width: 900px) {
             .event-title { font-size: 2.2rem; }
-            .member-profile { width: 130px; }
-            .member-avatar { width: 110px; height: 110px; }
-            .champion-card { padding: 40px 15px 30px; }
-            .winner-banner { font-size: 0.9rem; padding: 6px 20px; }
         }
     </style>
 </head>
@@ -310,7 +226,7 @@
     <!-- Winners Section -->
     <section class="winners-section content-section">
         <div class="winners-header-wrapper">
-            <h1 class="event-title" id="display-event-name">EVENT <span>WINNERS</span></h1>
+            <h1 class="event-title" id="display-event-name">EVENT <span>CHAMPION</span></h1>
             <p class="winners-subtitle">THE HALL OF FAME</p>
         </div>
 
@@ -362,67 +278,33 @@
             const MOCK_DATA = true; // Set to true to preview the beautiful UI
             
             if (MOCK_DATA) {
-                // We'll show an example based on event name. 
-                // E-Football / BGMI might have teams.
+                // Here we map event names to their specific poster images.
+                // You can add your actual poster URLs here!
+                const posterMapping = {
+                    'BGMI': 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80', // Replace with real BGMI Poster
+                    'E-FOOTBALL': 'https://images.unsplash.com/photo-1511886929837-354d827aae26?auto=format&fit=crop&w=1200&q=80', // Replace with real E-Football Poster
+                    'PAPER-X': 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80', // Replace with real Paper-X Poster
+                    'TECH QUIZ': 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=80',
+                    'WEB-DESIGNING': 'https://images.unsplash.com/photo-1507721999472-8ed4421c4af2?auto=format&fit=crop&w=1200&q=80',
+                    'TECH HUNT': 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=1200&q=80'
+                };
+
+                // Find the poster URL based on the event name. If not found, use a generic fallback.
+                const posterUrl = posterMapping[cleanEventName.toUpperCase()] || 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80';
                 
-                if (cleanEventName.toUpperCase().includes('FOOTBALL') || cleanEventName.toUpperCase().includes('BGMI')) {
-                    // Team Event Demo
-                    renderChampion({
-                        teamName: "Squad Alpha",
-                        desc: "An absolutely flawless victory displaying immense coordination and strategy.",
-                        members: [
-                            { name: "Pranav Raj", class: "S6 CSE A", img: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80" },
-                            { name: "Arjun Nair", class: "S6 CSE A", img: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=200&q=80" },
-                            { name: "Anil K", class: "S6 CSE B", img: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=200&q=80" },
-                            { name: "Rahul S", class: "S6 CSE B", img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80" }
-                        ]
-                    });
-                } else {
-                    // Solo Event Demo
-                    renderChampion({
-                        desc: "A masterclass performance leaving the judges in absolute awe.",
-                        members: [
-                            { name: "Meera Menon", class: "S4 AD", img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80" }
-                        ]
-                    });
-                }
+                renderPoster(posterUrl);
             }
         });
 
-        function renderChampion(championData) {
-            if (!championData || !championData.members || championData.members.length === 0) return;
+        function renderPoster(imgUrl) {
+            if (!imgUrl) return;
             
             const root = document.getElementById('winners-root');
-            
-            let membersHtml = '';
-            championData.members.forEach(m => {
-                membersHtml += `
-                    <div class="member-profile">
-                        <div class="member-avatar-box">
-                            <img src="${m.img || 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80'}" class="member-avatar" alt="${m.name}">
-                        </div>
-                        <div class="member-name">${m.name}</div>
-                        <div class="member-class">${m.class}</div>
-                    </div>
-                `;
-            });
-
-            // The winner banner logic (Show team name if exists, else '1st Place Winner')
-            const bannerText = championData.teamName ? `Team: ${championData.teamName}` : '1st Place Champion';
 
             let html = `
-                <div class="champion-container">
-                    <div class="champion-card">
-                        <i class="fas fa-crown crown"></i>
-                        
-                        <div class="members-wrap">
-                            ${membersHtml}
-                        </div>
-
-                        ${championData.desc ? `<p class="champion-desc">"${championData.desc}"</p>` : ''}
-                        
-                        <div class="winner-banner"><i class="fas fa-trophy"></i> ${bannerText}</div>
-                    </div>
+                <div class="poster-container">
+                    <i class="fas fa-crown crown"></i>
+                    <img src="${imgUrl}" class="winner-poster" alt="Champion Poster" title="Click to open full image" onclick="window.open('${imgUrl}', '_blank')">
                 </div>
             `;
 
