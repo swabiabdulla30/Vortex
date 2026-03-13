@@ -1,0 +1,272 @@
+﻿diff --git a/gallery.html b/gallery.html
+index ea2cfe4..4d7de03 100644
+--- a/gallery.html
++++ b/gallery.html
+@@ -5,7 +5,7 @@
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <link rel="icon" type="image/jpeg"
+-        href="https://image2url.com/r2/default/images/1771323328076-73754ca7-5637-40c3-9e39-77832d8f5a18.jpg">
++        href="https://image2url.com/r2/default/images/1771323328076-73754ca7-5637-40c3-9e39-77832d8f5a18.jpeg">
+     <title>Gallery - Vortex Innovators</title>
+     <meta name="description"
+         content="Vortex Innovators - Student Innovation Community under Department of Computer Applications.">
+@@ -33,7 +33,7 @@
+             <div class="brand-container">
+                 <a href="/">
+ 
+-                    <img src="https://image2url.com/r2/default/images/1771323328076-73754ca7-5637-40c3-9e39-77832d8f5a18.jpg"
++                    <img src="https://image2url.com/r2/default/images/1771323328076-73754ca7-5637-40c3-9e39-77832d8f5a18.jpeg"
+                         alt="Vortex Logo" class="nav-logo-img">
+                 </a>
+                 <a href="/" class="logo">VORTEX</a>
+@@ -52,7 +52,7 @@
+                 <!-- Mobile Only Header -->
+                 <div class="mobile-nav-header mobile-only">
+                     <div class="brand-container" style="margin-right:auto; gap:10px;"><img
+-                            src="https://image2url.com/r2/default/images/1771323328076-73754ca7-5637-40c3-9e39-77832d8f5a18.jpg"
++                            src="https://image2url.com/r2/default/images/1771323328076-73754ca7-5637-40c3-9e39-77832d8f5a18.jpeg"
+                             alt="Vortex Logo" class="nav-logo-img"><span class="logo"
+                             style="font-size:1.5rem;">VORTEX</span></div>
+                     <div class="close-menu">&times;</div>
+@@ -85,7 +85,7 @@
+         <div class="gallery-container">
+             <div class="slide">
+                 <div class="item">
+-                    <img src="https://image2url.com/r2/default/images/1771569580827-4ee0ab24-a2d3-4d0d-a66a-208aba1030be.jpg"
++                    <img src="https://image2url.com/r2/default/images/1771569580827-4ee0ab24-a2d3-4d0d-a66a-208aba1030be.jpeg"
+                         alt="AI Drone Swarm" loading="lazy" class="slider-img">
+                     <div class=" content">
+                         <div class="name"></div>
+@@ -95,7 +95,7 @@
+ 
+                 <!-- Slider Items -->
+                 <div class="item">
+-                    <img src="https://image2url.com/r2/default/images/1771569683076-ce6e76ec-af48-42cc-94d7-d8c619dd8a31.jpg"
++                    <img src="https://image2url.com/r2/default/images/1771569683076-ce6e76ec-af48-42cc-94d7-d8c619dd8a31.jpeg"
+                         alt="Project Alpha" loading="lazy" class="slider-img">
+                     <div class="content">
+                         <div class="name"></div>
+@@ -104,7 +104,7 @@
+                 </div>
+ 
+                 <div class="item">
+-                    <img src="https://image2url.com/r2/default/images/1771819617052-114d57dc-0f21-467f-b506-2833505b5450.jpg"
++                    <img src="https://image2url.com/r2/default/images/1771819617052-114d57dc-0f21-467f-b506-2833505b5450.jpeg"
+                         alt="Project Beta" loading="lazy" class="slider-img">
+                     <div class="content">
+                         <div class="name"></div>
+@@ -113,7 +113,7 @@
+                 </div>
+ 
+                 <div class="item">
+-                    <img src="https://image2url.com/r2/default/images/1771819688277-dc635bb1-c354-4d38-87fa-dc391326a46f.jpg"
++                    <img src="https://image2url.com/r2/default/images/1771819688277-dc635bb1-c354-4d38-87fa-dc391326a46f.jpeg"
+                         alt="Project Gamma" loading="lazy" class="slider-img">
+                     <div class="content">
+                         <div class="name"></div>
+@@ -122,7 +122,7 @@
+                 </div>
+ 
+                 <div class="item">
+-                    <img src="https://image2url.com/r2/default/images/1771908143354-c5d74dd0-b5c8-49f0-8f90-dd41ce49254f.jpg"
++                    <img src="https://image2url.com/r2/default/images/1771908143354-c5d74dd0-b5c8-49f0-8f90-dd41ce49254f.jpeg"
+                         alt="Cyber Security" loading="lazy" class="slider-img">
+                     <div class="content">
+                         <div class="name"></div>
+@@ -132,7 +132,7 @@
+                 </div>
+ 
+                 <div class="item">
+-                    <img src="https://image2url.com/r2/default/images/1771824123594-16841d17-37b0-4c20-9ad4-0ef99a9df4b0.jpg"
++                    <img src="https://image2url.com/r2/default/images/1771824123594-16841d17-37b0-4c20-9ad4-0ef99a9df4b0.jpeg"
+                         alt="IoT Hub" loading="lazy" class="slider-img">
+                     <div class="content">
+                         <div class="name"></div>
+@@ -141,7 +141,7 @@
+                 </div>
+ 
+                 <div class="item">
+-                    <img src="https://image2url.com/r2/default/images/1771830281432-e3e48f8b-41f2-449d-86d5-c111152c0a59.jpg"
++                    <img src="https://image2url.com/r2/default/images/1771830281432-e3e48f8b-41f2-449d-86d5-c111152c0a59.jpeg"
+                         alt="Blockchain" loading="lazy" class="slider-img">
+                     <div class="content">
+                         <div class="name"></div>
+@@ -150,55 +150,13 @@
+                 </div>
+ 
+                 <div class="item">
+-                    <img src="https://image2url.com/r2/default/images/1771907338001-5afd4a5a-a57d-4518-be73-68d49f2d5b12.jpg"
++                    <img src="https://image2url.com/r2/default/images/1771907338001-5afd4a5a-a57d-4518-be73-68d49f2d5b12.jpeg"
+                         alt="AR Navigation" loading="lazy" class="slider-img">
+                     <div class="content">
+                         <div class="name"></div>
+                         <div class="des"></div>
+                     </div>
+                 </div>
+-
+-                <!-- Newly Added Images -->
+-                <div class="item">
+-                    <img src="images/gallery/new_gallery_img_1.jpg"
+-                        alt="Gallery Event Image 1" loading="lazy" class="slider-img">
+-                    <div class="content">
+-                        <div class="name"></div>
+-                        <div class="des"></div>
+-                    </div>
+-                </div>
+-                <div class="item">
+-                    <img src="images/gallery/new_gallery_img_2.jpg"
+-                        alt="Gallery Event Image 2" loading="lazy" class="slider-img">
+-                    <div class="content">
+-                        <div class="name"></div>
+-                        <div class="des"></div>
+-                    </div>
+-                </div>
+-                <div class="item">
+-                    <img src="images/gallery/new_gallery_img_3.jpg"
+-                        alt="Gallery Event Image 3" loading="lazy" class="slider-img">
+-                    <div class="content">
+-                        <div class="name"></div>
+-                        <div class="des"></div>
+-                    </div>
+-                </div>
+-                <div class="item">
+-                    <img src="images/gallery/new_gallery_img_4.jpg"
+-                        alt="Gallery Event Image 4" loading="lazy" class="slider-img">
+-                    <div class="content">
+-                        <div class="name"></div>
+-                        <div class="des"></div>
+-                    </div>
+-                </div>
+-                <div class="item">
+-                    <img src="images/gallery/new_gallery_img_5.jpg"
+-                        alt="Gallery Event Image 5" loading="lazy" class="slider-img">
+-                    <div class="content">
+-                        <div class="name"></div>
+-                        <div class="des"></div>
+-                    </div>
+-                </div>
+             </div>
+ 
+             <div class="slider-buttons">
+@@ -214,85 +172,53 @@
+ 
+         <div class="gallery-grid">
+             <div class="gallery-item">
+-                <img src="https://image2url.com/r2/default/images/1771569580827-4ee0ab24-a2d3-4d0d-a66a-208aba1030be.jpg"
++                <img src="https://image2url.com/r2/default/images/1771569580827-4ee0ab24-a2d3-4d0d-a66a-208aba1030be.jpeg"
+                     alt="AI Drone Swarm" loading="lazy">
+                 <div class="overlay">
+                 </div>
+             </div>
+             <div class="gallery-item">
+-                <img src="https://image2url.com/r2/default/images/1771569683076-ce6e76ec-af48-42cc-94d7-d8c619dd8a31.jpg"
++                <img src="https://image2url.com/r2/default/images/1771569683076-ce6e76ec-af48-42cc-94d7-d8c619dd8a31.jpeg"
+                     alt="Project Alpha" loading="lazy">
+                 <div class="overlay">
+                 </div>
+             </div>
+             <div class="gallery-item">
+-                <img src="https://image2url.com/r2/default/images/1771819617052-114d57dc-0f21-467f-b506-2833505b5450.jpg"
++                <img src="https://image2url.com/r2/default/images/1771819617052-114d57dc-0f21-467f-b506-2833505b5450.jpeg"
+                     alt="Project Beta" loading="lazy">
+                 <div class="overlay">
+                 </div>
+             </div>
+             <div class="gallery-item">
+-                <img src="https://image2url.com/r2/default/images/1771819688277-dc635bb1-c354-4d38-87fa-dc391326a46f.jpg"
++                <img src="https://image2url.com/r2/default/images/1771819688277-dc635bb1-c354-4d38-87fa-dc391326a46f.jpeg"
+                     alt="Project Gamma" loading="lazy">
+                 <div class="overlay">
+                 </div>
+             </div>
+             <div class="gallery-item">
+-                <img src="https://image2url.com/r2/default/images/1771824123594-16841d17-37b0-4c20-9ad4-0ef99a9df4b0.jpg"
++                <img src="https://image2url.com/r2/default/images/1771824123594-16841d17-37b0-4c20-9ad4-0ef99a9df4b0.jpeg"
+                     alt="Cyber Security" loading="lazy">
+                 <div class="overlay">
+                 </div>
+             </div>
+             <div class="gallery-item">
+-                <img src="https://image2url.com/r2/default/images/1771830281432-e3e48f8b-41f2-449d-86d5-c111152c0a59.jpg"
++                <img src="https://image2url.com/r2/default/images/1771830281432-e3e48f8b-41f2-449d-86d5-c111152c0a59.jpeg"
+                     alt="IoT Hub" loading="lazy">
+                 <div class="overlay">
+                 </div>
+             </div>
+             <div class="gallery-item">
+-                <img src="https://image2url.com/r2/default/images/1771908143354-c5d74dd0-b5c8-49f0-8f90-dd41ce49254f.jpg"
++                <img src="https://image2url.com/r2/default/images/1771908143354-c5d74dd0-b5c8-49f0-8f90-dd41ce49254f.jpeg"
+                     alt="Blockchain" loading="lazy">
+                 <div class="overlay">
+                 </div>
+             </div>
+             <div class="gallery-item">
+-                <img src="https://image2url.com/r2/default/images/1771907338001-5afd4a5a-a57d-4518-be73-68d49f2d5b12.jpg"
++                <img src="https://image2url.com/r2/default/images/1771907338001-5afd4a5a-a57d-4518-be73-68d49f2d5b12.jpeg"
+                     alt="AR Navigation" loading="lazy">
+                 <div class="overlay">
+                 </div>
+             </div>
+-
+-            <!-- Newly Added Images -->
+-            <div class="gallery-item">
+-                <img src="images/gallery/new_gallery_img_1.jpg"
+-                    alt="Gallery Event Image 1" loading="lazy">
+-                <div class="overlay">
+-                </div>
+-            </div>
+-            <div class="gallery-item">
+-                <img src="images/gallery/new_gallery_img_2.jpg"
+-                    alt="Gallery Event Image 2" loading="lazy">
+-                <div class="overlay">
+-                </div>
+-            </div>
+-            <div class="gallery-item">
+-                <img src="images/gallery/new_gallery_img_3.jpg"
+-                    alt="Gallery Event Image 3" loading="lazy">
+-                <div class="overlay">
+-                </div>
+-            </div>
+-            <div class="gallery-item">
+-                <img src="images/gallery/new_gallery_img_4.jpg"
+-                    alt="Gallery Event Image 4" loading="lazy">
+-                <div class="overlay">
+-                </div>
+-            </div>
+-            <div class="gallery-item">
+-                <img src="images/gallery/new_gallery_img_5.jpg"
+-                    alt="Gallery Event Image 5" loading="lazy">
+-                <div class="overlay">
+-                </div>
+-            </div>
+         </div>
+     </section>
+ 
+@@ -321,4 +247,4 @@
+     <script src="script_slider.js"></script>
+ </body>
+ 
+-</html>
++</html>
+\ No newline at end of file
+diff --git a/images/gallery/new_gallery_img_1.jpeg b/images/gallery/new_gallery_img_1.jpeg
+deleted file mode 100644
+index 06e2c95..0000000
+Binary files a/images/gallery/new_gallery_img_1.jpeg and /dev/null differ
+diff --git a/images/gallery/new_gallery_img_2.jpeg b/images/gallery/new_gallery_img_2.jpeg
+deleted file mode 100644
+index ab75ff9..0000000
+Binary files a/images/gallery/new_gallery_img_2.jpeg and /dev/null differ
+diff --git a/images/gallery/new_gallery_img_3.jpeg b/images/gallery/new_gallery_img_3.jpeg
+deleted file mode 100644
+index 8ff62c6..0000000
+Binary files a/images/gallery/new_gallery_img_3.jpeg and /dev/null differ
+diff --git a/images/gallery/new_gallery_img_4.jpeg b/images/gallery/new_gallery_img_4.jpeg
+deleted file mode 100644
+index 8a298eb..0000000
+Binary files a/images/gallery/new_gallery_img_4.jpeg and /dev/null differ
+diff --git a/images/gallery/new_gallery_img_5.jpeg b/images/gallery/new_gallery_img_5.jpeg
+deleted file mode 100644
+index 8a298eb..0000000
+Binary files a/images/gallery/new_gallery_img_5.jpeg and /dev/null differ
