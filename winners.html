@@ -49,165 +49,130 @@
             font-weight: 300;
         }
 
-        /* ── Podium Layout Base ── */
-        .podium-container {
-            max-width: 1000px;
+        /* ── Champion Card Layout ── */
+        .champion-container {
+            max-width: 800px;
             margin: 0 auto;
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            gap: 20px;
-            height: 450px;
-            padding: 0 20px;
             position: relative;
             z-index: 2;
+            padding: 0 20px;
         }
 
-        .podium-card {
-            background: rgba(15, 15, 15, 0.6);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+        .champion-card {
+            background: rgba(20, 20, 20, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 215, 0, 0.4);
             border-radius: 24px;
-            padding: 30px 20px;
-            flex: 1;
-            max-width: 300px;
+            padding: 50px 30px 40px;
             display: flex;
             flex-direction: column;
             align-items: center;
             position: relative;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 20px 50px rgba(255, 215, 0, 0.15), inset 0 0 40px rgba(255, 215, 0, 0.05);
             animation: slideUp 0.8s ease-out backwards;
+            margin-top: 40px;
         }
 
-        /* Hover glows */
-        .podium-card:hover {
-            transform: translateY(-10px) scale(1.02);
+        /* ── Special Crown ── */
+        .crown {
+            position: absolute;
+            top: -45px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 3.5rem;
+            color: #f1c40f;
+            text-shadow: 0 0 25px rgba(241, 196, 15, 0.8);
+            animation: float 3s ease-in-out infinite;
             z-index: 10;
         }
 
-        .place-2:hover { border-color: rgba(192, 192, 192, 0.6); box-shadow: 0 15px 40px rgba(192, 192, 192, 0.15); }
-        .place-1:hover { border-color: rgba(255, 215, 0, 0.6); box-shadow: 0 15px 50px rgba(255, 215, 0, 0.2); }
-        .place-3:hover { border-color: rgba(205, 127, 50, 0.6); box-shadow: 0 15px 40px rgba(205, 127, 50, 0.15); }
-
-        /* Ordering and Heights */
-        .place-2 { order: 1; height: 340px; animation-delay: 0.2s; }
-        .place-1 { order: 2; height: 400px; margin: 0 10px; transform: scale(1.05); animation-delay: 0.4s; z-index: 5; }
-        .place-3 { order: 3; height: 320px; animation-delay: 0s; }
-        
-        /* 1st Place Default State Overrides */
-        .place-1 {
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            background: linear-gradient(to bottom, rgba(25, 25, 25, 0.8), rgba(255, 215, 0, 0.05));
+        /* ── Team/Solo Wrap ── */
+        .members-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            width: 100%;
+            margin-bottom: 20px;
         }
 
-        /* ── Image & Avatar ── */
-        .winner-avatar-wrap {
+        .member-profile {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 160px;
+            transition: transform 0.3s ease;
+        }
+
+        .member-profile:hover {
+            transform: translateY(-8px);
+        }
+
+        /* ── Avatar Images ── */
+        .member-avatar-box {
             position: relative;
-            margin-bottom: 25px;
+            margin-bottom: 15px;
         }
 
-        .winner-avatar {
-            width: 120px;
-            height: 120px;
+        .member-avatar {
+            width: 140px;
+            height: 140px;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid transparent; /* controlled by ::before/after */
+            border: 4px solid #f1c40f;
+            box-shadow: 0 0 20px rgba(241, 196, 15, 0.3);
             background: #2d3436;
-            padding: 4px;
         }
 
-        .place-1 .winner-avatar { width: 140px; height: 140px; }
-
-        .rank-badge {
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 900;
-            font-size: 1.1rem;
-            color: #000;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-            z-index: 3;
-        }
-
-        .place-1 .rank-badge { background: linear-gradient(135deg, #f1c40f, #f39c12); width: 45px; height: 45px; font-size: 1.4rem; bottom: -15px; }
-        .place-2 .rank-badge { background: linear-gradient(135deg, #bdc3c7, #95a5a6); }
-        .place-3 .rank-badge { background: linear-gradient(135deg, #e67e22, #d35400); }
-
-        /* ── Winner Details ── */
-        .winner-info {
-            text-align: center;
-            width: 100%;
-        }
-
-        .winner-name {
-            font-size: 1.4rem;
+        /* ── Details ── */
+        .member-name {
+            font-size: 1.3rem;
             font-weight: 800;
             color: #fff;
-            margin-bottom: 8px;
-            letter-spacing: 1px;
+            margin-bottom: 5px;
+            text-align: center;
+            line-height: 1.2;
         }
 
-        .place-1 .winner-name {
-            font-size: 1.7rem;
-            color: #f1c40f;
-            text-shadow: 0 0 10px rgba(241, 196, 15, 0.3);
-        }
-
-        .winner-class {
-            font-size: 0.95rem;
-            color: #b2bec3;
-            font-weight: 500;
-            background: rgba(255,255,255,0.05);
-            padding: 4px 12px;
-            border-radius: 15px;
-            display: inline-block;
-            margin-bottom: 6px;
-        }
-
-        .winner-desc {
+        .member-class {
             font-size: 0.85rem;
-            color: #888;
-            margin-top: 10px;
-            line-height: 1.4;
+            color: #f1c40f;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
         }
 
-        /* ── Special Crown for 1st ── */
-        .crown {
+        .champion-desc {
+            font-size: 1.1rem;
+            color: #b2bec3;
+            margin-top: 25px;
+            line-height: 1.6;
+            max-width: 600px;
+            text-align: center;
+            font-style: italic;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 25px;
+        }
+
+        /* ── Winner Banner ── */
+        .winner-banner {
             position: absolute;
-            top: -30px;
+            bottom: -20px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 2.5rem;
-            color: #f1c40f;
-            text-shadow: 0 0 20px rgba(241, 196, 15, 0.6);
-            animation: float 3s ease-in-out infinite;
+            background: linear-gradient(135deg, #f1c40f, #f39c12);
+            color: #000;
+            padding: 8px 30px;
+            border-radius: 30px;
+            font-weight: 900;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            box-shadow: 0 10px 20px rgba(241, 196, 15, 0.4);
+            white-space: nowrap;
+            text-transform: uppercase;
         }
-
-        /* ── Glow Rings ── */
-        .glow-ring {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            z-index: -1;
-            opacity: 0.5;
-        }
-        
-        .place-1 .glow-ring { background: radial-gradient(circle, rgba(241, 196, 15, 0.4) 0%, transparent 70%); }
-        .place-2 .glow-ring { background: radial-gradient(circle, rgba(149, 165, 166, 0.4) 0%, transparent 70%); }
-        .place-3 .glow-ring { background: radial-gradient(circle, rgba(211, 84, 0, 0.4) 0%, transparent 70%); }
 
         /* ── Empty State ── */
         .pending-container {
@@ -284,20 +249,11 @@
 
         /* ── Responsive ── */
         @media (max-width: 900px) {
-            .event-title { font-size: 2.5rem; }
-            .podium-container { 
-                flex-direction: column; 
-                align-items: center; 
-                height: auto; 
-                gap: 30px;
-                padding-bottom: 40px;
-            }
-            .podium-card { width: 100%; max-width: 400px; height: auto !important; }
-            .place-1 { order: 1; transform: scale(1); margin: 0; }
-            .place-2 { order: 2; }
-            .place-3 { order: 3; }
-            
-            .place-1:hover { transform: translateY(-5px) scale(1.02); }
+            .event-title { font-size: 2.2rem; }
+            .member-profile { width: 130px; }
+            .member-avatar { width: 110px; height: 110px; }
+            .champion-card { padding: 40px 15px 30px; }
+            .winner-banner { font-size: 0.9rem; padding: 6px 20px; }
         }
     </style>
 </head>
@@ -394,54 +350,82 @@
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const eventParam = urlParams.get('event');
+            let cleanEventName = "EVENT";
             
             if (eventParam) {
                 // Remove EVENT if present to avoid "EVENT WINNERS EVENT" etc, clean formatting
-                const cleanName = decodeURIComponent(eventParam).replace(/event/i, '').trim();
-                document.getElementById('display-event-name').innerHTML = `${cleanName} <span>WINNERS</span>`;
+                cleanEventName = decodeURIComponent(eventParam).replace(/event/i, '').trim();
+                document.getElementById('display-event-name').innerHTML = `${cleanEventName} <span>CHAMPION</span>`;
             }
 
             // Example Mock Data - Replace with real data logic later
             const MOCK_DATA = true; // Set to true to preview the beautiful UI
             
             if (MOCK_DATA) {
-                renderWinners([
-                    { place: 1, name: "Pranav Raj", class: "S6 CSE A", img: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80", desc: "Phenomenal performance in final round." },
-                    { place: 2, name: "Arjun Nair", class: "S4 ECE", img: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=200&q=80", desc: "Outstanding strategy." },
-                    { place: 3, name: "Meera K", class: "S6 AD", img: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=200&q=80", desc: "Great teamwork." }
-                ]);
+                // We'll show an example based on event name. 
+                // E-Football / BGMI might have teams.
+                
+                if (cleanEventName.toUpperCase().includes('FOOTBALL') || cleanEventName.toUpperCase().includes('BGMI')) {
+                    // Team Event Demo
+                    renderChampion({
+                        teamName: "Squad Alpha",
+                        desc: "An absolutely flawless victory displaying immense coordination and strategy.",
+                        members: [
+                            { name: "Pranav Raj", class: "S6 CSE A", img: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80" },
+                            { name: "Arjun Nair", class: "S6 CSE A", img: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=200&q=80" },
+                            { name: "Anil K", class: "S6 CSE B", img: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=200&q=80" },
+                            { name: "Rahul S", class: "S6 CSE B", img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80" }
+                        ]
+                    });
+                } else {
+                    // Solo Event Demo
+                    renderChampion({
+                        desc: "A masterclass performance leaving the judges in absolute awe.",
+                        members: [
+                            { name: "Meera Menon", class: "S4 AD", img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80" }
+                        ]
+                    });
+                }
             }
         });
 
-        function renderWinners(winners) {
-            if (!winners || winners.length === 0) return;
+        function renderChampion(championData) {
+            if (!championData || !championData.members || championData.members.length === 0) return;
             
             const root = document.getElementById('winners-root');
             
-            let html = `<div class="podium-container">`;
-            
-            winners.forEach(w => {
-                let badgeIcon = w.place;
-                if(w.place === 1) badgeIcon = '<i class="fas fa-trophy" style="font-size:0.7em"></i>';
-
-                html += `
-                <div class="podium-card place-${w.place}">
-                    ${w.place === 1 ? '<i class="fas fa-crown crown"></i>' : ''}
-                    <div class="winner-avatar-wrap">
-                        <div class="glow-ring"></div>
-                        <img src="${w.img || 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80'}" class="winner-avatar" alt="${w.name}">
-                        <div class="rank-badge">${badgeIcon}</div>
+            let membersHtml = '';
+            championData.members.forEach(m => {
+                membersHtml += `
+                    <div class="member-profile">
+                        <div class="member-avatar-box">
+                            <img src="${m.img || 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80'}" class="member-avatar" alt="${m.name}">
+                        </div>
+                        <div class="member-name">${m.name}</div>
+                        <div class="member-class">${m.class}</div>
                     </div>
-                    <div class="winner-info">
-                        <h3 class="winner-name">${w.name}</h3>
-                        <div class="winner-class">${w.class}</div>
-                        ${w.desc ? `<p class="winner-desc">"${w.desc}"</p>` : ''}
-                    </div>
-                </div>
                 `;
             });
 
-            html += `</div>`;
+            // The winner banner logic (Show team name if exists, else '1st Place Winner')
+            const bannerText = championData.teamName ? `Team: ${championData.teamName}` : '1st Place Champion';
+
+            let html = `
+                <div class="champion-container">
+                    <div class="champion-card">
+                        <i class="fas fa-crown crown"></i>
+                        
+                        <div class="members-wrap">
+                            ${membersHtml}
+                        </div>
+
+                        ${championData.desc ? `<p class="champion-desc">"${championData.desc}"</p>` : ''}
+                        
+                        <div class="winner-banner"><i class="fas fa-trophy"></i> ${bannerText}</div>
+                    </div>
+                </div>
+            `;
+
             root.innerHTML = html;
         }
     </script>
