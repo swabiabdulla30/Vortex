@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -99,7 +99,7 @@
                                 <span class="location"><i class="fas fa-map-marker-alt"></i> SEMINAR HALL</span>
                                 <span class="prize-badge"><i class="fas fa-trophy" style="color: gold;"></i>
                                     &#8377;300</span>
-                                <span class="slots-badge" id="slots-BGMI">→</span>
+                                <span class="winners-badge" onclick="event.preventDefault(); window.location.href='/winners.html?event=BGMI'">🏆 Winners</span>
                                 <span class="arrow">→</span>
                             </div>
                         </div>
@@ -127,7 +127,7 @@
                                 <span class="location"><i class="fas fa-map-marker-alt"></i> LAB</span>
                                 <span class="prize-badge"><i class="fas fa-trophy" style="color: gold;"></i>
                                     &#8377;200</span>
-                                <span class="slots-badge" id="slots-TECH HUNT">→</span>
+                                <span class="winners-badge" onclick="event.preventDefault(); window.location.href='/winners.html?event=Tech Hunt'">🏆 Winners</span>
                                 <span class="arrow">→</span>
                             </div>
                         </div>
@@ -155,7 +155,7 @@
                                 <span class="location"><i class="fas fa-map-marker-alt"></i> LAB </span>
                                 <span class="prize-badge"><i class="fas fa-trophy" style="color: gold;"></i>
                                     &#8377;200</span>
-                                <span class="slots-badge" id="slots-WEB-DESIGNING">→</span>
+                                <span class="winners-badge" onclick="event.preventDefault(); window.location.href='/winners.html?event=Web-Designing'">🏆 Winners</span>
                                 <span class="arrow">→</span>
                             </div>
                         </div>
@@ -183,7 +183,7 @@
                                 <span class="location"><i class="fas fa-map-marker-alt"></i> SEMINAR HALL</span>
                                 <span class="prize-badge"><i class="fas fa-trophy" style="color: gold;"></i>
                                     &#8377;200</span>
-                                <span class="slots-badge" id="slots-CO-OP E-FOOTBALL">→</span>
+                                <span class="winners-badge" onclick="event.preventDefault(); window.location.href='/winners.html?event=Co-op E-Football'">🏆 Winners</span>
                                 <span class="arrow">→</span>
                             </div>
                         </div>
@@ -209,7 +209,7 @@
                             <p>Test your knowledge, claim the prize.</p>
                             <div class="card-footer">
                                 <span class="location"><i class="fas fa-map-marker-alt"></i> LAB</span>
-                                <span class="slots-badge" id="slots-TECH QUIZ">→</span>
+                                <span class="winners-badge" onclick="event.preventDefault(); window.location.href='/winners.html?event=Tech Quiz'">🏆 Winners</span>
                                 <span class="arrow">→</span>
                             </div>
                         </div>
@@ -235,7 +235,7 @@
                             <p>Think Beyond Circuits</p>
                             <div class="card-footer">
                                 <span class="location"><i class="fas fa-map-marker-alt"></i> SEMINAR HALL</span>
-                                <span class="slots-badge" id="slots-PAPER-X">→</span>
+                                <span class="winners-badge" onclick="event.preventDefault(); window.location.href='/winners.html?event=Paper-X'">🏆 Winners</span>
                                 <span class="arrow">→</span>
                             </div>
                         </div>
@@ -263,57 +263,40 @@
     <script src="tech_bg_mobile.js"></script>
     <script src="script.js"></script>
     <script>
-        (async () => {
-            const API_URL = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost')
-                ? 'http://127.0.0.1:5000/api'
-                : '/api';
+        (() => {
             try {
                 const userStr = localStorage.getItem('vortexCurrentUser');
                 const user = userStr ? JSON.parse(userStr) : null;
                 const isAdmin = user && user.role === 'admin';
 
-                const res = await fetch(`${API_URL}/event-slots`);
-                const slots = await res.json();
-                slots.forEach(({ event, remaining, total }) => {
-                    const badge = document.getElementById(`slots-${event}`);
-                    if (!badge) return;
-
-                    const details = (typeof eventDetails !== 'undefined') ? eventDetails[event.toUpperCase()] || eventDetails[event] : null;
+                document.querySelectorAll('.event-card').forEach(card => {
+                    const eventName = card.dataset.event;
+                    const details = (typeof eventDetails !== 'undefined') ? (eventDetails[eventName.toUpperCase()] || eventDetails[eventName]) : null;
                     const isClosed = details && details.closed;
 
-                    if (remaining === 0 || isClosed) {
-                        if (isAdmin) {
-                            badge.textContent = remaining === 0 ? '● FULL (ADMIN OPEN)' : `🔥 ${remaining} LEFT (CLOSED)`;
-                            badge.className = remaining === 0 ? 'slots-badge slots-full' : 'slots-badge slots-low';
+                    if (isClosed) {
+                        if (!isAdmin) {
+                            card.style.pointerEvents = 'none';
+                            card.style.opacity = '0.6';
+                            const winnersBadge = card.querySelector('.winners-badge');
+                            if (winnersBadge) winnersBadge.style.pointerEvents = 'auto';
+                            
+                            const statusBadge = card.querySelector('.card-status');
+                            if (statusBadge) { 
+                                statusBadge.textContent = '● REGISTRATION CLOSED'; 
+                                statusBadge.className = 'card-status status-soon'; 
+                            }
                         } else {
-                            badge.textContent = remaining === 0 ? '● FULL' : '● CLOSED';
-                            badge.className = 'slots-badge slots-full';
-                        }
-
-                        // Disable the card link
-                        const card = badge.closest('.event-card');
-                        if (card && card.tagName === 'A') {
-                            if (!isAdmin) {
-                                card.style.pointerEvents = 'none';
-                                card.style.opacity = '0.6';
-                                const statusBadge = card.querySelector('.card-status');
-                                if (statusBadge) { statusBadge.textContent = '● REGISTRATION CLOSED'; statusBadge.className = 'card-status status-soon'; }
-                            } else {
-                                const statusBadge = card.querySelector('.card-status');
-                                if (statusBadge) { statusBadge.textContent = '● CLOSED (ADMIN OPEN)'; statusBadge.className = 'card-status status-active'; }
+                            const statusBadge = card.querySelector('.card-status');
+                            if (statusBadge) { 
+                                statusBadge.textContent = '● CLOSED (ADMIN OPEN)'; 
+                                statusBadge.className = 'card-status status-active'; 
                             }
                         }
-                    } else if (remaining <= 5) {
-                        badge.textContent = `🔥 ${remaining} left`;
-                        badge.className = 'slots-badge slots-low';
-                    } else {
-                        badge.textContent = `🔥 ${remaining} slots left`;
-                        badge.className = 'slots-badge slots-ok';
                     }
                 });
             } catch (e) {
-                console.warn('Could not load slot data:', e);
-                document.querySelectorAll('.slots-badge').forEach(b => b.textContent = '');
+                console.warn('Error applying closed status:', e);
             }
         })();
     </script>
