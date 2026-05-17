@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -83,7 +83,7 @@
         </div>
         <div class="section-container">
             <div class="cards-grid">
-                <a href="/elevate.html" class="card event-card" style="text-decoration: none; color: inherit;">
+                <a href="/elevate.html" id="elevate-main-card" class="card event-card" style="text-decoration: none; color: inherit;">
                     <div class="card-status status-active">&#9679; REGISTRATION OPEN</div>
                     <div class="card-image">
                         <img src="https://image2url.com/r2/default/images/1771924612874-479e698d-1dfb-49ec-90d2-a203530cd141.png"
@@ -179,6 +179,30 @@
     <script src="tech_bg_alt.js"></script>
     <script src="tech_bg_mobile.js"></script>
     <script src="script.js"></script>
+    <script>
+        (() => {
+            try {
+                const userStr = localStorage.getItem('vortexCurrentUser');
+                const user = userStr ? JSON.parse(userStr) : null;
+                const isAdmin = user && user.role === 'admin';
+
+                if (!isAdmin) {
+                    const elevateCard = document.getElementById('elevate-main-card');
+                    if (elevateCard) {
+                        elevateCard.style.pointerEvents = 'none';
+                        elevateCard.style.opacity = '0.6';
+                        const statusBadge = elevateCard.querySelector('.card-status');
+                        if (statusBadge) {
+                            statusBadge.textContent = '● REGISTRATION CLOSED';
+                            statusBadge.classList.replace('status-active', 'status-closed');
+                        }
+                    }
+                }
+            } catch(e) {
+                console.error('Error checking user status:', e);
+            }
+        })();
+    </script>
 </body>
 
 </html>
