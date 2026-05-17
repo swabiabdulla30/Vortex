@@ -197,6 +197,15 @@
                             statusBadge.classList.replace('status-active', 'status-soon');
                         }
                     }
+                } else {
+                    const elevateCard = document.getElementById('elevate-main-card');
+                    if (elevateCard) {
+                        const statusBadge = elevateCard.querySelector('.card-status');
+                        if (statusBadge) {
+                            statusBadge.textContent = '● CLOSED (ADMIN OPEN)';
+                            statusBadge.className = 'card-status status-active';
+                        }
+                    }
                 }
             } catch(e) {
                 console.error('Error checking user status:', e);
