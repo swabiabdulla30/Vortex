@@ -264,8 +264,8 @@
 
                     if (isClosed) {
                         if (!isAdmin) {
-                            card.style.pointerEvents = 'none';
-                            card.style.opacity = '0.6';
+                            card.removeAttribute('onclick');
+                            card.style.cursor = 'default';
                             const statusBadge = card.querySelector('.card-status');
                             if (statusBadge) { 
                                 statusBadge.textContent = 'REGISTRATION CLOSED'; 

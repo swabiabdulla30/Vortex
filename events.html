@@ -189,8 +189,8 @@
                 if (!isAdmin) {
                     const elevateCard = document.getElementById('elevate-main-card');
                     if (elevateCard) {
-                        elevateCard.style.pointerEvents = 'none';
-                        elevateCard.style.opacity = '0.6';
+                        elevateCard.removeAttribute('href');
+                        elevateCard.style.cursor = 'default';
                         const statusBadge = elevateCard.querySelector('.card-status');
                         if (statusBadge) {
                             statusBadge.textContent = 'REGISTRATION CLOSED';
