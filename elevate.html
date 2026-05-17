@@ -268,8 +268,8 @@
                             card.style.opacity = '0.6';
                             const statusBadge = card.querySelector('.card-status');
                             if (statusBadge) { 
-                                statusBadge.textContent = '● REGISTRATION CLOSED'; 
-                                statusBadge.className = 'card-status status-soon'; 
+                                statusBadge.textContent = 'REGISTRATION CLOSED'; 
+                                statusBadge.classList.replace('status-active', 'status-soon'); 
                             }
                         } else {
                             const statusBadge = card.querySelector('.card-status');
