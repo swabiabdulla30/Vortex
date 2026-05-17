@@ -24,6 +24,7 @@ const eventDetails = {
     },
     "TECH HUNT": {
         image: "https://image2url.com/r2/default/images/1771869172242-e128a3e7-34be-47d7-af3f-2fc32eb7c147.jpeg",
+        closed: true,
         date: "Mar 05, 2026",
         time: "9:30AM - 11:00AM",
         venue: "Lab",
@@ -42,6 +43,7 @@ const eventDetails = {
     },
     "WEBSITE DESIGNING COMPETITION": {
         image: "https://image2url.com/r2/default/images/1771863896078-ef98fc6d-f9d8-41ef-89d5-cac3231e8f7c.jpeg",
+        closed: true,
         date: "Mar 05, 2026",
         time: "11:15AM - 12:30PM",
         venue: "Lab",
@@ -64,6 +66,7 @@ const eventDetails = {
     },
     "CO-OP E-FOOTBALL": {
         image: "https://image2url.com/r2/default/images/1771995899025-6821ca81-aa54-4566-b29d-4fab70571c09.jpeg",
+        closed: true,
         date: "Mar 06, 2026",
         time: "11:00AM - 12:30PM",
         venue: "Seminar Hall",
@@ -82,6 +85,7 @@ const eventDetails = {
     },
     "TECH QUIZ": {
         image: "https://image2url.com/r2/default/images/1772440085076-0f0df1c1-a19a-4351-aa02-27f67b111fa8.jpeg",
+        closed: true,
         date: "Mar 05, 2026",
         time: "1:45 PM - 3:00 PM",
         venue: "Lab",
@@ -100,6 +104,7 @@ const eventDetails = {
     },
     "PAPER-X": {
         image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80",
+        closed: true,
         date: "Mar 06, 2026",
         time: "9:30AM - 10:30AM",
         venue: "Seminar Hall",
