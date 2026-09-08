@@ -83,7 +83,7 @@
         </div>
         <div class="section-container">
             <div class="cards-grid">
-                <a href="/elevate.html" id="elevate-main-card" class="card event-card" style="text-decoration: none; color: inherit;">
+                <a href="elevate.html" id="elevate-main-card" class="card event-card" style="text-decoration: none; color: inherit;">
                     <div class="card-status status-active">&#9679; REGISTRATION OPEN</div>
                     <div class="card-image">
                         <img src="https://image2url.com/r2/default/images/1771924612874-479e698d-1dfb-49ec-90d2-a203530cd141.png"
@@ -106,7 +106,7 @@
                     </div>
                 </a>
                 <div class="card event-card" id="techspark-card"
-                    onclick="window.location.href='/event_registration.html?event=CYBER%20DEFENSE'"
+                    onclick="window.location.href='event_registration.html?event=CYBER%20DEFENSE'"
                     style="cursor: pointer;">
                     <div class="card-status status-soon">REGISTRATION CLOSED</div>
                     <div class="card-image">
@@ -192,7 +192,7 @@
                 if (isAdmin) {
                     // Elevate card open for admin
                     if (elevateCard) {
-                        elevateCard.href = '/elevate.html';
+                        elevateCard.href = 'elevate.html';
                         elevateCard.style.cursor = 'pointer';
                         const badge = elevateCard.querySelector('.card-status');
                         if (badge) {
@@ -202,7 +202,7 @@
                     }
                     // TechSpark card open for admin
                     if (techsparkCard) {
-                        techsparkCard.setAttribute('onclick', "window.location.href='/event_registration.html?event=CYBER%20DEFENSE'");
+                        techsparkCard.setAttribute('onclick', "window.location.href='event_registration.html?event=CYBER%20DEFENSE'");
                         techsparkCard.style.cursor = 'pointer';
                         const badge = techsparkCard.querySelector('.card-status');
                         if (badge) {
@@ -212,7 +212,7 @@
                     }
                     // Vortex Innovators / AI Frontiers card open for admin
                     if (aiFrontiersCard) {
-                        aiFrontiersCard.setAttribute('onclick', "window.location.href='/event_registration.html?event=AI%20FRONTIERS'");
+                        aiFrontiersCard.setAttribute('onclick', "window.location.href='event_registration.html?event=AI%20FRONTIERS'");
                         aiFrontiersCard.style.cursor = 'pointer';
                         const badge = aiFrontiersCard.querySelector('.card-status');
                         if (badge) {

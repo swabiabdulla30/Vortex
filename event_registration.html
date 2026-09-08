@@ -585,7 +585,7 @@
             <div class="reg-event-hero">
                 <img id="reg-event-img" src="" alt="Event">
                 <div class="reg-hero-overlay"></div>
-                <div class="reg-hero-badge">● REGISTRATION OPEN</div>
+                <div class="reg-hero-badge" id="reg-hero-badge">● REGISTRATION OPEN</div>
                 <div class="reg-hero-title">
                     <h1 id="reg-hero-name">Loading...</h1>
                     <div class="reg-hero-meta">
@@ -825,10 +825,16 @@
                 const countEl = document.getElementById('reg-slot-count');
                 const slotFillEl = document.getElementById('reg-slot-fill');
                 const submitBtn = document.getElementById('reg-submit-btn');
+                const heroBadge = document.getElementById('reg-hero-badge');
 
                 // Immediate baseline check for closed status
                 if (isClosed) {
                     if (isAdmin) {
+                        if (heroBadge) {
+                            heroBadge.textContent = '● CLOSED (ADMIN OPEN)';
+                            heroBadge.style.background = 'rgba(0, 150, 60, 0.85)';
+                            heroBadge.style.borderColor = 'rgba(0, 255, 100, 0.4)';
+                        }
                         if (countEl) {
                             countEl.textContent = 'CLOSED (ADMIN OPEN)';
                             countEl.style.color = '#00e05a';
@@ -838,6 +844,11 @@
                             submitBtn.innerHTML = '<i class="fas fa-lock-open"></i> &nbsp;REGISTER (ADMIN BYPASS)';
                         }
                     } else {
+                        if (heroBadge) {
+                            heroBadge.textContent = 'REGISTRATION CLOSED';
+                            heroBadge.style.background = 'rgba(139, 0, 0, 0.85)';
+                            heroBadge.style.borderColor = 'rgba(255, 80, 80, 0.4)';
+                        }
                         if (countEl) {
                             countEl.textContent = 'CLOSED';
                             countEl.style.color = '#ff4444';
@@ -864,6 +875,11 @@
 
                         if (remaining === 0 || isClosed) {
                             if (isAdmin) {
+                                if (heroBadge) {
+                                    heroBadge.textContent = '● CLOSED (ADMIN OPEN)';
+                                    heroBadge.style.background = 'rgba(0, 150, 60, 0.85)';
+                                    heroBadge.style.borderColor = 'rgba(0, 255, 100, 0.4)';
+                                }
                                 if (remaining === 0) {
                                     if (countEl) {
                                         countEl.textContent = total > 0 ? `0 / ${total} left (FULL - ADMIN OPEN)` : 'FULL (ADMIN OPEN)';
@@ -882,6 +898,11 @@
                                     submitBtn.innerHTML = '<i class="fas fa-lock-open"></i> &nbsp;REGISTER (ADMIN BYPASS)';
                                 }
                             } else {
+                                if (heroBadge) {
+                                    heroBadge.textContent = remaining === 0 ? 'REGISTRATION FULL' : 'REGISTRATION CLOSED';
+                                    heroBadge.style.background = 'rgba(139, 0, 0, 0.85)';
+                                    heroBadge.style.borderColor = 'rgba(255, 80, 80, 0.4)';
+                                }
                                 if (countEl) {
                                     countEl.textContent = remaining === 0 ? 'FULL' : 'CLOSED';
                                     countEl.style.color = '#ff4444';
@@ -935,7 +956,7 @@
 
             if (!userEmail) {
                 alert('Error: User email not found. Please login again.');
-                window.location.href = '/login.html';
+                window.location.href = 'login.html';
                 return;
             }
 
@@ -976,7 +997,7 @@
                     sessionStorage.setItem('regDept', eventData.department);
                     sessionStorage.setItem('regId', freeData.ticketId);
                     sessionStorage.setItem('regTeammate', eventData.teammateName || '');
-                    window.location.href = '/registration_success.html';
+                    window.location.href = 'registration_success.html';
                     return;
                 }
                 // ----------------------------------------
@@ -1024,7 +1045,7 @@
                                 sessionStorage.setItem('regDept', eventData.department);
                                 sessionStorage.setItem('regId', ticketId);
                                 sessionStorage.setItem('regTeammate', eventData.teammateName || '');
-                                window.location.href = '/registration_success.html';
+                                window.location.href = 'registration_success.html';
                             } else {
                                 throw new Error(verifyData.error || 'Payment verification failed.');
                             }
