@@ -104,8 +104,7 @@
                             </div>
                         </div>
                     </div>
-                </a>
-                <div class="card event-card"
+                           <div class="card event-card" id="techspark-card"
                     onclick="window.location.href='/event_registration.html?event=CYBER%20DEFENSE'"
                     style="cursor: pointer;">
                     <div class="card-status status-soon">REGISTRATION CLOSED</div>
@@ -129,7 +128,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="card event-card">
+                <div class="card event-card" id="ai-frontiers-card">
                     <div class="card-status status-soon">REGISTRATION CLOSED</div>
                     <div class="card-image">
                         <img src="https://image2url.com/r2/default/images/1771925799245-91e45052-89b2-48d4-98f4-5f7081da8dbe.jpeg"
@@ -142,7 +141,6 @@
                         </div>
                         <div class="event-details">
                             <span class="event-type">
-
                             </span>
                             <h3>VORTEX INNOVATORS</h3>
                             <p>Exploring the future of Generative AI.</p>
@@ -186,24 +184,68 @@
                 const user = userStr ? JSON.parse(userStr) : null;
                 const isAdmin = user && user.role === 'admin';
 
-                if (!isAdmin) {
-                    const elevateCard = document.getElementById('elevate-main-card');
+                const elevateCard = document.getElementById('elevate-main-card');
+                const techsparkCard = document.getElementById('techspark-card');
+                const aiFrontiersCard = document.getElementById('ai-frontiers-card');
+
+                if (isAdmin) {
+                    // Elevate card open for admin
                     if (elevateCard) {
-                        elevateCard.removeAttribute('href');
-                        elevateCard.style.cursor = 'default';
-                        const statusBadge = elevateCard.querySelector('.card-status');
-                        if (statusBadge) {
-                            statusBadge.textContent = 'REGISTRATION CLOSED';
-                            statusBadge.classList.replace('status-active', 'status-soon');
+                        elevateCard.href = '/elevate.html';
+                        elevateCard.style.cursor = 'pointer';
+                        const badge = elevateCard.querySelector('.card-status');
+                        if (badge) {
+                            badge.textContent = '● CLOSED (ADMIN OPEN)';
+                            badge.className = 'card-status status-active';
+                        }
+                    }
+                    // TechSpark card open for admin
+                    if (techsparkCard) {
+                        techsparkCard.setAttribute('onclick', "window.location.href='/event_registration.html?event=CYBER%20DEFENSE'");
+                        techsparkCard.style.cursor = 'pointer';
+                        const badge = techsparkCard.querySelector('.card-status');
+                        if (badge) {
+                            badge.textContent = '● CLOSED (ADMIN OPEN)';
+                            badge.className = 'card-status status-active';
+                        }
+                    }
+                    // Vortex Innovators / AI Frontiers card open for admin
+                    if (aiFrontiersCard) {
+                        aiFrontiersCard.setAttribute('onclick', "window.location.href='/event_registration.html?event=AI%20FRONTIERS'");
+                        aiFrontiersCard.style.cursor = 'pointer';
+                        const badge = aiFrontiersCard.querySelector('.card-status');
+                        if (badge) {
+                            badge.textContent = '● CLOSED (ADMIN OPEN)';
+                            badge.className = 'card-status status-active';
                         }
                     }
                 } else {
-                    const elevateCard = document.getElementById('elevate-main-card');
+                    // Non-admin: close all cards
                     if (elevateCard) {
-                        const statusBadge = elevateCard.querySelector('.card-status');
-                        if (statusBadge) {
-                            statusBadge.textContent = '● CLOSED (ADMIN OPEN)';
-                            statusBadge.className = 'card-status status-active';
+                        elevateCard.removeAttribute('href');
+                        elevateCard.style.cursor = 'default';
+                        const badge = elevateCard.querySelector('.card-status');
+                        if (badge) {
+                            badge.textContent = 'REGISTRATION CLOSED';
+                            badge.className = 'card-status status-soon';
+                        }
+                    }
+                    if (techsparkCard) {
+                        techsparkCard.removeAttribute('onclick');
+                        techsparkCard.style.cursor = 'default';
+                        const badge = techsparkCard.querySelector('.card-status');
+                        if (badge) {
+                            badge.textContent = 'REGISTRATION CLOSED';
+                            badge.className = 'card-status status-soon';
+                        }
+                    }
+                    if (aiFrontiersCard) {
+                        aiFrontiersCard.removeAttribute('onclick');
+                        aiFrontiersCard.style.cursor = 'default';
+                        const badge = aiFrontiersCard.querySelector('.card-status');
+                        if (badge) {
+                            badge.textContent = 'REGISTRATION CLOSED';
+                            badge.className = 'card-status status-soon';
                         }
                     }
                 }

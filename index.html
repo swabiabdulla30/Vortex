@@ -106,6 +106,20 @@
                 </div>
             </div>
 
+            <div class="featured-event-block" id="featured-elevate-block" style="display: none;">
+                <span class="event-label">&#9679; FLAGSHIP EVENT &#9679;</span>
+                <h2 class="featured-event-title" id="elevate-title">ELEVATE</h2>
+                <hr>
+                <p class="featured-event-desc">
+                    Driven by creativity and powered by talent, this platform celebrates bold ideas and fearless
+                    participation. It’s a space where skills are tested, teamwork is strengthened, and excellence rises
+                    above the ordinary.
+                </p>
+                <span class="highlight-date">&#128467; MAR 05 &ndash; 06</span>
+                <a href="/elevate.html" class="theme-grid-btn">
+                    <span>● CLOSED (ADMIN OPEN)</span>
+                </a>
+            </div>
 
         </div>
     </section>
@@ -143,8 +157,21 @@
     <script src="tech_bg_alt.js"></script>
     <script src="tech_bg_mobile.js"></script>
     <script src="script.js"></script>
-
-
+    <script>
+        (() => {
+            try {
+                const userStr = localStorage.getItem('vortexCurrentUser');
+                const user = userStr ? JSON.parse(userStr) : null;
+                const isAdmin = user && user.role === 'admin';
+                const elevateBlock = document.getElementById('featured-elevate-block');
+                if (elevateBlock && isAdmin) {
+                    elevateBlock.style.display = 'flex';
+                }
+            } catch (e) {
+                console.error('Error checking user status:', e);
+            }
+        })();
+    </script>
 </body>
 
 </html>

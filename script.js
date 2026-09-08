@@ -44,6 +44,7 @@ window.addEventListener('load', function () {
                         menu.innerHTML = `
                         <a href="/tickets.html" class="dropdown-item"><i class="fas fa-ticket-alt"></i> CHECK TICKETS</a>
                         ${user.role === 'admin' ? '<a href="/admin.html" class="dropdown-item"><i class="fas fa-tachometer-alt"></i> DASHBOARD</a>' : ''}
+                        ${user.role === 'admin' ? '<a href="/elevate.html" class="dropdown-item"><i class="fas fa-rocket"></i> ELEVATE (SERIES)</a>' : ''}
                         <a href="#" class="dropdown-item logout-link"><i class="fas fa-sign-out-alt"></i> LOGOUT</a>
                     `;
 
@@ -96,6 +97,7 @@ window.addEventListener('load', function () {
                                 bottomActions.innerHTML = `
                                 <a href="/tickets.html" class="action-link"><i class="fas fa-ticket-alt"></i> My Tickets</a>
                                 ${user.role === 'admin' ? '<a href="/admin.html" class="action-link"><i class="fas fa-tachometer-alt"></i> Admin</a>' : ''}
+                                ${user.role === 'admin' ? '<a href="/elevate.html" class="action-link"><i class="fas fa-rocket"></i> Elevate Series</a>' : ''}
                                 <a href="#" class="action-link logout-link-mobile" style="color: var(--primary-red);"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
                             `;
                                 navLinks.appendChild(bottomActions);

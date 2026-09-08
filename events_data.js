@@ -134,6 +134,7 @@ const eventDetails = {
     },
     "CYBER DEFENSE": {
         image: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&q=80",
+        closed: true,
         about: "Introduction to ethical hacking and cybersecurity defense mechanisms. Learn how to protect systems from vulnerabilities in this hands-on workshop.",
         rules: [
             "Laptop required (Kali Linux preferred but not mandatory).",
@@ -144,6 +145,7 @@ const eventDetails = {
     },
     "AI FRONTIERS": {
         image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&q=80",
+        closed: true,
         about: "Explore the cutting-edge of Artificial Intelligence and Generative models. Understand the future of AI technology in this insightful tech talk.",
         rules: [
             "Open to all students.",

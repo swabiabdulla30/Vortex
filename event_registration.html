@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -818,7 +818,41 @@
                     teammatePhone.required = true;
                 }
 
-                // Slot bar � fetch from API
+                const details = (typeof eventDetails !== 'undefined') ? eventDetails[cleanName.toUpperCase()] || eventDetails[cleanName] : null;
+                const isClosed = details && details.closed;
+
+                const userStr = localStorage.getItem('vortexCurrentUser');
+                const user = userStr ? JSON.parse(userStr) : null;
+                const isAdmin = user && user.role === 'admin';
+
+                const countEl = document.getElementById('reg-slot-count');
+                const slotFillEl = document.getElementById('reg-slot-fill');
+                const submitBtn = document.getElementById('reg-submit-btn');
+
+                // Immediate baseline check for closed status
+                if (isClosed) {
+                    if (isAdmin) {
+                        if (countEl) {
+                            countEl.textContent = 'CLOSED (ADMIN OPEN)';
+                            countEl.style.color = '#00e05a';
+                        }
+                        if (submitBtn) {
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = '<i class="fas fa-lock-open"></i> &nbsp;REGISTER (ADMIN BYPASS)';
+                        }
+                    } else {
+                        if (countEl) {
+                            countEl.textContent = 'CLOSED';
+                            countEl.style.color = '#ff4444';
+                        }
+                        if (submitBtn) {
+                            submitBtn.disabled = true;
+                            submitBtn.textContent = '🚫 Registration Closed';
+                        }
+                    }
+                }
+
+                // Slot bar – fetch from API
                 const API_URL = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost')
                     ? 'http://127.0.0.1:5000/api' : '/api';
 
@@ -828,50 +862,57 @@
                         const match = slots.find(s => s.event.toUpperCase() === cleanName.toUpperCase());
                         if (!match) return;
                         const { total, remaining } = match;
-                        const pct = Math.round(((total - remaining) / total) * 100);
-                        document.getElementById('reg-slot-fill').style.width = pct + '%';
-
-                        const countEl = document.getElementById('reg-slot-count');
-
-                        const details = (typeof eventDetails !== 'undefined') ? eventDetails[cleanName.toUpperCase()] || eventDetails[cleanName] : null;
-                        const isClosed = details && details.closed;
-
-                        const userStr = localStorage.getItem('vortexCurrentUser');
-                        const user = userStr ? JSON.parse(userStr) : null;
-                        const isAdmin = user && user.role === 'admin';
+                        const pct = total > 0 ? Math.round(((total - remaining) / total) * 100) : 100;
+                        if (slotFillEl) slotFillEl.style.width = pct + '%';
 
                         if (remaining === 0 || isClosed) {
                             if (isAdmin) {
                                 if (remaining === 0) {
-                                    countEl.textContent = 'FULL';
-                                    countEl.style.color = '#ff4444';
-                                    document.getElementById('reg-slot-fill').style.background = '#cc0000';
+                                    if (countEl) {
+                                        countEl.textContent = total > 0 ? `0 / ${total} left (FULL - ADMIN OPEN)` : 'FULL (ADMIN OPEN)';
+                                        countEl.style.color = '#ff8c42';
+                                    }
+                                    if (slotFillEl) slotFillEl.style.background = '#cc0000';
                                 } else {
-                                    countEl.textContent = `${remaining} / ${total} left (CLOSED)`;
-                                    countEl.style.color = '#ff8c42';
-                                    document.getElementById('reg-slot-fill').style.background = 'linear-gradient(90deg,#8B0000,#ff6b00)';
+                                    if (countEl) {
+                                        countEl.textContent = `${remaining} / ${total} left (CLOSED - ADMIN OPEN)`;
+                                        countEl.style.color = '#00e05a';
+                                    }
+                                    if (slotFillEl) slotFillEl.style.background = 'linear-gradient(90deg,#8B0000,#ff6b00)';
                                 }
-                                document.getElementById('reg-submit-btn').disabled = false;
-                                document.getElementById('reg-submit-btn').innerHTML = '<i class="fas fa-lock-open"></i> &nbsp;REGISTER (ADMIN BYPASS)';
+                                if (submitBtn) {
+                                    submitBtn.disabled = false;
+                                    submitBtn.innerHTML = '<i class="fas fa-lock-open"></i> &nbsp;REGISTER (ADMIN BYPASS)';
+                                }
                             } else {
-                                countEl.textContent = remaining === 0 ? 'FULL' : 'CLOSED';
-                                countEl.style.color = '#ff4444';
-                                document.getElementById('reg-slot-fill').style.background = '#cc0000';
-                                document.getElementById('reg-submit-btn').disabled = true;
-                                document.getElementById('reg-submit-btn').textContent = remaining === 0 ? '🚫 Registration Full' : '🚫 Registration Closed';
+                                if (countEl) {
+                                    countEl.textContent = remaining === 0 ? 'FULL' : 'CLOSED';
+                                    countEl.style.color = '#ff4444';
+                                }
+                                if (slotFillEl) slotFillEl.style.background = '#cc0000';
+                                if (submitBtn) {
+                                    submitBtn.disabled = true;
+                                    submitBtn.textContent = remaining === 0 ? '🚫 Registration Full' : '🚫 Registration Closed';
+                                }
                             }
                         } else if (remaining <= 5) {
-                            countEl.textContent = `${remaining} / ${total} left`;
-                            countEl.style.color = '#ff8c42';
-                            document.getElementById('reg-slot-fill').style.background = 'linear-gradient(90deg,#8B0000,#ff6b00)';
+                            if (countEl) {
+                                countEl.textContent = `${remaining} / ${total} left`;
+                                countEl.style.color = '#ff8c42';
+                            }
+                            if (slotFillEl) slotFillEl.style.background = 'linear-gradient(90deg,#8B0000,#ff6b00)';
                         } else {
-                            countEl.textContent = `${remaining} / ${total} left`;
-                            countEl.style.color = '#00e05a';
-                            document.getElementById('reg-slot-fill').style.background = 'linear-gradient(90deg,#005820,#00c853)';
+                            if (countEl) {
+                                countEl.textContent = `${remaining} / ${total} left`;
+                                countEl.style.color = '#00e05a';
+                            }
+                            if (slotFillEl) slotFillEl.style.background = 'linear-gradient(90deg,#005820,#00c853)';
                         }
                     })
                     .catch(() => {
-                        document.getElementById('reg-slot-count').textContent = '';
+                        if (!isClosed && countEl) {
+                            countEl.textContent = '';
+                        }
                     });
             }
         });
