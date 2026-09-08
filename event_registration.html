@@ -818,10 +818,7 @@
                     teammatePhone.required = true;
                 }
 
-                const details = (typeof eventDetails !== 'undefined') ? eventDetails[cleanName.toUpperCase()] || eventDetails[cleanName] : null;
                 const isClosed = details && details.closed;
-
-                const userStr = localStorage.getItem('vortexCurrentUser');
                 const user = userStr ? JSON.parse(userStr) : null;
                 const isAdmin = user && user.role === 'admin';
 
