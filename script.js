@@ -688,10 +688,10 @@ async function loadDynamicEventsData() {
         const events = await res.json();
         if (!Array.isArray(events) || events.length === 0) return;
 
-        // Render on events.html (#events .cards-grid)
+        // Render on events.html (#events .cards-grid): ONLY Main Events / Sessions
         if (eventsSectionGrid) {
-            const sessionEvents = events.filter(e => (e.category || '').toLowerCase() === 'session');
-            const displayEvents = sessionEvents.length > 0 ? sessionEvents : events;
+            const mainEvents = events.filter(e => e.eventType === 'main_event' || (!e.parentEvent && (e.category || '').toLowerCase() === 'session'));
+            const displayEvents = mainEvents.length > 0 ? mainEvents : events.filter(e => !e.parentEvent);
 
             eventsSectionGrid.innerHTML = displayEvents.map(evt => {
                 const isClosed = (evt.status || 'OPEN').toUpperCase() === 'CLOSED';
@@ -731,10 +731,10 @@ async function loadDynamicEventsData() {
             }).join('');
         }
 
-        // Render on elevate.html (#code-red-events .cards-grid)
+        // Render on elevate.html (#code-red-events .cards-grid): ONLY Sub-Events inside ELEVATE
         if (elevateSectionGrid) {
-            const compEvents = events.filter(e => (e.category || '').toLowerCase() !== 'session');
-            const displayEvents = compEvents.length > 0 ? compEvents : events;
+            const elevateSubEvents = events.filter(e => (e.parentEvent || '').toUpperCase() === 'ELEVATE' || (e.eventType === 'sub_event' && (e.category || '').toLowerCase() !== 'session'));
+            const displayEvents = elevateSubEvents.length > 0 ? elevateSubEvents : events.filter(e => (e.category || '').toLowerCase() !== 'session');
 
             elevateSectionGrid.innerHTML = displayEvents.map(evt => {
                 const isClosed = (evt.status || 'OPEN').toUpperCase() === 'CLOSED';

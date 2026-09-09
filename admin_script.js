@@ -410,17 +410,25 @@ function initAdminCMS() {
             inputRole.placeholder = 'e.g. Inter-College Flagship Tech Fest';
             inputRole.required = false;
 
+            const catInput = document.getElementById('input-event-category');
+            const statusInput = document.getElementById('input-event-status');
+            const typeInput = document.getElementById('input-event-type');
+            const parentInput = document.getElementById('input-parent-event');
+            const groupParent = document.getElementById('group-parent-event');
+            const dateInput = document.getElementById('input-event-date');
+            const timeInput = document.getElementById('input-event-time');
+            const venueInput = document.getElementById('input-event-venue');
+            const feeInput = document.getElementById('input-event-fee');
+            const prizeInput = document.getElementById('input-event-prize');
+            const slotsInput = document.getElementById('input-event-slots');
+            const aboutInput = document.getElementById('input-event-about');
+            const rulesInput = document.getElementById('input-event-rules');
+
             if (isEdit) {
-                const catInput = document.getElementById('input-event-category');
-                const statusInput = document.getElementById('input-event-status');
-                const dateInput = document.getElementById('input-event-date');
-                const timeInput = document.getElementById('input-event-time');
-                const venueInput = document.getElementById('input-event-venue');
-                const feeInput = document.getElementById('input-event-fee');
-                const prizeInput = document.getElementById('input-event-prize');
-                const slotsInput = document.getElementById('input-event-slots');
-                const aboutInput = document.getElementById('input-event-about');
-                const rulesInput = document.getElementById('input-event-rules');
+                const isMain = itemToEdit.eventType === 'main_event' || (!itemToEdit.parentEvent && (itemToEdit.category || '').toLowerCase() === 'session');
+                if (typeInput) typeInput.value = isMain ? 'main_event' : 'sub_event';
+                if (parentInput) parentInput.value = itemToEdit.parentEvent || (isMain ? '' : 'ELEVATE');
+                if (groupParent) groupParent.style.display = isMain ? 'none' : 'block';
 
                 if (catInput) catInput.value = itemToEdit.category || 'General';
                 if (statusInput) statusInput.value = (itemToEdit.status || 'OPEN').toUpperCase();
@@ -433,7 +441,9 @@ function initAdminCMS() {
                 if (aboutInput) aboutInput.value = itemToEdit.about || '';
                 if (rulesInput) rulesInput.value = Array.isArray(itemToEdit.rules) ? itemToEdit.rules.join('\n') : '';
             } else {
-                const statusInput = document.getElementById('input-event-status');
+                if (typeInput) typeInput.value = 'sub_event';
+                if (parentInput) parentInput.value = 'ELEVATE';
+                if (groupParent) groupParent.style.display = 'block';
                 if (statusInput) statusInput.value = 'OPEN';
             }
         } else {
@@ -505,6 +515,17 @@ function initAdminCMS() {
     document.getElementById('open-add-lead-btn')?.addEventListener('click', () => openModal('leads'));
     document.getElementById('open-add-network-btn')?.addEventListener('click', () => openModal('network'));
     document.getElementById('open-add-gallery-btn')?.addEventListener('click', () => openModal('gallery'));
+
+    document.getElementById('input-event-type')?.addEventListener('change', (e) => {
+        const groupParent = document.getElementById('group-parent-event');
+        if (groupParent) {
+            groupParent.style.display = e.target.value === 'main_event' ? 'none' : 'block';
+        }
+    });
+
+    document.getElementById('event-placement-filter')?.addEventListener('change', () => {
+        renderEventsGrid();
+    });
 
     // 3. Image mode toggles
     const tabUpload = document.getElementById('tab-upload');
@@ -617,10 +638,15 @@ function initAdminCMS() {
             if (type === 'events') {
                 const rulesRaw = document.getElementById('input-event-rules')?.value || '';
                 const rulesArray = rulesRaw.split('\n').map(r => r.trim()).filter(r => r.length > 0);
+                const eventPlacement = document.getElementById('input-event-type')?.value || 'sub_event';
+                const parentFest = eventPlacement === 'main_event' ? '' : (document.getElementById('input-parent-event')?.value.trim() || 'ELEVATE');
+
                 payload = {
                     title: nameOrTitle,
                     subtitle: roleOrDesc,
                     category: document.getElementById('input-event-category')?.value.trim() || 'General',
+                    eventType: eventPlacement,
+                    parentEvent: parentFest,
                     status: (document.getElementById('input-event-status')?.value || 'OPEN').toUpperCase(),
                     date: document.getElementById('input-event-date')?.value.trim() || '',
                     time: document.getElementById('input-event-time')?.value.trim() || '',
@@ -875,62 +901,82 @@ async function fetchGallery() {
 }
 
 // Fetch and Render Events
-async function fetchEvents() {
+function renderEventsGrid() {
     const grid = document.getElementById('events-grid');
     const countBadge = document.getElementById('events-count');
+    const filter = document.getElementById('event-placement-filter')?.value || 'all';
+
+    let filtered = loadedEvents;
+    if (filter === 'main_event') {
+        filtered = loadedEvents.filter(e => e.eventType === 'main_event' || (!e.parentEvent && (e.category || '').toLowerCase() === 'session'));
+    } else if (filter === 'sub_event') {
+        filtered = loadedEvents.filter(e => e.eventType !== 'main_event' && (e.parentEvent || (e.category || '').toLowerCase() !== 'session'));
+    }
+
+    if (countBadge) countBadge.textContent = `${filtered.length} items`;
+
+    if (!filtered || filtered.length === 0) {
+        grid.innerHTML = '<div class="empty-state"><i class="fas fa-calendar-times"></i><p>No events found for this filter. Click "+ Create New Event" to add one!</p></div>';
+        return;
+    }
+
+    grid.innerHTML = filtered.map(evt => {
+        const isClosed = (evt.status || 'OPEN').toUpperCase() === 'CLOSED';
+        const statusClass = isClosed ? 'closed' : 'open';
+        const statusText = isClosed ? 'CLOSED' : 'OPEN';
+
+        const isMain = evt.eventType === 'main_event' || (!evt.parentEvent && (evt.category || '').toLowerCase() === 'session');
+        const placementBadge = isMain
+            ? `<span class="card-badge-placement main"><i class="fas fa-star"></i> Main Event (events.html)</span>`
+            : `<span class="card-badge-placement sub"><i class="fas fa-level-down-alt"></i> Inside ${escapeHtml(evt.parentEvent || 'ELEVATE')} (elevate.html)</span>`;
+
+        return `
+        <div class="admin-card">
+            <div class="card-thumb-container">
+                <img src="${evt.imageUrl || 'https://via.placeholder.com/400x200?text=Event+Banner'}" alt="${escapeHtml(evt.title)}" onerror="this.src='https://via.placeholder.com/400x200?text=Event+Banner';">
+            </div>
+            <div class="card-body">
+                <div>
+                    <div>${placementBadge}</div>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+                        <h3 style="margin: 0;">${escapeHtml(evt.title)}</h3>
+                        <span class="card-badge-status ${statusClass}">${statusText}</span>
+                    </div>
+                    ${evt.subtitle ? `<div class="card-subtitle">${escapeHtml(evt.subtitle)}</div>` : ''}
+                    
+                    <div class="card-meta-row">
+                        ${evt.category ? `<span class="card-meta-item"><i class="fas fa-tag"></i> ${escapeHtml(evt.category)}</span>` : ''}
+                        ${evt.date ? `<span class="card-meta-item"><i class="fas fa-calendar-alt"></i> ${escapeHtml(evt.date)}</span>` : ''}
+                        ${evt.time ? `<span class="card-meta-item"><i class="fas fa-clock"></i> ${escapeHtml(evt.time)}</span>` : ''}
+                        ${evt.venue ? `<span class="card-meta-item"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(evt.venue)}</span>` : ''}
+                        ${evt.fee ? `<span class="card-meta-item"><i class="fas fa-ticket-alt"></i> ${escapeHtml(evt.fee)}</span>` : ''}
+                        ${evt.prize ? `<span class="card-meta-item"><i class="fas fa-trophy"></i> ${escapeHtml(evt.prize)}</span>` : ''}
+                        ${evt.slots ? `<span class="card-meta-item"><i class="fas fa-users"></i> ${escapeHtml(evt.slots)}</span>` : ''}
+                    </div>
+
+                    ${evt.about ? `<p class="card-desc" style="-webkit-line-clamp: 2;">${escapeHtml(evt.about)}</p>` : ''}
+                </div>
+                <div class="card-actions">
+                    <button class="card-edit-btn" data-type="events" data-id="${evt._id}">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="card-delete-btn" data-type="events" data-id="${evt._id}" data-name="${escapeHtml(evt.title)}">
+                        <i class="fas fa-trash"></i> Remove
+                    </button>
+                </div>
+            </div>
+        </div>
+        `;
+    }).join('');
+}
+
+async function fetchEvents() {
+    const grid = document.getElementById('events-grid');
     try {
         const res = await fetch('/api/events');
         const events = await res.json();
         loadedEvents = Array.isArray(events) ? events : [];
-        if (countBadge) countBadge.textContent = `${loadedEvents.length} items`;
-
-        if (!loadedEvents || loadedEvents.length === 0) {
-            grid.innerHTML = '<div class="empty-state"><i class="fas fa-calendar-times"></i><p>No events found. Click "+ Create New Event" to add one!</p></div>';
-            return;
-        }
-
-        grid.innerHTML = loadedEvents.map(evt => {
-            const isClosed = (evt.status || 'OPEN').toUpperCase() === 'CLOSED';
-            const statusClass = isClosed ? 'closed' : 'open';
-            const statusText = isClosed ? 'CLOSED' : 'OPEN';
-
-            return `
-            <div class="admin-card">
-                <div class="card-thumb-container">
-                    <img src="${evt.imageUrl || 'https://via.placeholder.com/400x200?text=Event+Banner'}" alt="${escapeHtml(evt.title)}" onerror="this.src='https://via.placeholder.com/400x200?text=Event+Banner';">
-                </div>
-                <div class="card-body">
-                    <div>
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
-                            <h3 style="margin: 0;">${escapeHtml(evt.title)}</h3>
-                            <span class="card-badge-status ${statusClass}">${statusText}</span>
-                        </div>
-                        ${evt.subtitle ? `<div class="card-subtitle">${escapeHtml(evt.subtitle)}</div>` : ''}
-                        
-                        <div class="card-meta-row">
-                            ${evt.category ? `<span class="card-meta-item"><i class="fas fa-tag"></i> ${escapeHtml(evt.category)}</span>` : ''}
-                            ${evt.date ? `<span class="card-meta-item"><i class="fas fa-calendar-alt"></i> ${escapeHtml(evt.date)}</span>` : ''}
-                            ${evt.time ? `<span class="card-meta-item"><i class="fas fa-clock"></i> ${escapeHtml(evt.time)}</span>` : ''}
-                            ${evt.venue ? `<span class="card-meta-item"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(evt.venue)}</span>` : ''}
-                            ${evt.fee ? `<span class="card-meta-item"><i class="fas fa-ticket-alt"></i> ${escapeHtml(evt.fee)}</span>` : ''}
-                            ${evt.prize ? `<span class="card-meta-item"><i class="fas fa-trophy"></i> ${escapeHtml(evt.prize)}</span>` : ''}
-                            ${evt.slots ? `<span class="card-meta-item"><i class="fas fa-users"></i> ${escapeHtml(evt.slots)}</span>` : ''}
-                        </div>
-
-                        ${evt.about ? `<p class="card-desc" style="-webkit-line-clamp: 2;">${escapeHtml(evt.about)}</p>` : ''}
-                    </div>
-                    <div class="card-actions">
-                        <button class="card-edit-btn" data-type="events" data-id="${evt._id}">
-                            <i class="fas fa-edit"></i> Edit
-                        </button>
-                        <button class="card-delete-btn" data-type="events" data-id="${evt._id}" data-name="${escapeHtml(evt.title)}">
-                            <i class="fas fa-trash"></i> Remove
-                        </button>
-                    </div>
-                </div>
-            </div>
-            `;
-        }).join('');
+        renderEventsGrid();
     } catch (err) {
         console.error('Error fetching events:', err);
         grid.innerHTML = `<div class="empty-state" style="color:red;"><p>Error loading events: ${err.message}</p></div>`;

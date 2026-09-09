@@ -180,6 +180,8 @@ const EventSchema = new mongoose.Schema({
     time: { type: String, default: "" },
     venue: { type: String, default: "KMCT IETM" },
     category: { type: String, default: "Competition" },
+    eventType: { type: String, default: "sub_event" }, // "main_event" (shows on events.html) or "sub_event" (shows inside parent event, e.g. elevate.html)
+    parentEvent: { type: String, default: "ELEVATE" }, // e.g. "ELEVATE" or ""
     fee: { type: String, default: "Free" },
     prize: { type: String, default: "" },
     slots: { type: Number, default: 0 },
@@ -266,6 +268,16 @@ async function seedDefaultsIfNeeded() {
         if (evCount === 0) {
             await Event.insertMany(DEFAULT_EVENTS);
             console.log("Seeded initial events.");
+        } else {
+            // Backfill eventType and parentEvent if missing
+            await Event.updateMany(
+                { title: { $in: ["ELEVATE", "TECHSPARK", "VORTEX INNOVATORS"] }, eventType: { $exists: false } },
+                { $set: { eventType: "main_event", parentEvent: "" } }
+            );
+            await Event.updateMany(
+                { title: { $nin: ["ELEVATE", "TECHSPARK", "VORTEX INNOVATORS"] }, eventType: { $exists: false } },
+                { $set: { eventType: "sub_event", parentEvent: "ELEVATE" } }
+            );
         }
     } catch (err) {
         console.error("Error checking/seeding defaults:", err.message);
@@ -281,6 +293,8 @@ const DEFAULT_EVENTS = [
         time: "9:30 AM - 4:00 PM",
         venue: "KMCT IETM",
         category: "Session",
+        eventType: "main_event",
+        parentEvent: "",
         fee: "Free",
         prize: "",
         slots: 0,
@@ -296,6 +310,8 @@ const DEFAULT_EVENTS = [
         time: "10:00 AM - 1:00 PM",
         venue: "KMCT IETM",
         category: "Session",
+        eventType: "main_event",
+        parentEvent: "",
         fee: "Free",
         prize: "",
         slots: 0,
@@ -311,6 +327,8 @@ const DEFAULT_EVENTS = [
         time: "11:00 AM - 1:00 PM",
         venue: "KMCT IETM",
         category: "Session",
+        eventType: "main_event",
+        parentEvent: "",
         fee: "Free",
         prize: "",
         slots: 0,
@@ -326,6 +344,8 @@ const DEFAULT_EVENTS = [
         time: "2:00PM - 3:00PM",
         venue: "Seminar Hall",
         category: "Competition",
+        eventType: "sub_event",
+        parentEvent: "ELEVATE",
         fee: "₹10 per player",
         prize: "₹300",
         slots: 48,
@@ -341,6 +361,8 @@ const DEFAULT_EVENTS = [
         time: "9:30AM - 11:00AM",
         venue: "Lab",
         category: "Competition",
+        eventType: "sub_event",
+        parentEvent: "ELEVATE",
         fee: "₹10 per participant",
         prize: "₹200",
         slots: 0,
@@ -356,6 +378,8 @@ const DEFAULT_EVENTS = [
         time: "11:15AM - 12:30PM",
         venue: "Lab",
         category: "Competition",
+        eventType: "sub_event",
+        parentEvent: "ELEVATE",
         fee: "₹10 per participant",
         prize: "₹200",
         slots: 0,
@@ -371,6 +395,8 @@ const DEFAULT_EVENTS = [
         time: "11:00AM - 12:30PM",
         venue: "Seminar Hall",
         category: "Competition",
+        eventType: "sub_event",
+        parentEvent: "ELEVATE",
         fee: "₹20 per team",
         prize: "₹200",
         slots: 16,
@@ -386,6 +412,8 @@ const DEFAULT_EVENTS = [
         time: "1:45 PM - 3:00 PM",
         venue: "Lab",
         category: "Competition",
+        eventType: "sub_event",
+        parentEvent: "ELEVATE",
         fee: "Free",
         prize: "Cash Prize",
         slots: 10,
@@ -401,6 +429,8 @@ const DEFAULT_EVENTS = [
         time: "9:30AM - 10:30AM",
         venue: "Seminar Hall",
         category: "Competition",
+        eventType: "sub_event",
+        parentEvent: "ELEVATE",
         fee: "Free",
         prize: "Cash Prize",
         slots: 0,
@@ -1030,7 +1060,7 @@ app.post("/api/admin/events", authenticateToken, async (req, res) => {
     if (req.user.role !== 'admin') return res.status(403).json({ error: "Access denied" });
     try {
         await connectDB();
-        const { title, description, about, rules, date, time, venue, category, fee, prize, slots, status, imageUrl, order } = req.body;
+        const { title, description, about, rules, date, time, venue, category, eventType, parentEvent, fee, prize, slots, status, imageUrl, order } = req.body;
         if (!title || !imageUrl) return res.status(400).json({ error: "Title and Image are required" });
 
         let parsedRules = [];
@@ -1039,6 +1069,9 @@ app.post("/api/admin/events", authenticateToken, async (req, res) => {
         } else if (typeof rules === 'string' && rules.trim()) {
             parsedRules = rules.split('\n').map(r => r.trim()).filter(Boolean);
         }
+
+        const resolvedType = eventType === "main_event" ? "main_event" : "sub_event";
+        const resolvedParent = resolvedType === "main_event" ? "" : (parentEvent ? parentEvent.trim() : "ELEVATE");
 
         const newEvent = new Event({
             title: title.trim(),
@@ -1049,6 +1082,8 @@ app.post("/api/admin/events", authenticateToken, async (req, res) => {
             time: time ? time.trim() : "",
             venue: venue ? venue.trim() : "KMCT IETM",
             category: category || "Competition",
+            eventType: resolvedType,
+            parentEvent: resolvedParent,
             fee: fee ? fee.trim() : "Free",
             prize: prize ? prize.trim() : "",
             slots: slots !== undefined && slots !== "" ? Number(slots) : 0,
@@ -1069,7 +1104,7 @@ app.put("/api/admin/events/:id", authenticateToken, async (req, res) => {
     if (req.user.role !== 'admin') return res.status(403).json({ error: "Access denied" });
     try {
         await connectDB();
-        const { title, description, about, rules, date, time, venue, category, fee, prize, slots, status, imageUrl, order } = req.body;
+        const { title, description, about, rules, date, time, venue, category, eventType, parentEvent, fee, prize, slots, status, imageUrl, order } = req.body;
         const updateData = {};
         if (title) updateData.title = title.trim();
         if (description !== undefined) updateData.description = description.trim();
@@ -1081,6 +1116,13 @@ app.put("/api/admin/events/:id", authenticateToken, async (req, res) => {
         if (time !== undefined) updateData.time = time.trim();
         if (venue !== undefined) updateData.venue = venue.trim();
         if (category !== undefined) updateData.category = category;
+        if (eventType !== undefined) {
+            updateData.eventType = eventType;
+            if (eventType === "main_event") updateData.parentEvent = "";
+        }
+        if (parentEvent !== undefined && updateData.eventType !== "main_event") {
+            updateData.parentEvent = parentEvent ? parentEvent.trim() : "ELEVATE";
+        }
         if (fee !== undefined) updateData.fee = fee.trim();
         if (prize !== undefined) updateData.prize = prize.trim();
         if (slots !== undefined && slots !== "") updateData.slots = Number(slots);
