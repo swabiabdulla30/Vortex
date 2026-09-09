@@ -705,6 +705,26 @@ app.delete("/api/admin/leads/:id", authenticateToken, async (req, res) => {
     }
 });
 
+app.put("/api/admin/leads/:id", authenticateToken, async (req, res) => {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: "Access denied" });
+    try {
+        await connectDB();
+        const { name, role, imageUrl, order } = req.body;
+        const updateData = {};
+        if (name) updateData.name = name.trim();
+        if (role !== undefined) updateData.role = role.trim();
+        if (imageUrl) updateData.imageUrl = imageUrl.trim();
+        if (order !== undefined && order !== "") updateData.order = Number(order);
+
+        const updated = await LeadMember.findByIdAndUpdate(req.params.id, updateData, { new: true });
+        if (!updated) return res.status(404).json({ error: "Lead member not found" });
+        res.json({ success: true, lead: updated });
+    } catch (error) {
+        console.error("Update lead error:", error);
+        res.status(500).json({ error: "Failed to update lead member" });
+    }
+});
+
 // --- Operative Network Team ---
 app.post("/api/admin/network", authenticateToken, async (req, res) => {
     if (req.user.role !== 'admin') return res.status(403).json({ error: "Access denied" });
@@ -739,6 +759,26 @@ app.delete("/api/admin/network/:id", authenticateToken, async (req, res) => {
     }
 });
 
+app.put("/api/admin/network/:id", authenticateToken, async (req, res) => {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: "Access denied" });
+    try {
+        await connectDB();
+        const { name, role, imageUrl, order } = req.body;
+        const updateData = {};
+        if (name) updateData.name = name.trim();
+        if (role !== undefined) updateData.role = role.trim();
+        if (imageUrl) updateData.imageUrl = imageUrl.trim();
+        if (order !== undefined && order !== "") updateData.order = Number(order);
+
+        const updated = await NetworkMember.findByIdAndUpdate(req.params.id, updateData, { new: true });
+        if (!updated) return res.status(404).json({ error: "Network member not found" });
+        res.json({ success: true, member: updated });
+    } catch (error) {
+        console.error("Update network member error:", error);
+        res.status(500).json({ error: "Failed to update network member" });
+    }
+});
+
 // --- Gallery Moments & Photos ---
 app.post("/api/admin/gallery", authenticateToken, async (req, res) => {
     if (req.user.role !== 'admin') return res.status(403).json({ error: "Access denied" });
@@ -770,6 +810,26 @@ app.delete("/api/admin/gallery/:id", authenticateToken, async (req, res) => {
     } catch (error) {
         console.error("Delete gallery error:", error);
         res.status(500).json({ error: "Failed to delete gallery item" });
+    }
+});
+
+app.put("/api/admin/gallery/:id", authenticateToken, async (req, res) => {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: "Access denied" });
+    try {
+        await connectDB();
+        const { title, description, imageUrl, order } = req.body;
+        const updateData = {};
+        if (title !== undefined) updateData.title = title.trim();
+        if (description !== undefined) updateData.description = description.trim();
+        if (imageUrl) updateData.imageUrl = imageUrl.trim();
+        if (order !== undefined && order !== "") updateData.order = Number(order);
+
+        const updated = await GalleryItem.findByIdAndUpdate(req.params.id, updateData, { new: true });
+        if (!updated) return res.status(404).json({ error: "Gallery item not found" });
+        res.json({ success: true, item: updated });
+    } catch (error) {
+        console.error("Update gallery item error:", error);
+        res.status(500).json({ error: "Failed to update gallery item" });
     }
 });
 

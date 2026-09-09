@@ -346,6 +346,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 let currentImageBase64 = '';
 let currentImageMode = 'upload'; // 'upload' or 'url'
+let loadedLeads = [];
+let loadedNetwork = [];
+let loadedGallery = [];
 
 function initAdminCMS() {
     // 1. Tab Switching
@@ -374,23 +377,27 @@ function initAdminCMS() {
     const cancelModalBtn = document.getElementById('cancel-modal-btn');
     const cmsForm = document.getElementById('cms-form');
 
-    function openModal(type) {
+    function openModal(type, itemToEdit = null) {
         document.getElementById('cms-type').value = type;
+        document.getElementById('cms-id').value = itemToEdit ? itemToEdit._id : '';
         const titleEl = document.getElementById('modal-title');
         const labelName = document.getElementById('label-name-title');
         const inputName = document.getElementById('input-name-title');
         const groupRole = document.getElementById('group-role');
         const labelRole = document.getElementById('label-role');
         const inputRole = document.getElementById('input-role');
+        const inputOrder = document.getElementById('input-order');
+        const submitBtn = document.getElementById('submit-cms-btn');
 
         // Reset form
         cmsForm.reset();
         currentImageBase64 = '';
-        setImageMode('upload');
         resetImagePreview();
 
+        const isEdit = Boolean(itemToEdit);
+
         if (type === 'leads') {
-            titleEl.textContent = 'Add Faculty / Lead Member';
+            titleEl.textContent = isEdit ? 'Edit Faculty / Lead Member' : 'Add Faculty / Lead Member';
             labelName.textContent = 'Full Name';
             inputName.placeholder = 'e.g. Dr. John Doe';
             inputName.required = true;
@@ -399,7 +406,7 @@ function initAdminCMS() {
             inputRole.placeholder = 'e.g. ASSISTANT PROFESSOR';
             inputRole.required = true;
         } else if (type === 'network') {
-            titleEl.textContent = 'Add Operative Team Member';
+            titleEl.textContent = isEdit ? 'Edit Operative Team Member' : 'Add Operative Team Member';
             labelName.textContent = 'Full Name';
             inputName.placeholder = 'e.g. Jane Smith';
             inputName.required = true;
@@ -408,7 +415,7 @@ function initAdminCMS() {
             inputRole.placeholder = 'e.g. Web Developer / Coordinator';
             inputRole.required = true;
         } else if (type === 'gallery') {
-            titleEl.textContent = 'Add Gallery Moment';
+            titleEl.textContent = isEdit ? 'Edit Gallery Moment' : 'Add Gallery Moment';
             labelName.textContent = 'Title / Caption (Optional)';
             inputName.placeholder = 'e.g. Hackathon Kickoff';
             inputName.required = false;
@@ -416,6 +423,25 @@ function initAdminCMS() {
             labelRole.textContent = 'Description (Optional)';
             inputRole.placeholder = 'Short description...';
             inputRole.required = false;
+        }
+
+        if (isEdit) {
+            inputName.value = itemToEdit.name || itemToEdit.title || '';
+            inputRole.value = itemToEdit.role || itemToEdit.description || '';
+            inputOrder.value = itemToEdit.order !== undefined ? itemToEdit.order : 0;
+            submitBtn.innerHTML = '<i class="fas fa-save"></i> Update Changes';
+
+            if (itemToEdit.imageUrl) {
+                setImageMode('url');
+                inputUrl.value = itemToEdit.imageUrl;
+                showImagePreview(itemToEdit.imageUrl);
+            } else {
+                setImageMode('upload');
+            }
+        } else {
+            inputOrder.value = 0;
+            setImageMode('upload');
+            submitBtn.innerHTML = '<i class="fas fa-check"></i> Save to Website';
         }
 
         modal.classList.add('active');
@@ -507,10 +533,13 @@ function initAdminCMS() {
         showImagePreview(e.target.value.trim());
     });
 
-    // 4. Form Submission
+    // 4. Form Submission (Create or Update)
     cmsForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const type = document.getElementById('cms-type').value;
+        const editId = document.getElementById('cms-id').value;
+        const isEdit = Boolean(editId);
+
         const token = localStorage.getItem('vortexToken');
         if (!token) {
             alert('Session expired. Please log in.');
@@ -529,7 +558,7 @@ function initAdminCMS() {
             imageUrl = inputUrl.value.trim();
         }
 
-        if (!imageUrl) {
+        if (!imageUrl && !isEdit) {
             alert('Please select an image file or enter an image URL.');
             return;
         }
@@ -544,20 +573,25 @@ function initAdminCMS() {
                 payload = {
                     name: nameOrTitle,
                     role: roleOrDesc,
-                    imageUrl: imageUrl,
                     order: orderVal ? Number(orderVal) : 0
                 };
             } else if (type === 'gallery') {
                 payload = {
                     title: nameOrTitle,
                     description: roleOrDesc,
-                    imageUrl: imageUrl,
                     order: orderVal ? Number(orderVal) : 0
                 };
             }
 
-            const res = await fetch(`/api/admin/${type}`, {
-                method: 'POST',
+            if (imageUrl) {
+                payload.imageUrl = imageUrl;
+            }
+
+            const url = isEdit ? `/api/admin/${type}/${editId}` : `/api/admin/${type}`;
+            const method = isEdit ? 'PUT' : 'POST';
+
+            const res = await fetch(url, {
+                method: method,
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
@@ -570,7 +604,7 @@ function initAdminCMS() {
                 throw new Error(data.error || 'Failed to save item');
             }
 
-            alert('Added successfully!');
+            alert(isEdit ? 'Updated successfully!' : 'Added successfully!');
             closeModal();
 
             if (type === 'leads') fetchLeads();
@@ -582,12 +616,29 @@ function initAdminCMS() {
             alert('Error: ' + err.message);
         } finally {
             submitBtn.disabled = false;
-            submitBtn.innerHTML = '<i class="fas fa-check"></i> Save to Website';
+            submitBtn.innerHTML = isEdit ? '<i class="fas fa-save"></i> Update Changes' : '<i class="fas fa-check"></i> Save to Website';
         }
     });
 
-    // 5. Delete Delegation
+    // 5. Edit and Delete Delegation
     document.addEventListener('click', async (e) => {
+        // Edit Action
+        const editBtn = e.target.closest('.card-edit-btn');
+        if (editBtn) {
+            const id = editBtn.getAttribute('data-id');
+            const type = editBtn.getAttribute('data-type');
+            let item = null;
+            if (type === 'leads') item = loadedLeads.find(x => x._id === id);
+            else if (type === 'network') item = loadedNetwork.find(x => x._id === id);
+            else if (type === 'gallery') item = loadedGallery.find(x => x._id === id);
+
+            if (item) {
+                openModal(type, item);
+            }
+            return;
+        }
+
+        // Delete Action
         const delBtn = e.target.closest('.card-delete-btn');
         if (!delBtn) return;
 
@@ -638,14 +689,15 @@ async function fetchLeads() {
     try {
         const res = await fetch('/api/leads');
         const leads = await res.json();
-        countBadge.textContent = `${leads.length} items`;
+        loadedLeads = Array.isArray(leads) ? leads : [];
+        countBadge.textContent = `${loadedLeads.length} items`;
 
-        if (!leads || leads.length === 0) {
+        if (!loadedLeads || loadedLeads.length === 0) {
             grid.innerHTML = '<div class="empty-state"><i class="fas fa-user-slash"></i><p>No faculty/lead members found. Click "+ Add Lead Member" to add one!</p></div>';
             return;
         }
 
-        grid.innerHTML = leads.map(lead => `
+        grid.innerHTML = loadedLeads.map(lead => `
             <div class="admin-card">
                 <div class="card-thumb-container">
                     <img src="${lead.imageUrl}" alt="${escapeHtml(lead.name)}" onerror="this.src='https://via.placeholder.com/300x300?text=No+Image';">
@@ -656,6 +708,9 @@ async function fetchLeads() {
                         <div class="card-subtitle">${escapeHtml(lead.role || '')}</div>
                     </div>
                     <div class="card-actions">
+                        <button class="card-edit-btn" data-type="leads" data-id="${lead._id}">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
                         <button class="card-delete-btn" data-type="leads" data-id="${lead._id}" data-name="${escapeHtml(lead.name)}">
                             <i class="fas fa-trash"></i> Remove
                         </button>
@@ -676,14 +731,15 @@ async function fetchNetwork() {
     try {
         const res = await fetch('/api/network');
         const members = await res.json();
-        countBadge.textContent = `${members.length} items`;
+        loadedNetwork = Array.isArray(members) ? members : [];
+        countBadge.textContent = `${loadedNetwork.length} items`;
 
-        if (!members || members.length === 0) {
+        if (!loadedNetwork || loadedNetwork.length === 0) {
             grid.innerHTML = '<div class="empty-state"><i class="fas fa-users-slash"></i><p>No team members found. Click "+ Add Team Member" to add one!</p></div>';
             return;
         }
 
-        grid.innerHTML = members.map(m => `
+        grid.innerHTML = loadedNetwork.map(m => `
             <div class="admin-card">
                 <div class="card-thumb-container">
                     <img src="${m.imageUrl}" alt="${escapeHtml(m.name)}" onerror="this.src='https://via.placeholder.com/300x300?text=No+Image';">
@@ -694,6 +750,9 @@ async function fetchNetwork() {
                         <div class="card-subtitle">${escapeHtml(m.role || '')}</div>
                     </div>
                     <div class="card-actions">
+                        <button class="card-edit-btn" data-type="network" data-id="${m._id}">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
                         <button class="card-delete-btn" data-type="network" data-id="${m._id}" data-name="${escapeHtml(m.name)}">
                             <i class="fas fa-trash"></i> Remove
                         </button>
@@ -714,14 +773,15 @@ async function fetchGallery() {
     try {
         const res = await fetch('/api/gallery');
         const items = await res.json();
-        countBadge.textContent = `${items.length} items`;
+        loadedGallery = Array.isArray(items) ? items : [];
+        countBadge.textContent = `${loadedGallery.length} items`;
 
-        if (!items || items.length === 0) {
+        if (!loadedGallery || loadedGallery.length === 0) {
             grid.innerHTML = '<div class="empty-state"><i class="fas fa-images"></i><p>No gallery images found. Click "+ Add Gallery Image" to add one!</p></div>';
             return;
         }
 
-        grid.innerHTML = items.map(item => `
+        grid.innerHTML = loadedGallery.map(item => `
             <div class="admin-card">
                 <div class="card-thumb-container">
                     <img src="${item.imageUrl}" alt="${escapeHtml(item.title || 'Photo')}" onerror="this.src='https://via.placeholder.com/300x300?text=No+Image';">
@@ -732,6 +792,9 @@ async function fetchGallery() {
                         ${item.description ? `<p class="card-desc">${escapeHtml(item.description)}</p>` : ''}
                     </div>
                     <div class="card-actions">
+                        <button class="card-edit-btn" data-type="gallery" data-id="${item._id}">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
                         <button class="card-delete-btn" data-type="gallery" data-id="${item._id}" data-name="${escapeHtml(item.title || 'this photo')}">
                             <i class="fas fa-trash"></i> Remove
                         </button>

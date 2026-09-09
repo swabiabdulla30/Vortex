@@ -282,9 +282,31 @@
 .card-actions {
     display: flex;
     justify-content: flex-end;
+    gap: 8px;
     border-top: 1px solid rgba(255, 255, 255, 0.08);
     padding-top: 10px;
     margin-top: 5px;
+}
+
+.card-edit-btn {
+    padding: 6px 12px;
+    background: rgba(0, 210, 255, 0.15);
+    color: #00d2ff;
+    border: 1px solid rgba(0, 210, 255, 0.3);
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+}
+
+.card-edit-btn:hover {
+    background: #00d2ff;
+    color: #000;
+    border-color: #00d2ff;
 }
 
 .card-delete-btn {
