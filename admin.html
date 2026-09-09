@@ -162,29 +162,29 @@
             </div>
         </div>
 
-        <!-- Section 5: Manage Events -->
+        <!-- Section 5: Manage Events & Games -->
         <div id="section-events" class="admin-section">
             <div class="section-top-bar">
                 <h2>
                     <i class="fas fa-calendar-alt" style="color:#ffaa00;"></i>
-                    Manage Events
+                    Events &amp; Games
                     <span id="events-count" class="item-count-badge">0 items</span>
                 </h2>
                 <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                     <select id="event-placement-filter" class="action-btn" style="background: #222; color: #fff; border: 1px solid #444; height: 38px; border-radius: 6px; padding: 0 10px; font-size: 0.85rem;">
-                        <option value="all">📁 All Events</option>
-                        <option value="main_event">🌟 Main Events (events.html)</option>
-                        <option value="sub_event">🎯 Sub-Events (Inside Series/ELEVATE)</option>
+                        <option value="all">📁 All Events &amp; Games</option>
+                        <option value="main_event">🏆 Main Events (e.g. ELEVATE)</option>
+                        <option value="sub_event">🎮 Games / Competitions</option>
                     </select>
                     <button class="add-btn" id="open-add-event-btn">
-                        <i class="fas fa-plus"></i> Create New Event
+                        <i class="fas fa-plus"></i> Add Event / Game
                     </button>
                 </div>
             </div>
             <div id="events-grid" class="admin-items-grid">
                 <div class="empty-state">
                     <i class="fas fa-spinner fa-spin"></i>
-                    <p>Loading events...</p>
+                    <p>Loading events &amp; games...</p>
                 </div>
             </div>
         </div>
@@ -242,14 +242,14 @@
                 <div id="event-extra-fields" style="display: none;">
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="input-event-type">Event Placement</label>
+                            <label for="input-event-type">Item Classification</label>
                             <select id="input-event-type" class="form-control" style="background:#111; color:#fff; border:1px solid #333; height: 42px;">
-                                <option value="sub_event" selected>🎯 Sub-Event inside a Series (e.g. inside ELEVATE)</option>
-                                <option value="main_event">🌟 Main Event / Series (shows on Events page)</option>
+                                <option value="sub_event" selected>🎮 Game / Competition (conducted under an event)</option>
+                                <option value="main_event">🏆 Main Event (e.g. ELEVATE, TECHSPARK)</option>
                             </select>
                         </div>
                         <div class="form-group" id="group-parent-event">
-                            <label for="input-parent-event">Parent Series / Fest Name</label>
+                            <label for="input-parent-event">Conducted Under Event</label>
                             <input type="text" id="input-parent-event" class="form-control" placeholder="e.g. ELEVATE" value="ELEVATE">
                         </div>
                     </div>

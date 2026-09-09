@@ -401,10 +401,6 @@ function initAdminCMS() {
 
         if (type === 'events') {
             if (eventExtraFields) eventExtraFields.style.display = 'block';
-            titleEl.textContent = isEdit ? 'Edit Event Details' : 'Create New Event';
-            labelName.textContent = 'Event Title';
-            inputName.placeholder = 'e.g. ELEVATE 2026';
-            inputName.required = true;
             groupRole.style.display = 'block';
             labelRole.textContent = 'Subtitle / Tagline (Optional)';
             inputRole.placeholder = 'e.g. Inter-College Flagship Tech Fest';
@@ -424,13 +420,28 @@ function initAdminCMS() {
             const aboutInput = document.getElementById('input-event-about');
             const rulesInput = document.getElementById('input-event-rules');
 
+            const isMain = isEdit
+                ? (itemToEdit.eventType === 'main_event' || (!itemToEdit.parentEvent && (itemToEdit.category || '').toLowerCase() === 'session'))
+                : false;
+
+            if (isMain) {
+                titleEl.textContent = isEdit ? 'Edit Event Details' : 'Create New Event';
+                labelName.textContent = 'Event Name';
+                inputName.placeholder = 'e.g. ELEVATE';
+                if (groupParent) groupParent.style.display = 'none';
+            } else {
+                titleEl.textContent = isEdit ? 'Edit Game / Competition' : 'Add Game / Competition';
+                labelName.textContent = 'Game / Competition Name';
+                inputName.placeholder = 'e.g. BGMI, Tech Hunt, Web-Designing';
+                if (groupParent) groupParent.style.display = 'block';
+            }
+
+            inputName.required = true;
+
             if (isEdit) {
-                const isMain = itemToEdit.eventType === 'main_event' || (!itemToEdit.parentEvent && (itemToEdit.category || '').toLowerCase() === 'session');
                 if (typeInput) typeInput.value = isMain ? 'main_event' : 'sub_event';
                 if (parentInput) parentInput.value = itemToEdit.parentEvent || (isMain ? '' : 'ELEVATE');
-                if (groupParent) groupParent.style.display = isMain ? 'none' : 'block';
-
-                if (catInput) catInput.value = itemToEdit.category || 'General';
+                if (catInput) catInput.value = itemToEdit.category || (isMain ? 'Fest' : 'Competition');
                 if (statusInput) statusInput.value = (itemToEdit.status || 'OPEN').toUpperCase();
                 if (dateInput) dateInput.value = itemToEdit.date || '';
                 if (timeInput) timeInput.value = itemToEdit.time || '';
@@ -443,7 +454,7 @@ function initAdminCMS() {
             } else {
                 if (typeInput) typeInput.value = 'sub_event';
                 if (parentInput) parentInput.value = 'ELEVATE';
-                if (groupParent) groupParent.style.display = 'block';
+                if (catInput) catInput.value = 'Competition';
                 if (statusInput) statusInput.value = 'OPEN';
             }
         } else {
@@ -518,8 +529,22 @@ function initAdminCMS() {
 
     document.getElementById('input-event-type')?.addEventListener('change', (e) => {
         const groupParent = document.getElementById('group-parent-event');
-        if (groupParent) {
-            groupParent.style.display = e.target.value === 'main_event' ? 'none' : 'block';
+        const titleEl = document.getElementById('modal-title');
+        const labelName = document.getElementById('label-name-title');
+        const inputName = document.getElementById('input-name-title');
+        const editId = document.getElementById('cms-id')?.value;
+        const isEdit = Boolean(editId);
+
+        if (e.target.value === 'main_event') {
+            if (groupParent) groupParent.style.display = 'none';
+            if (titleEl) titleEl.textContent = isEdit ? 'Edit Event Details' : 'Create New Event';
+            if (labelName) labelName.textContent = 'Event Name';
+            if (inputName) inputName.placeholder = 'e.g. ELEVATE';
+        } else {
+            if (groupParent) groupParent.style.display = 'block';
+            if (titleEl) titleEl.textContent = isEdit ? 'Edit Game / Competition' : 'Add Game / Competition';
+            if (labelName) labelName.textContent = 'Game / Competition Name';
+            if (inputName) inputName.placeholder = 'e.g. BGMI, Tech Hunt, Web-Designing';
         }
     });
 
@@ -916,7 +941,7 @@ function renderEventsGrid() {
     if (countBadge) countBadge.textContent = `${filtered.length} items`;
 
     if (!filtered || filtered.length === 0) {
-        grid.innerHTML = '<div class="empty-state"><i class="fas fa-calendar-times"></i><p>No events found for this filter. Click "+ Create New Event" to add one!</p></div>';
+        grid.innerHTML = '<div class="empty-state"><i class="fas fa-calendar-times"></i><p>No items found for this filter. Click "+ Add Event / Game" to add one!</p></div>';
         return;
     }
 
@@ -927,8 +952,8 @@ function renderEventsGrid() {
 
         const isMain = evt.eventType === 'main_event' || (!evt.parentEvent && (evt.category || '').toLowerCase() === 'session');
         const placementBadge = isMain
-            ? `<span class="card-badge-placement main"><i class="fas fa-star"></i> Main Event (events.html)</span>`
-            : `<span class="card-badge-placement sub"><i class="fas fa-level-down-alt"></i> Inside ${escapeHtml(evt.parentEvent || 'ELEVATE')} (elevate.html)</span>`;
+            ? `<span class="card-badge-placement main"><i class="fas fa-trophy"></i> Main Event</span>`
+            : `<span class="card-badge-placement sub"><i class="fas fa-gamepad"></i> Game under ${escapeHtml(evt.parentEvent || 'ELEVATE')}</span>`;
 
         return `
         <div class="admin-card">
