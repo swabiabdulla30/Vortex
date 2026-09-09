@@ -676,7 +676,120 @@ async function loadDynamicGalleryData() {
     }
 }
 
+async function loadDynamicEventsData() {
+    const eventsSectionGrid = document.querySelector('#events .cards-grid');
+    const elevateSectionGrid = document.querySelector('#code-red-events .cards-grid');
+
+    if (!eventsSectionGrid && !elevateSectionGrid) return;
+
+    try {
+        const res = await fetch('/api/events');
+        if (!res.ok) return;
+        const events = await res.json();
+        if (!Array.isArray(events) || events.length === 0) return;
+
+        // Render on events.html (#events .cards-grid)
+        if (eventsSectionGrid) {
+            const sessionEvents = events.filter(e => (e.category || '').toLowerCase() === 'session');
+            const displayEvents = sessionEvents.length > 0 ? sessionEvents : events;
+
+            eventsSectionGrid.innerHTML = displayEvents.map(evt => {
+                const isClosed = (evt.status || 'OPEN').toUpperCase() === 'CLOSED';
+                const statusClass = isClosed ? 'status-soon' : 'status-active';
+                const statusText = isClosed ? 'REGISTRATION CLOSED' : '&#9679; REGISTRATION OPEN';
+                const dateParts = parseEventDate(evt.date);
+                
+                // If title is ELEVATE, link to elevate.html, otherwise link to registration
+                const isElevate = evt.title.trim().toUpperCase() === 'ELEVATE';
+                const linkHref = isElevate ? 'elevate.html' : `event_registration.html?event=${encodeURIComponent(evt.title)}`;
+
+                return `
+                <a href="${linkHref}" class="card event-card" style="text-decoration: none; color: inherit; cursor: pointer;">
+                    <div class="card-status ${statusClass}">${statusText}</div>
+                    <div class="card-image">
+                        <img src="${evt.imageUrl || 'https://via.placeholder.com/400x250?text=Event'}"
+                            alt="${evt.title}" loading="lazy" width="400" height="250"
+                            onerror="this.src='https://via.placeholder.com/400x250?text=Event';">
+                    </div>
+                    <div class="card-content">
+                        <div class="date-badge">
+                            <span class="month">${dateParts.month}</span>
+                            <span class="day">${dateParts.day}</span>
+                        </div>
+                        <div class="event-details">
+                            <span class="event-type"></span>
+                            <h3>${evt.title}</h3>
+                            <p>${evt.subtitle || evt.description || ''}</p>
+                            <div class="card-footer">
+                                <span class="location">📍 ${evt.venue || 'KMCT IETM'}</span>
+                                <span class="arrow">↗</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                `;
+            }).join('');
+        }
+
+        // Render on elevate.html (#code-red-events .cards-grid)
+        if (elevateSectionGrid) {
+            const compEvents = events.filter(e => (e.category || '').toLowerCase() !== 'session');
+            const displayEvents = compEvents.length > 0 ? compEvents : events;
+
+            elevateSectionGrid.innerHTML = displayEvents.map(evt => {
+                const isClosed = (evt.status || 'OPEN').toUpperCase() === 'CLOSED';
+                const statusClass = isClosed ? 'status-soon' : 'status-active';
+                const statusText = isClosed ? 'REGISTRATION CLOSED' : '● REGISTRATION OPEN';
+                const dateParts = parseEventDate(evt.date);
+                const linkHref = `event_registration.html?event=${encodeURIComponent(evt.title)}`;
+
+                return `
+                <a href="${linkHref}" class="card event-card" data-event="${evt.title}" style="text-decoration: none; color: inherit; cursor: pointer;">
+                    <div class="card-status ${statusClass}">${statusText}</div>
+                    <div class="card-image">
+                        <img src="${evt.imageUrl || 'https://via.placeholder.com/400x250?text=Event'}"
+                            alt="${evt.title}" loading="lazy"
+                            onerror="this.src='https://via.placeholder.com/400x250?text=Event';">
+                    </div>
+                    <div class="card-content">
+                        <div class="date-badge">
+                            <span class="month">${dateParts.month}</span>
+                            <span class="day">${dateParts.day}</span>
+                        </div>
+                        <div class="event-details">
+                            <span class="event-type"></span>
+                            <h3>${evt.title}</h3>
+                            <p>${evt.subtitle || evt.description || ''}</p>
+                            <div class="card-footer">
+                                <span class="location"><i class="fas fa-map-marker-alt"></i> ${evt.venue || 'KMCT IETM'}</span>
+                                ${evt.prize ? `<span class="prize-badge"><i class="fas fa-trophy" style="color: gold;"></i> ${evt.prize}</span>` : ''}
+                                <span class="arrow">→</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                `;
+            }).join('');
+        }
+    } catch (e) {
+        console.log("Using static events fallback:", e.message);
+    }
+}
+
+function parseEventDate(dateStr) {
+    if (!dateStr) return { month: 'DATE', day: 'TBA' };
+    const parts = dateStr.trim().split(/[\s,]+/);
+    if (parts.length >= 2) {
+        return {
+            month: parts[0].substring(0, 3).toUpperCase(),
+            day: parts.slice(1).join(' ')
+        };
+    }
+    return { month: 'DATE', day: dateStr };
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     loadDynamicAboutData();
     loadDynamicGalleryData();
+    loadDynamicEventsData();
 });

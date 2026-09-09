@@ -171,18 +171,38 @@ const GalleryItemSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now }
 }, { autoCreate: false });
 
+const EventSchema = new mongoose.Schema({
+    title: { type: String, required: true },
+    description: { type: String, default: "" },
+    about: { type: String, default: "" },
+    rules: { type: [String], default: [] },
+    date: { type: String, default: "" },
+    time: { type: String, default: "" },
+    venue: { type: String, default: "KMCT IETM" },
+    category: { type: String, default: "Competition" },
+    fee: { type: String, default: "Free" },
+    prize: { type: String, default: "" },
+    slots: { type: Number, default: 0 },
+    status: { type: String, default: "OPEN" },
+    imageUrl: { type: String, required: true },
+    order: { type: Number, default: 0 },
+    createdAt: { type: Date, default: Date.now }
+}, { autoCreate: false });
+
 // Force deletion of models to prevent OverwriteModelError (brute force fix for serverless)
 if (mongoose.models.User) delete mongoose.models.User;
 if (mongoose.models.Registration) delete mongoose.models.Registration;
 if (mongoose.models.LeadMember) delete mongoose.models.LeadMember;
 if (mongoose.models.NetworkMember) delete mongoose.models.NetworkMember;
 if (mongoose.models.GalleryItem) delete mongoose.models.GalleryItem;
+if (mongoose.models.Event) delete mongoose.models.Event;
 
 const User = mongoose.model("User", UserSchema);
 const Registration = mongoose.model("Registration", RegistrationSchema);
 const LeadMember = mongoose.model("LeadMember", LeadMemberSchema);
 const NetworkMember = mongoose.model("NetworkMember", NetworkMemberSchema);
 const GalleryItem = mongoose.model("GalleryItem", GalleryItemSchema);
+const Event = mongoose.model("Event", EventSchema);
 
 // --- Seed Data Defaults ---
 const DEFAULT_LEADS = [
@@ -242,10 +262,153 @@ async function seedDefaultsIfNeeded() {
             await GalleryItem.insertMany(DEFAULT_GALLERY);
             console.log("Seeded initial gallery items.");
         }
+        const evCount = await Event.countDocuments();
+        if (evCount === 0) {
+            await Event.insertMany(DEFAULT_EVENTS);
+            console.log("Seeded initial events.");
+        }
     } catch (err) {
         console.error("Error checking/seeding defaults:", err.message);
     }
 }
+
+const DEFAULT_EVENTS = [
+    {
+        title: "ELEVATE",
+        description: "To Lift Up, Raise Higher or Improve.",
+        about: "A flagship event focusing on career development, soft skills, and industry insights from experts. Elevate yourself with knowledge, networking, and inspiration.",
+        date: "MAR 05 - 06",
+        time: "9:30 AM - 4:00 PM",
+        venue: "KMCT IETM",
+        category: "Session",
+        fee: "Free",
+        prize: "",
+        slots: 0,
+        status: "OPEN",
+        imageUrl: "https://image2url.com/r2/default/images/1771924612874-479e698d-1dfb-49ec-90d2-a203530cd141.png",
+        order: 1
+    },
+    {
+        title: "TECHSPARK",
+        description: "Igniting the next generation of innovators.",
+        about: "Introduction to ethical hacking and cybersecurity defense mechanisms. Learn how to protect systems from vulnerabilities in this hands-on workshop.",
+        date: "AUG 26",
+        time: "10:00 AM - 1:00 PM",
+        venue: "KMCT IETM",
+        category: "Session",
+        fee: "Free",
+        prize: "",
+        slots: 0,
+        status: "CLOSED",
+        imageUrl: "https://image2url.com/r2/default/images/1771924658426-b7ca4811-d7d7-4f79-b1e9-64e516259d86.jpeg",
+        order: 2
+    },
+    {
+        title: "VORTEX INNOVATORS",
+        description: "Exploring the future of Generative AI.",
+        about: "Explore the cutting-edge of Artificial Intelligence and Generative models. Understand the future of AI technology in this insightful tech talk.",
+        date: "MAR 19",
+        time: "11:00 AM - 1:00 PM",
+        venue: "KMCT IETM",
+        category: "Session",
+        fee: "Free",
+        prize: "",
+        slots: 0,
+        status: "CLOSED",
+        imageUrl: "https://image2url.com/r2/default/images/1771925799245-91e45052-89b2-48d4-98f4-5f7081da8dbe.jpeg",
+        order: 3
+    },
+    {
+        title: "BGMI",
+        description: "Together till the last circle.",
+        about: "<strong>🎮 PUBG Mobile Tournament (Livik Map)</strong><br><br><strong>📌 Tournament Details:</strong><br>Map: Livik<br>Mode: Squad (TPP)<br>Total Teams: 12<br>Total Players: 48<br>Registration Fee: ₹10 per player<br>Total Prize Pool: ₹300<br>Duration: 1.5 Hours",
+        date: "MAR 06",
+        time: "2:00PM - 3:00PM",
+        venue: "Seminar Hall",
+        category: "Competition",
+        fee: "₹10 per player",
+        prize: "₹300",
+        slots: 48,
+        status: "CLOSED",
+        imageUrl: "https://image2url.com/r2/default/images/1772176721946-d99583c6-5bb0-4e52-8e9e-781fa092d280.jpeg",
+        order: 4
+    },
+    {
+        title: "Tech Hunt",
+        description: "Hunt through the web, find the prize.",
+        about: "Tech Hunt is an exciting online puzzle challenge where participants are given a website filled with hidden clues and challenges. Players must carefully explore the website, solve puzzles, and find the correct extension or link to unlock the next level.",
+        date: "MAR 05",
+        time: "9:30AM - 11:00AM",
+        venue: "Lab",
+        category: "Competition",
+        fee: "₹10 per participant",
+        prize: "₹200",
+        slots: 0,
+        status: "CLOSED",
+        imageUrl: "https://image2url.com/r2/default/images/1771996030667-7810be98-c833-4915-9f82-6059bb4f7259.jpeg",
+        order: 5
+    },
+    {
+        title: "Web-Designing",
+        description: "Design your way to the top.",
+        about: "The Web-Designing is a creative event where participants showcase their web development and design skills within the given time.",
+        date: "MAR 05",
+        time: "11:15AM - 12:30PM",
+        venue: "Lab",
+        category: "Competition",
+        fee: "₹10 per participant",
+        prize: "₹200",
+        slots: 0,
+        status: "CLOSED",
+        imageUrl: "https://image2url.com/r2/default/images/1771995989097-15167040-638c-48cd-a3c0-e93ddb26f811.jpeg",
+        order: 6
+    },
+    {
+        title: "Co-op E-Football",
+        description: "Pass, shoot, score together.",
+        about: "The E-Football Tournament is a competitive virtual football gaming event where teams of 2 players compete in head-to-head matches.",
+        date: "MAR 06",
+        time: "11:00AM - 12:30PM",
+        venue: "Seminar Hall",
+        category: "Competition",
+        fee: "₹20 per team",
+        prize: "₹200",
+        slots: 16,
+        status: "CLOSED",
+        imageUrl: "https://image2url.com/r2/default/images/1771995899025-6821ca81-a54a-4566-b29d-4fab70571c09.jpeg",
+        order: 7
+    },
+    {
+        title: "Tech Quiz",
+        description: "Test your tech intellect.",
+        about: "Tech Quiz is a fun team-based quiz competition for pairs (2 members per team). Test your combined knowledge across a wide range of topics.",
+        date: "MAR 05",
+        time: "1:45 PM - 3:00 PM",
+        venue: "Lab",
+        category: "Competition",
+        fee: "Free",
+        prize: "Cash Prize",
+        slots: 10,
+        status: "CLOSED",
+        imageUrl: "https://image2url.com/r2/default/images/1772440085076-0f0df1c1-a19a-4351-aa02-27f67b111fa8.jpeg",
+        order: 8
+    },
+    {
+        title: "Paper-X",
+        description: "Present your innovative ideas.",
+        about: "PAPER-X — Paper Presentation Competition. A premier academic event where participants present original research papers or concept-based presentations.",
+        date: "MAR 06",
+        time: "9:30AM - 10:30AM",
+        venue: "Seminar Hall",
+        category: "Competition",
+        fee: "Free",
+        prize: "Cash Prize",
+        slots: 0,
+        status: "CLOSED",
+        imageUrl: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80",
+        order: 9
+    }
+];
 
 // --- Middleware ---
 const authenticateToken = async (req, res, next) => {
@@ -667,6 +830,35 @@ app.get("/api/gallery", async (req, res) => {
     }
 });
 
+app.get("/api/events", async (req, res) => {
+    try {
+        await connectDB();
+        const events = await Event.find().sort({ order: 1, createdAt: 1 });
+        res.json(events);
+    } catch (error) {
+        console.error("Get events error:", error);
+        res.status(500).json({ error: "Failed to fetch events" });
+    }
+});
+
+app.get("/api/events/:id", async (req, res) => {
+    try {
+        await connectDB();
+        let event = null;
+        if (mongoose.Types.ObjectId.isValid(req.params.id)) {
+            event = await Event.findById(req.params.id);
+        }
+        if (!event) {
+            event = await Event.findOne({ title: { $regex: new RegExp(`^${req.params.id.trim()}$`, 'i') } });
+        }
+        if (!event) return res.status(404).json({ error: "Event not found" });
+        res.json(event);
+    } catch (error) {
+        console.error("Get single event error:", error);
+        res.status(500).json({ error: "Failed to fetch event" });
+    }
+});
+
 // ============================================================
 // --- Admin CMS Management Routes ---
 // ============================================================
@@ -830,6 +1022,91 @@ app.put("/api/admin/gallery/:id", authenticateToken, async (req, res) => {
     } catch (error) {
         console.error("Update gallery item error:", error);
         res.status(500).json({ error: "Failed to update gallery item" });
+    }
+});
+
+// --- Events Management ---
+app.post("/api/admin/events", authenticateToken, async (req, res) => {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: "Access denied" });
+    try {
+        await connectDB();
+        const { title, description, about, rules, date, time, venue, category, fee, prize, slots, status, imageUrl, order } = req.body;
+        if (!title || !imageUrl) return res.status(400).json({ error: "Title and Image are required" });
+
+        let parsedRules = [];
+        if (Array.isArray(rules)) {
+            parsedRules = rules;
+        } else if (typeof rules === 'string' && rules.trim()) {
+            parsedRules = rules.split('\n').map(r => r.trim()).filter(Boolean);
+        }
+
+        const newEvent = new Event({
+            title: title.trim(),
+            description: description ? description.trim() : "",
+            about: about ? about.trim() : "",
+            rules: parsedRules,
+            date: date ? date.trim() : "",
+            time: time ? time.trim() : "",
+            venue: venue ? venue.trim() : "KMCT IETM",
+            category: category || "Competition",
+            fee: fee ? fee.trim() : "Free",
+            prize: prize ? prize.trim() : "",
+            slots: slots !== undefined && slots !== "" ? Number(slots) : 0,
+            status: status ? status.toUpperCase() : "OPEN",
+            imageUrl: imageUrl.trim(),
+            order: order !== undefined && order !== "" ? Number(order) : 0
+        });
+
+        await newEvent.save();
+        res.status(201).json({ success: true, event: newEvent });
+    } catch (error) {
+        console.error("Create event error:", error);
+        res.status(500).json({ error: "Failed to create event" });
+    }
+});
+
+app.put("/api/admin/events/:id", authenticateToken, async (req, res) => {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: "Access denied" });
+    try {
+        await connectDB();
+        const { title, description, about, rules, date, time, venue, category, fee, prize, slots, status, imageUrl, order } = req.body;
+        const updateData = {};
+        if (title) updateData.title = title.trim();
+        if (description !== undefined) updateData.description = description.trim();
+        if (about !== undefined) updateData.about = about.trim();
+        if (rules !== undefined) {
+            updateData.rules = Array.isArray(rules) ? rules : rules.split('\n').map(r => r.trim()).filter(Boolean);
+        }
+        if (date !== undefined) updateData.date = date.trim();
+        if (time !== undefined) updateData.time = time.trim();
+        if (venue !== undefined) updateData.venue = venue.trim();
+        if (category !== undefined) updateData.category = category;
+        if (fee !== undefined) updateData.fee = fee.trim();
+        if (prize !== undefined) updateData.prize = prize.trim();
+        if (slots !== undefined && slots !== "") updateData.slots = Number(slots);
+        if (status !== undefined) updateData.status = status.toUpperCase();
+        if (imageUrl) updateData.imageUrl = imageUrl.trim();
+        if (order !== undefined && order !== "") updateData.order = Number(order);
+
+        const updated = await Event.findByIdAndUpdate(req.params.id, updateData, { new: true });
+        if (!updated) return res.status(404).json({ error: "Event not found" });
+        res.json({ success: true, event: updated });
+    } catch (error) {
+        console.error("Update event error:", error);
+        res.status(500).json({ error: "Failed to update event" });
+    }
+});
+
+app.delete("/api/admin/events/:id", authenticateToken, async (req, res) => {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: "Access denied" });
+    try {
+        await connectDB();
+        const deleted = await Event.findByIdAndDelete(req.params.id);
+        if (!deleted) return res.status(404).json({ error: "Event not found" });
+        res.json({ success: true, message: "Event removed successfully" });
+    } catch (error) {
+        console.error("Delete event error:", error);
+        res.status(500).json({ error: "Failed to delete event" });
     }
 });
 

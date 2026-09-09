@@ -349,6 +349,7 @@ let currentImageMode = 'upload'; // 'upload' or 'url'
 let loadedLeads = [];
 let loadedNetwork = [];
 let loadedGallery = [];
+let loadedEvents = [];
 
 function initAdminCMS() {
     // 1. Tab Switching
@@ -364,7 +365,8 @@ function initAdminCMS() {
             if (targetSec) targetSec.classList.add('active');
 
             // Load data for selected tab
-            if (targetTab === 'leads') fetchLeads();
+            if (targetTab === 'events') fetchEvents();
+            else if (targetTab === 'leads') fetchLeads();
             else if (targetTab === 'network') fetchNetwork();
             else if (targetTab === 'gallery') fetchGallery();
             else if (targetTab === 'registrations') fetchData();
@@ -388,6 +390,7 @@ function initAdminCMS() {
         const inputRole = document.getElementById('input-role');
         const inputOrder = document.getElementById('input-order');
         const submitBtn = document.getElementById('submit-cms-btn');
+        const eventExtraFields = document.getElementById('event-extra-fields');
 
         // Reset form
         cmsForm.reset();
@@ -396,38 +399,79 @@ function initAdminCMS() {
 
         const isEdit = Boolean(itemToEdit);
 
-        if (type === 'leads') {
-            titleEl.textContent = isEdit ? 'Edit Faculty / Lead Member' : 'Add Faculty / Lead Member';
-            labelName.textContent = 'Full Name';
-            inputName.placeholder = 'e.g. Dr. John Doe';
+        if (type === 'events') {
+            if (eventExtraFields) eventExtraFields.style.display = 'block';
+            titleEl.textContent = isEdit ? 'Edit Event Details' : 'Create New Event';
+            labelName.textContent = 'Event Title';
+            inputName.placeholder = 'e.g. ELEVATE 2026';
             inputName.required = true;
             groupRole.style.display = 'block';
-            labelRole.textContent = 'Role / Designation';
-            inputRole.placeholder = 'e.g. ASSISTANT PROFESSOR';
-            inputRole.required = true;
-        } else if (type === 'network') {
-            titleEl.textContent = isEdit ? 'Edit Operative Team Member' : 'Add Operative Team Member';
-            labelName.textContent = 'Full Name';
-            inputName.placeholder = 'e.g. Jane Smith';
-            inputName.required = true;
-            groupRole.style.display = 'block';
-            labelRole.textContent = 'Role';
-            inputRole.placeholder = 'e.g. Web Developer / Coordinator';
-            inputRole.required = true;
-        } else if (type === 'gallery') {
-            titleEl.textContent = isEdit ? 'Edit Gallery Moment' : 'Add Gallery Moment';
-            labelName.textContent = 'Title / Caption (Optional)';
-            inputName.placeholder = 'e.g. Hackathon Kickoff';
-            inputName.required = false;
-            groupRole.style.display = 'block';
-            labelRole.textContent = 'Description (Optional)';
-            inputRole.placeholder = 'Short description...';
+            labelRole.textContent = 'Subtitle / Tagline (Optional)';
+            inputRole.placeholder = 'e.g. Inter-College Flagship Tech Fest';
             inputRole.required = false;
+
+            if (isEdit) {
+                const catInput = document.getElementById('input-event-category');
+                const statusInput = document.getElementById('input-event-status');
+                const dateInput = document.getElementById('input-event-date');
+                const timeInput = document.getElementById('input-event-time');
+                const venueInput = document.getElementById('input-event-venue');
+                const feeInput = document.getElementById('input-event-fee');
+                const prizeInput = document.getElementById('input-event-prize');
+                const slotsInput = document.getElementById('input-event-slots');
+                const aboutInput = document.getElementById('input-event-about');
+                const rulesInput = document.getElementById('input-event-rules');
+
+                if (catInput) catInput.value = itemToEdit.category || 'General';
+                if (statusInput) statusInput.value = (itemToEdit.status || 'OPEN').toUpperCase();
+                if (dateInput) dateInput.value = itemToEdit.date || '';
+                if (timeInput) timeInput.value = itemToEdit.time || '';
+                if (venueInput) venueInput.value = itemToEdit.venue || '';
+                if (feeInput) feeInput.value = itemToEdit.fee || 'Free';
+                if (prizeInput) prizeInput.value = itemToEdit.prize || '';
+                if (slotsInput) slotsInput.value = itemToEdit.slots || '';
+                if (aboutInput) aboutInput.value = itemToEdit.about || '';
+                if (rulesInput) rulesInput.value = Array.isArray(itemToEdit.rules) ? itemToEdit.rules.join('\n') : '';
+            } else {
+                const statusInput = document.getElementById('input-event-status');
+                if (statusInput) statusInput.value = 'OPEN';
+            }
+        } else {
+            if (eventExtraFields) eventExtraFields.style.display = 'none';
+
+            if (type === 'leads') {
+                titleEl.textContent = isEdit ? 'Edit Faculty / Lead Member' : 'Add Faculty / Lead Member';
+                labelName.textContent = 'Full Name';
+                inputName.placeholder = 'e.g. Dr. John Doe';
+                inputName.required = true;
+                groupRole.style.display = 'block';
+                labelRole.textContent = 'Role / Designation';
+                inputRole.placeholder = 'e.g. ASSISTANT PROFESSOR';
+                inputRole.required = true;
+            } else if (type === 'network') {
+                titleEl.textContent = isEdit ? 'Edit Operative Team Member' : 'Add Operative Team Member';
+                labelName.textContent = 'Full Name';
+                inputName.placeholder = 'e.g. Jane Smith';
+                inputName.required = true;
+                groupRole.style.display = 'block';
+                labelRole.textContent = 'Role';
+                inputRole.placeholder = 'e.g. Web Developer / Coordinator';
+                inputRole.required = true;
+            } else if (type === 'gallery') {
+                titleEl.textContent = isEdit ? 'Edit Gallery Moment' : 'Add Gallery Moment';
+                labelName.textContent = 'Title / Caption (Optional)';
+                inputName.placeholder = 'e.g. Hackathon Kickoff';
+                inputName.required = false;
+                groupRole.style.display = 'block';
+                labelRole.textContent = 'Description (Optional)';
+                inputRole.placeholder = 'Short description...';
+                inputRole.required = false;
+            }
         }
 
         if (isEdit) {
-            inputName.value = itemToEdit.name || itemToEdit.title || '';
-            inputRole.value = itemToEdit.role || itemToEdit.description || '';
+            inputName.value = itemToEdit.title || itemToEdit.name || '';
+            inputRole.value = itemToEdit.subtitle || itemToEdit.role || itemToEdit.description || '';
             inputOrder.value = itemToEdit.order !== undefined ? itemToEdit.order : 0;
             submitBtn.innerHTML = '<i class="fas fa-save"></i> Update Changes';
 
@@ -457,6 +501,7 @@ function initAdminCMS() {
         if (e.target === modal) closeModal();
     });
 
+    document.getElementById('open-add-event-btn')?.addEventListener('click', () => openModal('events'));
     document.getElementById('open-add-lead-btn')?.addEventListener('click', () => openModal('leads'));
     document.getElementById('open-add-network-btn')?.addEventListener('click', () => openModal('network'));
     document.getElementById('open-add-gallery-btn')?.addEventListener('click', () => openModal('gallery'));
@@ -569,7 +614,25 @@ function initAdminCMS() {
 
         try {
             let payload = {};
-            if (type === 'leads' || type === 'network') {
+            if (type === 'events') {
+                const rulesRaw = document.getElementById('input-event-rules')?.value || '';
+                const rulesArray = rulesRaw.split('\n').map(r => r.trim()).filter(r => r.length > 0);
+                payload = {
+                    title: nameOrTitle,
+                    subtitle: roleOrDesc,
+                    category: document.getElementById('input-event-category')?.value.trim() || 'General',
+                    status: (document.getElementById('input-event-status')?.value || 'OPEN').toUpperCase(),
+                    date: document.getElementById('input-event-date')?.value.trim() || '',
+                    time: document.getElementById('input-event-time')?.value.trim() || '',
+                    venue: document.getElementById('input-event-venue')?.value.trim() || '',
+                    fee: document.getElementById('input-event-fee')?.value.trim() || 'Free',
+                    prize: document.getElementById('input-event-prize')?.value.trim() || '',
+                    slots: document.getElementById('input-event-slots')?.value.trim() || '',
+                    about: document.getElementById('input-event-about')?.value.trim() || '',
+                    rules: rulesArray,
+                    order: orderVal ? Number(orderVal) : 0
+                };
+            } else if (type === 'leads' || type === 'network') {
                 payload = {
                     name: nameOrTitle,
                     role: roleOrDesc,
@@ -607,7 +670,8 @@ function initAdminCMS() {
             alert(isEdit ? 'Updated successfully!' : 'Added successfully!');
             closeModal();
 
-            if (type === 'leads') fetchLeads();
+            if (type === 'events') fetchEvents();
+            else if (type === 'leads') fetchLeads();
             else if (type === 'network') fetchNetwork();
             else if (type === 'gallery') fetchGallery();
 
@@ -628,7 +692,8 @@ function initAdminCMS() {
             const id = editBtn.getAttribute('data-id');
             const type = editBtn.getAttribute('data-type');
             let item = null;
-            if (type === 'leads') item = loadedLeads.find(x => x._id === id);
+            if (type === 'events') item = loadedEvents.find(x => x._id === id);
+            else if (type === 'leads') item = loadedLeads.find(x => x._id === id);
             else if (type === 'network') item = loadedNetwork.find(x => x._id === id);
             else if (type === 'gallery') item = loadedGallery.find(x => x._id === id);
 
@@ -669,7 +734,8 @@ function initAdminCMS() {
             if (!res.ok) throw new Error(data.error || 'Failed to delete');
 
             // Refresh view
-            if (type === 'leads') fetchLeads();
+            if (type === 'events') fetchEvents();
+            else if (type === 'leads') fetchLeads();
             else if (type === 'network') fetchNetwork();
             else if (type === 'gallery') fetchGallery();
 
@@ -805,6 +871,69 @@ async function fetchGallery() {
     } catch (err) {
         console.error('Error fetching gallery:', err);
         grid.innerHTML = `<div class="empty-state" style="color:red;"><p>Error loading gallery: ${err.message}</p></div>`;
+    }
+}
+
+// Fetch and Render Events
+async function fetchEvents() {
+    const grid = document.getElementById('events-grid');
+    const countBadge = document.getElementById('events-count');
+    try {
+        const res = await fetch('/api/events');
+        const events = await res.json();
+        loadedEvents = Array.isArray(events) ? events : [];
+        if (countBadge) countBadge.textContent = `${loadedEvents.length} items`;
+
+        if (!loadedEvents || loadedEvents.length === 0) {
+            grid.innerHTML = '<div class="empty-state"><i class="fas fa-calendar-times"></i><p>No events found. Click "+ Create New Event" to add one!</p></div>';
+            return;
+        }
+
+        grid.innerHTML = loadedEvents.map(evt => {
+            const isClosed = (evt.status || 'OPEN').toUpperCase() === 'CLOSED';
+            const statusClass = isClosed ? 'closed' : 'open';
+            const statusText = isClosed ? 'CLOSED' : 'OPEN';
+
+            return `
+            <div class="admin-card">
+                <div class="card-thumb-container">
+                    <img src="${evt.imageUrl || 'https://via.placeholder.com/400x200?text=Event+Banner'}" alt="${escapeHtml(evt.title)}" onerror="this.src='https://via.placeholder.com/400x200?text=Event+Banner';">
+                </div>
+                <div class="card-body">
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+                            <h3 style="margin: 0;">${escapeHtml(evt.title)}</h3>
+                            <span class="card-badge-status ${statusClass}">${statusText}</span>
+                        </div>
+                        ${evt.subtitle ? `<div class="card-subtitle">${escapeHtml(evt.subtitle)}</div>` : ''}
+                        
+                        <div class="card-meta-row">
+                            ${evt.category ? `<span class="card-meta-item"><i class="fas fa-tag"></i> ${escapeHtml(evt.category)}</span>` : ''}
+                            ${evt.date ? `<span class="card-meta-item"><i class="fas fa-calendar-alt"></i> ${escapeHtml(evt.date)}</span>` : ''}
+                            ${evt.time ? `<span class="card-meta-item"><i class="fas fa-clock"></i> ${escapeHtml(evt.time)}</span>` : ''}
+                            ${evt.venue ? `<span class="card-meta-item"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(evt.venue)}</span>` : ''}
+                            ${evt.fee ? `<span class="card-meta-item"><i class="fas fa-ticket-alt"></i> ${escapeHtml(evt.fee)}</span>` : ''}
+                            ${evt.prize ? `<span class="card-meta-item"><i class="fas fa-trophy"></i> ${escapeHtml(evt.prize)}</span>` : ''}
+                            ${evt.slots ? `<span class="card-meta-item"><i class="fas fa-users"></i> ${escapeHtml(evt.slots)}</span>` : ''}
+                        </div>
+
+                        ${evt.about ? `<p class="card-desc" style="-webkit-line-clamp: 2;">${escapeHtml(evt.about)}</p>` : ''}
+                    </div>
+                    <div class="card-actions">
+                        <button class="card-edit-btn" data-type="events" data-id="${evt._id}">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="card-delete-btn" data-type="events" data-id="${evt._id}" data-name="${escapeHtml(evt.title)}">
+                            <i class="fas fa-trash"></i> Remove
+                        </button>
+                    </div>
+                </div>
+            </div>
+            `;
+        }).join('');
+    } catch (err) {
+        console.error('Error fetching events:', err);
+        grid.innerHTML = `<div class="empty-state" style="color:red;"><p>Error loading events: ${err.message}</p></div>`;
     }
 }
 

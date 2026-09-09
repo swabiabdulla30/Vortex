@@ -239,6 +239,59 @@
     transition: transform 0.4s ease;
 }
 
+.card-badge-status {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    z-index: 2;
+}
+
+.card-badge-status.open {
+    background: rgba(0, 255, 136, 0.85);
+    color: #000;
+}
+
+.card-badge-status.closed {
+    background: rgba(255, 42, 75, 0.85);
+    color: #fff;
+}
+
+.card-meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
+    font-size: 0.78rem;
+    color: #aaa;
+}
+
+.card-meta-item {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 3px 6px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+@media (max-width: 500px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
 .admin-card:hover .card-thumb-container img {
     transform: scale(1.05);
 }

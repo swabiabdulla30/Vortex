@@ -860,6 +860,105 @@
                     }
                 }
 
+                // Dynamic live event sync from API (for admin-created/edited events)
+                fetch('/api/events')
+                    .then(r => r.json())
+                    .then(events => {
+                        if (!Array.isArray(events)) return;
+                        const match = events.find(e => e.title && e.title.trim().toUpperCase() === cleanName.toUpperCase());
+                        if (match) {
+                            if (match.imageUrl) {
+                                const img = document.getElementById('reg-event-img');
+                                if (img) { img.src = match.imageUrl; img.alt = match.title; }
+                            }
+                            if (match.date) {
+                                const datePill = document.getElementById('reg-date-pill');
+                                if (datePill) datePill.innerHTML = `<i class="fas fa-calendar"></i> ${match.date}`;
+                            }
+                            if (match.venue) {
+                                const venuePill = document.getElementById('reg-venue-pill');
+                                if (venuePill) venuePill.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${match.venue}`;
+                            }
+                            if (match.time) {
+                                const timePill = document.getElementById('reg-time-pill');
+                                if (timePill) {
+                                    timePill.innerHTML = `<i class="fas fa-clock"></i> ${match.time}`;
+                                    timePill.style.display = 'inline-flex';
+                                }
+                            }
+                            const feeBanner = document.getElementById('reg-fee-banner');
+                            const feeAmount = document.getElementById('reg-fee-amount');
+                            if (feeBanner && feeAmount) {
+                                if (match.fee && match.fee.toLowerCase() !== 'free') {
+                                    feeBanner.style.display = 'flex';
+                                    feeBanner.className = 'reg-fee-banner';
+                                    feeAmount.textContent = match.fee;
+                                } else {
+                                    feeBanner.style.display = 'flex';
+                                    feeBanner.className = 'reg-fee-banner free-entry';
+                                    feeAmount.textContent = 'FREE';
+                                }
+                            }
+                            if (match.about) {
+                                const aboutEl = document.getElementById('reg-about-text');
+                                if (aboutEl) aboutEl.innerHTML = match.about;
+                            }
+                            if (Array.isArray(match.rules) && match.rules.length > 0) {
+                                const rulesList = document.getElementById('reg-rules-list');
+                                if (rulesList) rulesList.innerHTML = match.rules.map(r => `<li>${r}</li>`).join('');
+                            }
+
+                            // Dynamic status check
+                            const isLiveClosed = (match.status || 'OPEN').toUpperCase() === 'CLOSED';
+                            if (isLiveClosed) {
+                                if (isAdmin) {
+                                    if (heroBadge) {
+                                        heroBadge.textContent = '● CLOSED (ADMIN OPEN)';
+                                        heroBadge.style.background = 'rgba(0, 150, 60, 0.85)';
+                                        heroBadge.style.borderColor = 'rgba(0, 255, 100, 0.4)';
+                                    }
+                                    if (countEl) {
+                                        countEl.textContent = 'CLOSED (ADMIN OPEN)';
+                                        countEl.style.color = '#00e05a';
+                                    }
+                                    if (submitBtn) {
+                                        submitBtn.disabled = false;
+                                        submitBtn.innerHTML = '<i class="fas fa-lock-open"></i> &nbsp;REGISTER (ADMIN BYPASS)';
+                                    }
+                                } else {
+                                    if (heroBadge) {
+                                        heroBadge.textContent = 'REGISTRATION CLOSED';
+                                        heroBadge.style.background = 'rgba(139, 0, 0, 0.85)';
+                                        heroBadge.style.borderColor = 'rgba(255, 80, 80, 0.4)';
+                                    }
+                                    if (countEl) {
+                                        countEl.textContent = 'CLOSED';
+                                        countEl.style.color = '#ff4444';
+                                    }
+                                    if (submitBtn) {
+                                        submitBtn.disabled = true;
+                                        submitBtn.textContent = '🚫 Registration Closed';
+                                    }
+                                }
+                            } else {
+                                if (heroBadge) {
+                                    heroBadge.textContent = '● REGISTRATION OPEN';
+                                    heroBadge.style.background = 'rgba(0, 150, 60, 0.85)';
+                                    heroBadge.style.borderColor = 'rgba(0, 255, 100, 0.4)';
+                                }
+                                if (countEl && countEl.textContent === 'CLOSED') {
+                                    countEl.textContent = 'OPEN';
+                                    countEl.style.color = '#00e05a';
+                                }
+                                if (submitBtn && submitBtn.disabled) {
+                                    submitBtn.disabled = false;
+                                    submitBtn.innerHTML = '<i class="fas fa-lock"></i> &nbsp;SECURE MY SPOT';
+                                }
+                            }
+                        }
+                    })
+                    .catch(err => console.log('Live event sync skipped:', err.message));
+
                 // Slot bar – fetch from API
                 const API_URL = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost')
                     ? 'http://127.0.0.1:5000/api' : '/api';
