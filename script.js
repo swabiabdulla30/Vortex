@@ -572,3 +572,111 @@ document.addEventListener('click', (e) => {
         }
     }
 });
+
+// ============================================================
+// --- Dynamic CMS Loaders for Public Pages ---
+// ============================================================
+
+async function loadDynamicAboutData() {
+    const leadsWrapper = document.querySelector('.leads-wrapper');
+    const networkRow = document.querySelector('.network-row');
+
+    if (leadsWrapper) {
+        try {
+            const res = await fetch('/api/leads');
+            if (res.ok) {
+                const leads = await res.json();
+                if (Array.isArray(leads) && leads.length > 0) {
+                    leadsWrapper.innerHTML = leads.map(lead => `
+                        <div class="lead-slide">
+                            <div class="member-card main">
+                                <div class="frame">
+                                    <div class="member-image">
+                                        <img src="${lead.imageUrl}" alt="${lead.name}" loading="lazy">
+                                    </div>
+                                </div>
+                                <div class="member-info">
+                                    <h3>${lead.name}</h3>
+                                    <p>${lead.role || 'ASSISTANT PROFESSOR'}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    // Reset initial slider active state
+                    const currentSlides = leadsWrapper.querySelectorAll('.lead-slide');
+                    currentSlides.forEach(s => s.classList.remove('active'));
+                    const activeIndex = window.innerWidth <= 768 ? 0 : 1;
+                    if (currentSlides[activeIndex]) currentSlides[activeIndex].classList.add('active');
+                }
+            }
+        } catch (e) {
+            console.log("Using static leads fallback:", e.message);
+        }
+    }
+
+    if (networkRow) {
+        try {
+            const res = await fetch('/api/network');
+            if (res.ok) {
+                const members = await res.json();
+                if (Array.isArray(members) && members.length > 0) {
+                    networkRow.innerHTML = members.map((m, idx) => `
+                        <div class="mini-card ${idx === 0 ? 'active' : ''}">
+                            <img src="${m.imageUrl}" alt="${m.name}" loading="lazy">
+                            <div class="name-popup">
+                                <span class="name">${m.name}</span>
+                                <span class="role">${m.role || 'Member'}</span>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }
+        } catch (e) {
+            console.log("Using static network fallback:", e.message);
+        }
+    }
+}
+
+async function loadDynamicGalleryData() {
+    const slideContainer = document.querySelector('.gallery-container .slide');
+    const galleryGrid = document.querySelector('.gallery-grid');
+
+    if (slideContainer || galleryGrid) {
+        try {
+            const res = await fetch('/api/gallery');
+            if (res.ok) {
+                const items = await res.json();
+                if (Array.isArray(items) && items.length > 0) {
+                    if (slideContainer) {
+                        slideContainer.innerHTML = items.map(item => `
+                            <div class="item">
+                                <img src="${item.imageUrl}" alt="${item.title || 'Moments'}" loading="lazy" class="slider-img">
+                                <div class="content">
+                                    <div class="name">${item.title || ''}</div>
+                                    <div class="des">${item.description || ''}</div>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+
+                    if (galleryGrid) {
+                        galleryGrid.innerHTML = items.map(item => `
+                            <div class="gallery-item">
+                                <img src="${item.imageUrl}" alt="${item.title || 'Moments'}" loading="lazy">
+                                <div class="overlay"></div>
+                            </div>
+                        `).join('');
+                    }
+                }
+            }
+        } catch (e) {
+            console.log("Using static gallery fallback:", e.message);
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadDynamicAboutData();
+    loadDynamicGalleryData();
+});

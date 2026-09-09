@@ -335,4 +335,422 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // Initialize CMS Management Tabs & Modals
+    initAdminCMS();
 });
+
+// ============================================================
+// --- Admin CMS Functionality (Leads, Network, Gallery) ---
+// ============================================================
+
+let currentImageBase64 = '';
+let currentImageMode = 'upload'; // 'upload' or 'url'
+
+function initAdminCMS() {
+    // 1. Tab Switching
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const targetTab = btn.getAttribute('data-tab');
+            tabBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            document.querySelectorAll('.admin-section').forEach(sec => sec.classList.remove('active'));
+            const targetSec = document.getElementById(`section-${targetTab}`);
+            if (targetSec) targetSec.classList.add('active');
+
+            // Load data for selected tab
+            if (targetTab === 'leads') fetchLeads();
+            else if (targetTab === 'network') fetchNetwork();
+            else if (targetTab === 'gallery') fetchGallery();
+            else if (targetTab === 'registrations') fetchData();
+        });
+    });
+
+    // 2. Modal Setup
+    const modal = document.getElementById('cms-modal');
+    const closeModalBtn = document.getElementById('close-modal');
+    const cancelModalBtn = document.getElementById('cancel-modal-btn');
+    const cmsForm = document.getElementById('cms-form');
+
+    function openModal(type) {
+        document.getElementById('cms-type').value = type;
+        const titleEl = document.getElementById('modal-title');
+        const labelName = document.getElementById('label-name-title');
+        const inputName = document.getElementById('input-name-title');
+        const groupRole = document.getElementById('group-role');
+        const labelRole = document.getElementById('label-role');
+        const inputRole = document.getElementById('input-role');
+
+        // Reset form
+        cmsForm.reset();
+        currentImageBase64 = '';
+        setImageMode('upload');
+        resetImagePreview();
+
+        if (type === 'leads') {
+            titleEl.textContent = 'Add Faculty / Lead Member';
+            labelName.textContent = 'Full Name';
+            inputName.placeholder = 'e.g. Dr. John Doe';
+            inputName.required = true;
+            groupRole.style.display = 'block';
+            labelRole.textContent = 'Role / Designation';
+            inputRole.placeholder = 'e.g. ASSISTANT PROFESSOR';
+            inputRole.required = true;
+        } else if (type === 'network') {
+            titleEl.textContent = 'Add Operative Team Member';
+            labelName.textContent = 'Full Name';
+            inputName.placeholder = 'e.g. Jane Smith';
+            inputName.required = true;
+            groupRole.style.display = 'block';
+            labelRole.textContent = 'Role';
+            inputRole.placeholder = 'e.g. Web Developer / Coordinator';
+            inputRole.required = true;
+        } else if (type === 'gallery') {
+            titleEl.textContent = 'Add Gallery Moment';
+            labelName.textContent = 'Title / Caption (Optional)';
+            inputName.placeholder = 'e.g. Hackathon Kickoff';
+            inputName.required = false;
+            groupRole.style.display = 'block';
+            labelRole.textContent = 'Description (Optional)';
+            inputRole.placeholder = 'Short description...';
+            inputRole.required = false;
+        }
+
+        modal.classList.add('active');
+    }
+
+    function closeModal() {
+        modal.classList.remove('active');
+    }
+
+    if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
+    if (cancelModalBtn) cancelModalBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+
+    document.getElementById('open-add-lead-btn')?.addEventListener('click', () => openModal('leads'));
+    document.getElementById('open-add-network-btn')?.addEventListener('click', () => openModal('network'));
+    document.getElementById('open-add-gallery-btn')?.addEventListener('click', () => openModal('gallery'));
+
+    // 3. Image mode toggles
+    const tabUpload = document.getElementById('tab-upload');
+    const tabUrl = document.getElementById('tab-url');
+    const uploadMode = document.getElementById('image-upload-mode');
+    const urlMode = document.getElementById('image-url-mode');
+    const inputFile = document.getElementById('input-file');
+    const inputUrl = document.getElementById('input-url');
+
+    function setImageMode(mode) {
+        currentImageMode = mode;
+        if (mode === 'upload') {
+            tabUpload.classList.add('active');
+            tabUrl.classList.remove('active');
+            uploadMode.style.display = 'block';
+            urlMode.style.display = 'none';
+        } else {
+            tabUrl.classList.add('active');
+            tabUpload.classList.remove('active');
+            urlMode.style.display = 'block';
+            uploadMode.style.display = 'none';
+        }
+    }
+
+    tabUpload.addEventListener('click', () => setImageMode('upload'));
+    tabUrl.addEventListener('click', () => setImageMode('url'));
+
+    function resetImagePreview() {
+        const preview = document.getElementById('image-preview');
+        const placeholder = document.getElementById('preview-placeholder');
+        preview.src = '';
+        preview.style.display = 'none';
+        placeholder.style.display = 'block';
+    }
+
+    function showImagePreview(src) {
+        const preview = document.getElementById('image-preview');
+        const placeholder = document.getElementById('preview-placeholder');
+        if (src) {
+            preview.src = src;
+            preview.style.display = 'block';
+            placeholder.style.display = 'none';
+        } else {
+            resetImagePreview();
+        }
+    }
+
+    // File input preview
+    inputFile.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            if (file.size > 8 * 1024 * 1024) {
+                alert('File size too large. Please select an image under 8MB.');
+                inputFile.value = '';
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                currentImageBase64 = event.target.result;
+                showImagePreview(currentImageBase64);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            currentImageBase64 = '';
+            resetImagePreview();
+        }
+    });
+
+    // URL input preview
+    inputUrl.addEventListener('input', (e) => {
+        showImagePreview(e.target.value.trim());
+    });
+
+    // 4. Form Submission
+    cmsForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const type = document.getElementById('cms-type').value;
+        const token = localStorage.getItem('vortexToken');
+        if (!token) {
+            alert('Session expired. Please log in.');
+            window.location.href = '/login.html';
+            return;
+        }
+
+        const nameOrTitle = document.getElementById('input-name-title').value.trim();
+        const roleOrDesc = document.getElementById('input-role').value.trim();
+        const orderVal = document.getElementById('input-order').value;
+
+        let imageUrl = '';
+        if (currentImageMode === 'upload') {
+            imageUrl = currentImageBase64;
+        } else {
+            imageUrl = inputUrl.value.trim();
+        }
+
+        if (!imageUrl) {
+            alert('Please select an image file or enter an image URL.');
+            return;
+        }
+
+        const submitBtn = document.getElementById('submit-cms-btn');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+        try {
+            let payload = {};
+            if (type === 'leads' || type === 'network') {
+                payload = {
+                    name: nameOrTitle,
+                    role: roleOrDesc,
+                    imageUrl: imageUrl,
+                    order: orderVal ? Number(orderVal) : 0
+                };
+            } else if (type === 'gallery') {
+                payload = {
+                    title: nameOrTitle,
+                    description: roleOrDesc,
+                    imageUrl: imageUrl,
+                    order: orderVal ? Number(orderVal) : 0
+                };
+            }
+
+            const res = await fetch(`/api/admin/${type}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await res.json();
+            if (!res.ok) {
+                throw new Error(data.error || 'Failed to save item');
+            }
+
+            alert('Added successfully!');
+            closeModal();
+
+            if (type === 'leads') fetchLeads();
+            else if (type === 'network') fetchNetwork();
+            else if (type === 'gallery') fetchGallery();
+
+        } catch (err) {
+            console.error('Error saving item:', err);
+            alert('Error: ' + err.message);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-check"></i> Save to Website';
+        }
+    });
+
+    // 5. Delete Delegation
+    document.addEventListener('click', async (e) => {
+        const delBtn = e.target.closest('.card-delete-btn');
+        if (!delBtn) return;
+
+        const id = delBtn.getAttribute('data-id');
+        const type = delBtn.getAttribute('data-type');
+        const name = delBtn.getAttribute('data-name') || 'this item';
+
+        if (!confirm(`Are you sure you want to remove "${name}" from the website?`)) {
+            return;
+        }
+
+        const token = localStorage.getItem('vortexToken');
+        if (!token) {
+            alert('Session expired. Please log in.');
+            return;
+        }
+
+        try {
+            delBtn.disabled = true;
+            delBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+            const res = await fetch(`/api/admin/${type}/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Failed to delete');
+
+            // Refresh view
+            if (type === 'leads') fetchLeads();
+            else if (type === 'network') fetchNetwork();
+            else if (type === 'gallery') fetchGallery();
+
+        } catch (err) {
+            console.error('Delete error:', err);
+            alert('Error deleting item: ' + err.message);
+            delBtn.disabled = false;
+            delBtn.innerHTML = '<i class="fas fa-trash"></i> Remove';
+        }
+    });
+}
+
+// Fetch and Render Leads
+async function fetchLeads() {
+    const grid = document.getElementById('leads-grid');
+    const countBadge = document.getElementById('leads-count');
+    try {
+        const res = await fetch('/api/leads');
+        const leads = await res.json();
+        countBadge.textContent = `${leads.length} items`;
+
+        if (!leads || leads.length === 0) {
+            grid.innerHTML = '<div class="empty-state"><i class="fas fa-user-slash"></i><p>No faculty/lead members found. Click "+ Add Lead Member" to add one!</p></div>';
+            return;
+        }
+
+        grid.innerHTML = leads.map(lead => `
+            <div class="admin-card">
+                <div class="card-thumb-container">
+                    <img src="${lead.imageUrl}" alt="${escapeHtml(lead.name)}" onerror="this.src='https://via.placeholder.com/300x300?text=No+Image';">
+                </div>
+                <div class="card-body">
+                    <div>
+                        <h3>${escapeHtml(lead.name)}</h3>
+                        <div class="card-subtitle">${escapeHtml(lead.role || '')}</div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="card-delete-btn" data-type="leads" data-id="${lead._id}" data-name="${escapeHtml(lead.name)}">
+                            <i class="fas fa-trash"></i> Remove
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    } catch (err) {
+        console.error('Error fetching leads:', err);
+        grid.innerHTML = `<div class="empty-state" style="color:red;"><p>Error loading leads: ${err.message}</p></div>`;
+    }
+}
+
+// Fetch and Render Operative Network
+async function fetchNetwork() {
+    const grid = document.getElementById('network-grid');
+    const countBadge = document.getElementById('network-count');
+    try {
+        const res = await fetch('/api/network');
+        const members = await res.json();
+        countBadge.textContent = `${members.length} items`;
+
+        if (!members || members.length === 0) {
+            grid.innerHTML = '<div class="empty-state"><i class="fas fa-users-slash"></i><p>No team members found. Click "+ Add Team Member" to add one!</p></div>';
+            return;
+        }
+
+        grid.innerHTML = members.map(m => `
+            <div class="admin-card">
+                <div class="card-thumb-container">
+                    <img src="${m.imageUrl}" alt="${escapeHtml(m.name)}" onerror="this.src='https://via.placeholder.com/300x300?text=No+Image';">
+                </div>
+                <div class="card-body">
+                    <div>
+                        <h3>${escapeHtml(m.name)}</h3>
+                        <div class="card-subtitle">${escapeHtml(m.role || '')}</div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="card-delete-btn" data-type="network" data-id="${m._id}" data-name="${escapeHtml(m.name)}">
+                            <i class="fas fa-trash"></i> Remove
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    } catch (err) {
+        console.error('Error fetching network:', err);
+        grid.innerHTML = `<div class="empty-state" style="color:red;"><p>Error loading network: ${err.message}</p></div>`;
+    }
+}
+
+// Fetch and Render Gallery Items
+async function fetchGallery() {
+    const grid = document.getElementById('gallery-grid');
+    const countBadge = document.getElementById('gallery-count');
+    try {
+        const res = await fetch('/api/gallery');
+        const items = await res.json();
+        countBadge.textContent = `${items.length} items`;
+
+        if (!items || items.length === 0) {
+            grid.innerHTML = '<div class="empty-state"><i class="fas fa-images"></i><p>No gallery images found. Click "+ Add Gallery Image" to add one!</p></div>';
+            return;
+        }
+
+        grid.innerHTML = items.map(item => `
+            <div class="admin-card">
+                <div class="card-thumb-container">
+                    <img src="${item.imageUrl}" alt="${escapeHtml(item.title || 'Photo')}" onerror="this.src='https://via.placeholder.com/300x300?text=No+Image';">
+                </div>
+                <div class="card-body">
+                    <div>
+                        <h3>${escapeHtml(item.title || 'Untitled Photo')}</h3>
+                        ${item.description ? `<p class="card-desc">${escapeHtml(item.description)}</p>` : ''}
+                    </div>
+                    <div class="card-actions">
+                        <button class="card-delete-btn" data-type="gallery" data-id="${item._id}" data-name="${escapeHtml(item.title || 'this photo')}">
+                            <i class="fas fa-trash"></i> Remove
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    } catch (err) {
+        console.error('Error fetching gallery:', err);
+        grid.innerHTML = `<div class="empty-state" style="color:red;"><p>Error loading gallery: ${err.message}</p></div>`;
+    }
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}

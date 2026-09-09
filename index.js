@@ -18,7 +18,7 @@ app.use(helmet({
     contentSecurityPolicy: {
         directives: {
             "default-src": ["'self'"],
-            "img-src": ["'self'", "data:", "https://images.unsplash.com", "https://i.pravatar.cc", "https://img.sanishtech.com", "https://image2url.com"],
+            "img-src": ["'self'", "data:", "blob:", "https:"],
             "script-src": ["'self'", "'unsafe-inline'", "https://checkout.razorpay.com", "https://cdnjs.cloudflare.com"],
             "frame-src": ["https://api.razorpay.com", "https://checkout.razorpay.com"],
             "connect-src": ["'self'", "https://lumberjack.razorpay.com"]
@@ -27,7 +27,8 @@ app.use(helmet({
 })); // Security headers with custom CSP
 app.use(compression()); // Gzip compression
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
 // Rate Limiting (Prevent abuse)
 const limiter = rateLimit({
@@ -88,6 +89,7 @@ const connectDB = async () => {
             maxPoolSize: 10, // Limit connection pool for serverless environment
         });
         console.log("MongoDB Connected: Atlas (Cloud) with Pool Size 10");
+        await seedDefaultsIfNeeded();
     } catch (err) {
         console.error("MongoDB connection error:", err);
     }
@@ -145,12 +147,105 @@ const RegistrationSchema = new mongoose.Schema({
     autoCreate: false // Disable auto-creation of collection
 });
 
+const LeadMemberSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    role: { type: String, default: "ASSISTANT PROFESSOR" },
+    imageUrl: { type: String, required: true },
+    order: { type: Number, default: 0 },
+    createdAt: { type: Date, default: Date.now }
+}, { autoCreate: false });
+
+const NetworkMemberSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    role: { type: String, default: "Member" },
+    imageUrl: { type: String, required: true },
+    order: { type: Number, default: 0 },
+    createdAt: { type: Date, default: Date.now }
+}, { autoCreate: false });
+
+const GalleryItemSchema = new mongoose.Schema({
+    title: { type: String, default: "" },
+    description: { type: String, default: "" },
+    imageUrl: { type: String, required: true },
+    order: { type: Number, default: 0 },
+    createdAt: { type: Date, default: Date.now }
+}, { autoCreate: false });
+
 // Force deletion of models to prevent OverwriteModelError (brute force fix for serverless)
 if (mongoose.models.User) delete mongoose.models.User;
 if (mongoose.models.Registration) delete mongoose.models.Registration;
+if (mongoose.models.LeadMember) delete mongoose.models.LeadMember;
+if (mongoose.models.NetworkMember) delete mongoose.models.NetworkMember;
+if (mongoose.models.GalleryItem) delete mongoose.models.GalleryItem;
 
 const User = mongoose.model("User", UserSchema);
 const Registration = mongoose.model("Registration", RegistrationSchema);
+const LeadMember = mongoose.model("LeadMember", LeadMemberSchema);
+const NetworkMember = mongoose.model("NetworkMember", NetworkMemberSchema);
+const GalleryItem = mongoose.model("GalleryItem", GalleryItemSchema);
+
+// --- Seed Data Defaults ---
+const DEFAULT_LEADS = [
+    { name: "Thejas Mon P", role: "Head Of Department", imageUrl: "https://image2url.com/r2/default/images/1771389658946-0963b30b-4205-4e92-a430-30825e41dc77.jpeg", order: 1 },
+    { name: "Ashwini M", role: "ASSISTANT PROFESSOR", imageUrl: "https://image2url.com/r2/default/images/1771389280526-9f54b9cf-1120-4d9f-83f3-98479ec069a4.jpeg", order: 2 },
+    { name: "Ansha MK", role: "ASSISTANT PROFESSOR", imageUrl: "https://image2url.com/r2/default/images/1771389319263-cac79c3f-9e81-40c7-99c2-79634a44f668.jpeg", order: 3 },
+    { name: "Nihala P", role: "ASSISTANT PROFESSOR", imageUrl: "https://image2url.com/r2/default/images/1771389354242-f9dcdddb-b602-4427-ba50-d8e1e4bf3832.jpeg", order: 4 },
+    { name: "Fidha Hanna CK", role: "ASSISTANT PROFESSOR", imageUrl: "https://image2url.com/r2/default/images/1771478466879-e722060c-199b-477b-aed3-42472dcc7478.jpeg", order: 5 },
+    { name: "Anagha MS", role: "ASSISTANT PROFESSOR", imageUrl: "https://image2url.com/r2/default/images/1771389421830-e4b1eaed-dc04-4dfe-b78a-2c14f6cac37b.jpeg", order: 6 },
+    { name: "Kavitha GL", role: "ASSISTANT PROFESSOR", imageUrl: "https://image2url.com/r2/default/images/1771389456085-d4c7bc1a-1aaf-4733-871e-1e300cdd4926.jpeg", order: 7 },
+    { name: "Vaishnav", role: "ASSISTANT PROFESSOR", imageUrl: "https://image2url.com/r2/default/images/1771389492199-52868bf9-1202-4773-9815-27c1ce74a60a.jpeg", order: 8 },
+    { name: "Shibili PK", role: "ASSISTANT PROFESSOR", imageUrl: "https://image2url.com/r2/default/images/1771389531757-12b70d0d-4494-485f-a29e-1d7a204dd05f.png", order: 9 },
+    { name: "Muhammed Muhsin K", role: "ASSISTANT PROFESSOR", imageUrl: "https://image2url.com/r2/default/images/1771389570271-6e9335e4-7ef5-4a04-8872-488486def1de.jpeg", order: 10 },
+    { name: "Lal Jose", role: "ASSISTANT PROFESSOR", imageUrl: "https://image2url.com/r2/default/images/1771389627501-3700b5b7-6f1f-485e-91be-67e8742354e1.jpeg", order: 11 }
+];
+
+const DEFAULT_NETWORK = [
+    { name: "Infa Sulaika", role: "Secretary", imageUrl: "https://image2url.com/r2/default/images/1771390191128-e884acd5-06a1-485a-9e01-834416ecd88b.jpeg", order: 1 },
+    { name: "Abdulla Sabiyy", role: "Web Developer", imageUrl: "https://image2url.com/r2/default/images/1771390860933-fa6a8ffa-fc2a-47a4-baab-6580d45c5b47.jpeg", order: 2 },
+    { name: "Muhammad Dhanish KK", role: "Web Developer", imageUrl: "https://image2url.com/r2/default/images/1771784328573-34d76372-ebea-4aab-9653-b366753a1832.jpeg", order: 3 },
+    { name: "Heyden B John", role: "Codinator", imageUrl: "https://image2url.com/r2/default/images/1771912908132-7f9777aa-88d3-47b6-9fbd-e07d1730bf59.jpeg", order: 4 },
+    { name: "Nuhman", role: "Developer", imageUrl: "https://image2url.com/r2/default/images/1771911614179-be088c7f-4917-4171-8326-76ca5079bf91.jpeg", order: 5 },
+    { name: "Abdulla K", role: "Web Designer", imageUrl: "https://image2url.com/r2/default/images/1771912141381-2e90f0ab-e7f0-43b2-b5ac-8c36bf630ed6.jpeg", order: 6 }
+];
+
+const DEFAULT_GALLERY = [
+    { title: "AI Drone Swarm", description: "", imageUrl: "https://image2url.com/r2/default/images/1771569580827-4ee0ab24-a2d3-4d0d-a66a-208aba1030be.jpeg", order: 1 },
+    { title: "Project Alpha", description: "", imageUrl: "https://image2url.com/r2/default/images/1771569683076-ce6e76ec-af48-42cc-94d7-d8c619dd8a31.jpeg", order: 2 },
+    { title: "Project Beta", description: "", imageUrl: "https://image2url.com/r2/default/images/1771819617052-114d57dc-0f21-467f-b506-2833505b5450.jpeg", order: 3 },
+    { title: "Project Gamma", description: "", imageUrl: "https://image2url.com/r2/default/images/1771819688277-dc635bb1-c354-4d38-87fa-dc391326a46f.jpeg", order: 4 },
+    { title: "Cyber Security", description: "", imageUrl: "https://image2url.com/r2/default/images/1771908143354-c5d74dd0-b5c8-49f0-8f90-dd41ce49254f.jpeg", order: 5 },
+    { title: "IoT Hub", description: "", imageUrl: "https://image2url.com/r2/default/images/1771824123594-16841d17-37b0-4c20-9ad4-0ef99a9df4b0.jpeg", order: 6 },
+    { title: "Blockchain", description: "", imageUrl: "https://image2url.com/r2/default/images/1771830281432-e3e48f8b-41f2-449d-86d5-c111152c0a59.jpeg", order: 7 },
+    { title: "AR Navigation", description: "", imageUrl: "https://image2url.com/r2/default/images/1771907338001-5afd4a5a-a57d-4518-be73-68d49f2d5b12.jpeg", order: 8 },
+    { title: "Gallery Event Image 1", description: "", imageUrl: "https://image2url.com/r2/default/images/1773380215651-c30e4c82-6cbe-4bb4-bed0-2f2d39e144c5.jpeg", order: 9 },
+    { title: "Gallery Event Image 2", description: "", imageUrl: "https://image2url.com/r2/default/images/1773384921119-ae74a290-013c-4452-a559-17e9f836a7d4.jpeg", order: 10 },
+    { title: "Gallery Event Image 3", description: "", imageUrl: "https://image2url.com/r2/default/images/1773384957631-3060572f-2a84-4b75-ad39-f4fdf1e66672.jpeg", order: 11 },
+    { title: "Gallery Event Image 4", description: "", imageUrl: "https://image2url.com/r2/default/images/1773385004377-ef0f8ccd-42cc-4c1e-af9a-83efa242dd6a.jpeg", order: 12 },
+    { title: "Gallery Event Image 5", description: "", imageUrl: "https://image2url.com/r2/default/images/1773385079047-85d90ff2-863e-4c7c-98ad-6b5785dd9c5d.jpeg", order: 13 },
+    { title: "Gallery Event Image 6", description: "", imageUrl: "https://image2url.com/r2/default/images/1773385220981-ed136415-8cf5-4f62-8172-f49514949c02.jpeg", order: 14 }
+];
+
+async function seedDefaultsIfNeeded() {
+    try {
+        const leadCount = await LeadMember.countDocuments();
+        if (leadCount === 0) {
+            await LeadMember.insertMany(DEFAULT_LEADS);
+            console.log("Seeded initial lead members.");
+        }
+        const netCount = await NetworkMember.countDocuments();
+        if (netCount === 0) {
+            await NetworkMember.insertMany(DEFAULT_NETWORK);
+            console.log("Seeded initial network members.");
+        }
+        const galCount = await GalleryItem.countDocuments();
+        if (galCount === 0) {
+            await GalleryItem.insertMany(DEFAULT_GALLERY);
+            console.log("Seeded initial gallery items.");
+        }
+    } catch (err) {
+        console.error("Error checking/seeding defaults:", err.message);
+    }
+}
 
 // --- Middleware ---
 const authenticateToken = async (req, res, next) => {
@@ -533,6 +628,148 @@ app.delete("/api/admin/registrations", authenticateToken, async (req, res) => {
     } catch (error) {
         console.error("Delete All error:", error);
         res.status(500).json({ error: "Delete All failed" });
+    }
+});
+
+// ============================================================
+// --- Public Dynamic CMS Routes ---
+// ============================================================
+app.get("/api/leads", async (req, res) => {
+    try {
+        await connectDB();
+        const leads = await LeadMember.find().sort({ order: 1, createdAt: 1 });
+        res.json(leads);
+    } catch (error) {
+        console.error("Get leads error:", error);
+        res.status(500).json({ error: "Failed to fetch leads" });
+    }
+});
+
+app.get("/api/network", async (req, res) => {
+    try {
+        await connectDB();
+        const members = await NetworkMember.find().sort({ order: 1, createdAt: 1 });
+        res.json(members);
+    } catch (error) {
+        console.error("Get network error:", error);
+        res.status(500).json({ error: "Failed to fetch network members" });
+    }
+});
+
+app.get("/api/gallery", async (req, res) => {
+    try {
+        await connectDB();
+        const items = await GalleryItem.find().sort({ order: 1, createdAt: 1 });
+        res.json(items);
+    } catch (error) {
+        console.error("Get gallery error:", error);
+        res.status(500).json({ error: "Failed to fetch gallery items" });
+    }
+});
+
+// ============================================================
+// --- Admin CMS Management Routes ---
+// ============================================================
+
+// --- Leads / Faculty Slider ---
+app.post("/api/admin/leads", authenticateToken, async (req, res) => {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: "Access denied" });
+    try {
+        await connectDB();
+        const { name, role, imageUrl, order } = req.body;
+        if (!name || !imageUrl) return res.status(400).json({ error: "Name and image are required" });
+        const lead = new LeadMember({
+            name: name.trim(),
+            role: role ? role.trim() : "ASSISTANT PROFESSOR",
+            imageUrl: imageUrl.trim(),
+            order: order !== undefined && order !== "" ? Number(order) : 0
+        });
+        await lead.save();
+        res.status(201).json({ success: true, lead });
+    } catch (error) {
+        console.error("Create lead error:", error);
+        res.status(500).json({ error: "Failed to create lead member" });
+    }
+});
+
+app.delete("/api/admin/leads/:id", authenticateToken, async (req, res) => {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: "Access denied" });
+    try {
+        await connectDB();
+        const deleted = await LeadMember.findByIdAndDelete(req.params.id);
+        if (!deleted) return res.status(404).json({ error: "Lead member not found" });
+        res.json({ success: true, message: "Lead member removed successfully" });
+    } catch (error) {
+        console.error("Delete lead error:", error);
+        res.status(500).json({ error: "Failed to delete lead member" });
+    }
+});
+
+// --- Operative Network Team ---
+app.post("/api/admin/network", authenticateToken, async (req, res) => {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: "Access denied" });
+    try {
+        await connectDB();
+        const { name, role, imageUrl, order } = req.body;
+        if (!name || !imageUrl) return res.status(400).json({ error: "Name and image are required" });
+        const member = new NetworkMember({
+            name: name.trim(),
+            role: role ? role.trim() : "Member",
+            imageUrl: imageUrl.trim(),
+            order: order !== undefined && order !== "" ? Number(order) : 0
+        });
+        await member.save();
+        res.status(201).json({ success: true, member });
+    } catch (error) {
+        console.error("Create network member error:", error);
+        res.status(500).json({ error: "Failed to create network member" });
+    }
+});
+
+app.delete("/api/admin/network/:id", authenticateToken, async (req, res) => {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: "Access denied" });
+    try {
+        await connectDB();
+        const deleted = await NetworkMember.findByIdAndDelete(req.params.id);
+        if (!deleted) return res.status(404).json({ error: "Network member not found" });
+        res.json({ success: true, message: "Network member removed successfully" });
+    } catch (error) {
+        console.error("Delete network member error:", error);
+        res.status(500).json({ error: "Failed to delete network member" });
+    }
+});
+
+// --- Gallery Moments & Photos ---
+app.post("/api/admin/gallery", authenticateToken, async (req, res) => {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: "Access denied" });
+    try {
+        await connectDB();
+        const { title, description, imageUrl, order } = req.body;
+        if (!imageUrl) return res.status(400).json({ error: "Image is required" });
+        const item = new GalleryItem({
+            title: title ? title.trim() : "",
+            description: description ? description.trim() : "",
+            imageUrl: imageUrl.trim(),
+            order: order !== undefined && order !== "" ? Number(order) : 0
+        });
+        await item.save();
+        res.status(201).json({ success: true, item });
+    } catch (error) {
+        console.error("Create gallery item error:", error);
+        res.status(500).json({ error: "Failed to create gallery item" });
+    }
+});
+
+app.delete("/api/admin/gallery/:id", authenticateToken, async (req, res) => {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: "Access denied" });
+    try {
+        await connectDB();
+        const deleted = await GalleryItem.findByIdAndDelete(req.params.id);
+        if (!deleted) return res.status(404).json({ error: "Gallery item not found" });
+        res.json({ success: true, message: "Gallery item removed successfully" });
+    } catch (error) {
+        console.error("Delete gallery error:", error);
+        res.status(500).json({ error: "Failed to delete gallery item" });
     }
 });
 
