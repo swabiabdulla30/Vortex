@@ -147,10 +147,8 @@ const RegistrationSchema = new mongoose.Schema({
     teammatePhone: String,
     certificateStatus: { type: String, default: "Pending" },
     certificateId: { type: String, default: null },
-    certificatePath: { type: String, default: null },
     certificateIssuedAt: { type: Date, default: null },
-    certificateError: { type: String, default: null },
-    certificatePdf: { type: String, default: null } // Base64 PDF storage for serverless
+    certificateError: { type: String, default: null }
 }, {
     autoCreate: false // Disable auto-creation of collection
 });
@@ -855,21 +853,25 @@ app.post("/api/admin/approve-certificate", authenticateToken, async (req, res) =
             verifyUrl
         });
 
-        // 3. Update database record
+        // 3. Update database record (Do NOT store PDF in MongoDB)
         const finalStatus = emailResult.success ? "Certificate Sent" : "Failed";
         registration.certificateStatus = finalStatus;
         registration.certificateId = certResult.certificateId;
-        registration.certificatePath = certResult.filePath;
-        registration.certificatePdf = certResult.pdfBase64;
         registration.certificateIssuedAt = new Date();
         registration.certificateError = emailResult.success ? null : emailResult.error;
         await registration.save();
 
+        if (!emailResult.success) {
+            return res.status(502).json({
+                success: false,
+                error: `Email delivery failed: ${emailResult.error}`,
+                certificateId: certResult.certificateId
+            });
+        }
+
         res.json({
-            success: emailResult.success,
-            message: emailResult.success
-                ? `Certificate ${certResult.certificateId} generated and delivered successfully.`
-                : `Certificate generated, but email delivery failed: ${emailResult.error}`,
+            success: true,
+            message: `Certificate ${certResult.certificateId} generated and delivered successfully to ${registration.email}.`,
             registration: {
                 ticketId: registration.ticketId,
                 name: registration.name,
@@ -877,8 +879,7 @@ app.post("/api/admin/approve-certificate", authenticateToken, async (req, res) =
                 event: registration.event,
                 certificateStatus: registration.certificateStatus,
                 certificateId: registration.certificateId,
-                certificateIssuedAt: registration.certificateIssuedAt,
-                certificateError: registration.certificateError
+                certificateIssuedAt: registration.certificateIssuedAt
             },
             emailResult
         });
@@ -942,10 +943,9 @@ app.post("/api/admin/bulk-approve-certificates", authenticateToken, async (req, 
                     verifyUrl
                 });
 
+                // Do NOT store PDF in MongoDB
                 registration.certificateStatus = emailResult.success ? "Certificate Sent" : "Failed";
                 registration.certificateId = certResult.certificateId;
-                registration.certificatePath = certResult.filePath;
-                registration.certificatePdf = certResult.pdfBase64;
                 registration.certificateIssuedAt = new Date();
                 registration.certificateError = emailResult.success ? null : emailResult.error;
                 await registration.save();
@@ -992,20 +992,7 @@ app.get("/api/certificate/download/:ticketId", async (req, res) => {
         const safeStudentName = (registration.name || 'Participant').replace(/[^a-zA-Z0-9_-]/g, '_');
         const filename = `Certificate-${safeStudentName}-${registration.certificateId}.pdf`;
 
-        // 1. Direct from MongoDB base64 buffer (100% reliable across serverless lambdas)
-        if (registration.certificatePdf) {
-            const pdfBuffer = Buffer.from(registration.certificatePdf, 'base64');
-            res.setHeader('Content-Type', 'application/pdf');
-            res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-            return res.send(pdfBuffer);
-        }
-
-        // 2. Check cached file on disk if exists
-        if (registration.certificatePath && fs.existsSync(registration.certificatePath)) {
-            return res.download(registration.certificatePath, filename);
-        }
-
-        // 3. Re-generate dynamically in-memory if missing
+        // Generate dynamically on-the-fly in-memory (not stored in MongoDB)
         const protocol = req.headers['x-forwarded-proto'] || req.protocol;
         const host = req.get('host');
         const baseUrl = `${protocol}://${host}`;
@@ -1018,10 +1005,6 @@ app.get("/api/certificate/download/:ticketId", async (req, res) => {
             certificateId: registration.certificateId,
             baseUrl
         });
-
-        // Cache in DB for instant downloads next time
-        registration.certificatePdf = certRes.pdfBase64;
-        await registration.save().catch(e => console.warn("Save PDF to DB warning:", e.message));
 
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);

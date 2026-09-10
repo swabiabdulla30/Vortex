@@ -3,27 +3,51 @@ const nodemailer = require("nodemailer");
 
 /**
  * Creates and returns a nodemailer transporter based on environment variables.
+ * Supports standard SMTP_* as well as EMAIL_* and GMAIL_* naming conventions.
  */
 function getTransporter() {
-    const host = process.env.SMTP_HOST;
-    const user = process.env.SMTP_USER;
-    const pass = process.env.SMTP_PASS;
-    const port = parseInt(process.env.SMTP_PORT || "587", 10);
+    const user = (process.env.SMTP_USER || process.env.EMAIL_USER || process.env.GMAIL_USER || process.env.MAIL_USER || "").trim();
+    const pass = (process.env.SMTP_PASS || process.env.EMAIL_PASS || process.env.GMAIL_PASS || process.env.MAIL_PASS || process.env.EMAIL_PASSWORD || process.env.SMTP_PASSWORD || "").trim();
+    let host = (process.env.SMTP_HOST || process.env.EMAIL_HOST || process.env.MAIL_HOST || "").trim();
+    const port = parseInt(process.env.SMTP_PORT || process.env.EMAIL_PORT || "587", 10);
     const secure = process.env.SMTP_SECURE === "true" || port === 465;
 
-    if (!host || !user || !pass) {
-        return null; // Signals unconfigured SMTP -> fallback/simulation mode
+    if (!user || !pass) {
+        return { transporter: null, user, pass, host, error: "Missing email username or password in environment variables (expected SMTP_USER & SMTP_PASS, or EMAIL_USER & EMAIL_PASS)" };
     }
 
-    return nodemailer.createTransport({
-        host,
-        port,
-        secure,
-        auth: { user, pass },
-        tls: {
-            rejectUnauthorized: false // Avoid self-signed cert issues in dev
-        }
-    });
+    // Auto-detect Gmail to use Nodemailer's built-in Gmail service (bypasses serverless port blocks)
+    const isGmail = host === "smtp.gmail.com" || user.toLowerCase().endsWith("@gmail.com") || process.env.SMTP_SERVICE === "gmail";
+    if (isGmail) {
+        return {
+            transporter: nodemailer.createTransport({
+                service: "gmail",
+                auth: { user, pass }
+            }),
+            user,
+            pass,
+            host: "smtp.gmail.com"
+        };
+    }
+
+    if (!host) {
+        return { transporter: null, user, pass, host, error: "Missing SMTP_HOST in environment variables" };
+    }
+
+    return {
+        transporter: nodemailer.createTransport({
+            host,
+            port,
+            secure,
+            auth: { user, pass },
+            tls: {
+                rejectUnauthorized: false
+            }
+        }),
+        user,
+        pass,
+        host
+    };
 }
 
 /**
@@ -36,15 +60,26 @@ function getTransporter() {
  * @param {string} params.certificateId - Unique certificate ID
  * @param {Buffer} params.pdfBuffer - The binary PDF buffer
  * @param {string} [params.verifyUrl] - Verification URL
- * @returns {Promise<{ success: boolean, messageId?: string, simulated?: boolean, error?: string }>}
+ * @returns {Promise<{ success: boolean, messageId?: string, error?: string }>}
  */
 async function sendCertificateEmail({ to, studentName, eventName, certificateId, pdfBuffer, verifyUrl }) {
-    if (!to || !to.includes("@")) {
-        return { success: false, error: "Invalid recipient email address" };
+    const cleanTo = (to || "").trim();
+    if (!cleanTo || !cleanTo.includes("@")) {
+        return { success: false, error: `Invalid recipient email address: "${to}"` };
     }
 
-    const transporter = getTransporter();
-    const fromAddress = process.env.EMAIL_FROM || '"Vortex Innovators" <noreply@vortexinnovators.com>';
+    const { transporter, user, error: transporterError } = getTransporter();
+
+    if (!transporter) {
+        console.error(`[EMAIL_SERVICE] Cannot send email: ${transporterError}`);
+        return {
+            success: false,
+            error: transporterError || "SMTP credentials not configured on server"
+        };
+    }
+
+    // Default sender: use authenticated user to prevent SMTP providers (like Gmail) from rejecting unverified sender
+    const fromAddress = process.env.EMAIL_FROM || (user ? `"Vortex Innovators" <${user}>` : '"Vortex Innovators" <noreply@vortexinnovators.com>');
     const filename = `${certificateId}.pdf`;
 
     const htmlContent = `
@@ -95,20 +130,10 @@ async function sendCertificateEmail({ to, studentName, eventName, certificateId,
     </html>
     `;
 
-    // Fallback mode if SMTP credentials are not configured in environment
-    if (!transporter) {
-        console.warn(`[EMAIL_SERVICE] (DEV MODE) SMTP credentials not set in .env. Simulating email dispatch to: ${to} (Cert ID: ${certificateId})`);
-        return {
-            success: true,
-            simulated: true,
-            message: `Email delivery simulated (configure SMTP_HOST, SMTP_USER, SMTP_PASS in .env for real emails). Recipient: ${to}`
-        };
-    }
-
     try {
         const info = await transporter.sendMail({
             from: fromAddress,
-            to,
+            to: cleanTo,
             subject: `Official Certificate: ${eventName} - ${studentName} [${certificateId}]`,
             text: `Dear ${studentName},\n\nCongratulations! Your certificate for ${eventName} (ID: ${certificateId}) has been issued and is attached.\n\nBest regards,\nVortex Innovators Team`,
             html: htmlContent,
@@ -121,10 +146,10 @@ async function sendCertificateEmail({ to, studentName, eventName, certificateId,
             ]
         });
 
-        console.log(`[EMAIL_SERVICE] Certificate email successfully sent to ${to}:`, info.messageId);
+        console.log(`[EMAIL_SERVICE] Certificate email successfully sent to ${cleanTo}:`, info.messageId);
         return { success: true, messageId: info.messageId };
     } catch (error) {
-        console.error(`[EMAIL_SERVICE] Failed to send certificate email to ${to}:`, error.message);
+        console.error(`[EMAIL_SERVICE] Failed to send certificate email to ${cleanTo}:`, error.message);
         return { success: false, error: error.message };
     }
 }

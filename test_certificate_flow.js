@@ -28,7 +28,6 @@ const RegistrationSchema = new mongoose.Schema({
     teammatePhone: String,
     certificateStatus: { type: String, default: "Pending" },
     certificateId: { type: String, default: null },
-    certificatePath: { type: String, default: null },
     certificateIssuedAt: { type: Date, default: null },
     certificateError: { type: String, default: null }
 });
@@ -102,7 +101,6 @@ async function runTest() {
     // Update Student Record
     testStudent.certificateStatus = emailResult.success ? "Certificate Sent" : "Failed";
     testStudent.certificateId = certResult.certificateId;
-    testStudent.certificatePath = certResult.filePath;
     testStudent.certificateIssuedAt = new Date();
     await testStudent.save();
     console.log(`6. Student record updated. New status: "${testStudent.certificateStatus}", ID: ${testStudent.certificateId}`);
