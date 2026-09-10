@@ -746,6 +746,21 @@
     <script src="tech_bg_mobile.js"></script>
     <script src="script.js"></script>
     <script>
+        function isEventFeeFree(feeStr) {
+            if (!feeStr) return true;
+            const clean = feeStr.toString().trim().toLowerCase();
+            if (clean === '' || clean === 'free' || clean === '0' || clean === '₹0' || clean === 'inr 0' || clean === 'none' || clean === 'nil') {
+                return true;
+            }
+            const digits = clean.replace(/[^0-9]/g, '');
+            if (digits && parseInt(digits, 10) > 0) {
+                return false;
+            }
+            return true;
+        }
+
+        window.currentEventIsFree = true;
+
         document.addEventListener('DOMContentLoaded', function () {
             // Auto-fill User Data
             const userStr = localStorage.getItem('vortexCurrentUser');
@@ -768,6 +783,8 @@
                 const details = (typeof eventDetails !== 'undefined') ? eventDetails[cleanName.toUpperCase()] || eventDetails[cleanName] : null;
 
                 if (details) {
+                    window.currentEventIsFree = isEventFeeFree(details.fee);
+
                     // Hero image
                     const img = document.getElementById('reg-event-img');
                     img.src = details.image || '';
@@ -787,7 +804,7 @@
                     const feeBanner = document.getElementById('reg-fee-banner');
                     const feeAmount = document.getElementById('reg-fee-amount');
 
-                    if (details.fee && details.fee.toLowerCase() !== 'free') {
+                    if (!window.currentEventIsFree) {
                         feeBanner.style.display = 'flex';
                         feeBanner.className = 'reg-fee-banner';
                         feeAmount.textContent = details.fee;
@@ -888,8 +905,9 @@
                             }
                             const feeBanner = document.getElementById('reg-fee-banner');
                             const feeAmount = document.getElementById('reg-fee-amount');
+                            window.currentEventIsFree = isEventFeeFree(match.fee);
                             if (feeBanner && feeAmount) {
-                                if (match.fee && match.fee.toLowerCase() !== 'free') {
+                                if (!window.currentEventIsFree) {
                                     feeBanner.style.display = 'flex';
                                     feeBanner.className = 'reg-fee-banner';
                                     feeAmount.textContent = match.fee;
@@ -1080,9 +1098,33 @@
             }
 
             try {
-                // --- FREE EVENT BYPASS (no Razorpay) ---
-                const isFreeEvent = eventData.event.toUpperCase() === 'TECH QUIZ'
-                    || eventData.event.toUpperCase() === 'PAPER-X';
+                // --- DYNAMIC FREE EVENT BYPASS (no Razorpay) ---
+                let isFreeEvent = window.currentEventIsFree;
+
+                // Fallback check if currentEventIsFree wasn't initialized
+                if (isFreeEvent === undefined) {
+                    const cleanName = eventData.event.trim().toUpperCase();
+                    if (cleanName === 'TECH QUIZ' || cleanName === 'PAPER-X') {
+                        isFreeEvent = true;
+                    } else if (typeof eventDetails !== 'undefined' && (eventDetails[cleanName] || eventDetails[eventData.event])) {
+                        const ed = eventDetails[cleanName] || eventDetails[eventData.event];
+                        isFreeEvent = isEventFeeFree(ed.fee);
+                    }
+                }
+
+                // If still undetermined, check live API before opening payment
+                if (isFreeEvent === undefined) {
+                    try {
+                        const evCheck = await fetch(`/api/events/${encodeURIComponent(eventData.event.trim())}`);
+                        if (evCheck.ok) {
+                            const evData = await evCheck.json();
+                            isFreeEvent = isEventFeeFree(evData.fee);
+                        }
+                    } catch (e) {
+                        console.warn('Fee check error:', e);
+                    }
+                }
+
                 if (isFreeEvent) {
                     const freeRes = await fetch('/api/free-register', {
                         method: 'POST',
@@ -1112,7 +1154,29 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ ticketId, type: 'event', eventName: eventData.event })
                 });
-                if (!orderRes.ok) throw new Error('Failed to create payment order.');
+
+                if (!orderRes.ok) {
+                    const errData = await orderRes.json().catch(() => ({}));
+                    if (errData.isFree) {
+                        // Event is free according to backend; register directly
+                        const freeRes = await fetch('/api/free-register', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(eventData)
+                        });
+                        const freeData = await freeRes.json();
+                        if (freeData.success) {
+                            sessionStorage.setItem('regName', eventData.name);
+                            sessionStorage.setItem('regEvent', eventData.event);
+                            sessionStorage.setItem('regDept', eventData.department);
+                            sessionStorage.setItem('regId', freeData.ticketId);
+                            sessionStorage.setItem('regTeammate', eventData.teammateName || '');
+                            window.location.href = 'registration_success.html';
+                            return;
+                        }
+                    }
+                    throw new Error(errData.error || 'Failed to create payment order.');
+                }
                 const order = await orderRes.json();
 
                 const options = {

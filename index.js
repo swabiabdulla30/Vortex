@@ -594,9 +594,26 @@ app.post("/api/create-order", async (req, res) => {
         let amount = 59000; // Default Membership: 590.00 INR (in paise)
 
         if (type === 'event') {
-            const eventNameUpper = req.body.eventName ? req.body.eventName.toUpperCase() : '';
+            await connectDB();
+            const eventName = req.body.eventName || '';
+            const eventNameUpper = eventName.toUpperCase().trim();
 
-            if (eventNameUpper.includes('CO-OP E-FOOTBALL')) {
+            // 1. Check if event is registered dynamically in MongoDB
+            const dbEvent = await Event.findOne({
+                title: { $regex: new RegExp(`^${eventName.trim()}$`, 'i') }
+            });
+
+            if (dbEvent) {
+                const feeStr = (dbEvent.fee || '').toLowerCase().trim();
+                const digits = feeStr.replace(/[^0-9]/g, '');
+                const isFree = !feeStr || feeStr === 'free' || feeStr === '0' || feeStr === '₹0' || (digits === '' || parseInt(digits, 10) === 0);
+                if (isFree) {
+                    return res.status(400).json({ error: "This event is free. Payment order is not required.", isFree: true });
+                }
+                amount = parseInt(digits, 10) * 100; // Convert Rupees to Paise
+            } else if (eventNameUpper.includes('TECH QUIZ') || eventNameUpper.includes('PAPER-X')) {
+                return res.status(400).json({ error: "This event is free. Payment order is not required.", isFree: true });
+            } else if (eventNameUpper.includes('CO-OP E-FOOTBALL')) {
                 amount = 2000; // 20 INR
             } else if (eventNameUpper.includes('BGMI') ||
                 eventNameUpper.includes('TECH HUNT') ||
