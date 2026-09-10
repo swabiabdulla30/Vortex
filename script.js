@@ -677,6 +677,11 @@ async function loadDynamicGalleryData() {
 }
 
 async function loadDynamicEventsData() {
+    // Delegate to dedicated controllers on events.html and elevate.html if present
+    if (document.getElementById('admin-main-events-bar') || document.getElementById('admin-subevents-bar')) {
+        return;
+    }
+
     const eventsSectionGrid = document.querySelector('#events .cards-grid');
     const elevateSectionGrid = document.querySelector('#code-red-events .cards-grid');
 

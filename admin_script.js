@@ -928,6 +928,7 @@ async function fetchGallery() {
 // Fetch and Render Events
 function renderEventsGrid() {
     const grid = document.getElementById('events-grid');
+    if (!grid) return;
     const countBadge = document.getElementById('events-count');
     const filter = document.getElementById('event-placement-filter')?.value || 'all';
 
@@ -997,6 +998,7 @@ function renderEventsGrid() {
 
 async function fetchEvents() {
     const grid = document.getElementById('events-grid');
+    if (!grid) return;
     try {
         const res = await fetch('/api/events');
         const events = await res.json();

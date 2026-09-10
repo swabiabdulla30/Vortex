@@ -32,6 +32,7 @@
             </div>
             <div class="nav-links">
                 <a href="/" class="nav-item">Home</a>
+                <a href="/events.html" class="nav-item" style="color: #00ff88; font-weight: bold;"><i class="fas fa-calendar-alt"></i> Manage Events &rarr;</a>
                 <a href="/about.html" class="nav-item" target="_blank">View About</a>
                 <a href="/gallery.html" class="nav-item" target="_blank">View Gallery</a>
                 <a href="#" id="logout-btn">Logout</a>
@@ -44,9 +45,6 @@
         <div class="admin-tabs">
             <button class="tab-btn active" data-tab="registrations">
                 <i class="fas fa-clipboard-list"></i> Registrations
-            </button>
-            <button class="tab-btn" data-tab="events">
-                <i class="fas fa-calendar-alt"></i> Events
             </button>
             <button class="tab-btn" data-tab="leads">
                 <i class="fas fa-chalkboard-teacher"></i> Faculty & Leads Slider
@@ -161,36 +159,9 @@
                 </div>
             </div>
         </div>
-
-        <!-- Section 5: Manage Events & Games -->
-        <div id="section-events" class="admin-section">
-            <div class="section-top-bar">
-                <h2>
-                    <i class="fas fa-calendar-alt" style="color:#ffaa00;"></i>
-                    Events &amp; Games
-                    <span id="events-count" class="item-count-badge">0 items</span>
-                </h2>
-                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                    <select id="event-placement-filter" class="action-btn" style="background: #222; color: #fff; border: 1px solid #444; height: 38px; border-radius: 6px; padding: 0 10px; font-size: 0.85rem;">
-                        <option value="all">📁 All Events &amp; Games</option>
-                        <option value="main_event">🏆 Main Events (e.g. ELEVATE)</option>
-                        <option value="sub_event">🎮 Games / Competitions</option>
-                    </select>
-                    <button class="add-btn" id="open-add-event-btn">
-                        <i class="fas fa-plus"></i> Add Event / Game
-                    </button>
-                </div>
-            </div>
-            <div id="events-grid" class="admin-items-grid">
-                <div class="empty-state">
-                    <i class="fas fa-spinner fa-spin"></i>
-                    <p>Loading events &amp; games...</p>
-                </div>
-            </div>
-        </div>
     </div>
 
-    <!-- Reusable Modal for Adding Items (Leads, Team, Gallery, Events) -->
+    <!-- Reusable Modal for Adding Items (Leads, Team, Gallery) -->
     <div id="cms-modal" class="modal-overlay">
         <div class="modal-box">
             <div class="modal-header">
@@ -235,80 +206,6 @@
                     <div class="preview-box" id="preview-box">
                         <img id="image-preview" src="" alt="Preview" style="display: none;">
                         <span id="preview-placeholder"><i class="fas fa-image"></i> No image selected</span>
-                    </div>
-                </div>
-
-                <!-- Event Specific Fields (Shown only when type === 'events') -->
-                <div id="event-extra-fields" style="display: none;">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="input-event-type">Item Classification</label>
-                            <select id="input-event-type" class="form-control" style="background:#111; color:#fff; border:1px solid #333; height: 42px;">
-                                <option value="sub_event" selected>🎮 Game / Competition (conducted under an event)</option>
-                                <option value="main_event">🏆 Main Event (e.g. ELEVATE, TECHSPARK)</option>
-                            </select>
-                        </div>
-                        <div class="form-group" id="group-parent-event">
-                            <label for="input-parent-event">Conducted Under Event</label>
-                            <input type="text" id="input-parent-event" class="form-control" placeholder="e.g. ELEVATE" value="ELEVATE">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="input-event-category">Category / Tag</label>
-                            <input type="text" id="input-event-category" class="form-control" placeholder="e.g. Technical, Flagship, Gaming">
-                        </div>
-                        <div class="form-group">
-                            <label for="input-event-status">Registration Status</label>
-                            <select id="input-event-status" class="form-control" style="background:#111; color:#fff; border:1px solid #333; height: 42px;">
-                                <option value="OPEN">OPEN (Accepting entries)</option>
-                                <option value="CLOSED">CLOSED (Closed)</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="input-event-date">Event Date</label>
-                            <input type="text" id="input-event-date" class="form-control" placeholder="e.g. MARCH 25, 2026">
-                        </div>
-                        <div class="form-group">
-                            <label for="input-event-time">Event Time</label>
-                            <input type="text" id="input-event-time" class="form-control" placeholder="e.g. 09:30 AM - 12:30 PM">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="input-event-venue">Venue / Location</label>
-                            <input type="text" id="input-event-venue" class="form-control" placeholder="e.g. Seminar Hall B, Campus">
-                        </div>
-                        <div class="form-group">
-                            <label for="input-event-fee">Registration Fee</label>
-                            <input type="text" id="input-event-fee" class="form-control" placeholder="e.g. Free, ₹100 / Team, ₹50 / Head">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="input-event-prize">Prize Pool</label>
-                            <input type="text" id="input-event-prize" class="form-control" placeholder="e.g. ₹5,000 + Certificate">
-                        </div>
-                        <div class="form-group">
-                            <label for="input-event-slots">Slots / Team Size</label>
-                            <input type="text" id="input-event-slots" class="form-control" placeholder="e.g. 50 Teams, 1-4 Members">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="input-event-about">About / Description</label>
-                        <textarea id="input-event-about" class="form-control" rows="3" placeholder="Brief summary of what this event is about..."></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="input-event-rules">Rules & Guidelines (One per line)</label>
-                        <textarea id="input-event-rules" class="form-control" rows="4" placeholder="Enter each rule on a new line..."></textarea>
                     </div>
                 </div>
 

@@ -2885,3 +2885,404 @@ footer {
 .winners-badge:active {
     transform: translateY(0) scale(0.98);
 }
+
+/* ============================================================
+   ADMIN EVENT MANAGEMENT STYLES (EVENTS PAGE & INSIDE CARDS)
+   ============================================================ */
+.admin-event-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    background: linear-gradient(135deg, rgba(0, 255, 136, 0.08), rgba(0, 210, 255, 0.05));
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    border-radius: 14px;
+    padding: 16px 24px;
+    margin: 0 auto 30px auto;
+    max-width: 1200px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), inset 0 0 15px rgba(0, 255, 136, 0.05);
+    backdrop-filter: blur(10px);
+}
+
+.admin-banner-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.admin-shield-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: rgba(0, 255, 136, 0.15);
+    border: 1px solid rgba(0, 255, 136, 0.4);
+    color: #00ff88;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
+    flex-shrink: 0;
+}
+
+.admin-banner-info strong {
+    font-size: 1.05rem;
+    letter-spacing: 1px;
+    color: #00ff88;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.admin-banner-info p {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+}
+
+.admin-create-trigger-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #00ff88, #00d2ff);
+    color: #000;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+    padding: 11px 22px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
+    white-space: nowrap;
+}
+
+.admin-create-trigger-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 22px rgba(0, 255, 136, 0.5);
+    color: #000;
+}
+
+.admin-back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 10px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.admin-back-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: #00d2ff;
+    color: #00d2ff;
+}
+
+/* Add Placeholder Card in Grid */
+.card-add-placeholder {
+    border: 2px dashed rgba(0, 255, 136, 0.45) !important;
+    background: rgba(0, 255, 136, 0.02) !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 380px;
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.card-add-placeholder:hover {
+    border-color: #00ff88 !important;
+    background: rgba(0, 255, 136, 0.07) !important;
+    transform: translateY(-6px) scale(1.01) !important;
+    box-shadow: 0 12px 30px rgba(0, 255, 136, 0.2) !important;
+}
+
+.add-card-inner {
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.add-card-icon-wrap {
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    background: rgba(0, 255, 136, 0.12);
+    border: 1px solid rgba(0, 255, 136, 0.4);
+    color: #00ff88;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    margin-bottom: 6px;
+    transition: all 0.3s ease;
+}
+
+.card-add-placeholder:hover .add-card-icon-wrap {
+    background: #00ff88;
+    color: #000;
+    transform: scale(1.1) rotate(90deg);
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
+}
+
+.add-card-inner h3 {
+    font-size: 1.25rem;
+    color: #fff;
+    margin: 0;
+    letter-spacing: 0.5px;
+}
+
+.add-card-inner p {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0;
+    max-width: 260px;
+}
+
+.add-card-badge {
+    margin-top: 10px;
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 20px;
+    background: rgba(0, 255, 136, 0.15);
+    border: 1px solid rgba(0, 255, 136, 0.4);
+    color: #00ff88;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+/* Card Admin Action Bar (Edit / Delete) */
+.card-admin-bar {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: flex;
+    gap: 6px;
+    z-index: 20;
+    opacity: 0.9;
+    transition: opacity 0.2s ease;
+}
+
+.card:hover .card-admin-bar {
+    opacity: 1;
+}
+
+.card-admin-btn {
+    border: none;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(8px);
+}
+
+.card-admin-btn.edit {
+    background: rgba(0, 210, 255, 0.85);
+    color: #000;
+}
+
+.card-admin-btn.edit:hover {
+    background: #00d2ff;
+    transform: scale(1.05);
+}
+
+.card-admin-btn.delete {
+    background: rgba(255, 42, 75, 0.85);
+    color: #fff;
+}
+
+.card-admin-btn.delete:hover {
+    background: #ff2a4b;
+    transform: scale(1.05);
+}
+
+/* Modal for Event Creation on Frontend */
+.vortex-event-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.vortex-event-modal.active {
+    display: flex;
+}
+
+.vortex-modal-card {
+    background: #11141a;
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 650px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 26px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 255, 136, 0.1);
+    position: relative;
+    color: #fff;
+}
+
+.vortex-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 14px;
+}
+
+.vortex-modal-header h3 {
+    margin: 0;
+    font-size: 1.35rem;
+    color: #00ff88;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.vortex-close-modal {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 1.6rem;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s ease;
+}
+
+.vortex-close-modal:hover {
+    color: #ff2a4b;
+}
+
+.vortex-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+@media (max-width: 600px) {
+    .vortex-form-row {
+        grid-template-columns: 1fr;
+    }
+    .admin-event-banner {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+.vortex-form-group {
+    margin-bottom: 16px;
+}
+
+.vortex-form-group label {
+    display: block;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.75);
+    margin-bottom: 6px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.vortex-form-control {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: #fff;
+    font-family: inherit;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.vortex-form-control:focus {
+    outline: none;
+    border-color: #00ff88;
+    background: rgba(0, 255, 136, 0.03);
+    box-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
+}
+
+.vortex-img-preview-box {
+    margin-top: 10px;
+    width: 100%;
+    height: 140px;
+    border-radius: 8px;
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.vortex-img-preview-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.vortex-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.vortex-btn-cancel {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.vortex-btn-cancel:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.vortex-btn-submit {
+    background: linear-gradient(135deg, #00ff88, #00d2ff);
+    color: #000;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
+}
+
+.vortex-btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 255, 136, 0.5);
+}
