@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 const { PDFDocument, rgb, StandardFonts } = require('pdf-lib');
 
 /**
@@ -7,14 +8,17 @@ const { PDFDocument, rgb, StandardFonts } = require('pdf-lib');
  * Note: In pdf-lib, (0,0) is at the BOTTOM-LEFT corner.
  */
 const CONFIG = {
-    // Template paths to look for (in order of priority)
+    // Template paths to check (supports local and Vercel serverless cwd)
     templatePaths: [
         path.join(__dirname, 'templates', 'certificate-template.png'),
         path.join(__dirname, 'templates', 'certificate-template.jpg'),
         path.join(__dirname, 'templates', 'certificate-template.jpeg'),
-        path.join(__dirname, 'templates', 'certificate-template.pdf')
+        path.join(__dirname, 'templates', 'certificate-template.pdf'),
+        path.join(process.cwd(), 'templates', 'certificate-template.png'),
+        path.join(process.cwd(), 'templates', 'certificate-template.jpg'),
+        path.join(process.cwd(), 'templates', 'certificate-template.jpeg'),
+        path.join(process.cwd(), 'templates', 'certificate-template.pdf')
     ],
-    outputDir: path.join(__dirname, 'generated_certificates'),
 
     // Canvas dimensions (matches 1376x768 landscape)
     width: 1376,
@@ -71,11 +75,26 @@ const CONFIG = {
 };
 
 /**
- * Ensure output directory exists
+ * Returns a writable output directory.
+ * On serverless (Vercel/Lambda), /var/task is read-only, so os.tmpdir() (/tmp) must be used.
  */
-function ensureOutputDir() {
-    if (!fs.existsSync(CONFIG.outputDir)) {
-        fs.mkdirSync(CONFIG.outputDir, { recursive: true });
+function getOutputDir() {
+    if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NODE_ENV === 'production') {
+        return path.join(os.tmpdir(), 'generated_certificates');
+    }
+    return path.join(__dirname, 'generated_certificates');
+}
+
+/**
+ * Ensure output directory exists safely
+ */
+function ensureOutputDir(dir) {
+    try {
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+        }
+    } catch (e) {
+        console.warn(`[CERTIFICATE_SERVICE] Could not create directory ${dir}: ${e.message}`);
     }
 }
 
@@ -84,7 +103,11 @@ function ensureOutputDir() {
  */
 function getTemplatePath() {
     for (const p of CONFIG.templatePaths) {
-        if (fs.existsSync(p)) return p;
+        try {
+            if (fs.existsSync(p)) return p;
+        } catch (e) {
+            // Ignore access errors
+        }
     }
     return null;
 }
@@ -99,7 +122,9 @@ function generateCertificateId(counter) {
 }
 
 /**
- * Generates a certificate PDF for a student
+ * Generates a certificate PDF for a student.
+ * Designed to be 100% serverless-safe (never fails if filesystem is read-only).
+ *
  * @param {Object} studentData
  * @param {string} studentData.name - Full name of student
  * @param {string} studentData.event - Event / Course title
@@ -108,14 +133,15 @@ function generateCertificateId(counter) {
  * @param {Date|string} [studentData.date] - Issue date
  * @param {string} [studentData.certificateId] - Existing or custom cert ID
  * @param {string} [studentData.baseUrl] - Base URL for verification link
- * @returns {Promise<{ certificateId: string, filePath: string, fileName: string, pdfBuffer: Buffer }>}
+ * @returns {Promise<{ certificateId: string, filePath: string, fileName: string, pdfBuffer: Buffer, pdfBase64: string }>}
  */
 async function generateCertificate(studentData) {
-    ensureOutputDir();
+    const outputDir = getOutputDir();
+    ensureOutputDir(outputDir);
 
     const certId = studentData.certificateId || generateCertificateId();
     const fileName = `${certId}.pdf`;
-    const outputPath = path.join(CONFIG.outputDir, fileName);
+    let outputPath = path.join(outputDir, fileName);
 
     const templatePath = getTemplatePath();
     let pdfDoc;
@@ -163,7 +189,6 @@ async function generateCertificate(studentData) {
     }
 
     // Embed standard fonts
-    const fontTimesBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
     const fontTimesItalic = await pdfDoc.embedFont(StandardFonts.TimesRomanBoldItalic);
     const fontHelvetica = await pdfDoc.embedFont(StandardFonts.Helvetica);
     const fontHelveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
@@ -252,20 +277,40 @@ async function generateCertificate(studentData) {
         color: CONFIG.colors.mutedText
     });
 
-    // Save and write PDF
+    // Generate binary PDF bytes in-memory
     const pdfBytes = await pdfDoc.save();
-    fs.writeFileSync(outputPath, pdfBytes);
+    const pdfBuffer = Buffer.from(pdfBytes);
+    const pdfBase64 = pdfBuffer.toString('base64');
+
+    // Safe disk write (works on local or writable /tmp, gracefully catches EROFS)
+    try {
+        ensureOutputDir(outputDir);
+        fs.writeFileSync(outputPath, pdfBytes);
+    } catch (writeErr) {
+        console.warn(`[CERTIFICATE_SERVICE] Notice: local disk write failed (${writeErr.message}), trying os.tmpdir().`);
+        try {
+            const fallbackDir = path.join(os.tmpdir(), 'generated_certificates');
+            ensureOutputDir(fallbackDir);
+            outputPath = path.join(fallbackDir, fileName);
+            fs.writeFileSync(outputPath, pdfBytes);
+        } catch (tmpErr) {
+            console.warn(`[CERTIFICATE_SERVICE] Disk cache skipped (${tmpErr.message}), proceeding with in-memory buffer.`);
+            outputPath = null;
+        }
+    }
 
     return {
         certificateId: certId,
         filePath: outputPath,
         fileName: fileName,
-        pdfBuffer: Buffer.from(pdfBytes)
+        pdfBuffer: pdfBuffer,
+        pdfBase64: pdfBase64
     };
 }
 
 module.exports = {
     generateCertificate,
     generateCertificateId,
+    getOutputDir,
     CONFIG
 };

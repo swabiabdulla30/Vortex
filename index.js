@@ -149,7 +149,8 @@ const RegistrationSchema = new mongoose.Schema({
     certificateId: { type: String, default: null },
     certificatePath: { type: String, default: null },
     certificateIssuedAt: { type: Date, default: null },
-    certificateError: { type: String, default: null }
+    certificateError: { type: String, default: null },
+    certificatePdf: { type: String, default: null } // Base64 PDF storage for serverless
 }, {
     autoCreate: false // Disable auto-creation of collection
 });
@@ -859,6 +860,7 @@ app.post("/api/admin/approve-certificate", authenticateToken, async (req, res) =
         registration.certificateStatus = finalStatus;
         registration.certificateId = certResult.certificateId;
         registration.certificatePath = certResult.filePath;
+        registration.certificatePdf = certResult.pdfBase64;
         registration.certificateIssuedAt = new Date();
         registration.certificateError = emailResult.success ? null : emailResult.error;
         await registration.save();
@@ -943,6 +945,7 @@ app.post("/api/admin/bulk-approve-certificates", authenticateToken, async (req, 
                 registration.certificateStatus = emailResult.success ? "Certificate Sent" : "Failed";
                 registration.certificateId = certResult.certificateId;
                 registration.certificatePath = certResult.filePath;
+                registration.certificatePdf = certResult.pdfBase64;
                 registration.certificateIssuedAt = new Date();
                 registration.certificateError = emailResult.success ? null : emailResult.error;
                 await registration.save();
@@ -971,7 +974,7 @@ app.post("/api/admin/bulk-approve-certificates", authenticateToken, async (req, 
     }
 });
 
-// Download student's certificate PDF
+// Download student's certificate PDF (Serverless-safe streaming from MongoDB/Memory)
 app.get("/api/certificate/download/:ticketId", async (req, res) => {
     try {
         await connectDB();
@@ -986,32 +989,46 @@ app.get("/api/certificate/download/:ticketId", async (req, res) => {
             return res.status(403).send("Certificate has not yet been approved or issued by the administrator.");
         }
 
-        // File path check
-        const certFileName = `${registration.certificateId}.pdf`;
-        let certPath = registration.certificatePath || path.join(__dirname, 'generated_certificates', certFileName);
+        const safeStudentName = (registration.name || 'Participant').replace(/[^a-zA-Z0-9_-]/g, '_');
+        const filename = `Certificate-${safeStudentName}-${registration.certificateId}.pdf`;
 
-        if (!fs.existsSync(certPath)) {
-            // Re-generate if file missing on disk
-            const protocol = req.headers['x-forwarded-proto'] || req.protocol;
-            const host = req.get('host');
-            const baseUrl = `${protocol}://${host}`;
-            const certRes = await generateCertificate({
-                name: registration.name,
-                event: registration.event,
-                college: registration.college,
-                department: registration.department,
-                date: registration.date,
-                certificateId: registration.certificateId,
-                baseUrl
-            });
-            certPath = certRes.filePath;
+        // 1. Direct from MongoDB base64 buffer (100% reliable across serverless lambdas)
+        if (registration.certificatePdf) {
+            const pdfBuffer = Buffer.from(registration.certificatePdf, 'base64');
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+            return res.send(pdfBuffer);
         }
 
-        const safeStudentName = (registration.name || 'Participant').replace(/[^a-zA-Z0-9_-]/g, '_');
-        res.download(certPath, `Certificate-${safeStudentName}-${registration.certificateId}.pdf`);
+        // 2. Check cached file on disk if exists
+        if (registration.certificatePath && fs.existsSync(registration.certificatePath)) {
+            return res.download(registration.certificatePath, filename);
+        }
+
+        // 3. Re-generate dynamically in-memory if missing
+        const protocol = req.headers['x-forwarded-proto'] || req.protocol;
+        const host = req.get('host');
+        const baseUrl = `${protocol}://${host}`;
+        const certRes = await generateCertificate({
+            name: registration.name,
+            event: registration.event,
+            college: registration.college,
+            department: registration.department,
+            date: registration.date,
+            certificateId: registration.certificateId,
+            baseUrl
+        });
+
+        // Cache in DB for instant downloads next time
+        registration.certificatePdf = certRes.pdfBase64;
+        await registration.save().catch(e => console.warn("Save PDF to DB warning:", e.message));
+
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+        return res.send(certRes.pdfBuffer);
     } catch (error) {
         console.error("Download certificate error:", error);
-        res.status(500).send("Error downloading certificate.");
+        res.status(500).send("Error downloading certificate: " + error.message);
     }
 });
 
