@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/jpeg"
+        href="https://image2url.com/r2/default/images/1771323328076-73754ca7-5637-40c3-9e39-77832d8f5a18.jpeg">
+    <title>Certificate Verification - Vortex Innovators</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: radial-gradient(circle at center, #111a24 0%, #06090e 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #f0f0f0;
+            font-family: 'Outfit', sans-serif;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .verify-card {
+            background: rgba(18, 25, 38, 0.95);
+            border: 1px solid rgba(102, 252, 241, 0.3);
+            box-shadow: 0 0 50px rgba(0, 255, 136, 0.15), 0 20px 40px rgba(0,0,0,0.6);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 640px;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+
+        .brand-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .brand-header img {
+            height: 45px;
+            border-radius: 8px;
+        }
+
+        .brand-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: #66fcf1;
+            letter-spacing: 2px;
+            font-weight: 800;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+        }
+
+        .status-verified {
+            background: rgba(0, 255, 136, 0.15);
+            color: #00ff88;
+            border: 1px solid #00ff88;
+        }
+
+        .status-invalid {
+            background: rgba(255, 77, 77, 0.15);
+            color: #ff4d4d;
+            border: 1px solid #ff4d4d;
+        }
+
+        .status-loading {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ccc;
+        }
+
+        .student-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 10px 0 5px;
+        }
+
+        .event-title {
+            font-size: 1.2rem;
+            color: #ffd700;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .meta-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            text-align: left;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 25px 0;
+            font-size: 0.95rem;
+        }
+
+        .meta-label {
+            font-size: 0.8rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .meta-value {
+            font-weight: 600;
+            color: #e0e0e0;
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
+            color: #05101a;
+            font-weight: 700;
+            padding: 14px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 255, 136, 0.3);
+            font-size: 1rem;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 255, 136, 0.5);
+            background: #00ff88;
+        }
+
+        .back-link {
+            margin-top: 25px;
+            display: inline-block;
+            color: #888;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: #66fcf1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="verify-card">
+        <div class="brand-header">
+            <img src="https://image2url.com/r2/default/images/1771323328076-73754ca7-5637-40c3-9e39-77832d8f5a18.jpeg" alt="Logo">
+            <span class="brand-title">VORTEX VERIFY</span>
+        </div>
+
+        <div id="verify-container">
+            <div class="status-badge status-loading">
+                <i class="fas fa-spinner fa-spin"></i> Verifying authenticity...
+            </div>
+        </div>
+
+        <div>
+            <a href="/" class="back-link"><i class="fas fa-arrow-left"></i> Return to Vortex Innovators</a>
+        </div>
+    </div>
+
+    <script>
+        async function runVerification() {
+            const container = document.getElementById('verify-container');
+            
+            // Extract certificate ID from path /verify/:id or ?id=...
+            const pathSegments = window.location.pathname.split('/').filter(Boolean);
+            let certId = '';
+            if (pathSegments.length >= 2 && pathSegments[0] === 'verify') {
+                certId = pathSegments[1];
+            } else {
+                const params = new URLSearchParams(window.location.search);
+                certId = params.get('id');
+            }
+
+            if (!certId) {
+                container.innerHTML = `
+                    <div class="status-badge status-invalid">
+                        <i class="fas fa-exclamation-triangle"></i> No Certificate ID Provided
+                    </div>
+                    <p style="color: #aaa;">Please provide a valid certificate identifier.</p>
+                `;
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/verify-certificate/' + encodeURIComponent(certId));
+                const data = await res.json();
+
+                if (!res.ok || !data.valid) {
+                    container.innerHTML = `
+                        <div class="status-badge status-invalid">
+                            <i class="fas fa-times-circle"></i> Unverified Certificate
+                        </div>
+                        <p style="color: #bbb; margin-top: 15px;">
+                            ${data.error || 'The certificate ID does not exist in our records or has not yet been approved.'}
+                        </p>
+                        <p style="font-family: monospace; color: #ff6666;">ID: ${certId}</p>
+                    `;
+                    return;
+                }
+
+                const rec = data.data;
+                const issuedDate = rec.certificateIssuedAt 
+                    ? new Date(rec.certificateIssuedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+                    : (rec.date ? new Date(rec.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A');
+
+                container.innerHTML = `
+                    <div class="status-badge status-verified">
+                        <i class="fas fa-shield-alt"></i> Officially Verified & Valid
+                    </div>
+                    <div class="student-name">${rec.name}</div>
+                    <div class="event-title">Participation in ${rec.event}</div>
+
+                    <div class="meta-grid">
+                        <div>
+                            <div class="meta-label">Certificate ID</div>
+                            <div class="meta-value" style="color:#66fcf1; font-family: monospace;">${rec.certificateId}</div>
+                        </div>
+                        <div>
+                            <div class="meta-label">Date Issued</div>
+                            <div class="meta-value">${issuedDate}</div>
+                        </div>
+                        <div>
+                            <div class="meta-label">Institution / College</div>
+                            <div class="meta-value">${rec.college || 'Vortex Innovators'}</div>
+                        </div>
+                        <div>
+                            <div class="meta-label">Department</div>
+                            <div class="meta-value">${rec.department || 'N/A'}</div>
+                        </div>
+                    </div>
+
+                    ${rec.ticketId ? `
+                        <a href="/api/certificate/download/${rec.ticketId}" class="download-btn">
+                            <i class="fas fa-file-pdf"></i> Download Official Certificate (PDF)
+                        </a>
+                    ` : ''}
+                `;
+            } catch (err) {
+                container.innerHTML = `
+                    <div class="status-badge status-invalid">
+                        <i class="fas fa-times-circle"></i> Verification Error
+                    </div>
+                    <p style="color: #ff6666;">Unable to connect to verification server.</p>
+                `;
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', runVerification);
+    </script>
+</body>
+
+</html>

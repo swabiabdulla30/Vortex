@@ -10,6 +10,8 @@ const helmet = require("helmet");
 const compression = require("compression");
 const rateLimit = require("express-rate-limit");
 const { appendRegistrationToExcel, generateExcelBuffer } = require("./excel_service");
+const { generateCertificate } = require("./certificate_service");
+const { sendCertificateEmail } = require("./email_service");
 
 const app = express();
 
@@ -142,7 +144,12 @@ const RegistrationSchema = new mongoose.Schema({
     paymentId: String,
     paymentStatus: { type: String, default: "PENDING" },
     teammateName: String,
-    teammatePhone: String
+    teammatePhone: String,
+    certificateStatus: { type: String, default: "Pending" },
+    certificateId: { type: String, default: null },
+    certificatePath: { type: String, default: null },
+    certificateIssuedAt: { type: Date, default: null },
+    certificateError: { type: String, default: null }
 }, {
     autoCreate: false // Disable auto-creation of collection
 });
@@ -529,7 +536,12 @@ app.post("/api/register", async (req, res) => {
     try {
         await connectDB();
         const ticketId = "VTX-" + Date.now();
-        const data = new Registration({ ...req.body, ticketId, date: new Date() });
+        const data = new Registration({
+            ...req.body,
+            ticketId,
+            date: new Date(),
+            certificateStatus: "Pending"
+        });
         await data.save();
 
         // Note: Excel save is now DEFERRED until payment success
@@ -550,7 +562,8 @@ app.post("/api/free-register", async (req, res) => {
             ...req.body,
             ticketId,
             date: new Date(),
-            paymentStatus: "PAID"
+            paymentStatus: "PAID",
+            certificateStatus: "Pending"
         });
         await data.save();
 
@@ -648,6 +661,7 @@ app.post("/api/payment-success", async (req, res) => {
             ticketId,
             date: new Date(),
             paymentStatus: "PAID", // Directly set to PAID
+            certificateStatus: "Pending",
             eventId: razorpay_order_id, // Store order ID if needed
             paymentId: razorpay_payment_id
         });
@@ -784,6 +798,265 @@ app.post("/api/admin/verify-payment", authenticateToken, async (req, res) => {
         console.error("Verification error:", error);
         res.status(500).json({ error: "Verification failed" });
     }
+});
+
+// --- Admin Certificate Management Endpoints ---
+
+// Approve and Send Certificate for a single student
+app.post("/api/admin/approve-certificate", authenticateToken, async (req, res) => {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: "Access denied: Admin role required" });
+    try {
+        await connectDB();
+        const { ticketId, forceResend } = req.body;
+
+        if (!ticketId) {
+            return res.status(400).json({ error: "Missing ticketId" });
+        }
+
+        const registration = await Registration.findOne({ ticketId });
+        if (!registration) {
+            return res.status(404).json({ error: "Registration record not found" });
+        }
+
+        // Edge case: Prevent duplicate sends unless forceResend is explicitly requested
+        if (registration.certificateStatus === "Certificate Sent" && !forceResend) {
+            return res.status(400).json({
+                error: "Certificate has already been sent to this student. Use 'Resend' if you wish to deliver it again.",
+                alreadySent: true,
+                certificateId: registration.certificateId,
+                issuedAt: registration.certificateIssuedAt
+            });
+        }
+
+        const protocol = req.headers['x-forwarded-proto'] || req.protocol;
+        const host = req.get('host');
+        const baseUrl = `${protocol}://${host}`;
+
+        // 1. Generate certificate PDF
+        const certResult = await generateCertificate({
+            name: registration.name,
+            event: registration.event,
+            college: registration.college,
+            department: registration.department,
+            date: registration.date,
+            certificateId: registration.certificateId || undefined,
+            baseUrl
+        });
+
+        // 2. Email certificate
+        const verifyUrl = `${baseUrl}/verify/${certResult.certificateId}`;
+        const emailResult = await sendCertificateEmail({
+            to: registration.email,
+            studentName: registration.name,
+            eventName: registration.event,
+            certificateId: certResult.certificateId,
+            pdfBuffer: certResult.pdfBuffer,
+            verifyUrl
+        });
+
+        // 3. Update database record
+        const finalStatus = emailResult.success ? "Certificate Sent" : "Failed";
+        registration.certificateStatus = finalStatus;
+        registration.certificateId = certResult.certificateId;
+        registration.certificatePath = certResult.filePath;
+        registration.certificateIssuedAt = new Date();
+        registration.certificateError = emailResult.success ? null : emailResult.error;
+        await registration.save();
+
+        res.json({
+            success: emailResult.success,
+            message: emailResult.success
+                ? `Certificate ${certResult.certificateId} generated and delivered successfully.`
+                : `Certificate generated, but email delivery failed: ${emailResult.error}`,
+            registration: {
+                ticketId: registration.ticketId,
+                name: registration.name,
+                email: registration.email,
+                event: registration.event,
+                certificateStatus: registration.certificateStatus,
+                certificateId: registration.certificateId,
+                certificateIssuedAt: registration.certificateIssuedAt,
+                certificateError: registration.certificateError
+            },
+            emailResult
+        });
+    } catch (error) {
+        console.error("Certificate approval error:", error);
+        res.status(500).json({ error: "Certificate processing failed: " + error.message });
+    }
+});
+
+// Bulk Approve and Send Certificates
+app.post("/api/admin/bulk-approve-certificates", authenticateToken, async (req, res) => {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: "Access denied" });
+    try {
+        await connectDB();
+        const { ticketIds, forceResend } = req.body;
+        if (!Array.isArray(ticketIds) || ticketIds.length === 0) {
+            return res.status(400).json({ error: "Array of ticketIds is required" });
+        }
+
+        const protocol = req.headers['x-forwarded-proto'] || req.protocol;
+        const host = req.get('host');
+        const baseUrl = `${protocol}://${host}`;
+
+        const results = [];
+        let successCount = 0;
+        let failedCount = 0;
+        let skippedCount = 0;
+
+        for (const ticketId of ticketIds) {
+            try {
+                const registration = await Registration.findOne({ ticketId });
+                if (!registration) {
+                    results.push({ ticketId, status: 'error', error: 'Record not found' });
+                    failedCount++;
+                    continue;
+                }
+
+                if (registration.certificateStatus === "Certificate Sent" && !forceResend) {
+                    results.push({ ticketId, status: 'skipped', message: 'Already sent', certificateId: registration.certificateId });
+                    skippedCount++;
+                    continue;
+                }
+
+                const certResult = await generateCertificate({
+                    name: registration.name,
+                    event: registration.event,
+                    college: registration.college,
+                    department: registration.department,
+                    date: registration.date,
+                    certificateId: registration.certificateId || undefined,
+                    baseUrl
+                });
+
+                const verifyUrl = `${baseUrl}/verify/${certResult.certificateId}`;
+                const emailResult = await sendCertificateEmail({
+                    to: registration.email,
+                    studentName: registration.name,
+                    eventName: registration.event,
+                    certificateId: certResult.certificateId,
+                    pdfBuffer: certResult.pdfBuffer,
+                    verifyUrl
+                });
+
+                registration.certificateStatus = emailResult.success ? "Certificate Sent" : "Failed";
+                registration.certificateId = certResult.certificateId;
+                registration.certificatePath = certResult.filePath;
+                registration.certificateIssuedAt = new Date();
+                registration.certificateError = emailResult.success ? null : emailResult.error;
+                await registration.save();
+
+                if (emailResult.success) {
+                    successCount++;
+                    results.push({ ticketId, status: 'success', certificateId: certResult.certificateId });
+                } else {
+                    failedCount++;
+                    results.push({ ticketId, status: 'email_failed', error: emailResult.error });
+                }
+            } catch (err) {
+                failedCount++;
+                results.push({ ticketId, status: 'error', error: err.message });
+            }
+        }
+
+        res.json({
+            success: true,
+            summary: { total: ticketIds.length, successCount, failedCount, skippedCount },
+            results
+        });
+    } catch (error) {
+        console.error("Bulk certificate approval error:", error);
+        res.status(500).json({ error: "Bulk certificate approval failed" });
+    }
+});
+
+// Download student's certificate PDF
+app.get("/api/certificate/download/:ticketId", async (req, res) => {
+    try {
+        await connectDB();
+        const { ticketId } = req.params;
+        const registration = await Registration.findOne({ ticketId });
+
+        if (!registration) {
+            return res.status(404).send("Registration not found for this ticket.");
+        }
+
+        if (registration.certificateStatus !== "Certificate Sent" && !registration.certificateId) {
+            return res.status(403).send("Certificate has not yet been approved or issued by the administrator.");
+        }
+
+        // File path check
+        const certFileName = `${registration.certificateId}.pdf`;
+        let certPath = registration.certificatePath || path.join(__dirname, 'generated_certificates', certFileName);
+
+        if (!fs.existsSync(certPath)) {
+            // Re-generate if file missing on disk
+            const protocol = req.headers['x-forwarded-proto'] || req.protocol;
+            const host = req.get('host');
+            const baseUrl = `${protocol}://${host}`;
+            const certRes = await generateCertificate({
+                name: registration.name,
+                event: registration.event,
+                college: registration.college,
+                department: registration.department,
+                date: registration.date,
+                certificateId: registration.certificateId,
+                baseUrl
+            });
+            certPath = certRes.filePath;
+        }
+
+        const safeStudentName = (registration.name || 'Participant').replace(/[^a-zA-Z0-9_-]/g, '_');
+        res.download(certPath, `Certificate-${safeStudentName}-${registration.certificateId}.pdf`);
+    } catch (error) {
+        console.error("Download certificate error:", error);
+        res.status(500).send("Error downloading certificate.");
+    }
+});
+
+// Public verification API
+app.get("/api/verify-certificate/:certificateId", async (req, res) => {
+    try {
+        await connectDB();
+        const { certificateId } = req.params;
+        const registration = await Registration.findOne({
+            certificateId: { $regex: new RegExp(`^${certificateId.trim()}$`, 'i') }
+        });
+
+        if (!registration || registration.certificateStatus !== "Certificate Sent") {
+            return res.status(404).json({
+                valid: false,
+                error: "Certificate not found or not yet approved."
+            });
+        }
+
+        res.json({
+            valid: true,
+            data: {
+                certificateId: registration.certificateId,
+                name: registration.name,
+                event: registration.event,
+                college: registration.college,
+                department: registration.department,
+                date: registration.date,
+                certificateIssuedAt: registration.certificateIssuedAt,
+                ticketId: registration.ticketId
+            }
+        });
+    } catch (error) {
+        console.error("Verification API error:", error);
+        res.status(500).json({ valid: false, error: "Verification failed." });
+    }
+});
+
+// Public verification page routes
+app.get("/verify/:certificateId", (req, res) => {
+    res.sendFile(path.join(process.cwd(), 'verify.html'));
+});
+
+app.get("/verify", (req, res) => {
+    res.sendFile(path.join(process.cwd(), 'verify.html'));
 });
 
 app.delete("/api/admin/registration/:identifier", authenticateToken, async (req, res) => {

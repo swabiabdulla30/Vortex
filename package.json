@@ -9,6 +9,8 @@
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.2.1",
+    "nodemailer": "^10.0.2",
+    "pdf-lib": "^1.17.1",
     "razorpay": "^2.9.6",
     "xlsx": "^0.18.5"
   },

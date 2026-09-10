@@ -271,6 +271,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <button class="submit-btn download-ticket-btn download-btn-dynamic">
                         <i class="fas fa-download"></i> Download Ticket
                     </button>
+                    ${ticket.certificateStatus === 'Certificate Sent' ? `
+                    <a href="/api/certificate/download/${ticket.ticketId}" target="_blank" class="submit-btn" style="margin-top: 8px; background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%); color: #05101a; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: bold;">
+                        <i class="fas fa-certificate"></i> Download Certificate (PDF)
+                    </a>
+                    ` : ''}
                 </div>
             </div>
             `}).join('');

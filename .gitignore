@@ -7,3 +7,4 @@ vortex_db_data/
 dist/
 .vercel
 .env*.local
+generated_certificates/*.pdf

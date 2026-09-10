@@ -72,6 +72,95 @@
     border: 1px solid #ffaa00;
 }
 
+/* Certificate Status Badges */
+.cert-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.cert-badge-pending {
+    background: rgba(255, 170, 0, 0.15);
+    color: #ffaa00;
+    border: 1px solid rgba(255, 170, 0, 0.4);
+}
+
+.cert-badge-sent {
+    background: rgba(0, 255, 136, 0.15);
+    color: #00ff88;
+    border: 1px solid rgba(0, 255, 136, 0.4);
+}
+
+.cert-badge-failed {
+    background: rgba(255, 68, 68, 0.15);
+    color: #ff4444;
+    border: 1px solid rgba(255, 68, 68, 0.4);
+}
+
+.cert-btn-approve {
+    background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
+    color: #05101a;
+    border: none;
+    font-size: 0.8rem;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(0, 255, 136, 0.25);
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.cert-btn-approve:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 14px rgba(0, 255, 136, 0.45);
+}
+
+.cert-btn-resend {
+    background: transparent;
+    color: #00d2ff;
+    border: 1px solid #00d2ff;
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.cert-btn-resend:hover {
+    background: rgba(0, 210, 255, 0.15);
+}
+
+.cert-btn-download {
+    background: #1f2833;
+    color: #66fcf1;
+    border: 1px solid #45a29e;
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.cert-btn-download:hover {
+    background: #45a29e;
+    color: #0b0c10;
+}
+
+.cert-meta-info {
+    font-size: 0.75rem;
+    color: #888;
+    margin-top: 3px;
+    font-family: monospace;
+}
+
 @media (max-width: 768px) {
     .admin-header {
         flex-direction: column;

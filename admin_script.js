@@ -58,6 +58,7 @@ async function fetchData() {
 function getFilteredRegistrations() {
     const eventFilter = document.getElementById('event-filter')?.value || 'all';
     const statusFilter = document.getElementById('status-filter')?.value || 'all';
+    const certFilter = document.getElementById('cert-filter')?.value || 'all';
 
     let filtered = allRegistrations;
 
@@ -73,11 +74,15 @@ function getFilteredRegistrations() {
         }
     }
 
-    return { filtered, eventFilter, statusFilter };
+    if (certFilter !== 'all') {
+        filtered = filtered.filter(item => (item.certificateStatus || 'Pending') === certFilter);
+    }
+
+    return { filtered, eventFilter, statusFilter, certFilter };
 }
 
 function exportExcel() {
-    const { filtered, eventFilter, statusFilter } = getFilteredRegistrations();
+    const { filtered, eventFilter, statusFilter, certFilter } = getFilteredRegistrations();
 
     if (!filtered || filtered.length === 0) {
         alert("No data available to export.");
@@ -85,7 +90,7 @@ function exportExcel() {
     }
 
     try {
-        const headers = ["Ticket ID", "Name", "Event", "Email", "Phone", "Department", "Year", "College", "Date", "Payment Status", "Transaction ID", "Teammate Name", "Teammate Phone"];
+        const headers = ["Ticket ID", "Name", "Event", "Email", "Phone", "Department", "Year", "College", "Date", "Payment Status", "Transaction ID", "Certificate Status", "Certificate ID", "Certificate Issued At", "Teammate Name", "Teammate Phone"];
         const rows = filtered.map(r => [
             r.ticketId || '',
             `"${(r.name || '').replace(/"/g, '""')}"`,
@@ -98,6 +103,9 @@ function exportExcel() {
             r.date ? new Date(r.date).toLocaleDateString() : '',
             r.paymentStatus || 'PENDING',
             r.transactionId || r.paymentId || '',
+            r.certificateStatus || 'Pending',
+            r.certificateId || '',
+            r.certificateIssuedAt ? new Date(r.certificateIssuedAt).toLocaleString() : '',
             `"${(r.teammateName || '').replace(/"/g, '""')}"`,
             r.teammatePhone || ''
         ]);
@@ -111,7 +119,8 @@ function exportExcel() {
         const datePart = new Date().toISOString().slice(0, 10);
         const eventPart = eventFilter !== 'all' ? `_${eventFilter.replace(/\s+/g, '_')}` : '_AllEvents';
         const statusPart = statusFilter !== 'all' ? `_${statusFilter}` : '';
-        const filename = `vortex${eventPart}${statusPart}_${datePart}.csv`;
+        const certPart = certFilter !== 'all' ? `_${certFilter.replace(/\s+/g, '_')}` : '';
+        const filename = `vortex${eventPart}${statusPart}${certPart}_${datePart}.csv`;
 
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
@@ -144,54 +153,55 @@ function populateEventFilter(data) {
 }
 
 function filterAndRender() {
-    const eventFilterEl = document.getElementById('event-filter');
-    const statusFilterEl = document.getElementById('status-filter');
-    if (!eventFilterEl || !statusFilterEl) return;
-
-    const eventFilter = eventFilterEl.value;
-    const statusFilter = statusFilterEl.value;
-
-    let filteredData = allRegistrations;
-
-    if (eventFilter !== 'all') {
-        filteredData = filteredData.filter(item => item.event === eventFilter);
-    }
-
-    if (statusFilter !== 'all') {
-        if (statusFilter === 'PAID') {
-            filteredData = filteredData.filter(item => item.paymentStatus === 'PAID');
-        } else {
-            // PENDING logic
-            filteredData = filteredData.filter(item => item.paymentStatus !== 'PAID');
-        }
-    }
-
-    renderTable(filteredData);
+    const { filtered } = getFilteredRegistrations();
+    renderTable(filtered);
+    updateBulkButton();
 }
 
 function renderTable(data) {
     const tbody = document.getElementById('data-body');
+    if (!tbody) return;
+
     if (data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8">No registrations found.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding: 25px; color: #888;">No matching registrations found.</td></tr>';
+        updateBulkButton();
         return;
     }
 
     tbody.innerHTML = data.map(item => {
         const isPaid = item.paymentStatus === 'PAID';
+        const certStatus = item.certificateStatus || 'Pending';
+        const isCertSent = certStatus === 'Certificate Sent';
+        const isCertFailed = certStatus === 'Failed';
+
+        let certBadgeHtml = `<span class="cert-badge cert-badge-pending">Pending</span>`;
+        if (isCertSent) {
+            certBadgeHtml = `
+                <span class="cert-badge cert-badge-sent">Sent ✅</span>
+                <div class="cert-meta-info">${item.certificateId || ''}</div>
+            `;
+        } else if (isCertFailed) {
+            certBadgeHtml = `
+                <span class="cert-badge cert-badge-failed" title="${item.certificateError || 'Delivery error'}">Failed ❌</span>
+            `;
+        }
 
         return `
-        <tr>
+        <tr data-ticket-id="${item.ticketId}">
+            <td style="text-align:center;">
+                <input type="checkbox" class="cert-checkbox" data-id="${item.ticketId}">
+            </td>
             <td>${new Date(item.date).toLocaleDateString()}</td>
             <td>
                 <div style="font-weight:bold;">${item.name}</div>
                 <div style="font-size:0.8em; color:#aaa;">${item.email}</div>
             </td>
             <td>${item.phone}</td>
-            <td>${item.event}</td>
+            <td><strong>${item.event}</strong></td>
             <td>
                 <div style="font-size:0.85em;">
-                    ${item.department}<br>
-                    ${item.year}Yr • ${item.college}
+                    ${item.department || ''}<br>
+                    ${item.year ? item.year + 'Yr • ' : ''}${item.college || ''}
                     ${item.teammateName ? `<br><span style="color:#ffd700;">👥 ${item.teammateName}${item.teammatePhone ? ' · ' + item.teammatePhone : ''}</span>` : ''}
                 </div>
             </td>
@@ -199,13 +209,34 @@ function renderTable(data) {
                 ${item.paymentStatus || 'PENDING'}
             </td>
             <td>
-                ${!isPaid ?
-                `<button data-action="approve" data-id="${item.ticketId}" class="action-btn" style="background:#00ff88; color:black; margin-bottom:5px;">Approve</button>` :
-                ''}
-                <button data-action="delete" data-id="${item.ticketId || item._id}" class="action-btn delete-btn">Delete</button>
+                ${certBadgeHtml}
+            </td>
+            <td>
+                <div style="display:flex; flex-direction:column; gap:4px;">
+                    ${!isCertSent ?
+                    `<button data-action="approve-cert" data-id="${item.ticketId}" class="action-btn cert-btn-approve" title="Review, generate PDF and email certificate">Approve & Send Cert</button>` :
+                    `
+                    <div style="display:flex; gap:4px; flex-wrap:wrap;">
+                        <button data-action="resend-cert" data-id="${item.ticketId}" class="action-btn cert-btn-resend" title="Resend certificate email">Resend</button>
+                        <a href="/api/certificate/download/${item.ticketId}" target="_blank" class="action-btn cert-btn-download" title="Download official PDF"><i class="fas fa-file-pdf"></i> PDF</a>
+                        <a href="/verify/${item.certificateId}" target="_blank" class="action-btn cert-btn-download" title="Verify Online">Verify</a>
+                    </div>
+                    `
+                    }
+
+                    <div style="display:flex; gap:4px; margin-top:2px;">
+                        ${!isPaid ?
+                        `<button data-action="approve" data-id="${item.ticketId}" class="action-btn" style="background:#00ff88; color:black; font-size:0.75rem;">Pay OK</button>` :
+                        ''}
+                        <button data-action="delete" data-id="${item.ticketId || item._id}" class="action-btn delete-btn" style="font-size:0.75rem;">Delete</button>
+                    </div>
+                </div>
             </td>
         </tr>
     `}).join('');
+
+    attachCheckboxListeners();
+    updateBulkButton();
 }
 
 async function verifyPayment(ticketId, action) {
@@ -284,6 +315,126 @@ async function deleteAllRegistrations() {
     }
 }
 
+// --- Certificate Actions ---
+
+async function approveCertificate(ticketId, forceResend = false, buttonEl = null) {
+    const actionLabel = forceResend ? "RESEND" : "APPROVE & SEND";
+    if (!confirm(`Are you sure you want to ${actionLabel} the certificate for student ticket: ${ticketId}?`)) return;
+
+    let originalHtml = '';
+    if (buttonEl) {
+        originalHtml = buttonEl.innerHTML;
+        buttonEl.disabled = true;
+        buttonEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+    }
+
+    const token = localStorage.getItem('vortexToken');
+    try {
+        const res = await fetch('/api/admin/approve-certificate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ ticketId, forceResend })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+            alert("Success: " + data.message);
+            fetchData();
+        } else {
+            alert("Error: " + (data.error || "Failed to issue certificate."));
+            if (buttonEl) {
+                buttonEl.disabled = false;
+                buttonEl.innerHTML = originalHtml;
+            }
+        }
+    } catch (error) {
+        console.error("Certificate approval error:", error);
+        alert("Failed to communicate with certificate service.");
+        if (buttonEl) {
+            buttonEl.disabled = false;
+            buttonEl.innerHTML = originalHtml;
+        }
+    }
+}
+
+function attachCheckboxListeners() {
+    const checkboxes = document.querySelectorAll('.cert-checkbox');
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', updateBulkButton);
+    });
+
+    const selectAll = document.getElementById('select-all-certs');
+    if (selectAll) {
+        selectAll.onclick = (e) => {
+            checkboxes.forEach(cb => { cb.checked = selectAll.checked; });
+            updateBulkButton();
+        };
+    }
+}
+
+function updateBulkButton() {
+    const checked = document.querySelectorAll('.cert-checkbox:checked');
+    const bulkBtn = document.getElementById('bulk-cert-btn');
+    const countSpan = document.getElementById('selected-count');
+
+    if (!bulkBtn || !countSpan) return;
+
+    countSpan.textContent = checked.length;
+    if (checked.length > 0) {
+        bulkBtn.style.display = 'inline-block';
+    } else {
+        bulkBtn.style.display = 'none';
+        const selectAll = document.getElementById('select-all-certs');
+        if (selectAll) selectAll.checked = false;
+    }
+}
+
+async function bulkApproveCertificates() {
+    const checked = Array.from(document.querySelectorAll('.cert-checkbox:checked'));
+    if (checked.length === 0) return;
+
+    const ticketIds = checked.map(cb => cb.getAttribute('data-id')).filter(Boolean);
+    if (!confirm(`Are you sure you want to approve & issue certificates for ${ticketIds.length} selected student(s)?`)) return;
+
+    const bulkBtn = document.getElementById('bulk-cert-btn');
+    if (bulkBtn) {
+        bulkBtn.disabled = true;
+        bulkBtn.textContent = 'Processing Batch...';
+    }
+
+    const token = localStorage.getItem('vortexToken');
+    try {
+        const res = await fetch('/api/admin/bulk-approve-certificates', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ ticketIds, forceResend: false })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+            const summary = data.summary;
+            alert(`Bulk Approval Complete:\n• Total Processed: ${summary.total}\n• Successfully Sent: ${summary.successCount}\n• Already Sent (Skipped): ${summary.skippedCount}\n• Failed: ${summary.failedCount}`);
+            fetchData();
+        } else {
+            alert("Bulk approval error: " + (data.error || "Server error"));
+        }
+    } catch (err) {
+        console.error("Bulk approve error:", err);
+        alert("Failed to execute bulk approval: " + err.message);
+    } finally {
+        if (bulkBtn) {
+            bulkBtn.disabled = false;
+            updateBulkButton();
+        }
+    }
+}
+
 function logout() {
     localStorage.removeItem('vortexToken');
     localStorage.removeItem('vortexCurrentUser');
@@ -302,6 +453,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const exportBtn = document.getElementById('export-btn');
     if (exportBtn) exportBtn.addEventListener('click', exportExcel);
 
+    const bulkCertBtn = document.getElementById('bulk-cert-btn');
+    if (bulkCertBtn) bulkCertBtn.addEventListener('click', bulkApproveCertificates);
+
     const logoutBtn = document.getElementById('logout-btn');
     if (logoutBtn) logoutBtn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -318,20 +472,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const stFilt = document.getElementById('status-filter');
     if (stFilt) stFilt.addEventListener('change', filterAndRender);
 
+    const certFilt = document.getElementById('cert-filter');
+    if (certFilt) certFilt.addEventListener('change', filterAndRender);
+
     // Event Delegation for Table Actions
     const dataBody = document.getElementById('data-body');
     if (dataBody) {
         dataBody.addEventListener('click', (e) => {
-            const target = e.target;
-            if (target.tagName === 'BUTTON') {
-                const action = target.getAttribute('data-action');
-                const id = target.getAttribute('data-id');
+            const target = e.target.closest('button');
+            if (!target) return;
 
-                if (action === 'approve') {
-                    verifyPayment(id, 'approve');
-                } else if (action === 'delete') {
-                    deleteRegistration(id);
-                }
+            const action = target.getAttribute('data-action');
+            const id = target.getAttribute('data-id');
+
+            if (action === 'approve') {
+                verifyPayment(id, 'approve');
+            } else if (action === 'delete') {
+                deleteRegistration(id);
+            } else if (action === 'approve-cert') {
+                approveCertificate(id, false, target);
+            } else if (action === 'resend-cert') {
+                approveCertificate(id, true, target);
             }
         });
     }

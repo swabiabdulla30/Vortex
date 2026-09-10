@@ -61,18 +61,27 @@
         <div id="section-registrations" class="admin-section active">
             <div class="admin-header">
                 <h1>Event Registrations</h1>
-                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
                     <select id="status-filter" class="action-btn"
                         style="background: #333; color: white; border: 1px solid #555;">
-                        <option value="PAID" style="background: #333; color: #00ff88; font-weight: bold;" selected>PAID ONLY
-                        </option>
-                        <option value="all" style="background: #333; color: white;">All Status</option>
-                        <option value="PENDING" style="background: #333; color: #ffaa00;">Pending</option>
+                        <option value="all" style="background: #333; color: white;">All Payments</option>
+                        <option value="PAID" style="background: #333; color: #00ff88; font-weight: bold;">Paid Only</option>
+                        <option value="PENDING" style="background: #333; color: #ffaa00;">Pending Payment</option>
+                    </select>
+                    <select id="cert-filter" class="action-btn"
+                        style="background: #333; color: white; border: 1px solid #555;">
+                        <option value="all" style="background: #333; color: white;">All Certificates</option>
+                        <option value="Pending" style="background: #333; color: #ffaa00;">Cert: Pending</option>
+                        <option value="Certificate Sent" style="background: #333; color: #00ff88;">Cert: Sent ✅</option>
+                        <option value="Failed" style="background: #333; color: #ff4444;">Cert: Failed ❌</option>
                     </select>
                     <select id="event-filter" class="action-btn"
                         style="background: #333; color: white; border: 1px solid #555;">
                         <option value="all" style="background: #333; color: white;">All Events</option>
                     </select>
+                    <button id="bulk-cert-btn" class="action-btn" style="background: #00c3ff; color: #000; display: none;">
+                        Approve Selected (<span id="selected-count">0</span>)
+                    </button>
                     <button id="export-btn" class="action-btn" style="background: #00ff88; color: #000;">Export to Excel</button>
                     <button id="refresh-btn" class="action-btn">Refresh Data</button>
                     <button id="delete-all-btn" class="action-btn delete-all-btn">DELETE ALL</button>
@@ -82,18 +91,22 @@
                 <table class="data-table">
                     <thead>
                         <tr>
+                            <th style="width: 35px; text-align: center;">
+                                <input type="checkbox" id="select-all-certs" title="Select all for bulk certificate action">
+                            </th>
                             <th>Date</th>
                             <th>Name</th>
                             <th>Mobile</th>
                             <th>Event</th>
                             <th>Details</th>
-                            <th>Status</th>
+                            <th>Payment</th>
+                            <th>Certificate</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody id="data-body">
                         <tr>
-                            <td colspan="7">Loading...</td>
+                            <td colspan="9">Loading...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -225,10 +238,7 @@
         </div>
     </div>
 
-
     <script src="admin_script.js"></script>
 </body>
 
 </html>
-
-
