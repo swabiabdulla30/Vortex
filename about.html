@@ -15,170 +15,75 @@
     <link rel="stylesheet" href="style.css?v=2.7">
     <link rel="stylesheet" href="style_slider.css?v=1.1">
     <link rel="stylesheet" href="style_slider_leads.css?v=1.1">
-    <link rel="stylesheet" href="theme_vortex.css?v=2.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
-<body class="cyber-theme-body">
+<body>
+
+
 
     <!-- Spotlight Effect Container -->
     <div id="spotlight"></div>
 
-    <!-- Mobile HUD Bar -->
-    <header class="mobile-hud-bar">
-        <a href="/" class="mobile-brand-link">
-            <svg viewBox="0 0 100 100" class="mobile-poly-icon" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <polygon points="50,92 22,44 38,44" fill="#8f000e" />
-                <polygon points="50,92 38,44 50,62" fill="#c40015" />
-                <polygon points="22,44 10,18 34,30" fill="#e50914" />
-                <polygon points="34,30 38,44 22,44" fill="#a80011" />
-                <polygon points="34,30 50,18 50,38" fill="#ff1f2f" />
-                <polygon points="34,30 50,38 38,44" fill="#d90017" />
-                <polygon points="50,92 78,44 62,44" fill="#6e000b" />
-                <polygon points="50,92 62,44 50,62" fill="#a00012" />
-                <polygon points="78,44 90,18 66,30" fill="#c40015" />
-                <polygon points="66,30 62,44 78,44" fill="#88000f" />
-                <polygon points="66,30 50,18 50,38" fill="#d90017" />
-                <polygon points="66,30 50,38 62,44" fill="#ff1f2f" />
-            </svg>
-            <span class="mobile-title-text">VORTEX</span>
-        </a>
-        <div class="mobile-right-btns">
-            <a href="/login.html" class="mobile-login-icon" title="Login">
-                <i class="fas fa-user-circle"></i>
+    <!-- Navigation -->
+    <nav class="glass-nav">
+        <div class="nav-content">
+            <div class="brand-container">
+                <a href="/">
+
+
+
+                    <img src="https://image2url.com/r2/default/files/1771322552033-2c823e74-a8c2-4df6-b595-89948ce4d5ef.jpeg"
+                        alt="Description" class="nav-logo-img">
+
+                </a>
+                <a href="/" class="logo">VORTEX</a>
+            </div>
+
+            <a href="/login.html" class="login-btn">
+                <span class="icon">🔒</span> LOGIN
             </a>
-            <div class="mobile-burger-toggle" id="mobileToggle">
-                <span></span>
-                <span></span>
-                <span></span>
+
+            <div class="hamburger">
+                <div class="line1"></div>
+                <div class="line2"></div>
+                <div class="line3"></div>
+            </div>
+            <div class="nav-links">
+                <!-- Mobile Only Header -->
+                <div class="mobile-nav-header mobile-only">
+                    <div class="brand-container" style="margin-right:auto; gap:10px;"><img
+                            src="https://image2url.com/r2/default/images/1771323328076-73754ca7-5637-40c3-9e39-77832d8f5a18.jpeg"
+                            alt="Vortex Logo" class="nav-logo-img"><span class="logo"
+                            style="font-size:1.5rem;">VORTEX</span></div>
+                    <div class="close-menu">&times;</div>
+                </div>
+
+                <a href="/" class="nav-item">Home</a>
+                <a href="/about.html" class="nav-item active">About</a>
+                <a href="/events.html" class="nav-item">Events</a>
+                <a href="/gallery.html" class="nav-item">Gallery</a>
+
+                <a href="/login.html" class="login-btn mobile-only">
+                    <span class="icon">🔒</span> LOGIN
+                </a>
             </div>
         </div>
-    </header>
+    </nav>
 
-    <!-- App Overall Container -->
-    <div class="vortex-app-container">
+    <!-- System Status Bar -->
+    <div class="system-status">
+        <div class="status-indicator active"></div>
+        <span class="status-text">> SYSTEM_STATUS: ONLINE // ENCRYPTION: ACTIVE</span>
+    </div>
 
-        <!-- Left HUD Sidebar -->
-        <aside class="vortex-hud-sidebar" id="vortexSidebar">
-            <button class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="Close Sidebar">&times;</button>
-
-            <!-- Brand Section -->
-            <a href="/" class="vortex-sidebar-brand">
-                <svg viewBox="0 0 100 100" class="vortex-poly-svg" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <polygon points="50,92 22,44 38,44" fill="#8f000e" />
-                    <polygon points="50,92 38,44 50,62" fill="#c40015" />
-                    <polygon points="22,44 10,18 34,30" fill="#e50914" />
-                    <polygon points="34,30 38,44 22,44" fill="#a80011" />
-                    <polygon points="34,30 50,18 50,38" fill="#ff1f2f" />
-                    <polygon points="34,30 50,38 38,44" fill="#d90017" />
-                    <polygon points="50,92 78,44 62,44" fill="#6e000b" />
-                    <polygon points="50,92 62,44 50,62" fill="#a00012" />
-                    <polygon points="78,44 90,18 66,30" fill="#c40015" />
-                    <polygon points="66,30 62,44 78,44" fill="#88000f" />
-                    <polygon points="66,30 50,18 50,38" fill="#d90017" />
-                    <polygon points="66,30 50,38 62,44" fill="#ff1f2f" />
-                </svg>
-                <div class="vortex-brand-name">VORTEX</div>
-                <div class="vortex-brand-dept">DEPARTMENT OF<br>COMPUTER APPLICATIONS</div>
-            </a>
-
-            <!-- Navigation Menu -->
-            <nav class="vortex-sidebar-nav">
-                <ul class="vortex-menu-list">
-                    <li>
-                        <a href="/" class="vortex-menu-link">
-                            <i class="fas fa-home"></i>
-                            <span>Home</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/about.html" class="vortex-menu-link active">
-                            <i class="far fa-user"></i>
-                            <span>About</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/events.html" class="vortex-menu-link">
-                            <i class="far fa-calendar-alt"></i>
-                            <span>Events</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/gallery.html" class="vortex-menu-link">
-                            <i class="far fa-image"></i>
-                            <span>Gallery</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-
-            <!-- Bottom Section -->
-            <div class="vortex-sidebar-bottom">
-                <div class="vortex-socials-row">
-                    <a href="https://www.instagram.com/vortex_innovatorss?igsh=MWN2YjVzYmtoZmxkMQ==" target="_blank"
-                        class="vortex-social-item" title="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="https://linkedin.com" target="_blank" class="vortex-social-item" title="LinkedIn"><i
-                            class="fab fa-linkedin-in"></i></a>
-                    <a href="https://github.com" target="_blank" class="vortex-social-item" title="GitHub"><i
-                            class="fab fa-github"></i></a>
-                    <a href="https://youtube.com" target="_blank" class="vortex-social-item" title="YouTube"><i
-                            class="fab fa-youtube"></i></a>
-                </div>
-
-                <a href="/events.html" class="vortex-join-btn">
-                    <span>Join Vortex</span>
-                    <i class="fas fa-arrow-right"></i>
-                </a>
-
-                <div class="vortex-copyright-box">
-                    <div>&copy; 2025 Vortex</div>
-                    <div class="tagline-line">Ideas Never Stand Still.</div>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Main HUD Workspace -->
-        <main class="vortex-hud-main">
-
-            <!-- Top HUD Bar -->
-            <header class="vortex-topbar">
-                <div class="vortex-topbar-left">
-                    <div class="vortex-status-badge">
-                        <span class="vortex-status-dot"></span>
-                        <span>SYSTEM_STATUS: ONLINE</span>
-                    </div>
-                </div>
-
-                <div class="vortex-topbar-right">
-                    <div class="vortex-ethos-row">
-                        <span>INNOVATE</span>
-                        <i class="sep-slash">/</i>
-                        <span>COLLABORATE</span>
-                        <i class="sep-slash">/</i>
-                        <span>CREATE</span>
-                        <i class="sep-slash">/</i>
-                        <span>IMPACT</span>
-                    </div>
-
-                    <a href="/events.html" class="vortex-search-icon-btn" title="Search Events" aria-label="Search">
-                        <i class="fas fa-search"></i>
-                    </a>
-
-                    <a href="/login.html" class="vortex-admin-login-pill login-btn">
-                        <i class="fas fa-user-circle"></i>
-                        <span>Admin Login</span>
-                    </a>
-                </div>
-            </header>
-
-            <div class="vortex-inner-content">
-                <!-- About Section - Operative Network -->
-                <section id="about" class="content-section" style="padding-top: 20px;">
-                    <div class="section-header">
-                        <span class="section-tag"></span>
-                        <h2 class="section-title">THE NETWORK</h2>
+    <!-- About Section - Operative Network -->
+    <section id="about" class="content-section" style="padding-top: 100px;">
+        <div class="section-header">
+            <span class="section-tag"></span>
+            <h2 class="section-title">THE NETWORK</h2>
         </div>
         <div class="section-container">
             <p class="section-text big-text">
@@ -456,50 +361,29 @@
 
                 </div>
             </div>
-        </section>
+    </section>
 
-        <!-- Contact Section -->
-        <footer style="margin-top: 50px; text-align: center;">
-            <div class="contact-section">
-                <h3 style="font-family: var(--vx-font-hud); letter-spacing: 2px; color: #fff;">CONNECT WITH US</h3>
-                <div class="social-links" style="margin: 15px 0;">
-                    <a href="mailto:vortexinnovators2k24@gmail.com" class="social-icon" style="color: #ff2233; margin: 0 10px; font-size: 1.2rem;"><i class="fas fa-envelope"></i></a>
-                    <a href="https://instagram.com/vortex_innovators" target="_blank" class="social-icon" style="color: #ff2233; margin: 0 10px; font-size: 1.2rem;"><i
-                            class="fab fa-instagram"></i></a>
-                </div>
-                <p class="copyright" style="font-size: 0.8rem; color: rgba(255,255,255,0.4);">&copy; 2026 VORTEX INNOVATORS. SYSTEM_STATUS: ONLINE</p>
-                <p class="copyright" style="margin-top: 5px; font-size: 0.7rem;">
-                    <a href="/privacy_policy.html" style="color: #666; text-decoration: none;">Privacy Policy</a> |
-                    <a href="/terms.html" style="color: #666; text-decoration: none;">Terms & Conditions</a> |
-                    <a href="/refund_policy.html" style="color: #666; text-decoration: none;">Refund Policy</a>
-                </p>
+    <!-- Contact Section -->
+    <footer>
+        <div class="contact-section">
+            <h3>CONNECT WITH US</h3>
+            <div class="social-links">
+                <a href="mailto:vortexinnovators2k24@gmail.com" class="social-icon"><i class="fas fa-envelope"></i></a>
+                <a href="https://instagram.com/vortex_innovators" target="_blank" class="social-icon"><i
+                        class="fab fa-instagram"></i></a>
             </div>
-        </footer>
-    </div>
-    </main>
-    </div>
+            <p class="copyright">© 2026 VORTEX INNOVATORS. SYSTEM_STATUS: ONLINE</p>
+            <p class="copyright" style="margin-top: 5px; font-size: 0.7rem;">
+                <a href="/privacy_policy.html" style="color: #666; text-decoration: none;">Privacy Policy</a> |
+                <a href="/terms.html" style="color: #666; text-decoration: none;">Terms & Conditions</a> |
+                <a href="/refund_policy.html" style="color: #666; text-decoration: none;">Refund Policy</a>
+            </p>
+        </div>
+    </footer>
 
     <script src="tech_bg_alt.js"></script>
     <script src="tech_bg_mobile.js"></script>
     <script src="script.js"></script>
-    <script>
-        (() => {
-            const toggle = document.getElementById('mobileToggle');
-            const sidebar = document.getElementById('vortexSidebar');
-            const closeBtn = document.getElementById('sidebarCloseBtn');
-
-            if (toggle && sidebar) {
-                toggle.addEventListener('click', () => {
-                    sidebar.classList.toggle('sidebar-open');
-                });
-            }
-            if (closeBtn && sidebar) {
-                closeBtn.addEventListener('click', () => {
-                    sidebar.classList.remove('sidebar-open');
-                });
-            }
-        })();
-    </script>
 </body>
 
 </html>
