@@ -11,8 +11,8 @@
         content="Vortex Innovators - Student Innovation Community under Department of Computer Applications.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=3.0">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;800;900&family=Rajdhani:wght@500;600;700&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=3.2">
     <link rel="stylesheet" href="style_slider.css?v=1.3">
     <link rel="stylesheet" href="style_slider_leads.css?v=1.3">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -21,8 +21,6 @@
 </head>
 
 <body>
-
-
 
     <!-- Loading Screen -->
     <div id="loading-screen">
@@ -35,92 +33,285 @@
     <!-- Spotlight Effect Container -->
     <div id="spotlight"></div>
 
-    <!-- Navigation -->
-    <nav class="glass-nav">
-        <div class="nav-content">
-            <div class="brand-container">
-                <a href="/">
+    <!-- Integrated Top Horizontal Navigation Bar -->
+    <header class="vortex-top-nav">
+        <div class="vortex-nav-container">
+            <!-- Left Side: Vortex Identity -->
+            <div class="vortex-nav-left">
+                <a href="/" class="brand-link">
+                    <img src="https://image2url.com/r2/default/images/1771323328076-73754ca7-5637-40c3-9e39-77832d8f5a18.jpeg"
+                        alt="Vortex Logo" class="vortex-nav-logo">
+                    <span class="vortex-nav-title">VORTEX</span>
+                </a>
+                <span class="vortex-nav-divider"></span>
+                <span class="vortex-nav-subtitle">DEPARTMENT OF COMPUTER APPLICATIONS</span>
+            </div>
+
+            <!-- Center Menu: Numbered Navigation Items -->
+            <nav class="vortex-nav-center">
+                <a href="/" class="vortex-nav-item active">
+                    <span class="vortex-nav-num">01</span> HOME
+                </a>
+                <a href="/about.html" class="vortex-nav-item">
+                    <span class="vortex-nav-num">02</span> ABOUT
+                </a>
+                <a href="/events.html" class="vortex-nav-item">
+                    <span class="vortex-nav-num">03</span> EVENTS
+                </a>
+                <a href="/gallery.html" class="vortex-nav-item">
+                    <span class="vortex-nav-num">04</span> GALLERY
+                </a>
+            </nav>
+
+            <!-- Right Side: Search & Admin User -->
+            <div class="vortex-nav-right">
+                <button type="button" id="nav-search-btn" class="vortex-search-btn" aria-label="Search" title="Search Network">
+                    <i class="fas fa-search"></i>
+                </button>
+
+                <a href="/login.html" class="login-btn vortex-admin-btn">
+                    <i class="fas fa-user-astronaut"></i>
+                    <span>ADMIN USER</span>
+                </a>
+
+                <!-- Mobile Hamburger Toggle -->
+                <div class="hamburger">
+                    <div class="line1"></div>
+                    <div class="line2"></div>
+                    <div class="line3"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Drawer Navigation -->
+        <div class="nav-links">
+            <div class="mobile-nav-header mobile-only">
+                <div class="brand-container" style="margin-right: auto; gap: 10px;">
                     <img src="https://image2url.com/r2/default/images/1771323328076-73754ca7-5637-40c3-9e39-77832d8f5a18.jpeg"
                         alt="Vortex Logo" class="nav-logo-img">
-                </a>
-                <a href="/" class="logo">VORTEX</a>
-            </div>
-
-            <a href="/login.html" class="login-btn">
-                <i class="fas fa-lock"></i> LOGIN
-            </a>
-
-            <div class="hamburger">
-                <div class="line1"></div>
-                <div class="line2"></div>
-                <div class="line3"></div>
-            </div>
-            <div class="nav-links">
-                <!-- Mobile Only Header -->
-                <div class="mobile-nav-header mobile-only">
-                    <div class="brand-container" style="margin-right:auto; gap:10px;"><img
-                            src="https://image2url.com/r2/default/images/1771323328076-73754ca7-5637-40c3-9e39-77832d8f5a18.jpeg"
-                            alt="Vortex Logo" class="nav-logo-img"><span class="logo"
-                            style="font-size:1.5rem;">VORTEX</span></div>
-                    <div class="close-menu">&times;</div>
+                    <span class="logo" style="font-size: 1.4rem;">VORTEX</span>
                 </div>
+                <div class="close-menu">&times;</div>
+            </div>
 
-                <a href="/" class="nav-item active">Home</a>
-                <a href="/about.html" class="nav-item">About</a>
-                <a href="/events.html" class="nav-item">Events</a>
-                <a href="/gallery.html" class="nav-item">Gallery</a>
+            <a href="/" class="nav-item active">01 Home</a>
+            <a href="/about.html" class="nav-item">02 About</a>
+            <a href="/events.html" class="nav-item">03 Events</a>
+            <a href="/gallery.html" class="nav-item">04 Gallery</a>
 
-                <!-- Mobile Login Button (Shows in Overlay) -->
-                <a href="/login.html" class="login-btn mobile-only">
-                    <i class="fas fa-lock"></i> LOGIN
+            <a href="/login.html" class="login-btn mobile-only">
+                <i class="fas fa-user-astronaut"></i> ADMIN USER
+            </a>
+        </div>
+    </header>
+
+    <!-- Search HUD Command Palette Modal -->
+    <div id="vortex-search-modal" class="vortex-search-modal">
+        <div class="vortex-search-box">
+            <div class="vortex-search-header">
+                <i class="fas fa-search"></i>
+                <input type="text" id="vortex-search-input" class="vortex-search-input" placeholder="Search Vortex Network (e.g., Events, About, Elevate)..." autocomplete="off">
+                <button type="button" id="vortex-search-close" class="vortex-search-close">&times;</button>
+            </div>
+            <div class="vortex-search-results">
+                <a href="/" class="vortex-search-item">
+                    <span class="item-title">01 // Home Innovation Portal</span>
+                    <span class="item-cat">PORTAL</span>
+                </a>
+                <a href="/about.html" class="vortex-search-item">
+                    <span class="item-title">02 // About Vortex & Department Leads</span>
+                    <span class="item-cat">ASSOCIATION</span>
+                </a>
+                <a href="/events.html" class="vortex-search-item">
+                    <span class="item-title">03 // Events & Hackathons</span>
+                    <span class="item-cat">ACTIVITIES</span>
+                </a>
+                <a href="/gallery.html" class="vortex-search-item">
+                    <span class="item-title">04 // Innovation Showcase Gallery</span>
+                    <span class="item-cat">ARCHIVES</span>
+                </a>
+                <a href="/login.html" class="vortex-search-item">
+                    <span class="item-title">05 // Admin & Member Portal</span>
+                    <span class="item-cat">ACCESS</span>
                 </a>
             </div>
         </div>
-    </nav>
+    </div>
 
-    <!-- Hero Section -->
-    <section id="home" class="hero-section">
-        <div class="hero-content">
-            <h1 class="hero-title">
-                <div class="line">WE ARE</div>
-                <div class="line highlight-text">VORTEX</div>
-            </h1>
-            <p class="hero-subtitle">THE INTELLIGENT INNOVATION NETWORK OF DEPARTMENT OF COMPUTER APPLICATIONS</p>
+    <!-- Asymmetric Hero Section -->
+    <section id="home" class="vortex-hero">
+        <!-- Technical Grid & Markings -->
+        <div class="vortex-hero-grid"></div>
+        <div class="vortex-tech-tag tech-tag-tl">[ SYS: ONLINE // NODE: VTX-01 // COORD: 11.2588° N, 75.7804° E ]</div>
+        <div class="vortex-tech-tag tech-tag-bl">[ ARCHITECTURE: 64-BIT // PROTOCOL: INNOVATION // STATUS: READY ]</div>
 
-            <p class="hero-description">
-                Vortex Innovators is a dynamic association driven by creativity, collaboration, and forward-thinking
-                ideas.
-                We bring together passionate minds to innovate, learn, and create impactful solutions that shape the
-                future.
-                At Vortex, ideas turn into action and innovation never stands still.
-            </p>
-
-            <div class="hero-stats">
-                <div class="stat-item">
-                    <span class="stat-val">100+</span>
-                    <span class="stat-label">INNOVATORS</span>
+        <div class="vortex-hero-inner">
+            <!-- Left Hero Content -->
+            <div class="vortex-hero-left">
+                <!-- Eyebrow Tag -->
+                <div class="vortex-eyebrow">
+                    <span class="vortex-beacon-dot"></span>
+                    THE INTELLIGENT INNOVATION NETWORK
                 </div>
-                <div class="stat-item">
-                    <span class="stat-val">10+</span>
-                    <span class="stat-label">PROJECTS</span>
-                </div>
-            </div>
 
-            <div class="featured-event-block" id="featured-elevate-block" style="display: none;">
-                <span class="event-label">&#9679; FLAGSHIP EVENT &#9679;</span>
-                <h2 class="featured-event-title" id="elevate-title">ELEVATE</h2>
-                <hr>
-                <p class="featured-event-desc">
-                    Driven by creativity and powered by talent, this platform celebrates bold ideas and fearless
-                    participation. It’s a space where skills are tested, teamwork is strengthened, and excellence rises
-                    above the ordinary.
+                <!-- Headline -->
+                <h1 class="vortex-headline-h1">
+                    <span class="vortex-hl-weare">WE ARE</span>
+                    <span class="vortex-hl-vortex">VORTEX</span>
+                </h1>
+
+                <!-- Subheadline -->
+                <p class="vortex-lead-sub">
+                    The intelligent innovation network of the Department of Computer Applications.
                 </p>
-                <span class="highlight-date">&#128467; MAR 05 &ndash; 06</span>
-                <a href="/elevate.html" class="theme-grid-btn">
-                    <span>● CLOSED (ADMIN OPEN)</span>
-                </a>
+
+                <!-- Association Description -->
+                <p class="vortex-hero-paragraph">
+                    Vortex Innovators is a dynamic association driven by creativity, collaboration, and forward-thinking ideas. We bring together passionate minds to innovate, learn, and create impactful solutions that shape the future. At Vortex, ideas turn into action and innovation never stands still.
+                </p>
+
+                <!-- Premium CTA Buttons -->
+                <div class="vortex-cta-group">
+                    <a href="/events.html" class="vortex-btn-primary">
+                        <span>EXPLORE EVENTS</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <a href="/about.html" class="vortex-btn-secondary">
+                        LEARN MORE
+                    </a>
+                </div>
+
+                <!-- Admin-Only Featured Event Block (Elevate) -->
+                <div class="featured-event-block" id="featured-elevate-block" style="display: none; margin-top: 30px;">
+                    <span class="event-label">&#9679; FLAGSHIP EVENT &#9679;</span>
+                    <h2 class="featured-event-title" id="elevate-title">ELEVATE</h2>
+                    <hr>
+                    <p class="featured-event-desc">
+                        Driven by creativity and powered by talent, this platform celebrates bold ideas and fearless
+                        participation. It’s a space where skills are tested, teamwork is strengthened, and excellence rises
+                        above the ordinary.
+                    </p>
+                    <span class="highlight-date">&#128467; MAR 05 &ndash; 06</span>
+                    <a href="/elevate.html" class="theme-grid-btn">
+                        <span>● CLOSED (ADMIN OPEN)</span>
+                    </a>
+                </div>
             </div>
 
+            <!-- Right Hero Visual (Abstract 3D Technological Vortex) -->
+            <div class="vortex-hero-right">
+                <div class="vortex-visual-wrap">
+                    <!-- Interactive 3D Canvas Engine -->
+                    <canvas id="vortex-canvas-3d"></canvas>
+
+                    <!-- HUD Information Panel 1: Ideas -->
+                    <div class="vortex-hud-panel hud-pos-ideas">
+                        <div class="hud-icon-wrap">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <div class="hud-text-wrap">
+                            <span class="hud-label">IDEAS</span>
+                            <span class="hud-val">SPARK CHANGE</span>
+                        </div>
+                    </div>
+
+                    <!-- HUD Information Panel 2: People -->
+                    <div class="vortex-hud-panel hud-pos-people">
+                        <div class="hud-icon-wrap">
+                            <i class="fas fa-users-cog"></i>
+                        </div>
+                        <div class="hud-text-wrap">
+                            <span class="hud-label">PEOPLE</span>
+                            <span class="hud-val">BUILD TOGETHER</span>
+                        </div>
+                    </div>
+
+                    <!-- HUD Information Panel 3: Impact -->
+                    <div class="vortex-hud-panel hud-pos-impact">
+                        <div class="hud-icon-wrap">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <div class="hud-text-wrap">
+                            <span class="hud-label">IMPACT</span>
+                            <span class="hud-val">DRIVE TOMORROW</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scroll Indicator -->
+        <a href="#stats-panel" class="vortex-scroll-indicator">
+            <span class="vortex-scroll-line"></span>
+            <span>SCROLL TO EXPLORE</span>
+        </a>
+    </section>
+
+    <!-- Wide Horizontal Statistics Panel -->
+    <section id="stats-panel" class="vortex-stats-panel-section">
+        <div class="vortex-stats-panel">
+            <div class="vortex-stat-col">
+                <i class="fas fa-user-friends vortex-stat-icon"></i>
+                <div class="vortex-stat-info">
+                    <span class="vortex-stat-number">100+</span>
+                    <span class="vortex-stat-title">INNOVATORS</span>
+                </div>
+            </div>
+
+            <div class="vortex-stat-col">
+                <i class="fas fa-layer-group vortex-stat-icon"></i>
+                <div class="vortex-stat-info">
+                    <span class="vortex-stat-number">10+</span>
+                    <span class="vortex-stat-title">PROJECTS</span>
+                </div>
+            </div>
+
+            <div class="vortex-stat-col">
+                <i class="fas fa-calendar-alt vortex-stat-icon"></i>
+                <div class="vortex-stat-info">
+                    <span class="vortex-stat-number">5+</span>
+                    <span class="vortex-stat-title">EVENTS</span>
+                </div>
+            </div>
+
+            <div class="vortex-stat-col">
+                <i class="fas fa-infinity vortex-stat-icon"></i>
+                <div class="vortex-stat-info">
+                    <span class="vortex-stat-number">∞</span>
+                    <span class="vortex-stat-title">POSSIBILITIES</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cinematic Mission Section -->
+    <section class="vortex-mission-section">
+        <div class="vortex-mission-panel">
+            <!-- Dark Technological Architecture Background Layer -->
+            <div class="vortex-mission-bg"></div>
+            <div class="vortex-mission-overlay"></div>
+
+            <div class="vortex-mission-content">
+                <div class="vortex-mission-left">
+                    <div class="vortex-mission-label">
+                        <i class="fas fa-terminal"></i>
+                        <span>// 01 OUR MISSION</span>
+                    </div>
+                    <h2 class="vortex-mission-heading">
+                        TURNING IDEAS INTO <span class="highlight-impact">IMPACT.</span>
+                    </h2>
+                    <p class="vortex-mission-desc">
+                        To create a platform where ideas meet opportunities, enabling students to explore, innovate, and make a real-world impact through technology.
+                    </p>
+                </div>
+
+                <div class="vortex-mission-right">
+                    <div class="vortex-mission-callout">
+                        Students today.
+                        <span>Innovators tomorrow.</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -130,14 +321,14 @@
         <span class="status-text">> SYSTEM_STATUS: ONLINE // ENCRYPTION: ACTIVE</span>
     </div>
 
-    <!-- Contact Section -->
+    <!-- Contact & Footer Section -->
     <footer>
         <div class="contact-section">
             <h3>CONNECT WITH US</h3>
             <div class="social-links">
-                <a href="mailto:vortexinnovators2k24@gmail.com" class="social-icon"><i class="fas fa-envelope"></i></a>
+                <a href="mailto:vortexinnovators2k24@gmail.com" class="social-icon" title="Email Us"><i class="fas fa-envelope"></i></a>
                 <a href="https://www.instagram.com/vortex_innovatorss?igsh=MWN2YjVzYmtoZmxkMQ==" target="_blank"
-                    class="social-icon"><i class="fab fa-instagram"></i></a>
+                    class="social-icon" title="Instagram"><i class="fab fa-instagram"></i></a>
             </div>
             <p class="copyright">&copy; 2026 VORTEX INNOVATORS. SYSTEM_STATUS: ONLINE</p>
             <p class="copyright" style="margin-top: 5px; font-size: 0.7rem;">
@@ -154,8 +345,10 @@
         <img id="lightbox-img" src="" alt="Full Screen Image">
     </div>
 
+    <!-- Script Suite -->
     <script src="tech_bg_alt.js"></script>
     <script src="tech_bg_mobile.js"></script>
+    <script src="vortex_canvas.js"></script>
     <script src="script.js"></script>
     <script>
         (() => {
