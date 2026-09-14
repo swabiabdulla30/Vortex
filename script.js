@@ -190,65 +190,17 @@ elementsToAnimate.forEach(el => {
 // Navigation Scroll Effect
 let lastScroll = 0;
 window.addEventListener('scroll', function () {
-    const nav = document.querySelector('.glass-nav') || document.querySelector('.vortex-top-nav');
+    const nav = document.querySelector('.glass-nav');
     const currentScroll = window.pageYOffset;
 
     if (nav) {
-        const isTopNav = nav.classList.contains('vortex-top-nav');
         if (currentScroll > lastScroll && currentScroll > 100) {
-            nav.style.transform = isTopNav ? 'translateY(-100%)' : 'translate(-50%, -100%)';
+            nav.style.transform = 'translate(-50%, -100%)';
         } else {
-            nav.style.transform = isTopNav ? 'translateY(0)' : 'translate(-50%, 0)';
+            nav.style.transform = 'translate(-50%, 0)';
         }
     }
     lastScroll = currentScroll;
-});
-
-// Search Modal HUD Controller
-document.addEventListener('DOMContentLoaded', function () {
-    const searchBtn = document.getElementById('nav-search-btn');
-    const searchModal = document.getElementById('vortex-search-modal');
-    const searchClose = document.getElementById('vortex-search-close');
-    const searchInput = document.getElementById('vortex-search-input');
-
-    if (searchBtn && searchModal) {
-        searchBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            searchModal.classList.add('active');
-            if (searchInput) {
-                setTimeout(() => searchInput.focus(), 50);
-            }
-        });
-
-        if (searchClose) {
-            searchClose.addEventListener('click', () => {
-                searchModal.classList.remove('active');
-            });
-        }
-
-        searchModal.addEventListener('click', (e) => {
-            if (e.target === searchModal) {
-                searchModal.classList.remove('active');
-            }
-        });
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && searchModal.classList.contains('active')) {
-                searchModal.classList.remove('active');
-            }
-        });
-
-        if (searchInput) {
-            searchInput.addEventListener('input', (e) => {
-                const term = e.target.value.toLowerCase().trim();
-                const items = document.querySelectorAll('.vortex-search-item');
-                items.forEach(item => {
-                    const text = item.textContent.toLowerCase();
-                    item.style.display = text.includes(term) ? 'flex' : 'none';
-                });
-            });
-        }
-    }
 });
 
 // Main Leads Slider Logic (Seamless Loop & Touch)
