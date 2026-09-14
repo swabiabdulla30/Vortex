@@ -11,10 +11,9 @@
         content="Vortex Innovators - Student Innovation Community under Department of Computer Applications.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;800;900&family=Outfit:wght@300;400;500;600;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=3.5">
-    <link rel="stylesheet" href="style_slider.css?v=1.3">
-    <link rel="stylesheet" href="style_slider_leads.css?v=1.3">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=3.6">
+    <link rel="stylesheet" href="theme_vortex.css?v=2.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -33,338 +32,325 @@
     <!-- Spotlight Effect Container -->
     <div id="spotlight"></div>
 
-    <!-- Mobile Nav Bar Header (Visible on Mobile / Tablet) -->
-    <header class="mobile-hud-header">
-        <div class="mobile-brand">
-            <a href="/" class="brand-link">
-                <img src="https://image2url.com/r2/default/images/1771323328076-73754ca7-5637-40c3-9e39-77832d8f5a18.jpeg"
-                    alt="Vortex Logo" class="mobile-logo-img">
-                <span class="mobile-brand-text">VORTEX</span>
-            </a>
-        </div>
-        <div class="mobile-header-actions">
-            <a href="/login.html" class="login-btn mobile-header-login">
+    <!-- Mobile HUD Bar (Header on Mobile) -->
+    <header class="mobile-hud-bar">
+        <a href="/" class="mobile-brand-link">
+            <svg viewBox="0 0 100 100" class="mobile-poly-icon" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="50,92 22,44 38,44" fill="#8f000e" />
+                <polygon points="50,92 38,44 50,62" fill="#c40015" />
+                <polygon points="22,44 10,18 34,30" fill="#e50914" />
+                <polygon points="34,30 38,44 22,44" fill="#a80011" />
+                <polygon points="34,30 50,18 50,38" fill="#ff1f2f" />
+                <polygon points="34,30 50,38 38,44" fill="#d90017" />
+                <polygon points="50,92 78,44 62,44" fill="#6e000b" />
+                <polygon points="50,92 62,44 50,62" fill="#a00012" />
+                <polygon points="78,44 90,18 66,30" fill="#c40015" />
+                <polygon points="66,30 62,44 78,44" fill="#88000f" />
+                <polygon points="66,30 50,18 50,38" fill="#d90017" />
+                <polygon points="66,30 50,38 62,44" fill="#ff1f2f" />
+            </svg>
+            <span class="mobile-title-text">VORTEX</span>
+        </a>
+        <div class="mobile-right-btns">
+            <a href="/login.html" class="mobile-login-icon" title="Login">
                 <i class="fas fa-user-circle"></i>
             </a>
-            <div class="hamburger" id="navBurger">
-                <div class="line1"></div>
-                <div class="line2"></div>
-                <div class="line3"></div>
+            <div class="mobile-burger-toggle" id="mobileToggle">
+                <span></span>
+                <span></span>
+                <span></span>
             </div>
         </div>
     </header>
 
-    <!-- App Layout Container -->
-    <div class="app-layout-wrapper">
+    <!-- App Overall Container -->
+    <div class="vortex-app-container">
 
         <!-- Left HUD Sidebar -->
-        <aside class="app-sidebar" id="appSidebar">
-            <!-- Sidebar Header / Brand -->
-            <div class="sidebar-brand-section">
-                <a href="/" class="sidebar-brand-link">
-                    <img src="https://image2url.com/r2/default/images/1771323328076-73754ca7-5637-40c3-9e39-77832d8f5a18.jpeg"
-                        alt="Vortex Logo" class="sidebar-logo-img">
-                    <span class="sidebar-logo-title">VORTEX</span>
-                    <span class="sidebar-logo-subtitle">DEPARTMENT OF<br>COMPUTER APPLICATIONS</span>
-                </a>
-                <button class="close-menu sidebar-close-btn" aria-label="Close Navigation">&times;</button>
-            </div>
+        <aside class="vortex-hud-sidebar" id="vortexSidebar">
+            <button class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="Close Sidebar">&times;</button>
 
-            <!-- Navigation Links -->
-            <nav class="sidebar-nav-container nav-links">
-                <!-- Mobile only profile injected by script.js when logged in -->
-                <div class="mobile-nav-header mobile-only"></div>
+            <!-- Brand Section -->
+            <a href="/" class="vortex-sidebar-brand">
+                <svg viewBox="0 0 100 100" class="vortex-poly-svg" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="50,92 22,44 38,44" fill="#8f000e" />
+                    <polygon points="50,92 38,44 50,62" fill="#c40015" />
+                    <polygon points="22,44 10,18 34,30" fill="#e50914" />
+                    <polygon points="34,30 38,44 22,44" fill="#a80011" />
+                    <polygon points="34,30 50,18 50,38" fill="#ff1f2f" />
+                    <polygon points="34,30 50,38 38,44" fill="#d90017" />
+                    <polygon points="50,92 78,44 62,44" fill="#6e000b" />
+                    <polygon points="50,92 62,44 50,62" fill="#a00012" />
+                    <polygon points="78,44 90,18 66,30" fill="#c40015" />
+                    <polygon points="66,30 62,44 78,44" fill="#88000f" />
+                    <polygon points="66,30 50,18 50,38" fill="#d90017" />
+                    <polygon points="66,30 50,38 62,44" fill="#ff1f2f" />
+                </svg>
+                <div class="vortex-brand-name">VORTEX</div>
+                <div class="vortex-brand-dept">DEPARTMENT OF<br>COMPUTER APPLICATIONS</div>
+            </a>
 
-                <ul class="sidebar-menu-list">
+            <!-- Navigation Menu -->
+            <nav class="vortex-sidebar-nav">
+                <ul class="vortex-menu-list">
                     <li>
-                        <a href="/" class="sidebar-menu-item active nav-item">
+                        <a href="/" class="vortex-menu-link active">
                             <i class="fas fa-home"></i>
                             <span>Home</span>
                         </a>
                     </li>
                     <li>
-                        <a href="/about.html" class="sidebar-menu-item nav-item">
+                        <a href="/about.html" class="vortex-menu-link">
                             <i class="far fa-user"></i>
                             <span>About</span>
                         </a>
                     </li>
                     <li>
-                        <a href="/events.html" class="sidebar-menu-item nav-item">
+                        <a href="/events.html" class="vortex-menu-link">
                             <i class="far fa-calendar-alt"></i>
                             <span>Events</span>
                         </a>
                     </li>
                     <li>
-                        <a href="/gallery.html" class="sidebar-menu-item nav-item">
+                        <a href="/gallery.html" class="vortex-menu-link">
                             <i class="far fa-image"></i>
                             <span>Gallery</span>
                         </a>
                     </li>
                 </ul>
-
-                <!-- Fallback/Mobile Login Link -->
-                <a href="/login.html" class="login-btn mobile-only">
-                    <i class="fas fa-lock"></i> LOGIN
-                </a>
             </nav>
 
-            <!-- Sidebar Bottom Info & Socials -->
-            <div class="sidebar-bottom-section">
-                <div class="sidebar-socials">
+            <!-- Bottom Section -->
+            <div class="vortex-sidebar-bottom">
+                <div class="vortex-socials-row">
                     <a href="https://www.instagram.com/vortex_innovatorss?igsh=MWN2YjVzYmtoZmxkMQ==" target="_blank"
-                        class="sidebar-social-link" title="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="mailto:vortexinnovators2k24@gmail.com" class="sidebar-social-link" title="Contact Email"><i
-                            class="fas fa-envelope"></i></a>
-                    <a href="https://github.com" target="_blank" class="sidebar-social-link" title="GitHub"><i
-                            class="fab fa-github"></i></a>
-                    <a href="https://linkedin.com" target="_blank" class="sidebar-social-link" title="LinkedIn"><i
+                        class="vortex-social-item" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://linkedin.com" target="_blank" class="vortex-social-item" title="LinkedIn"><i
                             class="fab fa-linkedin-in"></i></a>
+                    <a href="https://github.com" target="_blank" class="vortex-social-item" title="GitHub"><i
+                            class="fab fa-github"></i></a>
+                    <a href="https://youtube.com" target="_blank" class="vortex-social-item" title="YouTube"><i
+                            class="fab fa-youtube"></i></a>
                 </div>
 
-                <a href="/events.html" class="sidebar-join-cta">
+                <a href="/events.html" class="vortex-join-btn">
                     <span>Join Vortex</span>
                     <i class="fas fa-arrow-right"></i>
                 </a>
 
-                <div class="sidebar-footer-info">
-                    <div class="copy-primary">&copy; 2025 Vortex</div>
-                    <div class="copy-tagline">Ideas Never Stand Still.</div>
+                <div class="vortex-copyright-box">
+                    <div>&copy; 2025 Vortex</div>
+                    <div class="tagline-line">Ideas Never Stand Still.</div>
                 </div>
             </div>
         </aside>
 
-        <!-- Main Workspace Area -->
-        <div class="app-main-content">
+        <!-- Main HUD Workspace Area -->
+        <main class="vortex-hud-main">
 
-            <!-- Top HUD Status & Actions Bar -->
-            <header class="app-topbar">
-                <div class="topbar-left">
-                    <div class="system-status-pill">
-                        <span class="status-pulse-dot"></span>
-                        <span class="status-text">SYSTEM_STATUS: ONLINE</span>
+            <!-- Top HUD Bar -->
+            <header class="vortex-topbar">
+                <div class="vortex-topbar-left">
+                    <div class="vortex-status-badge">
+                        <span class="vortex-status-dot"></span>
+                        <span>SYSTEM_STATUS: ONLINE</span>
                     </div>
                 </div>
 
-                <div class="topbar-right">
-                    <div class="topbar-ethos-tags">
+                <div class="vortex-topbar-right">
+                    <div class="vortex-ethos-row">
                         <span>INNOVATE</span>
-                        <i class="slash">/</i>
+                        <i class="sep-slash">/</i>
                         <span>COLLABORATE</span>
-                        <i class="slash">/</i>
+                        <i class="sep-slash">/</i>
                         <span>CREATE</span>
-                        <i class="slash">/</i>
+                        <i class="sep-slash">/</i>
                         <span>IMPACT</span>
                     </div>
 
-                    <a href="/events.html" class="topbar-search-btn" title="Search Events" aria-label="Search">
+                    <a href="/events.html" class="vortex-search-icon-btn" title="Search Events" aria-label="Search">
                         <i class="fas fa-search"></i>
                     </a>
 
-                    <a href="/login.html" class="login-btn topbar-login-btn">
+                    <a href="/login.html" class="vortex-admin-login-pill login-btn">
                         <i class="fas fa-user-circle"></i>
                         <span>Admin Login</span>
                     </a>
                 </div>
             </header>
 
-            <!-- Main Cyber Hero Section -->
-            <main class="cyber-hero-section" id="home">
-                <div class="cyber-hero-grid">
+            <!-- Hero Command View (2 Columns) -->
+            <section class="vortex-hero-view" id="home">
 
-                    <!-- Left Column: Typography & CTAs -->
-                    <div class="hero-left-column">
-                        <div class="hero-dept-bar">
-                            <span class="dept-bar-line"></span>
-                            <span class="dept-bar-text">DEPARTMENT OF COMPUTER APPLICATIONS</span>
-                            <span class="dept-bar-dot"></span>
-                        </div>
+                <!-- Left Column: Typography, Tagline, CTAs -->
+                <div class="vortex-hero-left">
+                    <div class="vortex-dept-header-line">
+                        <span class="dept-accent-dash"></span>
+                        <span class="dept-accent-title">DEPARTMENT OF COMPUTER APPLICATIONS</span>
+                        <span class="dept-accent-dot"></span>
+                    </div>
 
-                        <h1 class="hero-massive-headline">
-                            <div class="title-metallic">WE ARE</div>
-                            <div class="title-crimson-glow">VORTEX</div>
-                        </h1>
+                    <div class="vortex-headline-group">
+                        <div class="title-we-are">WE ARE</div>
+                        <div class="title-vortex-crimson">VORTEX</div>
+                    </div>
 
-                        <p class="hero-spaced-tagline">THE INTELLIGENT INNOVATION NETWORK</p>
+                    <div class="vortex-tagline-spaced">THE INTELLIGENT INNOVATION NETWORK</div>
 
-                        <p class="hero-body-description">
-                            Vortex Innovators is a dynamic association driven by creativity, collaboration, and forward-thinking
-                            ideas. We bring together passionate minds to innovate, learn, and create impactful solutions that shape
-                            the future. At Vortex, ideas turn into action and innovation never stands still.
+                    <p class="vortex-hero-paragraph">
+                        Vortex Innovators is a dynamic association driven by creativity, collaboration, and forward-thinking
+                        ideas. We bring together passionate minds to innovate, learn, and create impactful solutions that shape
+                        the future. At Vortex, ideas turn into action and innovation never stands still.
+                    </p>
+
+                    <div class="vortex-actions-group">
+                        <a href="/events.html" class="btn-vortex-primary">
+                            <span>Explore Events</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                        <a href="/about.html" class="btn-vortex-secondary">
+                            <span>Learn More</span>
+                        </a>
+                    </div>
+
+                    <!-- Preserved Admin Elevate Block -->
+                    <div class="featured-event-block" id="featured-elevate-block" style="display: none; margin-top: 20px;">
+                        <span class="event-label">&#9679; FLAGSHIP EVENT &#9679;</span>
+                        <h2 class="featured-event-title" id="elevate-title">ELEVATE</h2>
+                        <hr>
+                        <p class="featured-event-desc">
+                            Driven by creativity and powered by talent, this platform celebrates bold ideas and fearless
+                            participation. It’s a space where skills are tested, teamwork is strengthened, and excellence rises
+                            above the ordinary.
                         </p>
-
-                        <div class="hero-cta-button-group">
-                            <a href="/events.html" class="btn-hero-glow">
-                                <span>Explore Events</span>
-                                <i class="fas fa-arrow-right"></i>
-                            </a>
-                            <a href="/about.html" class="btn-hero-dark">
-                                <span>Learn More</span>
-                            </a>
-                        </div>
-
-                        <!-- Featured Elevate Block (Preserved for Admin) -->
-                        <div class="featured-event-block" id="featured-elevate-block" style="display: none;">
-                            <span class="event-label">&#9679; FLAGSHIP EVENT &#9679;</span>
-                            <h2 class="featured-event-title" id="elevate-title">ELEVATE</h2>
-                            <hr>
-                            <p class="featured-event-desc">
-                                Driven by creativity and powered by talent, this platform celebrates bold ideas and fearless
-                                participation. It’s a space where skills are tested, teamwork is strengthened, and excellence rises
-                                above the ordinary.
-                            </p>
-                            <span class="highlight-date">&#128467; MAR 05 &ndash; 06</span>
-                            <a href="/elevate.html" class="theme-grid-btn">
-                                <span>● CLOSED (ADMIN OPEN)</span>
-                            </a>
-                        </div>
+                        <span class="highlight-date">&#128467; MAR 05 &ndash; 06</span>
+                        <a href="/elevate.html" class="theme-grid-btn">
+                            <span>● CLOSED (ADMIN OPEN)</span>
+                        </a>
                     </div>
+                </div>
 
-                    <!-- Right Column: 3D Wireframe Cyber Globe & Interactive HUD Badges -->
-                    <div class="hero-right-column">
-                        <div class="globe-hud-container" id="globe-container">
-                            <canvas id="globe-canvas"></canvas>
+                <!-- Right Column: 3D Wireframe Cyber Globe & HUD Badges -->
+                <div class="vortex-hero-right">
+                    <div class="vortex-globe-wrapper" id="globe-container">
+                        <canvas id="globe-canvas"></canvas>
 
-                            <!-- Floating HUD Card 1: IDEAS -->
-                            <div class="hud-tech-card hud-ideas">
-                                <div class="hud-tech-icon"><i class="fas fa-lightbulb"></i></div>
-                                <div class="hud-tech-body">
-                                    <div class="hud-tech-title">IDEAS</div>
-                                    <div class="hud-tech-desc">SPARK CHANGE</div>
-                                </div>
+                        <!-- HUD Badge 1: IDEAS -->
+                        <div class="vortex-hud-badge hud-badge-ideas">
+                            <div class="vortex-hud-icon"><i class="fas fa-lightbulb"></i></div>
+                            <div class="vortex-hud-texts">
+                                <span class="vortex-hud-heading">IDEAS</span>
+                                <span class="vortex-hud-subtext">SPARK CHANGE</span>
                             </div>
+                        </div>
 
-                            <!-- Floating HUD Card 2: PEOPLE -->
-                            <div class="hud-tech-card hud-people">
-                                <div class="hud-tech-icon"><i class="fas fa-users"></i></div>
-                                <div class="hud-tech-body">
-                                    <div class="hud-tech-title">PEOPLE</div>
-                                    <div class="hud-tech-desc">BUILD TOGETHER</div>
-                                </div>
+                        <!-- HUD Badge 2: PEOPLE -->
+                        <div class="vortex-hud-badge hud-badge-people">
+                            <div class="vortex-hud-icon"><i class="fas fa-users"></i></div>
+                            <div class="vortex-hud-texts">
+                                <span class="vortex-hud-heading">PEOPLE</span>
+                                <span class="vortex-hud-subtext">BUILD TOGETHER</span>
                             </div>
+                        </div>
 
-                            <!-- Floating HUD Card 3: IMPACT -->
-                            <div class="hud-tech-card hud-impact">
-                                <div class="hud-tech-icon"><i class="fas fa-chart-line"></i></div>
-                                <div class="hud-tech-body">
-                                    <div class="hud-tech-title">IMPACT</div>
-                                    <div class="hud-tech-desc">DRIVE TOMORROW</div>
-                                </div>
+                        <!-- HUD Badge 3: IMPACT -->
+                        <div class="vortex-hud-badge hud-badge-impact">
+                            <div class="vortex-hud-icon"><i class="fas fa-chart-line"></i></div>
+                            <div class="vortex-hud-texts">
+                                <span class="vortex-hud-heading">IMPACT</span>
+                                <span class="vortex-hud-subtext">DRIVE TOMORROW</span>
                             </div>
+                        </div>
 
-                            <!-- Vertical Stepper Rail -->
-                            <div class="hero-vertical-stepper">
-                                <div class="stepper-item active">
-                                    <span class="stepper-bar">|</span>
-                                    <span class="stepper-num">01</span>
-                                </div>
-                                <div class="stepper-item">
-                                    <span class="stepper-num">02</span>
-                                </div>
-                                <div class="stepper-item">
-                                    <span class="stepper-num">03</span>
-                                </div>
+                        <!-- Stepper on Far Right Edge -->
+                        <div class="vortex-stepper-rail">
+                            <div class="vortex-stepper-num active">
+                                <span class="vortex-stepper-bar">|</span> 01
                             </div>
+                            <div class="vortex-stepper-num">02</div>
+                            <div class="vortex-stepper-num">03</div>
+                        </div>
 
-                            <!-- Scroll To Explore Pulse Badge -->
-                            <div class="scroll-explore-pill">
-                                <div class="explore-radar-ring">
-                                    <span class="radar-dot"></span>
-                                </div>
-                                <span class="explore-text">SCROLL TO EXPLORE</span>
+                        <!-- Scroll To Explore Pill -->
+                        <div class="vortex-scroll-pill">
+                            <div class="vortex-radar-ring">
+                                <span class="vortex-radar-center"></span>
                             </div>
+                            <span>SCROLL TO EXPLORE</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Bottom Stats Grid Bar -->
-                <div class="cyber-stats-bar">
-                    <div class="stat-cell">
-                        <div class="stat-cell-icon">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <div class="stat-cell-info">
-                            <div class="stat-number">100+</div>
-                            <div class="stat-label">INNOVATORS</div>
-                        </div>
-                    </div>
+            </section>
 
-                    <div class="stat-cell-divider"></div>
-
-                    <div class="stat-cell">
-                        <div class="stat-cell-icon">
-                            <i class="fas fa-folder-open"></i>
-                        </div>
-                        <div class="stat-cell-info">
-                            <div class="stat-number">10+</div>
-                            <div class="stat-label">PROJECTS</div>
-                        </div>
-                    </div>
-
-                    <div class="stat-cell-divider"></div>
-
-                    <div class="stat-cell">
-                        <div class="stat-cell-icon">
-                            <i class="fas fa-trophy"></i>
-                        </div>
-                        <div class="stat-cell-info">
-                            <div class="stat-number">5+</div>
-                            <div class="stat-label">EVENTS</div>
-                        </div>
-                    </div>
-
-                    <div class="stat-cell-divider"></div>
-
-                    <div class="stat-cell">
-                        <div class="stat-cell-icon">
-                            <i class="fas fa-infinity"></i>
-                        </div>
-                        <div class="stat-cell-info">
-                            <div class="stat-number">&infin;</div>
-                            <div class="stat-label">POSSIBILITIES</div>
-                        </div>
+            <!-- Bottom Stats Ribbon -->
+            <div class="vortex-stats-ribbon">
+                <div class="vortex-stat-item">
+                    <div class="vortex-stat-icon"><i class="fas fa-users"></i></div>
+                    <div>
+                        <div class="vortex-stat-digits">100+</div>
+                        <div class="vortex-stat-label">INNOVATORS</div>
                     </div>
                 </div>
 
-                <!-- Bottom Mission Heartbeat Banner -->
-                <div class="cyber-mission-banner">
-                    <div class="mission-banner-left">
-                        <div class="mission-tag-eyebrow">OUR MISSION</div>
-                        <div class="mission-headline">Turning Ideas into <span class="impact-crimson">Impact.</span></div>
-                    </div>
+                <div class="vortex-stat-sep"></div>
 
-                    <div class="mission-pulse-visual">
-                        <svg class="ecg-pulse-svg" viewBox="0 0 260 40" preserveAspectRatio="none">
-                            <path class="ecg-back-line" d="M0,20 L40,20 L52,12 L60,30 L70,5 L80,26 L90,16 L100,20 L260,20" />
-                            <path class="ecg-glow-pulse" d="M0,20 L40,20 L52,12 L60,30 L70,5 L80,26 L90,16 L100,20 L260,20" />
-                        </svg>
-                    </div>
-
-                    <div class="mission-banner-right">
-                        <div class="mission-quote-line">Students today.</div>
-                        <div class="mission-quote-line">Innovators tomorrow. &mdash;</div>
+                <div class="vortex-stat-item">
+                    <div class="vortex-stat-icon"><i class="fas fa-folder-open"></i></div>
+                    <div>
+                        <div class="vortex-stat-digits">10+</div>
+                        <div class="vortex-stat-label">PROJECTS</div>
                     </div>
                 </div>
 
-            </main>
+                <div class="vortex-stat-sep"></div>
 
-            <!-- Lightbox Container -->
-            <div id="lightbox">
-                <span class="close-lightbox">&times;</span>
-                <img id="lightbox-img" src="" alt="Full Screen Image">
+                <div class="vortex-stat-item">
+                    <div class="vortex-stat-icon"><i class="fas fa-trophy"></i></div>
+                    <div>
+                        <div class="vortex-stat-digits">5+</div>
+                        <div class="vortex-stat-label">EVENTS</div>
+                    </div>
+                </div>
+
+                <div class="vortex-stat-sep"></div>
+
+                <div class="vortex-stat-item">
+                    <div class="vortex-stat-icon"><i class="fas fa-infinity"></i></div>
+                    <div>
+                        <div class="vortex-stat-digits">&infin;</div>
+                        <div class="vortex-stat-label">POSSIBILITIES</div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Footer Section -->
-            <footer class="cyber-page-footer">
-                <div class="footer-legal-links">
-                    <a href="/privacy_policy.html">Privacy Policy</a>
-                    <span class="sep">|</span>
-                    <a href="/terms.html">Terms & Conditions</a>
-                    <span class="sep">|</span>
-                    <a href="/refund_policy.html">Refund Policy</a>
+            <!-- Bottom Mission Heartbeat Banner -->
+            <div class="vortex-mission-strip">
+                <div class="vortex-mission-left">
+                    <div class="vortex-mission-tag">OUR MISSION</div>
+                    <div class="vortex-mission-quote">Turning Ideas into <span class="vortex-impact-glow">Impact.</span></div>
                 </div>
-            </footer>
 
-        </div>
+                <div class="vortex-pulse-mid">
+                    <svg class="vortex-ecg-svg" viewBox="0 0 260 40" preserveAspectRatio="none">
+                        <path class="ecg-dim-path" d="M0,20 L40,20 L52,12 L60,30 L70,5 L80,26 L90,16 L100,20 L260,20" />
+                        <path class="ecg-bright-path" d="M0,20 L40,20 L52,12 L60,30 L70,5 L80,26 L90,16 L100,20 L260,20" />
+                    </svg>
+                </div>
+
+                <div class="vortex-mission-right">
+                    <div>Students today.</div>
+                    <div>Innovators tomorrow. &mdash;</div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Lightbox Container -->
+    <div id="lightbox">
+        <span class="close-lightbox">&times;</span>
+        <img id="lightbox-img" src="" alt="Full Screen Image">
     </div>
 
     <!-- Scripts -->
@@ -375,19 +361,19 @@
     <script>
         (() => {
             try {
-                // Mobile burger toggle handler for sidebar
-                const burger = document.getElementById('navBurger');
-                const sidebar = document.getElementById('appSidebar');
-                const closeBtn = document.querySelector('.sidebar-close-btn');
+                // Mobile toggle for sidebar
+                const toggle = document.getElementById('mobileToggle');
+                const sidebar = document.getElementById('vortexSidebar');
+                const closeBtn = document.getElementById('sidebarCloseBtn');
 
-                if (burger && sidebar) {
-                    burger.addEventListener('click', () => {
-                        sidebar.classList.toggle('sidebar-active');
+                if (toggle && sidebar) {
+                    toggle.addEventListener('click', () => {
+                        sidebar.classList.toggle('sidebar-open');
                     });
                 }
                 if (closeBtn && sidebar) {
                     closeBtn.addEventListener('click', () => {
-                        sidebar.classList.remove('sidebar-active');
+                        sidebar.classList.remove('sidebar-open');
                     });
                 }
 

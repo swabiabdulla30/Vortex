@@ -1,0 +1,1024 @@
+/* ==========================================================================
+   VORTEX EXACT CYBERPUNK HUD THEME
+   Pixel-perfect styling matching the reference interface
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&family=Rajdhani:wght@500;600;700&display=swap');
+
+:root {
+    --vx-bg: #040507;
+    --vx-red-primary: #ff1a26;
+    --vx-red-deep: #b60012;
+    --vx-red-dark: #7a000c;
+    --vx-red-glow: rgba(255, 26, 38, 0.65);
+    --vx-border-red: rgba(255, 30, 45, 0.35);
+    --vx-glass-bg: rgba(11, 9, 13, 0.78);
+    --vx-text-white: #ffffff;
+    --vx-text-muted: rgba(220, 222, 235, 0.75);
+    --vx-font-main: 'Outfit', sans-serif;
+    --vx-font-hud: 'Rajdhani', sans-serif;
+}
+
+/* Reset overrides for exact theme */
+html, body.cyber-theme-body {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    min-height: 100vh !important;
+    background: var(--vx-bg) !important;
+    color: var(--vx-text-white) !important;
+    font-family: var(--vx-font-main) !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+/* Base App Layout */
+.vortex-app-container {
+    display: flex;
+    width: 100vw;
+    min-height: 100vh;
+    background: transparent;
+    position: relative;
+    z-index: 2;
+}
+
+/* ==========================================================================
+   LEFT HUD SIDEBAR
+   ========================================================================== */
+.vortex-hud-sidebar {
+    width: 210px;
+    min-width: 210px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 24px 18px 20px 18px;
+    background: rgba(6, 6, 8, 0.96);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-right: 1px solid rgba(255, 30, 45, 0.18);
+    box-shadow: 4px 0 35px rgba(0, 0, 0, 0.85);
+    transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+.sidebar-close-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.8rem;
+    cursor: pointer;
+    line-height: 1;
+}
+
+/* Brand Section */
+.vortex-sidebar-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+}
+
+.vortex-poly-svg {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 8px;
+    filter: drop-shadow(0 0 10px rgba(255, 26, 38, 0.75));
+    transition: transform 0.3s ease;
+}
+
+.vortex-sidebar-brand:hover .vortex-poly-svg {
+    transform: scale(1.05);
+}
+
+.vortex-brand-name {
+    font-size: 1.25rem;
+    font-weight: 900;
+    letter-spacing: 4px;
+    color: #ffffff;
+    line-height: 1;
+    margin-top: 2px;
+}
+
+.vortex-brand-dept {
+    font-family: var(--vx-font-hud);
+    font-size: 0.52rem;
+    font-weight: 700;
+    letter-spacing: 1.8px;
+    color: #ff3344;
+    text-transform: uppercase;
+    text-align: center;
+    margin-top: 6px;
+    line-height: 1.35;
+    opacity: 0.9;
+}
+
+/* Sidebar Menu Navigation */
+.vortex-sidebar-nav {
+    margin: 28px 0 auto 0;
+    width: 100%;
+}
+
+.vortex-menu-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.vortex-menu-link {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 11px 16px;
+    border-radius: 6px;
+    color: rgba(255, 255, 255, 0.65);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    transition: all 0.25s ease;
+}
+
+.vortex-menu-link i {
+    font-size: 1rem;
+    width: 20px;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.5);
+    transition: color 0.25s ease;
+}
+
+.vortex-menu-link:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.vortex-menu-link:hover i {
+    color: var(--vx-red-primary);
+}
+
+/* Active Menu Item (Home) */
+.vortex-menu-link.active {
+    background: #b60012 !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    box-shadow: 0 0 20px rgba(182, 0, 18, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.vortex-menu-link.active i {
+    color: #ffffff !important;
+    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.8));
+}
+
+/* Sidebar Bottom */
+.vortex-sidebar-bottom {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.vortex-socials-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 6px;
+    margin-bottom: 18px;
+}
+
+.vortex-social-item {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.vortex-social-item:hover {
+    color: #ff3344;
+    filter: drop-shadow(0 0 8px rgba(255, 51, 68, 0.7));
+    transform: translateY(-1px);
+}
+
+.vortex-join-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 30, 45, 0.65);
+    background: rgba(0, 0, 0, 0.45);
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    box-shadow: 0 0 14px rgba(255, 30, 45, 0.15);
+    transition: all 0.25s cubic-bezier(0.2, 0.9, 0.3, 1);
+    margin-bottom: 16px;
+}
+
+.vortex-join-btn i {
+    color: #ff2a38;
+    font-size: 0.85rem;
+    transition: transform 0.2s ease;
+}
+
+.vortex-join-btn:hover {
+    background: var(--vx-red-deep);
+    border-color: #ff2a38;
+    box-shadow: 0 0 22px rgba(255, 30, 45, 0.65);
+    transform: translateY(-1px);
+}
+
+.vortex-join-btn:hover i {
+    color: #ffffff;
+    transform: translateX(3px);
+}
+
+.vortex-copyright-box {
+    font-size: 0.62rem;
+    line-height: 1.45;
+    color: rgba(255, 255, 255, 0.32);
+}
+
+.vortex-copyright-box .tagline-line {
+    color: rgba(255, 255, 255, 0.22);
+}
+
+/* ==========================================================================
+   MAIN HUD WORKSPACE
+   ========================================================================== */
+.vortex-hud-main {
+    margin-left: 210px;
+    flex: 1;
+    min-width: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 18px 40px 20px 40px;
+    position: relative;
+    z-index: 10;
+    background: radial-gradient(circle at 72% 38%, rgba(185, 12, 28, 0.18) 0%, rgba(4, 5, 7, 0) 55%),
+                radial-gradient(circle at 15% 85%, rgba(125, 0, 15, 0.12) 0%, rgba(4, 5, 7, 0) 45%);
+}
+
+/* Top HUD Bar */
+.vortex-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 50px;
+    width: 100%;
+    margin-bottom: 4px;
+}
+
+.vortex-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    background: rgba(0, 0, 0, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    font-family: var(--vx-font-hud);
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 1.6px;
+    color: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.vortex-status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #00ff66;
+    box-shadow: 0 0 10px #00ff66, 0 0 20px #00ff66;
+    animation: vxDotPulse 2.2s infinite ease-in-out;
+}
+
+@keyframes vxDotPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+.vortex-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.vortex-ethos-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--vx-font-hud);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 2.2px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.vortex-ethos-row .sep-slash {
+    color: rgba(255, 30, 45, 0.45);
+    font-style: normal;
+}
+
+.vortex-search-icon-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.vortex-search-icon-btn:hover {
+    color: #fff;
+    border-color: rgba(255, 30, 45, 0.6);
+    background: rgba(255, 30, 45, 0.12);
+    box-shadow: 0 0 14px rgba(255, 30, 45, 0.3);
+}
+
+.vortex-admin-login-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 8px 18px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #b80d1a 0%, #820610 100%);
+    color: #ffffff !important;
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    border: 1px solid rgba(255, 70, 80, 0.4);
+    box-shadow: 0 0 18px rgba(184, 13, 26, 0.45);
+    transition: all 0.25s ease;
+}
+
+.vortex-admin-login-pill:hover {
+    background: linear-gradient(135deg, #d40c1a 0%, #9e0510 100%);
+    box-shadow: 0 0 28px rgba(255, 30, 45, 0.7);
+    transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   HERO COMMAND VIEW (2 COLUMNS)
+   ========================================================================== */
+.vortex-hero-view {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 30px;
+    align-items: center;
+    flex: 1;
+    min-height: 460px;
+    position: relative;
+}
+
+/* Left Column */
+.vortex-hero-left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    z-index: 5;
+}
+
+.vortex-dept-header-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.dept-accent-dash {
+    width: 26px;
+    height: 2px;
+    background: var(--vx-red-primary);
+    box-shadow: 0 0 6px var(--vx-red-primary);
+}
+
+.dept-accent-title {
+    font-family: var(--vx-font-hud);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 2.2px;
+    color: var(--vx-red-primary);
+    text-transform: uppercase;
+}
+
+.dept-accent-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--vx-red-primary);
+    box-shadow: 0 0 6px var(--vx-red-primary);
+}
+
+/* Massive Headline */
+.vortex-headline-group {
+    margin: 0 0 12px 0;
+    line-height: 0.92;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.title-we-are {
+    font-size: clamp(3.6rem, 5.2vw, 5.2rem);
+    font-weight: 900;
+    letter-spacing: -1px;
+    text-transform: uppercase;
+    background: linear-gradient(180deg, #ffffff 20%, #dcdfe8 60%, #9094a4 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.8));
+    line-height: 0.96;
+}
+
+.title-vortex-crimson {
+    font-size: clamp(4.4rem, 6.6vw, 6.6rem);
+    font-weight: 900;
+    letter-spacing: -2px;
+    text-transform: uppercase;
+    color: #ff1828;
+    line-height: 0.94;
+    text-shadow: 0 0 28px rgba(255, 24, 40, 0.9),
+                 0 0 65px rgba(255, 24, 40, 0.5);
+}
+
+.vortex-tagline-spaced {
+    font-family: var(--vx-font-hud);
+    font-size: 0.92rem;
+    font-weight: 700;
+    letter-spacing: 3.5px;
+    color: #ff2638;
+    margin-bottom: 18px;
+    text-transform: uppercase;
+    text-shadow: 0 0 8px rgba(255, 38, 56, 0.4);
+}
+
+.vortex-hero-paragraph {
+    font-size: 0.92rem;
+    line-height: 1.72;
+    color: rgba(220, 222, 235, 0.78);
+    max-width: 520px;
+    margin: 0 0 24px 0;
+}
+
+.vortex-actions-group {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+}
+
+.btn-vortex-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 26px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #d40c1a 0%, #a00510 100%);
+    color: #ffffff !important;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    box-shadow: 0 0 22px rgba(212, 12, 26, 0.55);
+    border: 1px solid rgba(255, 70, 80, 0.4);
+    transition: all 0.25s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+.btn-vortex-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 32px rgba(255, 30, 45, 0.85);
+    background: linear-gradient(135deg, #ff1a26 0%, #cc0510 100%);
+}
+
+.btn-vortex-secondary {
+    display: inline-flex;
+    align-items: center;
+    padding: 13px 26px;
+    border-radius: 8px;
+    background: rgba(14, 12, 16, 0.65);
+    backdrop-filter: blur(10px);
+    color: #ffffff !important;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    transition: all 0.25s ease;
+}
+
+.btn-vortex-secondary:hover {
+    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+/* Right Column: 3D Globe & Floating HUD Cards */
+.vortex-hero-right {
+    position: relative;
+    width: 100%;
+    height: 480px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vortex-globe-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#globe-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: auto;
+    cursor: grab;
+}
+
+#globe-canvas:active {
+    cursor: grabbing;
+}
+
+/* Floating HUD Tech Cards */
+.vortex-hud-badge {
+    position: absolute;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 15px;
+    background: rgba(12, 9, 12, 0.75);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 30, 45, 0.58);
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(255, 20, 35, 0.22),
+                inset 0 0 10px rgba(255, 20, 35, 0.1);
+    pointer-events: auto;
+    transition: all 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+.vortex-hud-badge:hover {
+    transform: translateY(-2px) scale(1.03);
+    border-color: #ff2a38;
+    box-shadow: 0 0 26px rgba(255, 30, 45, 0.5);
+}
+
+.vortex-hud-icon {
+    color: #ff2233;
+    font-size: 1.2rem;
+    filter: drop-shadow(0 0 8px #ff2233);
+}
+
+.vortex-hud-texts {
+    display: flex;
+    flex-direction: column;
+}
+
+.vortex-hud-heading {
+    font-family: var(--vx-font-hud);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 1.6px;
+    color: #ffffff;
+    line-height: 1.1;
+}
+
+.vortex-hud-subtext {
+    font-family: var(--vx-font-hud);
+    font-size: 0.62rem;
+    letter-spacing: 1.4px;
+    color: rgba(255, 255, 255, 0.62);
+    text-transform: uppercase;
+    margin-top: 2px;
+}
+
+/* Floating Card Placement matching reference image */
+.hud-badge-ideas {
+    top: 14%;
+    left: 2%;
+}
+
+.hud-badge-people {
+    top: 28%;
+    right: 2%;
+}
+
+.hud-badge-impact {
+    bottom: 22%;
+    right: 8%;
+}
+
+/* Vertical Stepper Rail on Right Edge */
+.vortex-stepper-rail {
+    position: absolute;
+    right: -15px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    font-family: var(--vx-font-hud);
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, 0.3);
+    z-index: 10;
+}
+
+.vortex-stepper-num.active {
+    color: #ff2233;
+    font-weight: 700;
+    text-shadow: 0 0 10px rgba(255, 30, 45, 0.85);
+}
+
+.vortex-stepper-bar {
+    color: #ff2233;
+    margin-right: 3px;
+    font-weight: 900;
+}
+
+/* Scroll To Explore Pill */
+.vortex-scroll-pill {
+    position: absolute;
+    bottom: 6%;
+    right: 12%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--vx-font-hud);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: rgba(255, 255, 255, 0.65);
+    z-index: 10;
+}
+
+.vortex-radar-ring {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 30, 45, 0.65);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    box-shadow: 0 0 10px rgba(255, 30, 45, 0.2);
+}
+
+.vortex-radar-center {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #ff2233;
+    box-shadow: 0 0 8px #ff2233;
+    animation: vxRadarBlink 1.8s infinite ease-in-out;
+}
+
+@keyframes vxRadarBlink {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(0.7); opacity: 0.5; }
+}
+
+/* ==========================================================================
+   BOTTOM STATS RIBBON
+   ========================================================================== */
+.vortex-stats-ribbon {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 18px 35px;
+    background: rgba(11, 9, 13, 0.75);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 30, 45, 0.32);
+    border-radius: 10px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7),
+                inset 0 0 15px rgba(255, 30, 45, 0.05);
+    position: relative;
+    z-index: 5;
+    margin-top: 10px;
+}
+
+.vortex-stat-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.vortex-stat-icon {
+    font-size: 1.7rem;
+    color: #ff2233;
+    filter: drop-shadow(0 0 10px rgba(255, 30, 45, 0.65));
+}
+
+.vortex-stat-digits {
+    font-size: 1.7rem;
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1;
+    letter-spacing: 0.5px;
+}
+
+.vortex-stat-label {
+    font-family: var(--vx-font-hud);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: rgba(255, 255, 255, 0.55);
+    margin-top: 4px;
+}
+
+.vortex-stat-sep {
+    width: 1px;
+    height: 38px;
+    background: rgba(255, 30, 45, 0.2);
+}
+
+/* ==========================================================================
+   BOTTOM MISSION HEARTBEAT BANNER WITH MOUNTAIN SILHOUETTE
+   ========================================================================== */
+.vortex-mission-strip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 32px;
+    background: linear-gradient(180deg, rgba(14, 10, 14, 0.72) 0%, rgba(8, 6, 10, 0.92) 100%),
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,120 L0,80 L80,50 L160,85 L260,30 L350,75 L450,20 L580,80 L700,35 L820,70 L950,25 L1080,75 L1200,45 L1200,120 Z' fill='rgba(35, 15, 22, 0.45)'/%3E%3Cpath d='M0,120 L0,95 L120,65 L220,95 L340,50 L480,90 L620,40 L760,85 L900,55 L1040,85 L1200,60 L1200,120 Z' fill='rgba(18, 10, 15, 0.75)'/%3E%3C/svg%3E");
+    background-size: cover;
+    background-position: bottom;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 30, 45, 0.28);
+    border-radius: 8px;
+    position: relative;
+    z-index: 5;
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+.vortex-mission-left {
+    position: relative;
+    z-index: 2;
+}
+
+.vortex-mission-tag {
+    font-family: var(--vx-font-hud);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    margin-bottom: 3px;
+}
+
+.vortex-mission-quote {
+    font-size: 1.22rem;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.3px;
+}
+
+.vortex-impact-glow {
+    color: #ff1c2a;
+    text-shadow: 0 0 16px rgba(255, 28, 42, 0.8);
+}
+
+.vortex-pulse-mid {
+    flex: 1;
+    max-width: 360px;
+    margin: 0 32px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+}
+
+.vortex-ecg-svg {
+    width: 100%;
+    height: 34px;
+    overflow: visible;
+}
+
+.ecg-dim-path {
+    stroke: rgba(255, 30, 45, 0.25);
+    stroke-width: 1.5;
+    fill: none;
+}
+
+.ecg-bright-path {
+    stroke: #ff1c2a;
+    stroke-width: 2.2;
+    fill: none;
+    stroke-dasharray: 70 200;
+    animation: vxEcgWave 2.8s linear infinite;
+    filter: drop-shadow(0 0 8px #ff1c2a);
+}
+
+@keyframes vxEcgWave {
+    0% { stroke-dashoffset: 270; }
+    100% { stroke-dashoffset: 0; }
+}
+
+.vortex-mission-right {
+    text-align: right;
+    font-size: 0.88rem;
+    color: rgba(255, 255, 255, 0.72);
+    line-height: 1.42;
+    position: relative;
+    z-index: 2;
+}
+
+/* ==========================================================================
+   MOBILE HEADER & RESPONSIVENESS
+   ========================================================================== */
+.mobile-hud-bar {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background: rgba(6, 7, 9, 0.95);
+    backdrop-filter: blur(15px);
+    border-bottom: 1px solid rgba(255, 30, 45, 0.25);
+    z-index: 1200;
+    padding: 0 20px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.mobile-brand-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+.mobile-poly-icon {
+    width: 30px;
+    height: 30px;
+    filter: drop-shadow(0 0 8px rgba(255, 30, 45, 0.8));
+}
+
+.mobile-title-text {
+    font-weight: 800;
+    font-size: 1.15rem;
+    letter-spacing: 2px;
+    color: #fff;
+}
+
+.mobile-right-btns {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.mobile-login-icon {
+    font-size: 1.25rem;
+    color: var(--vx-red-primary);
+    text-decoration: none;
+}
+
+.mobile-burger-toggle {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+}
+
+.mobile-burger-toggle span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: #ffffff;
+    transition: all 0.3s ease;
+}
+
+@media (max-width: 1100px) {
+    .vortex-hero-view {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    .vortex-hero-right {
+        height: 400px;
+    }
+
+    .hud-badge-ideas { left: 4%; top: 10%; }
+    .hud-badge-people { right: 4%; top: 25%; }
+    .hud-badge-impact { right: 8%; bottom: 15%; }
+}
+
+@media (max-width: 960px) {
+    .mobile-hud-bar {
+        display: flex;
+    }
+
+    .vortex-hud-sidebar {
+        transform: translateX(-100%);
+        width: 260px;
+        z-index: 2000;
+    }
+
+    .vortex-hud-sidebar.sidebar-open {
+        transform: translateX(0);
+    }
+
+    .sidebar-close-btn {
+        display: block;
+        align-self: flex-end;
+        margin-bottom: 10px;
+    }
+
+    .vortex-hud-main {
+        margin-left: 0;
+        padding: 75px 20px 25px 20px;
+    }
+
+    .vortex-ethos-row {
+        display: none;
+    }
+
+    .vortex-stats-ribbon {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+        padding: 20px;
+    }
+
+    .vortex-stat-sep {
+        display: none;
+    }
+
+    .vortex-mission-strip {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+        padding: 20px;
+    }
+
+    .vortex-pulse-mid {
+        width: 100%;
+        max-width: 100%;
+        margin: 10px 0;
+    }
+
+    .vortex-mission-right {
+        text-align: left;
+    }
+}
+
+@media (max-width: 580px) {
+    .title-we-are {
+        font-size: 2.8rem;
+    }
+
+    .title-vortex-crimson {
+        font-size: 3.4rem;
+    }
+
+    .vortex-hero-right {
+        height: 340px;
+    }
+
+    .vortex-stats-ribbon {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .vortex-actions-group {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .btn-vortex-primary, .btn-vortex-secondary {
+        width: 100%;
+        justify-content: center;
+    }
+}
