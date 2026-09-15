@@ -817,6 +817,32 @@ body {
     box-shadow: 0 4px 16px var(--adm-emerald-glow);
 }
 
+.send-all-certs-btn {
+    background: linear-gradient(135deg, #00f0ff 0%, #0072ff 100%);
+    color: #ffffff;
+    font-weight: 700;
+    box-shadow: 0 2px 12px rgba(0, 210, 255, 0.4);
+    border: 1px solid rgba(0, 240, 255, 0.4);
+    transition: all 0.25s ease;
+}
+
+.send-all-certs-btn:hover {
+    background: linear-gradient(135deg, #26f4ff 0%, #0088ff 100%);
+    box-shadow: 0 4px 20px rgba(0, 240, 255, 0.65);
+    transform: translateY(-1px);
+    color: #ffffff;
+}
+
+.send-all-certs-btn:active {
+    transform: translateY(0);
+}
+
+.send-all-certs-btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    filter: grayscale(40%);
+}
+
 #bulk-cert-btn {
     background: linear-gradient(135deg, #00d2ff 0%, #0099cc 100%);
     color: #02121e;

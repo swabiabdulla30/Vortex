@@ -907,13 +907,34 @@ app.post("/api/admin/approve-certificate", authenticateToken, async (req, res) =
 });
 
 // Bulk Approve and Send Certificates
-app.post("/api/admin/bulk-approve-certificates", authenticateToken, async (req, res) => {
+const handleBulkCertificates = async (req, res) => {
     if (req.user.role !== 'admin') return res.status(403).json({ error: "Access denied" });
     try {
         await connectDB();
-        const { ticketIds, forceResend } = req.body;
+        let { ticketIds, forceResend, sendAll, event, paymentStatus } = req.body;
+
+        if (sendAll) {
+            const query = {};
+            if (paymentStatus && paymentStatus !== 'all') {
+                query.paymentStatus = paymentStatus;
+            }
+            if (event && event !== 'all') {
+                query.event = event;
+            }
+            if (!forceResend) {
+                query.certificateStatus = { $ne: "Certificate Sent" };
+            }
+            const matchingDocs = await Registration.find(query, 'ticketId');
+            ticketIds = matchingDocs.map(d => d.ticketId);
+        }
+
         if (!Array.isArray(ticketIds) || ticketIds.length === 0) {
-            return res.status(400).json({ error: "Array of ticketIds is required" });
+            return res.json({
+                success: true,
+                message: "No eligible participants found to receive certificates.",
+                summary: { total: 0, successCount: 0, failedCount: 0, skippedCount: 0 },
+                results: []
+            });
         }
 
         const protocol = req.headers['x-forwarded-proto'] || req.protocol;
@@ -989,7 +1010,10 @@ app.post("/api/admin/bulk-approve-certificates", authenticateToken, async (req, 
         console.error("Bulk certificate approval error:", error);
         res.status(500).json({ error: "Bulk certificate approval failed" });
     }
-});
+};
+
+app.post("/api/admin/bulk-approve-certificates", authenticateToken, handleBulkCertificates);
+app.post("/api/admin/send-all-certificates", authenticateToken, handleBulkCertificates);
 
 // Download student's certificate PDF (Serverless-safe streaming from MongoDB/Memory)
 app.get("/api/certificate/download/:ticketId", async (req, res) => {

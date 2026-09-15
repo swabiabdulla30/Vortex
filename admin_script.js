@@ -503,6 +503,88 @@ function updateBulkButton() {
     }
 }
 
+async function sendAllCertificates() {
+    const { filtered } = getFilteredRegistrations();
+    const eventFilter = document.getElementById('event-filter')?.value || 'all';
+    const statusFilter = document.getElementById('status-filter')?.value || 'all';
+
+    const pendingTotal = allRegistrations.filter(r => r.certificateStatus !== 'Certificate Sent');
+    const pendingFiltered = filtered.filter(r => r.certificateStatus !== 'Certificate Sent');
+
+    let targetTicketIds = null;
+
+    if (eventFilter !== 'all' || statusFilter !== 'all') {
+        const useFiltered = confirm(
+            `Active filter detected (${eventFilter !== 'all' ? `Event: ${eventFilter} ` : ''}${statusFilter !== 'all' ? `Status: ${statusFilter}` : ''}).\n\n` +
+            `• Click OK to send certificates to ${pendingFiltered.length} matching pending student(s).\n` +
+            `• Click CANCEL to send to ALL ${pendingTotal.length} pending students across all events.`
+        );
+
+        if (useFiltered) {
+            targetTicketIds = pendingFiltered.map(r => r.ticketId).filter(Boolean);
+            if (targetTicketIds.length === 0) {
+                alert("No students with pending certificates found in this filtered view.");
+                return;
+            }
+        }
+    }
+
+    let payload = {};
+    if (targetTicketIds) {
+        payload = { ticketIds: targetTicketIds, forceResend: false };
+    } else {
+        if (pendingTotal.length === 0) {
+            const force = confirm("All participants have already been issued certificates. Would you like to force resend to ALL participants?");
+            if (!force) return;
+            payload = { sendAll: true, forceResend: true };
+        } else {
+            const proceed = confirm(`Are you sure you want to generate & deliver certificates to all ${pendingTotal.length} participant(s) with pending certificates?`);
+            if (!proceed) return;
+            payload = { sendAll: true, forceResend: false };
+        }
+    }
+
+    const sendBtn = document.getElementById('send-all-certs-btn');
+    const originalHtml = sendBtn ? sendBtn.innerHTML : '';
+    if (sendBtn) {
+        sendBtn.disabled = true;
+        sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Delivering to Everyone...';
+    }
+
+    const token = localStorage.getItem('vortexToken');
+    try {
+        const res = await fetch('/api/admin/send-all-certificates', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+            const summary = data.summary || {};
+            alert(`🎉 Batch Certificate Delivery Complete!\n\n` +
+                  `• Total Processed: ${summary.total ?? '0'}\n` +
+                  `• Successfully Sent: ${summary.successCount ?? '0'}\n` +
+                  `• Already Sent (Skipped): ${summary.skippedCount ?? '0'}\n` +
+                  `• Failed Deliveries: ${summary.failedCount ?? '0'}`);
+            fetchData();
+        } else {
+            alert("Delivery Error: " + (data.error || "Server error occurred"));
+        }
+    } catch (err) {
+        console.error("Send all certificates error:", err);
+        alert("Failed to communicate with certificate delivery service: " + err.message);
+    } finally {
+        if (sendBtn) {
+            sendBtn.disabled = false;
+            sendBtn.innerHTML = originalHtml;
+        }
+    }
+}
+
 async function bulkApproveCertificates() {
     const checked = Array.from(document.querySelectorAll('.cert-checkbox:checked'));
     if (checked.length === 0) return;
@@ -614,6 +696,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const exportBtn = document.getElementById('export-btn');
     if (exportBtn) exportBtn.addEventListener('click', exportExcel);
+
+    const sendAllCertsBtn = document.getElementById('send-all-certs-btn');
+    if (sendAllCertsBtn) sendAllCertsBtn.addEventListener('click', sendAllCertificates);
 
     const bulkCertBtn = document.getElementById('bulk-cert-btn');
     if (bulkCertBtn) bulkCertBtn.addEventListener('click', bulkApproveCertificates);
