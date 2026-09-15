@@ -55,10 +55,38 @@ async function fetchData() {
     }
 }
 
+function updateKPIs(allData, filteredData) {
+    const total = allData.length;
+    const paid = allData.filter(item => item.paymentStatus === 'PAID').length;
+    const pending = total - paid;
+    const certSent = allData.filter(item => (item.certificateStatus || '') === 'Certificate Sent').length;
+
+    const kpiTotal = document.getElementById('kpi-total');
+    const kpiPaid = document.getElementById('kpi-paid');
+    const kpiPending = document.getElementById('kpi-pending');
+    const kpiCert = document.getElementById('kpi-cert');
+    const kpiPaidRate = document.getElementById('kpi-paid-rate');
+    const kpiCertRate = document.getElementById('kpi-cert-rate');
+    const regTabBadge = document.getElementById('tab-badge-registrations');
+    const countBadge = document.getElementById('table-count-badge');
+
+    if (kpiTotal) kpiTotal.textContent = total;
+    if (kpiPaid) kpiPaid.textContent = paid;
+    if (kpiPending) kpiPending.textContent = pending;
+    if (kpiCert) kpiCert.textContent = certSent;
+
+    const rate = total > 0 ? Math.round((paid / total) * 100) : 0;
+    if (kpiPaidRate) kpiPaidRate.innerHTML = `<i class="fas fa-shield-check" style="color: var(--adm-emerald);"></i> ${rate}% conversion rate`;
+    if (kpiCertRate) kpiCertRate.innerHTML = `<i class="fas fa-envelope-open-text" style="color: var(--adm-purple);"></i> ${certSent} dispatched`;
+    if (regTabBadge) regTabBadge.textContent = total;
+    if (countBadge) countBadge.textContent = `Showing ${filteredData.length} of ${total} entries`;
+}
+
 function getFilteredRegistrations() {
     const eventFilter = document.getElementById('event-filter')?.value || 'all';
     const statusFilter = document.getElementById('status-filter')?.value || 'all';
     const certFilter = document.getElementById('cert-filter')?.value || 'all';
+    const searchVal = document.getElementById('admin-search-input')?.value.toLowerCase().trim() || '';
 
     let filtered = allRegistrations;
 
@@ -76,6 +104,27 @@ function getFilteredRegistrations() {
 
     if (certFilter !== 'all') {
         filtered = filtered.filter(item => (item.certificateStatus || 'Pending') === certFilter);
+    }
+
+    if (searchVal) {
+        filtered = filtered.filter(item => {
+            const name = (item.name || '').toLowerCase();
+            const email = (item.email || '').toLowerCase();
+            const phone = (item.phone || '').toLowerCase();
+            const ticketId = (item.ticketId || '').toLowerCase();
+            const college = (item.college || '').toLowerCase();
+            const eventName = (item.event || '').toLowerCase();
+            const dept = (item.department || '').toLowerCase();
+            const teammate = (item.teammateName || '').toLowerCase();
+            return name.includes(searchVal) ||
+                email.includes(searchVal) ||
+                phone.includes(searchVal) ||
+                ticketId.includes(searchVal) ||
+                college.includes(searchVal) ||
+                eventName.includes(searchVal) ||
+                dept.includes(searchVal) ||
+                teammate.includes(searchVal);
+        });
     }
 
     return { filtered, eventFilter, statusFilter, certFilter };
@@ -154,6 +203,7 @@ function populateEventFilter(data) {
 
 function filterAndRender() {
     const { filtered } = getFilteredRegistrations();
+    updateKPIs(allRegistrations, filtered);
     renderTable(filtered);
     updateBulkButton();
 }
@@ -163,7 +213,15 @@ function renderTable(data) {
     if (!tbody) return;
 
     if (data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding: 25px; color: #888;">No matching registrations found.</td></tr>';
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="9" style="text-align: center; padding: 45px 20px; color: var(--adm-text-dim);">
+                    <i class="fas fa-search-minus" style="font-size: 2.2rem; margin-bottom: 12px; display: block; opacity: 0.4;"></i>
+                    <p style="font-size: 1rem; color: #fff; margin-bottom: 4px;">No matching registrations found</p>
+                    <small>Try clearing your search query or adjusting your active filters.</small>
+                </td>
+            </tr>
+        `;
         updateBulkButton();
         return;
     }
@@ -174,61 +232,114 @@ function renderTable(data) {
         const isCertSent = certStatus === 'Certificate Sent';
         const isCertFailed = certStatus === 'Failed';
 
-        let certBadgeHtml = `<span class="cert-badge cert-badge-pending">Pending</span>`;
+        // Initials avatar
+        const initials = (item.name || 'U')
+            .trim()
+            .split(' ')
+            .filter(Boolean)
+            .map(n => n[0])
+            .slice(0, 2)
+            .join('')
+            .toUpperCase() || 'U';
+
+        let certBadgeHtml = `<span class="cert-badge cert-badge-pending"><i class="fas fa-clock"></i> Pending</span>`;
         if (isCertSent) {
             certBadgeHtml = `
-                <span class="cert-badge cert-badge-sent">Sent ✅</span>
-                <div class="cert-meta-info">${item.certificateId || ''}</div>
+                <span class="cert-badge cert-badge-sent"><i class="fas fa-check-circle"></i> Sent ✅</span>
+                <div class="cert-meta-info">${escapeHtml(item.certificateId || '')}</div>
             `;
         } else if (isCertFailed) {
             certBadgeHtml = `
-                <span class="cert-badge cert-badge-failed" title="${item.certificateError || 'Delivery error'}">Failed ❌</span>
+                <span class="cert-badge cert-badge-failed" title="${escapeHtml(item.certificateError || 'Delivery error')}">
+                    <i class="fas fa-exclamation-circle"></i> Failed ❌
+                </span>
             `;
         }
 
+        const dateStr = item.date ? new Date(item.date).toLocaleDateString(undefined, {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+        }) : 'N/A';
+
         return `
-        <tr data-ticket-id="${item.ticketId}">
-            <td style="text-align:center;">
-                <input type="checkbox" class="cert-checkbox" data-id="${item.ticketId}">
+        <tr data-ticket-id="${escapeHtml(item.ticketId || '')}">
+            <td style="text-align: center;">
+                <input type="checkbox" class="cert-checkbox" data-id="${escapeHtml(item.ticketId || '')}">
             </td>
-            <td>${new Date(item.date).toLocaleDateString()}</td>
-            <td>
-                <div style="font-weight:bold;">${item.name}</div>
-                <div style="font-size:0.8em; color:#aaa;">${item.email}</div>
+            <td class="table-date-cell">
+                <div>${dateStr}</div>
+                <div style="font-size: 0.7rem; color: var(--adm-text-dim); font-family: var(--adm-font-mono);">${escapeHtml(item.ticketId || '')}</div>
             </td>
-            <td>${item.phone}</td>
-            <td><strong>${item.event}</strong></td>
             <td>
-                <div style="font-size:0.85em;">
-                    ${item.department || ''}<br>
-                    ${item.year ? item.year + 'Yr • ' : ''}${item.college || ''}
-                    ${item.teammateName ? `<br><span style="color:#ffd700;">👥 ${item.teammateName}${item.teammatePhone ? ' · ' + item.teammatePhone : ''}</span>` : ''}
+                <div class="table-user-cell">
+                    <div class="table-user-avatar">${initials}</div>
+                    <div>
+                        <div class="table-user-name">${escapeHtml(item.name || 'Unknown')}</div>
+                        <div class="table-user-email">${escapeHtml(item.email || '')}</div>
+                    </div>
                 </div>
             </td>
-            <td class="${isPaid ? 'status-paid' : 'status-pending'}">
-                ${item.paymentStatus || 'PENDING'}
+            <td class="table-phone-cell">
+                <i class="fas fa-phone-alt" style="font-size: 0.72rem; color: var(--adm-cyan); margin-right: 4px;"></i>
+                ${escapeHtml(item.phone || '-')}
+            </td>
+            <td>
+                <span class="table-event-tag">
+                    <i class="fas fa-bolt" style="font-size: 0.68rem;"></i> ${escapeHtml(item.event || 'General')}
+                </span>
+            </td>
+            <td>
+                <div class="table-details-box">
+                    ${item.department ? `<strong>${escapeHtml(item.department)}</strong>` : ''}
+                    ${item.year ? ` • Yr ${escapeHtml(item.year)}` : ''}
+                    ${item.college ? `<br><span style="color: var(--adm-text-dim);">${escapeHtml(item.college)}</span>` : ''}
+                    ${item.teammateName ? `
+                        <div class="table-teammate-pill">
+                            <i class="fas fa-user-friends"></i> ${escapeHtml(item.teammateName)}${item.teammatePhone ? ' · ' + escapeHtml(item.teammatePhone) : ''}
+                        </div>
+                    ` : ''}
+                </div>
+            </td>
+            <td>
+                <span class="${isPaid ? 'status-paid' : 'status-pending'}">
+                    ${isPaid ? 'PAID' : 'PENDING'}
+                </span>
             </td>
             <td>
                 ${certBadgeHtml}
             </td>
-            <td>
-                <div style="display:flex; flex-direction:column; gap:4px;">
+            <td style="text-align: right;">
+                <div style="display: inline-flex; flex-direction: column; gap: 5px; align-items: flex-end;">
                     ${!isCertSent ?
-                    `<button data-action="approve-cert" data-id="${item.ticketId}" class="action-btn cert-btn-approve" title="Review, generate PDF and email certificate">Approve & Send Cert</button>` :
-                    `
-                    <div style="display:flex; gap:4px; flex-wrap:wrap;">
-                        <button data-action="resend-cert" data-id="${item.ticketId}" class="action-btn cert-btn-resend" title="Resend certificate email">Resend</button>
-                        <a href="/api/certificate/download/${item.ticketId}" target="_blank" class="action-btn cert-btn-download" title="Download official PDF"><i class="fas fa-file-pdf"></i> PDF</a>
-                        <a href="/verify/${item.certificateId}" target="_blank" class="action-btn cert-btn-download" title="Verify Online">Verify</a>
-                    </div>
-                    `
+                        `<button data-action="approve-cert" data-id="${escapeHtml(item.ticketId)}" class="action-btn cert-btn-approve" title="Review, generate PDF and email certificate">
+                            <i class="fas fa-paper-plane"></i> Approve &amp; Send Cert
+                        </button>` :
+                        `
+                        <div style="display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end;">
+                            <button data-action="resend-cert" data-id="${escapeHtml(item.ticketId)}" class="action-btn cert-btn-resend" title="Resend certificate email">
+                                <i class="fas fa-redo-alt"></i> Resend
+                            </button>
+                            <a href="/api/certificate/download/${escapeHtml(item.ticketId)}" target="_blank" class="action-btn cert-btn-download" title="Download official PDF">
+                                <i class="fas fa-file-pdf"></i> PDF
+                            </a>
+                            <a href="/verify/${escapeHtml(item.certificateId)}" target="_blank" class="action-btn cert-btn-download" title="Verify Online">
+                                <i class="fas fa-external-link-alt"></i> Verify
+                            </a>
+                        </div>
+                        `
                     }
 
-                    <div style="display:flex; gap:4px; margin-top:2px;">
+                    <div style="display: flex; gap: 4px; justify-content: flex-end;">
                         ${!isPaid ?
-                        `<button data-action="approve" data-id="${item.ticketId}" class="action-btn" style="background:#00ff88; color:black; font-size:0.75rem;">Pay OK</button>` :
-                        ''}
-                        <button data-action="delete" data-id="${item.ticketId || item._id}" class="action-btn delete-btn" style="font-size:0.75rem;">Delete</button>
+                            `<button data-action="approve" data-id="${escapeHtml(item.ticketId)}" class="action-btn" style="background: rgba(0, 255, 136, 0.15); color: #00ff88; border: 1px solid rgba(0, 255, 136, 0.3); font-size: 0.72rem; padding: 4px 8px;">
+                                <i class="fas fa-check"></i> Pay OK
+                            </button>` :
+                            ''
+                        }
+                        <button data-action="delete" data-id="${escapeHtml(item.ticketId || item._id)}" class="action-btn delete-btn" title="Remove registration">
+                            <i class="fas fa-trash-alt"></i> Delete
+                        </button>
                     </div>
                 </div>
             </td>
@@ -443,12 +554,44 @@ function logout() {
 
 // Event Listeners (DOMContentLoaded)
 document.addEventListener('DOMContentLoaded', () => {
-    // Initial Fetch
+    // Initial Fetch of all sections
     fetchData();
+    fetchLeads();
+    fetchNetwork();
+    fetchGallery();
+
+    // Quick Search Listeners
+    const searchInput = document.getElementById('admin-search-input');
+    const clearSearchBtn = document.getElementById('clear-search-btn');
+    if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            if (clearSearchBtn) {
+                clearSearchBtn.style.display = searchInput.value ? 'block' : 'none';
+            }
+            filterAndRender();
+        });
+    }
+
+    if (clearSearchBtn) {
+        clearSearchBtn.addEventListener('click', () => {
+            if (searchInput) {
+                searchInput.value = '';
+                searchInput.focus();
+            }
+            clearSearchBtn.style.display = 'none';
+            filterAndRender();
+        });
+    }
 
     // Button Listeners
     const refreshBtn = document.getElementById('refresh-btn');
-    if (refreshBtn) refreshBtn.addEventListener('click', fetchData);
+    if (refreshBtn) refreshBtn.addEventListener('click', () => {
+        const originalHtml = refreshBtn.innerHTML;
+        refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
+        fetchData().finally(() => {
+            refreshBtn.innerHTML = originalHtml;
+        });
+    });
 
     const exportBtn = document.getElementById('export-btn');
     if (exportBtn) exportBtn.addEventListener('click', exportExcel);
@@ -964,12 +1107,15 @@ function initAdminCMS() {
 async function fetchLeads() {
     const grid = document.getElementById('leads-grid');
     const countBadge = document.getElementById('leads-count');
+    const tabBadge = document.getElementById('tab-badge-leads');
     try {
         const res = await fetch('/api/leads');
         const leads = await res.json();
         loadedLeads = Array.isArray(leads) ? leads : [];
-        countBadge.textContent = `${loadedLeads.length} items`;
+        if (countBadge) countBadge.textContent = `${loadedLeads.length} items`;
+        if (tabBadge) tabBadge.textContent = loadedLeads.length;
 
+        if (!grid) return;
         if (!loadedLeads || loadedLeads.length === 0) {
             grid.innerHTML = '<div class="empty-state"><i class="fas fa-user-slash"></i><p>No faculty/lead members found. Click "+ Add Lead Member" to add one!</p></div>';
             return;
@@ -998,7 +1144,7 @@ async function fetchLeads() {
         `).join('');
     } catch (err) {
         console.error('Error fetching leads:', err);
-        grid.innerHTML = `<div class="empty-state" style="color:red;"><p>Error loading leads: ${err.message}</p></div>`;
+        if (grid) grid.innerHTML = `<div class="empty-state" style="color:red;"><p>Error loading leads: ${err.message}</p></div>`;
     }
 }
 
@@ -1006,12 +1152,15 @@ async function fetchLeads() {
 async function fetchNetwork() {
     const grid = document.getElementById('network-grid');
     const countBadge = document.getElementById('network-count');
+    const tabBadge = document.getElementById('tab-badge-network');
     try {
         const res = await fetch('/api/network');
         const members = await res.json();
         loadedNetwork = Array.isArray(members) ? members : [];
-        countBadge.textContent = `${loadedNetwork.length} items`;
+        if (countBadge) countBadge.textContent = `${loadedNetwork.length} items`;
+        if (tabBadge) tabBadge.textContent = loadedNetwork.length;
 
+        if (!grid) return;
         if (!loadedNetwork || loadedNetwork.length === 0) {
             grid.innerHTML = '<div class="empty-state"><i class="fas fa-users-slash"></i><p>No team members found. Click "+ Add Team Member" to add one!</p></div>';
             return;
@@ -1040,7 +1189,7 @@ async function fetchNetwork() {
         `).join('');
     } catch (err) {
         console.error('Error fetching network:', err);
-        grid.innerHTML = `<div class="empty-state" style="color:red;"><p>Error loading network: ${err.message}</p></div>`;
+        if (grid) grid.innerHTML = `<div class="empty-state" style="color:red;"><p>Error loading network: ${err.message}</p></div>`;
     }
 }
 
@@ -1048,12 +1197,15 @@ async function fetchNetwork() {
 async function fetchGallery() {
     const grid = document.getElementById('gallery-grid');
     const countBadge = document.getElementById('gallery-count');
+    const tabBadge = document.getElementById('tab-badge-gallery');
     try {
         const res = await fetch('/api/gallery');
         const items = await res.json();
         loadedGallery = Array.isArray(items) ? items : [];
-        countBadge.textContent = `${loadedGallery.length} items`;
+        if (countBadge) countBadge.textContent = `${loadedGallery.length} items`;
+        if (tabBadge) tabBadge.textContent = loadedGallery.length;
 
+        if (!grid) return;
         if (!loadedGallery || loadedGallery.length === 0) {
             grid.innerHTML = '<div class="empty-state"><i class="fas fa-images"></i><p>No gallery images found. Click "+ Add Gallery Image" to add one!</p></div>';
             return;
@@ -1082,7 +1234,7 @@ async function fetchGallery() {
         `).join('');
     } catch (err) {
         console.error('Error fetching gallery:', err);
-        grid.innerHTML = `<div class="empty-state" style="color:red;"><p>Error loading gallery: ${err.message}</p></div>`;
+        if (grid) grid.innerHTML = `<div class="empty-state" style="color:red;"><p>Error loading gallery: ${err.message}</p></div>`;
     }
 }
 

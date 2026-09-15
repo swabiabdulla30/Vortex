@@ -6,107 +6,219 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/jpeg"
         href="https://image2url.com/r2/default/images/1771323328076-73754ca7-5637-40c3-9e39-77832d8f5a18.jpeg">
-    <title>Admin Dashboard - Vortex Innovators</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+    <title>Admin Dashboard - Vortex Command Console</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Rajdhani:wght@500;600;700&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="admin_style.css">
 </head>
 
 <body>
+    <!-- HUD Top Navigation Bar -->
     <nav class="glass-nav">
         <div class="nav-content">
             <div class="brand-container">
                 <a href="/">
                     <img src="https://image2url.com/r2/default/images/1771323328076-73754ca7-5637-40c3-9e39-77832d8f5a18.jpeg"
-                        alt="Vortex Logo" class="nav-logo-img"
-                        style="height: 40px; margin-right: 10px; vertical-align: middle;">
+                        alt="Vortex Logo" class="nav-logo-img">
                 </a>
-                <a href="/" class="logo">VORTEX ADMIN</a>
+                <div class="logo-group">
+                    <a href="/" class="logo">
+                        VORTEX <span class="logo-badge">ADMIN</span>
+                    </a>
+                    <span class="system-status-indicator">
+                        <span class="pulse-dot"></span> SYS_CORE: ONLINE // 256-BIT SECURE
+                    </span>
+                </div>
             </div>
 
-            <div class="hamburger">
-                <div class="line1"></div>
-                <div class="line2"></div>
-                <div class="line3"></div>
-            </div>
             <div class="nav-links">
-                <a href="/" class="nav-item">Home</a>
-                <a href="/events.html" class="nav-item" style="color: #00ff88; font-weight: bold;"><i class="fas fa-calendar-alt"></i> Manage Events &rarr;</a>
-                <a href="/about.html" class="nav-item" target="_blank">View About</a>
-                <a href="/gallery.html" class="nav-item" target="_blank">View Gallery</a>
-                <a href="#" id="logout-btn">Logout</a>
+                <span class="admin-user-badge">
+                    <i class="fas fa-shield-alt"></i> ROOT ADMIN
+                </span>
+                <a href="/" class="nav-item">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                <a href="/events.html" class="nav-item highlight">
+                    <i class="fas fa-calendar-alt"></i> Manage Events &rarr;
+                </a>
+                <a href="/about.html" class="nav-item" target="_blank">
+                    <i class="fas fa-info-circle"></i> About
+                </a>
+                <a href="/gallery.html" class="nav-item" target="_blank">
+                    <i class="fas fa-images"></i> Gallery
+                </a>
+                <a href="#" id="logout-btn" class="logout-link">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
             </div>
         </div>
     </nav>
 
     <div class="admin-container">
-        <!-- Dashboard Navigation Tabs -->
-        <div class="admin-tabs">
-            <button class="tab-btn active" data-tab="registrations">
-                <i class="fas fa-clipboard-list"></i> Registrations
-            </button>
-            <button class="tab-btn" data-tab="leads">
-                <i class="fas fa-chalkboard-teacher"></i> Faculty & Leads Slider
-            </button>
-            <button class="tab-btn" data-tab="network">
-                <i class="fas fa-users-cog"></i> Operative Network
-            </button>
-            <button class="tab-btn" data-tab="gallery">
-                <i class="fas fa-images"></i> Gallery Moments
-            </button>
+        <!-- Live Telemetry KPI Metrics Cards -->
+        <div class="admin-stats-grid">
+            <div class="stat-card stat-total">
+                <div class="stat-icon-wrapper">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-label">Total Registrations</span>
+                    <div class="stat-value" id="kpi-total">0</div>
+                    <span class="stat-subtext">
+                        <i class="fas fa-bolt" style="color: var(--adm-cyan);"></i> Live entries in database
+                    </span>
+                </div>
+            </div>
+
+            <div class="stat-card stat-paid">
+                <div class="stat-icon-wrapper">
+                    <i class="fas fa-check-double"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-label">Verified / Paid</span>
+                    <div class="stat-value" id="kpi-paid">0</div>
+                    <span class="stat-subtext" id="kpi-paid-rate">
+                        <i class="fas fa-shield-check" style="color: var(--adm-emerald);"></i> 0% conversion rate
+                    </span>
+                </div>
+            </div>
+
+            <div class="stat-card stat-pending">
+                <div class="stat-icon-wrapper">
+                    <i class="fas fa-hourglass-half"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-label">Pending Payments</span>
+                    <div class="stat-value" id="kpi-pending">0</div>
+                    <span class="stat-subtext">
+                        <i class="fas fa-clock" style="color: var(--adm-amber);"></i> Awaiting verification
+                    </span>
+                </div>
+            </div>
+
+            <div class="stat-card stat-cert">
+                <div class="stat-icon-wrapper">
+                    <i class="fas fa-award"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-label">Certificates Issued</span>
+                    <div class="stat-value" id="kpi-cert">0</div>
+                    <span class="stat-subtext" id="kpi-cert-rate">
+                        <i class="fas fa-envelope-open-text" style="color: var(--adm-purple);"></i> 0 dispatched
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Cockpit Navigation Tabs -->
+        <div class="admin-tabs-wrapper">
+            <div class="admin-tabs">
+                <button class="tab-btn active" data-tab="registrations">
+                    <i class="fas fa-clipboard-list"></i> Registrations
+                    <span id="tab-badge-registrations" class="tab-count-chip">0</span>
+                </button>
+                <button class="tab-btn" data-tab="leads">
+                    <i class="fas fa-chalkboard-teacher"></i> Faculty &amp; Leads
+                    <span id="tab-badge-leads" class="tab-count-chip">0</span>
+                </button>
+                <button class="tab-btn" data-tab="network">
+                    <i class="fas fa-users-cog"></i> Operative Network
+                    <span id="tab-badge-network" class="tab-count-chip">0</span>
+                </button>
+                <button class="tab-btn" data-tab="gallery">
+                    <i class="fas fa-images"></i> Gallery Moments
+                    <span id="tab-badge-gallery" class="tab-count-chip">0</span>
+                </button>
+            </div>
         </div>
 
         <!-- Section 1: Registrations -->
         <div id="section-registrations" class="admin-section active">
             <div class="admin-header">
-                <h1>Event Registrations</h1>
-                <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
-                    <select id="status-filter" class="action-btn"
-                        style="background: #333; color: white; border: 1px solid #555;">
-                        <option value="all" style="background: #333; color: white;">All Payments</option>
-                        <option value="PAID" style="background: #333; color: #00ff88; font-weight: bold;">Paid Only</option>
-                        <option value="PENDING" style="background: #333; color: #ffaa00;">Pending Payment</option>
-                    </select>
-                    <select id="cert-filter" class="action-btn"
-                        style="background: #333; color: white; border: 1px solid #555;">
-                        <option value="all" style="background: #333; color: white;">All Certificates</option>
-                        <option value="Pending" style="background: #333; color: #ffaa00;">Cert: Pending</option>
-                        <option value="Certificate Sent" style="background: #333; color: #00ff88;">Cert: Sent ✅</option>
-                        <option value="Failed" style="background: #333; color: #ff4444;">Cert: Failed ❌</option>
-                    </select>
-                    <select id="event-filter" class="action-btn"
-                        style="background: #333; color: white; border: 1px solid #555;">
-                        <option value="all" style="background: #333; color: white;">All Events</option>
-                    </select>
-                    <button id="bulk-cert-btn" class="action-btn" style="background: #00c3ff; color: #000; display: none;">
-                        Approve Selected (<span id="selected-count">0</span>)
-                    </button>
-                    <button id="export-btn" class="action-btn" style="background: #00ff88; color: #000;">Export to Excel</button>
-                    <button id="refresh-btn" class="action-btn">Refresh Data</button>
-                    <button id="delete-all-btn" class="action-btn delete-all-btn">DELETE ALL</button>
+                <!-- Top Header Row: Title + Live Search -->
+                <div class="admin-header-row-top">
+                    <div class="admin-title-group">
+                        <h1><i class="fas fa-satellite-dish"></i> Event Registrations</h1>
+                        <span id="table-count-badge" class="records-counter-badge">Showing 0 entries</span>
+                    </div>
+
+                    <!-- Live Quick Search Bar -->
+                    <div class="search-box-wrapper">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="admin-search-input" class="admin-search-input"
+                            placeholder="Live search by name, email, phone, ticket ID...">
+                        <button id="clear-search-btn" class="clear-search-btn" title="Clear search">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Bottom Header Row: Filters & Action Buttons -->
+                <div class="admin-header-row-bottom">
+                    <!-- Filters Left -->
+                    <div class="filter-group-left">
+                        <select id="status-filter" class="hud-select" title="Filter by payment status">
+                            <option value="all">All Payments</option>
+                            <option value="PAID">Paid Only</option>
+                            <option value="PENDING">Pending Payment</option>
+                        </select>
+
+                        <select id="cert-filter" class="hud-select" title="Filter by certificate status">
+                            <option value="all">All Certificates</option>
+                            <option value="Pending">Cert: Pending</option>
+                            <option value="Certificate Sent">Cert: Sent ✅</option>
+                            <option value="Failed">Cert: Failed ❌</option>
+                        </select>
+
+                        <select id="event-filter" class="hud-select" title="Filter by event name">
+                            <option value="all">All Events</option>
+                        </select>
+                    </div>
+
+                    <!-- Actions Right -->
+                    <div class="actions-group-right">
+                        <button id="bulk-cert-btn" class="action-btn" style="display: none;">
+                            <i class="fas fa-paper-plane"></i> Approve Selected (<span id="selected-count">0</span>)
+                        </button>
+                        <button id="export-btn" class="action-btn" title="Download Excel CSV report">
+                            <i class="fas fa-file-excel"></i> Export to Excel
+                        </button>
+                        <button id="refresh-btn" class="action-btn" title="Reload registrations from server">
+                            <i class="fas fa-sync-alt"></i> Refresh Data
+                        </button>
+                        <button id="delete-all-btn" class="action-btn delete-all-btn" title="Purge database records">
+                            <i class="fas fa-trash-alt"></i> DELETE ALL
+                        </button>
+                    </div>
                 </div>
             </div>
+
+            <!-- Registrations Data Table -->
             <div class="table-responsive">
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th style="width: 35px; text-align: center;">
-                                <input type="checkbox" id="select-all-certs" title="Select all for bulk certificate action">
+                            <th style="width: 40px; text-align: center;">
+                                <input type="checkbox" id="select-all-certs" title="Select all for bulk action">
                             </th>
                             <th>Date</th>
-                            <th>Name</th>
-                            <th>Mobile</th>
+                            <th>Student</th>
+                            <th>Contact</th>
                             <th>Event</th>
-                            <th>Details</th>
+                            <th>Academic &amp; Team</th>
                             <th>Payment</th>
                             <th>Certificate</th>
-                            <th>Actions</th>
+                            <th style="text-align: right;">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="data-body">
                         <tr>
-                            <td colspan="9">Loading...</td>
+                            <td colspan="9" style="text-align: center; padding: 30px; color: var(--adm-text-muted);">
+                                <i class="fas fa-spinner fa-spin" style="margin-right: 8px;"></i> Initializing telemetry data...
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -117,8 +229,8 @@
         <div id="section-leads" class="admin-section">
             <div class="section-top-bar">
                 <h2>
-                    <i class="fas fa-chalkboard-teacher" style="color:#ff2a4b;"></i>
-                    Faculty & Leads Slider
+                    <i class="fas fa-chalkboard-teacher" style="color: var(--adm-crimson);"></i>
+                    Faculty &amp; Leads Slider
                     <span id="leads-count" class="item-count-badge">0 items</span>
                 </h2>
                 <button class="add-btn" id="open-add-lead-btn">
@@ -128,7 +240,7 @@
             <div id="leads-grid" class="admin-items-grid">
                 <div class="empty-state">
                     <i class="fas fa-spinner fa-spin"></i>
-                    <p>Loading faculty & leads...</p>
+                    <p>Loading faculty &amp; leads...</p>
                 </div>
             </div>
         </div>
@@ -137,7 +249,7 @@
         <div id="section-network" class="admin-section">
             <div class="section-top-bar">
                 <h2>
-                    <i class="fas fa-users-cog" style="color:#00d2ff;"></i>
+                    <i class="fas fa-users-cog" style="color: var(--adm-cyan);"></i>
                     Operative Network Team
                     <span id="network-count" class="item-count-badge">0 items</span>
                 </h2>
@@ -157,7 +269,7 @@
         <div id="section-gallery" class="admin-section">
             <div class="section-top-bar">
                 <h2>
-                    <i class="fas fa-images" style="color:#00ff88;"></i>
+                    <i class="fas fa-images" style="color: var(--adm-emerald);"></i>
                     Gallery Moments
                     <span id="gallery-count" class="item-count-badge">0 items</span>
                 </h2>
@@ -174,12 +286,12 @@
         </div>
     </div>
 
-    <!-- Reusable Modal for Adding Items (Leads, Team, Gallery) -->
+    <!-- Reusable Modal for Adding/Editing Items -->
     <div id="cms-modal" class="modal-overlay">
         <div class="modal-box">
             <div class="modal-header">
                 <h3 id="modal-title">Add Item</h3>
-                <button class="close-modal-btn" id="close-modal">&times;</button>
+                <button class="close-modal-btn" id="close-modal" aria-label="Close modal">&times;</button>
             </div>
             <form id="cms-form">
                 <input type="hidden" id="cms-type" value="">
@@ -191,18 +303,80 @@
                     <input type="text" id="input-name-title" class="form-control" required placeholder="e.g. Dr. John Doe">
                 </div>
 
-                <!-- Field 2: Role / Subtitle (Hidden for gallery if not needed) -->
+                <!-- Field 2: Role / Subtitle -->
                 <div class="form-group" id="group-role">
                     <label id="label-role" for="input-role">Role / Designation</label>
                     <input type="text" id="input-role" class="form-control" placeholder="e.g. ASSISTANT PROFESSOR">
                 </div>
 
-                <!-- Field 3: Image Input (URL or Local File Upload) -->
+                <!-- Event Extra Fields (Used if editing an event) -->
+                <div id="event-extra-fields" style="display: none;">
+                    <div class="form-group">
+                        <label for="input-event-type">Event Category / Placement</label>
+                        <select id="input-event-type" class="form-control">
+                            <option value="sub_event">Sub-Event / Competition</option>
+                            <option value="main_event">Main Event Showcase</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="group-parent-event">
+                        <label for="input-parent-event">Parent Fest / Event</label>
+                        <input type="text" id="input-parent-event" class="form-control" placeholder="e.g. ELEVATE">
+                    </div>
+                    <div class="form-group">
+                        <label for="input-event-category">Category</label>
+                        <input type="text" id="input-event-category" class="form-control" placeholder="e.g. Technical, Gaming">
+                    </div>
+                    <div class="form-group">
+                        <label for="input-event-status">Status</label>
+                        <select id="input-event-status" class="form-control">
+                            <option value="OPEN">OPEN</option>
+                            <option value="CLOSED">CLOSED</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="input-event-date">Date</label>
+                        <input type="text" id="input-event-date" class="form-control" placeholder="e.g. 25 OCT 2026">
+                    </div>
+                    <div class="form-group">
+                        <label for="input-event-time">Time</label>
+                        <input type="text" id="input-event-time" class="form-control" placeholder="e.g. 10:00 AM">
+                    </div>
+                    <div class="form-group">
+                        <label for="input-event-venue">Venue</label>
+                        <input type="text" id="input-event-venue" class="form-control" placeholder="e.g. Seminar Hall 1">
+                    </div>
+                    <div class="form-group">
+                        <label for="input-event-fee">Registration Fee</label>
+                        <input type="text" id="input-event-fee" class="form-control" placeholder="e.g. ₹150 or Free">
+                    </div>
+                    <div class="form-group">
+                        <label for="input-event-prize">Prize Pool</label>
+                        <input type="text" id="input-event-prize" class="form-control" placeholder="e.g. ₹5,000">
+                    </div>
+                    <div class="form-group">
+                        <label for="input-event-slots">Slots / Team Size</label>
+                        <input type="text" id="input-event-slots" class="form-control" placeholder="e.g. 4 Members">
+                    </div>
+                    <div class="form-group">
+                        <label for="input-event-about">About Event</label>
+                        <textarea id="input-event-about" class="form-control" rows="3" placeholder="Brief event description..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="input-event-rules">Rules (one rule per line)</label>
+                        <textarea id="input-event-rules" class="form-control" rows="3" placeholder="Rule 1&#10;Rule 2"></textarea>
+                    </div>
+                </div>
+
+                <!-- Field 3: Image Input (File Upload or Direct URL) -->
                 <div class="form-group">
-                    <label>Image / Banner (Upload file or paste URL)</label>
+                    <label>Profile Image / Thumbnail</label>
                     <div class="image-input-tabs">
-                        <button type="button" class="image-tab-toggle active" id="tab-upload">Upload File</button>
-                        <button type="button" class="image-tab-toggle" id="tab-url">Image URL</button>
+                        <button type="button" class="image-tab-toggle active" id="tab-upload">
+                            <i class="fas fa-upload"></i> Upload File
+                        </button>
+                        <button type="button" class="image-tab-toggle" id="tab-url">
+                            <i class="fas fa-link"></i> Image URL
+                        </button>
                     </div>
 
                     <!-- File input mode -->
@@ -222,9 +396,9 @@
                     </div>
                 </div>
 
-                <!-- Field 4: Order (Optional sorting order) -->
+                <!-- Field 4: Order -->
                 <div class="form-group">
-                    <label for="input-order">Display Order (Optional)</label>
+                    <label for="input-order">Display Sequence Order</label>
                     <input type="number" id="input-order" class="form-control" placeholder="e.g. 1" value="0">
                 </div>
 
