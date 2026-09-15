@@ -16,274 +16,326 @@
 </head>
 
 <body>
-    <!-- HUD Top Navigation Bar -->
-    <nav class="glass-nav">
-        <div class="nav-content">
-            <div class="brand-container">
-                <a href="/">
+    <!-- Mobile Top Bar (Shown only on small screens) -->
+    <header class="mobile-top-bar">
+        <div class="mobile-brand">
+            <img src="https://image2url.com/r2/default/images/1771323328076-73754ca7-5637-40c3-9e39-77832d8f5a18.jpeg"
+                alt="Vortex Logo" class="mobile-logo-img">
+            <span class="mobile-logo-text">VORTEX <span class="logo-badge">ADMIN</span></span>
+        </div>
+        <button id="sidebar-toggle-btn" class="mobile-sidebar-toggle" aria-label="Toggle Navigation">
+            <i class="fas fa-bars"></i>
+        </button>
+    </header>
+
+    <!-- Mobile Overlay Backdrop -->
+    <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+    <div class="admin-layout">
+        <!-- Vertical Left Sidebar -->
+        <aside class="admin-sidebar" id="admin-sidebar">
+            <!-- Brand & Status -->
+            <div class="sidebar-brand">
+                <a href="/" class="brand-link">
                     <img src="https://image2url.com/r2/default/images/1771323328076-73754ca7-5637-40c3-9e39-77832d8f5a18.jpeg"
-                        alt="Vortex Logo" class="nav-logo-img">
-                </a>
-                <div class="logo-group">
-                    <a href="/" class="logo">
-                        VORTEX <span class="logo-badge">ADMIN</span>
-                    </a>
-                    <span class="system-status-indicator">
-                        <span class="pulse-dot"></span> SYS_CORE: ONLINE // 256-BIT SECURE
-                    </span>
-                </div>
-            </div>
-
-            <div class="nav-links">
-                <span class="admin-user-badge">
-                    <i class="fas fa-shield-alt"></i> ROOT ADMIN
-                </span>
-                <a href="/" class="nav-item">
-                    <i class="fas fa-home"></i> Home
-                </a>
-                <a href="/events.html" class="nav-item highlight">
-                    <i class="fas fa-calendar-alt"></i> Manage Events &rarr;
-                </a>
-                <a href="/about.html" class="nav-item" target="_blank">
-                    <i class="fas fa-info-circle"></i> About
-                </a>
-                <a href="/gallery.html" class="nav-item" target="_blank">
-                    <i class="fas fa-images"></i> Gallery
-                </a>
-                <a href="#" id="logout-btn" class="logout-link">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </a>
-            </div>
-        </div>
-    </nav>
-
-    <div class="admin-container">
-        <!-- Live Telemetry KPI Metrics Cards -->
-        <div class="admin-stats-grid">
-            <div class="stat-card stat-total">
-                <div class="stat-icon-wrapper">
-                    <i class="fas fa-users"></i>
-                </div>
-                <div class="stat-info">
-                    <span class="stat-label">Total Registrations</span>
-                    <div class="stat-value" id="kpi-total">0</div>
-                    <span class="stat-subtext">
-                        <i class="fas fa-bolt" style="color: var(--adm-cyan);"></i> Live entries in database
-                    </span>
-                </div>
-            </div>
-
-            <div class="stat-card stat-paid">
-                <div class="stat-icon-wrapper">
-                    <i class="fas fa-check-double"></i>
-                </div>
-                <div class="stat-info">
-                    <span class="stat-label">Verified / Paid</span>
-                    <div class="stat-value" id="kpi-paid">0</div>
-                    <span class="stat-subtext" id="kpi-paid-rate">
-                        <i class="fas fa-shield-check" style="color: var(--adm-emerald);"></i> 0% conversion rate
-                    </span>
-                </div>
-            </div>
-
-            <div class="stat-card stat-pending">
-                <div class="stat-icon-wrapper">
-                    <i class="fas fa-hourglass-half"></i>
-                </div>
-                <div class="stat-info">
-                    <span class="stat-label">Pending Payments</span>
-                    <div class="stat-value" id="kpi-pending">0</div>
-                    <span class="stat-subtext">
-                        <i class="fas fa-clock" style="color: var(--adm-amber);"></i> Awaiting verification
-                    </span>
-                </div>
-            </div>
-
-            <div class="stat-card stat-cert">
-                <div class="stat-icon-wrapper">
-                    <i class="fas fa-award"></i>
-                </div>
-                <div class="stat-info">
-                    <span class="stat-label">Certificates Issued</span>
-                    <div class="stat-value" id="kpi-cert">0</div>
-                    <span class="stat-subtext" id="kpi-cert-rate">
-                        <i class="fas fa-envelope-open-text" style="color: var(--adm-purple);"></i> 0 dispatched
-                    </span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Dashboard Cockpit Navigation Tabs -->
-        <div class="admin-tabs-wrapper">
-            <div class="admin-tabs">
-                <button class="tab-btn active" data-tab="registrations">
-                    <i class="fas fa-clipboard-list"></i> Registrations
-                    <span id="tab-badge-registrations" class="tab-count-chip">0</span>
-                </button>
-                <button class="tab-btn" data-tab="leads">
-                    <i class="fas fa-chalkboard-teacher"></i> Faculty &amp; Leads
-                    <span id="tab-badge-leads" class="tab-count-chip">0</span>
-                </button>
-                <button class="tab-btn" data-tab="network">
-                    <i class="fas fa-users-cog"></i> Operative Network
-                    <span id="tab-badge-network" class="tab-count-chip">0</span>
-                </button>
-                <button class="tab-btn" data-tab="gallery">
-                    <i class="fas fa-images"></i> Gallery Moments
-                    <span id="tab-badge-gallery" class="tab-count-chip">0</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- Section 1: Registrations -->
-        <div id="section-registrations" class="admin-section active">
-            <div class="admin-header">
-                <!-- Top Header Row: Title + Live Search -->
-                <div class="admin-header-row-top">
-                    <div class="admin-title-group">
-                        <h1><i class="fas fa-satellite-dish"></i> Event Registrations</h1>
-                        <span id="table-count-badge" class="records-counter-badge">Showing 0 entries</span>
+                        alt="Vortex Logo" class="sidebar-logo-img">
+                    <div class="brand-text">
+                        <span class="logo-title">VORTEX <span class="logo-badge">ADMIN</span></span>
+                        <span class="system-status-indicator">
+                            <span class="pulse-dot"></span> SYS_CORE: ONLINE
+                        </span>
                     </div>
+                </a>
+            </div>
 
-                    <!-- Live Quick Search Bar -->
-                    <div class="search-box-wrapper">
-                        <i class="fas fa-search search-icon"></i>
-                        <input type="text" id="admin-search-input" class="admin-search-input"
-                            placeholder="Live search by name, email, phone, ticket ID...">
-                        <button id="clear-search-btn" class="clear-search-btn" title="Clear search">
-                            <i class="fas fa-times"></i>
+            <!-- Root Admin User Card -->
+            <div class="sidebar-user-card">
+                <div class="user-avatar-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="user-meta">
+                    <span class="user-role">ROOT ADMINISTRATOR</span>
+                    <span class="user-status">Authorized Access // 256-Bit</span>
+                </div>
+            </div>
+
+            <!-- Scrollable Navigation Items -->
+            <div class="sidebar-nav-container">
+                <!-- Dashboard Views (Tabs) -->
+                <div class="sidebar-nav-group">
+                    <span class="sidebar-nav-heading">CONSOLE VIEWS</span>
+                    <div class="admin-tabs sidebar-tabs">
+                        <button class="tab-btn active" data-tab="registrations">
+                            <div class="tab-main-info">
+                                <i class="fas fa-clipboard-list"></i>
+                                <span class="tab-text">Registrations</span>
+                            </div>
+                            <span id="tab-badge-registrations" class="tab-count-chip">0</span>
+                        </button>
+                        <button class="tab-btn" data-tab="leads">
+                            <div class="tab-main-info">
+                                <i class="fas fa-chalkboard-teacher"></i>
+                                <span class="tab-text">Faculty &amp; Leads</span>
+                            </div>
+                            <span id="tab-badge-leads" class="tab-count-chip">0</span>
+                        </button>
+                        <button class="tab-btn" data-tab="network">
+                            <div class="tab-main-info">
+                                <i class="fas fa-users-cog"></i>
+                                <span class="tab-text">Operative Network</span>
+                            </div>
+                            <span id="tab-badge-network" class="tab-count-chip">0</span>
+                        </button>
+                        <button class="tab-btn" data-tab="gallery">
+                            <div class="tab-main-info">
+                                <i class="fas fa-images"></i>
+                                <span class="tab-text">Gallery Moments</span>
+                            </div>
+                            <span id="tab-badge-gallery" class="tab-count-chip">0</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- Bottom Header Row: Filters & Action Buttons -->
-                <div class="admin-header-row-bottom">
-                    <!-- Filters Left -->
-                    <div class="filter-group-left">
-                        <select id="status-filter" class="hud-select" title="Filter by payment status">
-                            <option value="all">All Payments</option>
-                            <option value="PAID">Paid Only</option>
-                            <option value="PENDING">Pending Payment</option>
-                        </select>
+                <!-- Navigation Links (Left side vertical menu) -->
+                <div class="sidebar-nav-group">
+                    <span class="sidebar-nav-heading">QUICK ACCESS</span>
+                    <nav class="sidebar-links">
+                        <a href="/" class="sidebar-nav-item">
+                            <i class="fas fa-home"></i>
+                            <span>Home</span>
+                        </a>
+                        <a href="/events.html" class="sidebar-nav-item highlight">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Manage Events &rarr;</span>
+                        </a>
+                        <a href="/about.html" class="sidebar-nav-item" target="_blank">
+                            <i class="fas fa-info-circle"></i>
+                            <span>About Page</span>
+                        </a>
+                        <a href="/gallery.html" class="sidebar-nav-item" target="_blank">
+                            <i class="fas fa-images"></i>
+                            <span>Gallery Page</span>
+                        </a>
+                    </nav>
+                </div>
+            </div>
 
-                        <select id="cert-filter" class="hud-select" title="Filter by certificate status">
-                            <option value="all">All Certificates</option>
-                            <option value="Pending">Cert: Pending</option>
-                            <option value="Certificate Sent">Cert: Sent ✅</option>
-                            <option value="Failed">Cert: Failed ❌</option>
-                        </select>
+            <!-- Sidebar Footer: Logout -->
+            <div class="sidebar-footer">
+                <a href="#" id="logout-btn" class="sidebar-logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout Session</span>
+                </a>
+            </div>
+        </aside>
 
-                        <select id="event-filter" class="hud-select" title="Filter by event name">
-                            <option value="all">All Events</option>
-                        </select>
+        <!-- Main Workspace Area -->
+        <main class="admin-main">
+            <!-- Live Telemetry KPI Metrics Cards -->
+            <div class="admin-stats-grid">
+                <div class="stat-card stat-total">
+                    <div class="stat-icon-wrapper">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-label">Total Registrations</span>
+                        <div class="stat-value" id="kpi-total">0</div>
+                        <span class="stat-subtext">
+                            <i class="fas fa-bolt" style="color: var(--adm-cyan);"></i> Live entries in database
+                        </span>
+                    </div>
+                </div>
+
+                <div class="stat-card stat-paid">
+                    <div class="stat-icon-wrapper">
+                        <i class="fas fa-check-double"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-label">Verified / Paid</span>
+                        <div class="stat-value" id="kpi-paid">0</div>
+                        <span class="stat-subtext" id="kpi-paid-rate">
+                            <i class="fas fa-shield-check" style="color: var(--adm-emerald);"></i> 0% conversion rate
+                        </span>
+                    </div>
+                </div>
+
+                <div class="stat-card stat-pending">
+                    <div class="stat-icon-wrapper">
+                        <i class="fas fa-hourglass-half"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-label">Pending Payments</span>
+                        <div class="stat-value" id="kpi-pending">0</div>
+                        <span class="stat-subtext">
+                            <i class="fas fa-clock" style="color: var(--adm-amber);"></i> Awaiting verification
+                        </span>
+                    </div>
+                </div>
+
+                <div class="stat-card stat-cert">
+                    <div class="stat-icon-wrapper">
+                        <i class="fas fa-award"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-label">Certificates Issued</span>
+                        <div class="stat-value" id="kpi-cert">0</div>
+                        <span class="stat-subtext" id="kpi-cert-rate">
+                            <i class="fas fa-envelope-open-text" style="color: var(--adm-purple);"></i> 0 dispatched
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 1: Registrations -->
+            <div id="section-registrations" class="admin-section active">
+                <div class="admin-header">
+                    <!-- Top Header Row: Title + Live Search -->
+                    <div class="admin-header-row-top">
+                        <div class="admin-title-group">
+                            <h1><i class="fas fa-satellite-dish"></i> Event Registrations</h1>
+                            <span id="table-count-badge" class="records-counter-badge">Showing 0 entries</span>
+                        </div>
+
+                        <!-- Live Quick Search Bar -->
+                        <div class="search-box-wrapper">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" id="admin-search-input" class="admin-search-input"
+                                placeholder="Live search by name, email, phone, ticket ID...">
+                            <button id="clear-search-btn" class="clear-search-btn" title="Clear search">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
                     </div>
 
-                    <!-- Actions Right -->
-                    <div class="actions-group-right">
-                        <button id="bulk-cert-btn" class="action-btn" style="display: none;">
-                            <i class="fas fa-paper-plane"></i> Approve Selected (<span id="selected-count">0</span>)
-                        </button>
-                        <button id="export-btn" class="action-btn" title="Download Excel CSV report">
-                            <i class="fas fa-file-excel"></i> Export to Excel
-                        </button>
-                        <button id="refresh-btn" class="action-btn" title="Reload registrations from server">
-                            <i class="fas fa-sync-alt"></i> Refresh Data
-                        </button>
-                        <button id="delete-all-btn" class="action-btn delete-all-btn" title="Purge database records">
-                            <i class="fas fa-trash-alt"></i> DELETE ALL
-                        </button>
+                    <!-- Bottom Header Row: Filters & Action Buttons -->
+                    <div class="admin-header-row-bottom">
+                        <!-- Filters Left -->
+                        <div class="filter-group-left">
+                            <select id="status-filter" class="hud-select" title="Filter by payment status">
+                                <option value="all">All Payments</option>
+                                <option value="PAID">Paid Only</option>
+                                <option value="PENDING">Pending Payment</option>
+                            </select>
+
+                            <select id="cert-filter" class="hud-select" title="Filter by certificate status">
+                                <option value="all">All Certificates</option>
+                                <option value="Pending">Cert: Pending</option>
+                                <option value="Certificate Sent">Cert: Sent ✅</option>
+                                <option value="Failed">Cert: Failed ❌</option>
+                            </select>
+
+                            <select id="event-filter" class="hud-select" title="Filter by event name">
+                                <option value="all">All Events</option>
+                            </select>
+                        </div>
+
+                        <!-- Actions Right -->
+                        <div class="actions-group-right">
+                            <button id="bulk-cert-btn" class="action-btn" style="display: none;">
+                                <i class="fas fa-paper-plane"></i> Approve Selected (<span id="selected-count">0</span>)
+                            </button>
+                            <button id="export-btn" class="action-btn" title="Download Excel CSV report">
+                                <i class="fas fa-file-excel"></i> Export to Excel
+                            </button>
+                            <button id="refresh-btn" class="action-btn" title="Reload registrations from server">
+                                <i class="fas fa-sync-alt"></i> Refresh Data
+                            </button>
+                            <button id="delete-all-btn" class="action-btn delete-all-btn" title="Purge database records">
+                                <i class="fas fa-trash-alt"></i> DELETE ALL
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Registrations Data Table -->
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 40px; text-align: center;">
+                                    <input type="checkbox" id="select-all-certs" title="Select all for bulk action">
+                                </th>
+                                <th>Date</th>
+                                <th>Student</th>
+                                <th>Contact</th>
+                                <th>Event</th>
+                                <th>Academic &amp; Team</th>
+                                <th>Payment</th>
+                                <th>Certificate</th>
+                                <th style="text-align: right;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="data-body">
+                            <tr>
+                                <td colspan="9" style="text-align: center; padding: 30px; color: var(--adm-text-muted);">
+                                    <i class="fas fa-spinner fa-spin" style="margin-right: 8px;"></i> Initializing telemetry data...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Section 2: Faculty & Leads Slider -->
+            <div id="section-leads" class="admin-section">
+                <div class="section-top-bar">
+                    <h2>
+                        <i class="fas fa-chalkboard-teacher" style="color: var(--adm-crimson);"></i>
+                        Faculty &amp; Leads Slider
+                        <span id="leads-count" class="item-count-badge">0 items</span>
+                    </h2>
+                    <button class="add-btn" id="open-add-lead-btn">
+                        <i class="fas fa-plus"></i> Add Lead Member
+                    </button>
+                </div>
+                <div id="leads-grid" class="admin-items-grid">
+                    <div class="empty-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading faculty &amp; leads...</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Registrations Data Table -->
-            <div class="table-responsive">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 40px; text-align: center;">
-                                <input type="checkbox" id="select-all-certs" title="Select all for bulk action">
-                            </th>
-                            <th>Date</th>
-                            <th>Student</th>
-                            <th>Contact</th>
-                            <th>Event</th>
-                            <th>Academic &amp; Team</th>
-                            <th>Payment</th>
-                            <th>Certificate</th>
-                            <th style="text-align: right;">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="data-body">
-                        <tr>
-                            <td colspan="9" style="text-align: center; padding: 30px; color: var(--adm-text-muted);">
-                                <i class="fas fa-spinner fa-spin" style="margin-right: 8px;"></i> Initializing telemetry data...
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Section 2: Faculty & Leads Slider -->
-        <div id="section-leads" class="admin-section">
-            <div class="section-top-bar">
-                <h2>
-                    <i class="fas fa-chalkboard-teacher" style="color: var(--adm-crimson);"></i>
-                    Faculty &amp; Leads Slider
-                    <span id="leads-count" class="item-count-badge">0 items</span>
-                </h2>
-                <button class="add-btn" id="open-add-lead-btn">
-                    <i class="fas fa-plus"></i> Add Lead Member
-                </button>
-            </div>
-            <div id="leads-grid" class="admin-items-grid">
-                <div class="empty-state">
-                    <i class="fas fa-spinner fa-spin"></i>
-                    <p>Loading faculty &amp; leads...</p>
+            <!-- Section 3: Operative Network -->
+            <div id="section-network" class="admin-section">
+                <div class="section-top-bar">
+                    <h2>
+                        <i class="fas fa-users-cog" style="color: var(--adm-cyan);"></i>
+                        Operative Network Team
+                        <span id="network-count" class="item-count-badge">0 items</span>
+                    </h2>
+                    <button class="add-btn" id="open-add-network-btn">
+                        <i class="fas fa-plus"></i> Add Team Member
+                    </button>
+                </div>
+                <div id="network-grid" class="admin-items-grid">
+                    <div class="empty-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading team members...</p>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Section 3: Operative Network -->
-        <div id="section-network" class="admin-section">
-            <div class="section-top-bar">
-                <h2>
-                    <i class="fas fa-users-cog" style="color: var(--adm-cyan);"></i>
-                    Operative Network Team
-                    <span id="network-count" class="item-count-badge">0 items</span>
-                </h2>
-                <button class="add-btn" id="open-add-network-btn">
-                    <i class="fas fa-plus"></i> Add Team Member
-                </button>
-            </div>
-            <div id="network-grid" class="admin-items-grid">
-                <div class="empty-state">
-                    <i class="fas fa-spinner fa-spin"></i>
-                    <p>Loading team members...</p>
+            <!-- Section 4: Gallery Moments -->
+            <div id="section-gallery" class="admin-section">
+                <div class="section-top-bar">
+                    <h2>
+                        <i class="fas fa-images" style="color: var(--adm-emerald);"></i>
+                        Gallery Moments
+                        <span id="gallery-count" class="item-count-badge">0 items</span>
+                    </h2>
+                    <button class="add-btn" id="open-add-gallery-btn">
+                        <i class="fas fa-plus"></i> Add Gallery Image
+                    </button>
+                </div>
+                <div id="gallery-grid" class="admin-items-grid">
+                    <div class="empty-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading gallery moments...</p>
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Section 4: Gallery Moments -->
-        <div id="section-gallery" class="admin-section">
-            <div class="section-top-bar">
-                <h2>
-                    <i class="fas fa-images" style="color: var(--adm-emerald);"></i>
-                    Gallery Moments
-                    <span id="gallery-count" class="item-count-badge">0 items</span>
-                </h2>
-                <button class="add-btn" id="open-add-gallery-btn">
-                    <i class="fas fa-plus"></i> Add Gallery Image
-                </button>
-            </div>
-            <div id="gallery-grid" class="admin-items-grid">
-                <div class="empty-state">
-                    <i class="fas fa-spinner fa-spin"></i>
-                    <p>Loading gallery moments...</p>
-                </div>
-            </div>
-        </div>
+        </main>
     </div>
 
     <!-- Reusable Modal for Adding/Editing Items -->
