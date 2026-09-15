@@ -47,9 +47,10 @@ const CONFIG = {
         centerX: 1229,
         underlineStartX: 1082,
         underlineEndX: 1376,
-        y: 641,
-        maxFontSize: 22,
-        minFontSize: 13
+        y: 642,
+        maxFontSize: 38,
+        minFontSize: 16,
+        maxWidth: 310
     }
 };
 
@@ -194,19 +195,19 @@ async function generateCertificate(studentData) {
         color: CONFIG.colors.primary
     });
 
-    // 2. Event Name (Centered right on the pre-printed underline)
-    const rawEvent = (studentData.event || 'Vortex Event').trim();
-    let eventFontSize = CONFIG.event.maxFontSize || 22;
+    // 2. Event Name (Centered right on the pre-printed underline, bold & prominent)
+    const rawEvent = (studentData.event || 'Vortex Event').trim().toUpperCase();
+    let eventFontSize = CONFIG.event.maxFontSize || 38;
     let eventWidth = fontHelveticaBold.widthOfTextAtSize(rawEvent, eventFontSize);
-    const maxEventWidth = 270;
-    while (eventWidth > maxEventWidth && eventFontSize > (CONFIG.event.minFontSize || 13)) {
+    const maxEventWidth = CONFIG.event.maxWidth || 310;
+    while (eventWidth > maxEventWidth && eventFontSize > (CONFIG.event.minFontSize || 16)) {
         eventFontSize -= 1;
         eventWidth = fontHelveticaBold.widthOfTextAtSize(rawEvent, eventFontSize);
     }
     const eventX = CONFIG.event.centerX - (eventWidth / 2);
     page.drawText(rawEvent, {
         x: eventX,
-        y: CONFIG.event.y || 641,
+        y: CONFIG.event.y || 642,
         size: eventFontSize,
         font: fontHelveticaBold,
         color: CONFIG.colors.gold
