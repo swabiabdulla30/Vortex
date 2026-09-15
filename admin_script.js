@@ -684,6 +684,9 @@ function initAdminCMS() {
             btn.classList.add('active');
 
             document.querySelectorAll('.admin-section').forEach(sec => sec.classList.remove('active'));
+            const targetSec = document.getElementById(`section-${targetTab}`);
+            if (targetSec) targetSec.classList.add('active');
+
             // Auto-close sidebar on mobile after tab select
             const sidebar = document.getElementById('admin-sidebar');
             const overlay = document.getElementById('sidebar-overlay');
