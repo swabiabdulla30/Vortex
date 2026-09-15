@@ -10,67 +10,46 @@ const { PDFDocument, rgb, StandardFonts } = require('pdf-lib');
 const CONFIG = {
     // Template paths to check (supports local and Vercel serverless cwd)
     templatePaths: [
-        path.join(__dirname, 'templates', 'certificate-template.png'),
         path.join(__dirname, 'templates', 'certificate-template.jpg'),
+        path.join(__dirname, 'templates', 'certificate for participation with logo.jpg'),
+        path.join(__dirname, 'certificate for participation with logo.jpg'),
+        path.join(__dirname, 'templates', 'certificate-template.png'),
         path.join(__dirname, 'templates', 'certificate-template.jpeg'),
         path.join(__dirname, 'templates', 'certificate-template.pdf'),
-        path.join(process.cwd(), 'templates', 'certificate-template.png'),
         path.join(process.cwd(), 'templates', 'certificate-template.jpg'),
+        path.join(process.cwd(), 'templates', 'certificate for participation with logo.jpg'),
+        path.join(process.cwd(), 'certificate for participation with logo.jpg'),
+        path.join(process.cwd(), 'templates', 'certificate-template.png'),
         path.join(process.cwd(), 'templates', 'certificate-template.jpeg'),
         path.join(process.cwd(), 'templates', 'certificate-template.pdf')
     ],
 
-    // Canvas dimensions (matches 1376x768 landscape)
-    width: 1376,
-    height: 768,
+    // Default Canvas dimensions (matches 2000x1414 certificate template)
+    width: 2000,
+    height: 1414,
 
-    // Text positions & colors
+    // Text colors tailored to match the INNEXA / KMCT gold and navy certificate aesthetic
     colors: {
-        primary: rgb(0.08, 0.18, 0.36),      // Deep navy blue #142e5c
-        secondary: rgb(0.65, 0.49, 0.16),    // Classic certificate gold #a67d29
-        darkText: rgb(0.12, 0.12, 0.12),     // Charcoal black #1f1f1f
-        mutedText: rgb(0.40, 0.40, 0.40),    // Slate grey #666666
-        accentBlue: rgb(0.0, 0.45, 0.74)     // Bright accent blue
+        primary: rgb(0.07, 0.15, 0.30),      // Deep navy blue #12264c
+        gold: rgb(0.61, 0.45, 0.14)          // Rich certificate gold #9b7323
     },
 
-    // Name positioning
+    // Name positioning (centered between header and participation line)
     name: {
-        y: 405,
-        maxFontSize: 42,
-        minFontSize: 24,
-        maxCharacters: 20
+        y: 752,
+        maxFontSize: 60,
+        minFontSize: 28,
+        maxAvailableWidthRatio: 0.70
     },
 
-    // Event & citation positioning
+    // Event on the underline
     event: {
-        y: 345,
-        fontSize: 20
-    },
-
-    // College / Department
-    institution: {
-        y: 315,
-        fontSize: 15
-    },
-
-    // Date
-    date: {
-        x: 420,
-        y: 250,
-        fontSize: 16
-    },
-
-    // Certificate ID & verification
-    certId: {
-        x: 180,
-        y: 140,
-        fontSize: 13
-    },
-
-    verification: {
-        x: 180,
-        y: 122,
-        fontSize: 11
+        centerX: 1229,
+        underlineStartX: 1082,
+        underlineEndX: 1376,
+        y: 641,
+        maxFontSize: 22,
+        minFontSize: 13
     }
 };
 
@@ -158,7 +137,6 @@ async function generateCertificate(studentData) {
         pageHeight = size.height;
     } else {
         pdfDoc = await PDFDocument.create();
-        page = pdfDoc.addPage([pageWidth, pageHeight]);
 
         if (templatePath) {
             const imgBytes = fs.readFileSync(templatePath);
@@ -168,6 +146,9 @@ async function generateCertificate(studentData) {
             } else {
                 embeddedImg = await pdfDoc.embedJpg(imgBytes);
             }
+            pageWidth = embeddedImg.width;
+            pageHeight = embeddedImg.height;
+            page = pdfDoc.addPage([pageWidth, pageHeight]);
             page.drawImage(embeddedImg, {
                 x: 0,
                 y: 0,
@@ -175,13 +156,14 @@ async function generateCertificate(studentData) {
                 height: pageHeight
             });
         } else {
+            page = pdfDoc.addPage([pageWidth, pageHeight]);
             // Draw a decorative background if no template file exists
             page.drawRectangle({
                 x: 20,
                 y: 20,
                 width: pageWidth - 40,
                 height: pageHeight - 40,
-                borderColor: CONFIG.colors.secondary,
+                borderColor: CONFIG.colors.gold,
                 borderWidth: 5,
                 color: rgb(0.98, 0.98, 0.96)
             });
@@ -190,91 +172,44 @@ async function generateCertificate(studentData) {
 
     // Embed standard fonts
     const fontTimesItalic = await pdfDoc.embedFont(StandardFonts.TimesRomanBoldItalic);
-    const fontHelvetica = await pdfDoc.embedFont(StandardFonts.Helvetica);
     const fontHelveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
-    // 1. Student Name (with auto-shrink & center alignment)
+    // 1. Student Name (Centered between header and participation line)
     const studentName = (studentData.name || 'Participant Name').trim();
-    let nameFontSize = CONFIG.name.maxFontSize;
+    let nameFontSize = CONFIG.name.maxFontSize || 60;
     let nameWidth = fontTimesItalic.widthOfTextAtSize(studentName, nameFontSize);
 
     // Auto-scale font if name is long
-    const maxAvailableWidth = pageWidth * 0.65;
-    while (nameWidth > maxAvailableWidth && nameFontSize > CONFIG.name.minFontSize) {
+    const maxNameWidth = pageWidth * (CONFIG.name.maxAvailableWidthRatio || 0.70);
+    while (nameWidth > maxNameWidth && nameFontSize > (CONFIG.name.minFontSize || 26)) {
         nameFontSize -= 1;
         nameWidth = fontTimesItalic.widthOfTextAtSize(studentName, nameFontSize);
     }
 
-    const nameX = (pageWidth - nameWidth) / 2;
     page.drawText(studentName, {
-        x: nameX,
-        y: CONFIG.name.y,
+        x: (pageWidth - nameWidth) / 2,
+        y: CONFIG.name.y || 750,
         size: nameFontSize,
         font: fontTimesItalic,
         color: CONFIG.colors.primary
     });
 
-    // 2. Event / Program citation
-    const eventName = (studentData.event || 'Vortex Innovators Event').toUpperCase();
-    const eventText = `has successfully participated in ${eventName}`;
-    const eventWidth = fontHelveticaBold.widthOfTextAtSize(eventText, CONFIG.event.fontSize);
-    page.drawText(eventText, {
-        x: (pageWidth - eventWidth) / 2,
-        y: CONFIG.event.y,
-        size: CONFIG.event.fontSize,
-        font: fontHelveticaBold,
-        color: CONFIG.colors.darkText
-    });
-
-    // 3. College & Department Details (if provided)
-    let detailsText = 'at VORTEX INNOVATORS TECHNICAL SYMPOSIUM';
-    if (studentData.college || studentData.department) {
-        const parts = [];
-        if (studentData.department) parts.push(studentData.department);
-        if (studentData.college) parts.push(studentData.college);
-        detailsText = `${parts.join(' - ')} | VORTEX 2026`;
+    // 2. Event Name (Centered right on the pre-printed underline)
+    const rawEvent = (studentData.event || 'Vortex Event').trim();
+    let eventFontSize = CONFIG.event.maxFontSize || 22;
+    let eventWidth = fontHelveticaBold.widthOfTextAtSize(rawEvent, eventFontSize);
+    const maxEventWidth = 270;
+    while (eventWidth > maxEventWidth && eventFontSize > (CONFIG.event.minFontSize || 13)) {
+        eventFontSize -= 1;
+        eventWidth = fontHelveticaBold.widthOfTextAtSize(rawEvent, eventFontSize);
     }
-    const detailsWidth = fontHelvetica.widthOfTextAtSize(detailsText, CONFIG.institution.fontSize);
-    page.drawText(detailsText, {
-        x: (pageWidth - detailsWidth) / 2,
-        y: CONFIG.institution.y,
-        size: CONFIG.institution.fontSize,
-        font: fontHelvetica,
-        color: CONFIG.colors.mutedText
-    });
-
-    // 4. Issue Date
-    const issueDate = studentData.date
-        ? new Date(studentData.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
-        : new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-
-    page.drawText(issueDate, {
-        x: CONFIG.date.x,
-        y: CONFIG.date.y,
-        size: CONFIG.date.fontSize,
+    const eventX = CONFIG.event.centerX - (eventWidth / 2);
+    page.drawText(rawEvent, {
+        x: eventX,
+        y: CONFIG.event.y || 641,
+        size: eventFontSize,
         font: fontHelveticaBold,
-        color: CONFIG.colors.darkText
-    });
-
-    // 5. Certificate ID
-    const certIdLabel = `Certificate ID: ${certId}`;
-    page.drawText(certIdLabel, {
-        x: CONFIG.certId.x,
-        y: CONFIG.certId.y,
-        size: CONFIG.certId.fontSize,
-        font: fontHelveticaBold,
-        color: CONFIG.colors.secondary
-    });
-
-    // 6. Public verification note
-    const baseUrl = studentData.baseUrl || 'https://vortexinnovators.com';
-    const verifyUrl = `${baseUrl.replace(/\/$/, '')}/verify/${certId}`;
-    page.drawText(`Verify at: ${verifyUrl}`, {
-        x: CONFIG.verification.x,
-        y: CONFIG.verification.y,
-        size: CONFIG.verification.fontSize,
-        font: fontHelvetica,
-        color: CONFIG.colors.mutedText
+        color: CONFIG.colors.gold
     });
 
     // Generate binary PDF bytes in-memory
