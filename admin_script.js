@@ -474,22 +474,51 @@ async function approveCertificate(ticketId, forceResend = false, buttonEl = null
 function attachCheckboxListeners() {
     const checkboxes = document.querySelectorAll('.cert-checkbox');
     checkboxes.forEach(cb => {
-        cb.addEventListener('change', updateBulkButton);
+        cb.addEventListener('change', () => {
+            const tr = cb.closest('tr');
+            if (tr) {
+                if (cb.checked) tr.classList.add('row-selected');
+                else tr.classList.remove('row-selected');
+            }
+            updateBulkButton();
+        });
     });
 
     const selectAll = document.getElementById('select-all-certs');
     if (selectAll) {
-        selectAll.onclick = (e) => {
-            checkboxes.forEach(cb => { cb.checked = selectAll.checked; });
+        selectAll.onclick = () => {
+            checkboxes.forEach(cb => {
+                cb.checked = selectAll.checked;
+                const tr = cb.closest('tr');
+                if (tr) {
+                    if (cb.checked) tr.classList.add('row-selected');
+                    else tr.classList.remove('row-selected');
+                }
+            });
             updateBulkButton();
         };
     }
 }
 
 function updateBulkButton() {
+    const allCbs = document.querySelectorAll('.cert-checkbox');
     const checked = document.querySelectorAll('.cert-checkbox:checked');
     const bulkBtn = document.getElementById('bulk-cert-btn');
     const countSpan = document.getElementById('selected-count');
+    const selectAll = document.getElementById('select-all-certs');
+
+    allCbs.forEach(cb => {
+        const tr = cb.closest('tr');
+        if (tr) {
+            if (cb.checked) tr.classList.add('row-selected');
+            else tr.classList.remove('row-selected');
+        }
+    });
+
+    if (selectAll && allCbs.length > 0) {
+        selectAll.checked = (checked.length === allCbs.length);
+        selectAll.indeterminate = (checked.length > 0 && checked.length < allCbs.length);
+    }
 
     if (!bulkBtn || !countSpan) return;
 
@@ -498,8 +527,31 @@ function updateBulkButton() {
         bulkBtn.style.display = 'inline-block';
     } else {
         bulkBtn.style.display = 'none';
-        const selectAll = document.getElementById('select-all-certs');
-        if (selectAll) selectAll.checked = false;
+    }
+}
+
+function selectPendingStudents() {
+    const rows = document.querySelectorAll('#data-body tr[data-ticket-id]');
+    let count = 0;
+
+    rows.forEach(tr => {
+        const ticketId = tr.getAttribute('data-ticket-id');
+        const reg = allRegistrations.find(r => r.ticketId === ticketId);
+        const cb = tr.querySelector('.cert-checkbox');
+        if (cb && reg && reg.certificateStatus !== 'Certificate Sent') {
+            cb.checked = true;
+            tr.classList.add('row-selected');
+            count++;
+        } else if (cb) {
+            cb.checked = false;
+            tr.classList.remove('row-selected');
+        }
+    });
+
+    updateBulkButton();
+
+    if (count === 0) {
+        alert("All participants in the current view have already received their certificates.");
     }
 }
 
@@ -590,12 +642,13 @@ async function bulkApproveCertificates() {
     if (checked.length === 0) return;
 
     const ticketIds = checked.map(cb => cb.getAttribute('data-id')).filter(Boolean);
-    if (!confirm(`Are you sure you want to approve & issue certificates for ${ticketIds.length} selected student(s)?`)) return;
+    if (!confirm(`Are you sure you want to send certificates to ${ticketIds.length} selected participant(s)?`)) return;
 
     const bulkBtn = document.getElementById('bulk-cert-btn');
+    const originalHtml = bulkBtn ? bulkBtn.innerHTML : '';
     if (bulkBtn) {
         bulkBtn.disabled = true;
-        bulkBtn.textContent = 'Processing Batch...';
+        bulkBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Delivering to ${ticketIds.length} Selected...`;
     }
 
     const token = localStorage.getItem('vortexToken');
@@ -611,18 +664,23 @@ async function bulkApproveCertificates() {
 
         const data = await res.json();
         if (res.ok) {
-            const summary = data.summary;
-            alert(`Bulk Approval Complete:\n• Total Processed: ${summary.total}\n• Successfully Sent: ${summary.successCount}\n• Already Sent (Skipped): ${summary.skippedCount}\n• Failed: ${summary.failedCount}`);
+            const summary = data.summary || {};
+            alert(`🎉 Delivery to Selected Participants Complete!\n\n` +
+                  `• Total Selected: ${summary.total ?? ticketIds.length}\n` +
+                  `• Successfully Sent: ${summary.successCount ?? 0}\n` +
+                  `• Already Sent (Skipped): ${summary.skippedCount ?? 0}\n` +
+                  `• Failed: ${summary.failedCount ?? 0}`);
             fetchData();
         } else {
-            alert("Bulk approval error: " + (data.error || "Server error"));
+            alert("Bulk delivery error: " + (data.error || "Server error"));
         }
     } catch (err) {
         console.error("Bulk approve error:", err);
-        alert("Failed to execute bulk approval: " + err.message);
+        alert("Failed to execute bulk delivery: " + err.message);
     } finally {
         if (bulkBtn) {
             bulkBtn.disabled = false;
+            bulkBtn.innerHTML = originalHtml;
             updateBulkButton();
         }
     }
@@ -702,6 +760,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const bulkCertBtn = document.getElementById('bulk-cert-btn');
     if (bulkCertBtn) bulkCertBtn.addEventListener('click', bulkApproveCertificates);
+
+    const selectPendingBtn = document.getElementById('select-pending-btn');
+    if (selectPendingBtn) selectPendingBtn.addEventListener('click', selectPendingStudents);
 
     const logoutBtn = document.getElementById('logout-btn');
     if (logoutBtn) logoutBtn.addEventListener('click', (e) => {
