@@ -20,16 +20,20 @@
         // Access Gatekeeper: strictly prevent non-admin users from accessing Elevate
         (function () {
             try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const curEvt = (urlParams.get('event') || 'ELEVATE').trim();
+                const isElevate = curEvt.toUpperCase() === 'ELEVATE';
+
                 const userStr = localStorage.getItem('vortexCurrentUser');
                 const token = localStorage.getItem('vortexToken');
                 const user = userStr ? JSON.parse(userStr) : null;
                 const isAdmin = Boolean(user && user.role === 'admin' && token);
-                if (!isAdmin) {
+                if (isElevate && !isAdmin) {
                     sessionStorage.setItem('vortex_toast_msg', 'Access to the Elevate Series is currently closed.');
                     window.location.replace('events.html');
                 }
             } catch (e) {
-                window.location.replace('events.html');
+                // Keep accessible
             }
         })();
     </script>

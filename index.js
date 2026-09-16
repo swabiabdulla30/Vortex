@@ -294,6 +294,30 @@ async function seedDefaultsIfNeeded() {
                 },
                 { $set: { status: "CLOSED" } }
             );
+
+            // Ensure INNEXA events are explicitly OPEN
+            const innexaEvent = await Event.findOne({ title: { $regex: /innexa/i } });
+            if (innexaEvent) {
+                await Event.updateMany({ title: { $regex: /innexa/i } }, { $set: { status: "OPEN" } });
+            } else {
+                await Event.create({
+                    title: "INNEXA 26",
+                    description: "The Ultimate Tech Symposium & Innovation Challenge.",
+                    about: "INNEXA 26 — The flagship state-level technical symposium of Department of Computer Applications, KMCT IETM.",
+                    date: "MAR 26",
+                    time: "9:30 AM - 4:30 PM",
+                    venue: "KMCT IETM",
+                    category: "Session",
+                    eventType: "main_event",
+                    parentEvent: "",
+                    fee: "Free",
+                    prize: "₹10,000+",
+                    slots: 100,
+                    status: "OPEN",
+                    imageUrl: "https://image2url.com/r2/default/images/1771924658426-b7ca4811-d7d7-4f79-b1e9-64e516259d86.jpeg",
+                    order: 4
+                });
+            }
             invalidateEventsCache();
         }
     } catch (err) {
@@ -352,6 +376,23 @@ const DEFAULT_EVENTS = [
         status: "CLOSED",
         imageUrl: "https://image2url.com/r2/default/images/1771925799245-91e45052-89b2-48d4-98f4-5f7081da8dbe.jpeg",
         order: 3
+    },
+    {
+        title: "INNEXA 26",
+        description: "The Ultimate Tech Symposium & Innovation Challenge.",
+        about: "INNEXA 26 — The flagship state-level technical symposium of Department of Computer Applications, KMCT IETM. Uniting coders, creators, and innovators.",
+        date: "MAR 26",
+        time: "9:30 AM - 4:30 PM",
+        venue: "KMCT IETM",
+        category: "Session",
+        eventType: "main_event",
+        parentEvent: "",
+        fee: "Free",
+        prize: "₹10,000+",
+        slots: 100,
+        status: "OPEN",
+        imageUrl: "https://image2url.com/r2/default/images/1771924658426-b7ca4811-d7d7-4f79-b1e9-64e516259d86.jpeg",
+        order: 4
     },
     {
         title: "BGMI",
@@ -544,6 +585,7 @@ app.post("/api/login", async (req, res) => {
 // --- Helper to verify if an event is closed for registration ---
 async function isEventClosedForUser(eventName, authHeader) {
     if (!eventName) return false;
+    if (eventName.trim().toUpperCase().includes('INNEXA')) return false; // INNEXA is unlocked and open
     try {
         if (authHeader && authHeader.startsWith('Bearer ')) {
             const token = authHeader.split(' ')[1];

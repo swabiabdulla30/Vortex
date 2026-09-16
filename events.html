@@ -200,6 +200,28 @@
                         </div>
                     </div>
                 </div>
+                <a href="elevate.html?event=INNEXA%2026" class="card event-card" id="innexa-card" style="text-decoration: none; color: inherit; cursor: pointer; position: relative;">
+                    <div class="card-status status-active">&#9679; REGISTRATION OPEN</div>
+                    <div class="card-image">
+                        <img src="https://image2url.com/r2/default/images/1771924658426-b7ca4811-d7d7-4f79-b1e9-64e516259d86.jpeg"
+                            alt="Innexa 26" loading="lazy" width="400" height="250">
+                    </div>
+                    <div class="card-content">
+                        <div class="date-badge">
+                            <span class="month">MAR</span>
+                            <span class="day">26</span>
+                        </div>
+                        <div class="event-details">
+                            <span class="event-type"></span>
+                            <h3>INNEXA 26</h3>
+                            <p>The Ultimate Tech Symposium &amp; Innovation Challenge.</p>
+                            <div class="card-footer">
+                                <span class="location">📍 KMCT IETM</span>
+                                <span class="arrow">↗</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
             </div>
             <!-- Instant 0ms Pre-renderer from local cache or preloaded data -->
             <script>
@@ -240,15 +262,16 @@
 
                         grid.innerHTML = displayList.map(evt => {
                             const isElevate = (evt.title || '').trim().toUpperCase() === 'ELEVATE';
-                            const isClosed = isElevate || (evt.status || 'OPEN').toUpperCase() === 'CLOSED';
+                            const isInnexa = (evt.title || '').trim().toUpperCase().includes('INNEXA');
+                            const isClosed = !isInnexa && (isElevate || (evt.status || 'OPEN').toUpperCase() === 'CLOSED');
                             const dateParts = (() => {
                                 if (!evt.date) return { month: 'DATE', day: 'TBA' };
                                 const p = evt.date.trim().split(/[\s,]+/);
                                 return p.length >= 2 ? { month: p[0].substring(0, 3).toUpperCase(), day: p.slice(1).join(' ') } : { month: 'DATE', day: evt.date };
                             })();
 
-                            // ELEVATE is strictly locked for everyone; all other cards locked for non-admins
-                            const isLocked = isElevate || !isAdmin;
+                            // ELEVATE is strictly locked; INNEXA 26 is explicitly UNLOCKED for everyone; others follow admin/status
+                            const isLocked = isElevate || (!isInnexa && !isAdmin && isClosed);
                             const linkHref = isLocked ? 'javascript:void(0)' : 'elevate.html?event=' + encodeURIComponent(evt.title);
                             const clickAttr = isLocked ? 'onclick="alert(\'This event is locked and registrations are closed.\'); return false;"' : '';
                             const cardStyle = isLocked ? 'text-decoration: none; color: inherit; cursor: not-allowed; position: relative; opacity: 0.75;' : 'text-decoration: none; color: inherit; cursor: pointer; position: relative;';

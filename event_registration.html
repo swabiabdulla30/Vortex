@@ -838,6 +838,7 @@
                 }
 
                 let isClosed = Boolean(details && details.closed);
+                if (cleanName.toUpperCase().includes('INNEXA')) isClosed = false;
                 window.currentEventIsClosed = isClosed;
                 const user = userStr ? JSON.parse(userStr) : null;
                 const isAdmin = Boolean(user && user.role === 'admin');
@@ -985,8 +986,9 @@
                     }
 
                     // Dynamic status check from DB
-                    const isLiveClosed = (match.status || 'OPEN').toUpperCase() === 'CLOSED';
-                    if (isLiveClosed || isClosed) {
+                    const isInnexa = cleanName.toUpperCase().includes('INNEXA');
+                    const isLiveClosed = !isInnexa && (match.status || 'OPEN').toUpperCase() === 'CLOSED';
+                    if (!isInnexa && (isLiveClosed || isClosed)) {
                         applyClosedState(true, 'closed');
                     } else {
                         applyClosedState(false);

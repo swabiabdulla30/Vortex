@@ -705,19 +705,19 @@ async function loadDynamicEventsData() {
             const isAdmin = Boolean(user && user.role === 'admin' && token);
 
             eventsSectionGrid.innerHTML = displayEvents.map(evt => {
-                const isClosed = (evt.status || 'OPEN').toUpperCase() === 'CLOSED';
+                const isElevate = evt.title.trim().toUpperCase() === 'ELEVATE';
+                const isInnexa = evt.title.trim().toUpperCase().includes('INNEXA');
+                const isClosed = !isInnexa && (isElevate || (evt.status || 'OPEN').toUpperCase() === 'CLOSED');
                 const dateParts = parseEventDate(evt.date);
                 
-                // If title is ELEVATE, link to elevate.html, otherwise link to registration
-                const isElevate = evt.title.trim().toUpperCase() === 'ELEVATE';
-                
-                // Strictly lock ALL cards for non-admins
-                const linkHref = !isAdmin ? 'javascript:void(0)' : (isElevate ? 'elevate.html' : `event_registration.html?event=${encodeURIComponent(evt.title)}`);
-                const clickAttr = !isAdmin ? 'onclick="alert(\'This event is currently locked. Only administrators can access it.\'); return false;"' : '';
-                const cardStyle = !isAdmin ? 'text-decoration: none; color: inherit; cursor: not-allowed; opacity: 0.75;' : 'text-decoration: none; color: inherit; cursor: pointer;';
+                // Strictly lock ELEVATE; keep INNEXA unlocked; other cards follow admin/status
+                const isLocked = isElevate || (!isInnexa && !isAdmin && isClosed);
+                const linkHref = isLocked ? 'javascript:void(0)' : (isElevate ? 'elevate.html' : `elevate.html?event=${encodeURIComponent(evt.title)}`);
+                const clickAttr = isLocked ? 'onclick="alert(\'This event is currently locked. Only administrators can access it.\'); return false;"' : '';
+                const cardStyle = isLocked ? 'text-decoration: none; color: inherit; cursor: not-allowed; opacity: 0.75;' : 'text-decoration: none; color: inherit; cursor: pointer;';
 
-                const statusClass = !isAdmin ? 'status-soon' : (isClosed ? 'status-soon' : 'status-active');
-                const statusText = !isAdmin ? '🔒 LOCKED (CLOSED)' : (isClosed ? 'REGISTRATION CLOSED' : '&#9679; REGISTRATION OPEN');
+                const statusClass = isLocked ? 'status-soon' : 'status-active';
+                const statusText = isLocked ? '🔒 LOCKED (CLOSED)' : '&#9679; REGISTRATION OPEN';
 
                 return `
                 <a href="${linkHref}" ${clickAttr} class="card event-card" style="${cardStyle}">

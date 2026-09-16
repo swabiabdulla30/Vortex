@@ -153,10 +153,32 @@ const eventDetails = {
             "Q&A session will follow the talk.",
             "Notes and resources will be shared after the session."
         ]
+    },
+    "INNEXA 26": {
+        image: "https://image2url.com/r2/default/images/1771924658426-b7ca4811-d7d7-4f79-b1e9-64e516259d86.jpeg",
+        closed: false,
+        date: "Mar 26, 2026",
+        time: "9:30AM - 4:30PM",
+        venue: "KMCT IETM",
+        slots: 100,
+        prize: "₹10,000+",
+        fee: "Free",
+        about: "<strong>🚀 INNEXA '26 — State Level Technical Symposium</strong><br><br>The Department of Computer Applications at KMCT IETM presents INNEXA 26, bringing together aspiring technologists, developers, and designers for a premier day of competitions, workshops, and innovation challenges.",
+        rules: [
+            "Open to all students with a valid college ID card.",
+            "Registration is mandatory for participation.",
+            "Participants must adhere to the event guidelines and schedule.",
+            "Official certificates will be issued to all registered participants."
+        ]
     }
 };
 
 // Friendly-name aliases — match exact card display names
+eventDetails["INNEXA"] = eventDetails["INNEXA 26"];
+eventDetails["Innexa"] = eventDetails["INNEXA 26"];
+eventDetails["Innexa 26"] = eventDetails["INNEXA 26"];
+eventDetails["INNEXA '26"] = eventDetails["INNEXA 26"];
+eventDetails["Innexa '26"] = eventDetails["INNEXA 26"];
 eventDetails["TECH HUNT"] = eventDetails["TECH HUNT"];
 eventDetails["Tech Hunt"] = eventDetails["TECH HUNT"];
 eventDetails["WEBSITE DESIGNING COMPETITION"] = eventDetails["WEBSITE DESIGNING COMPETITION"];

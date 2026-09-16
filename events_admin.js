@@ -111,11 +111,12 @@
 
         let cardsHtml = displayList.map(evt => {
             const isElevate = evt.title.trim().toUpperCase() === 'ELEVATE';
-            const isClosed = isElevate || (evt.status || 'OPEN').toUpperCase() === 'CLOSED';
+            const isInnexa = evt.title.trim().toUpperCase().includes('INNEXA');
+            const isClosed = !isInnexa && (isElevate || (evt.status || 'OPEN').toUpperCase() === 'CLOSED');
             const dateParts = parseDateString(evt.date);
             
-            // ELEVATE is strictly locked for everyone; all other cards locked for non-admins
-            const isLocked = isElevate || !isAdmin;
+            // ELEVATE is strictly locked; INNEXA 26 is explicitly UNLOCKED for everyone; others follow admin/status
+            const isLocked = isElevate || (!isInnexa && !isAdmin && isClosed);
             const linkHref = isLocked ? 'javascript:void(0)' : 'elevate.html?event=' + encodeURIComponent(evt.title);
             const clickAttr = isLocked ? 'onclick="alert(\'This event is locked and registrations are closed.\'); return false;"' : '';
             const cardStyle = isLocked ? 'text-decoration: none; color: inherit; cursor: not-allowed; position: relative; opacity: 0.75;' : 'text-decoration: none; color: inherit; cursor: pointer; position: relative;';
