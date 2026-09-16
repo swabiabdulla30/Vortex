@@ -298,6 +298,18 @@ async function seedDefaultsIfNeeded() {
             // Ensure INNEXA events are explicitly OPEN
             const innexaEvent = await Event.findOne({ title: { $regex: /innexa/i } });
             if (innexaEvent) {
+                // If it still has the old Techspark image placeholder, update to official Innexa poster
+                await Event.updateMany(
+                    {
+                        title: { $regex: /innexa/i },
+                        $or: [
+                            { imageUrl: "https://image2url.com/r2/default/images/1771924658426-b7ca4811-d7d7-4f79-b1e9-64e516259d86.jpeg" },
+                            { imageUrl: "" },
+                            { imageUrl: { $exists: false } }
+                        ]
+                    },
+                    { $set: { imageUrl: "images/innexa_26.jpeg" } }
+                );
                 await Event.updateMany({ title: { $regex: /innexa/i } }, { $set: { status: "OPEN" } });
             } else {
                 await Event.create({
@@ -314,7 +326,7 @@ async function seedDefaultsIfNeeded() {
                     prize: "₹10,000+",
                     slots: 100,
                     status: "OPEN",
-                    imageUrl: "https://image2url.com/r2/default/images/1771924658426-b7ca4811-d7d7-4f79-b1e9-64e516259d86.jpeg",
+                    imageUrl: "images/innexa_26.jpeg",
                     order: 4
                 });
             }
@@ -391,7 +403,7 @@ const DEFAULT_EVENTS = [
         prize: "₹10,000+",
         slots: 100,
         status: "OPEN",
-        imageUrl: "https://image2url.com/r2/default/images/1771924658426-b7ca4811-d7d7-4f79-b1e9-64e516259d86.jpeg",
+        imageUrl: "images/innexa_26.jpeg",
         order: 4
     },
     {

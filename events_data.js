@@ -155,7 +155,7 @@ const eventDetails = {
         ]
     },
     "INNEXA 26": {
-        image: "https://image2url.com/r2/default/images/1771924658426-b7ca4811-d7d7-4f79-b1e9-64e516259d86.jpeg",
+        image: "images/innexa_26.jpeg",
         closed: false,
         date: "Mar 26, 2026",
         time: "9:30AM - 4:30PM",
