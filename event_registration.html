@@ -594,12 +594,12 @@
                 <div class="reg-hero-overlay"></div>
                 <div class="reg-hero-badge" id="reg-hero-badge">● REGISTRATION OPEN</div>
                 <div class="reg-hero-title">
-                    <h1 id="reg-hero-name">Loading...</h1>
+                    <h1 id="reg-hero-name">Loading Event...</h1>
                     <div class="reg-hero-meta">
-                        <span class="reg-meta-pill" id="reg-date-pill"><i class="fas fa-calendar"></i> �</span>
-                        <span class="reg-meta-pill" id="reg-venue-pill"><i class="fas fa-map-marker-alt"></i> �</span>
+                        <span class="reg-meta-pill" id="reg-date-pill"><i class="fas fa-calendar"></i> TBA</span>
+                        <span class="reg-meta-pill" id="reg-venue-pill"><i class="fas fa-map-marker-alt"></i> KMCT IETM</span>
                         <span class="reg-meta-pill" id="reg-time-pill" style="display:none;"><i
-                                class="fas fa-clock"></i> �</span>
+                                class="fas fa-clock"></i> TBA</span>
                     </div>
                 </div>
             </div>
@@ -610,18 +610,18 @@
                 <div class="reg-slot-track">
                     <div class="reg-slot-fill" id="reg-slot-fill" style="width: 0%"></div>
                 </div>
-                <span class="reg-slot-count" id="reg-slot-count">Loading�</span>
+                <span class="reg-slot-count" id="reg-slot-count">Checking availability...</span>
             </div>
 
             <div class="reg-left-body">
                 <!-- Highlighted Fee Banner -->
                 <div class="reg-fee-banner" id="reg-fee-banner" style="display: none;">
                     <div class="fee-label"><i class="fas fa-ticket-alt"></i> Entry Fee</div>
-                    <div class="fee-amount" id="reg-fee-amount">�</div>
+                    <div class="fee-amount" id="reg-fee-amount">Free</div>
                 </div>
 
                 <div class="reg-section-label"><i class="fas fa-info-circle"></i> About Event</div>
-                <p class="reg-about-text" id="reg-about-text">�</p>
+                <p class="reg-about-text" id="reg-about-text">Loading event description...</p>
 
                 <div class="reg-section-label"><i class="fas fa-gavel"></i> Rules &amp; Regulations</div>
                 <ul class="reg-rules-list" id="reg-rules-list"></ul>
@@ -633,7 +633,8 @@
             <div class="reg-form-header">
                 <span class="reg-form-tag">Elevate Series</span>
                 <h2 class="reg-form-title">Secure Your Spot</h2>
-                <p class="reg-form-sub">Fill in your details below � your ticket will be issued instantly.</p>
+                <p class="reg-form-sub">Fill in your details below — your ticket will be issued instantly.</p>
+            </div>
             <div id="reg-closed-alert" style="display: none; background: rgba(220, 38, 38, 0.15); border: 1px solid rgba(220, 38, 38, 0.5); border-radius: 8px; padding: 14px 16px; margin-bottom: 20px; color: #ff6b6b; font-weight: 600; text-align: center; font-size: 0.95rem; align-items: center; justify-content: center; gap: 8px;">
                 <i class="fas fa-lock"></i> &nbsp;REGISTRATION CLOSED: Entries for this event are officially closed. New registrations cannot be accepted.
             </div>
@@ -770,37 +771,73 @@
 
         window.currentEventIsFree = true;
 
-        document.addEventListener('DOMContentLoaded', function () {
-            // Auto-fill User Data
-            const userStr = localStorage.getItem('vortexCurrentUser');
-            if (userStr) {
-                const user = JSON.parse(userStr);
-                if (user.name) document.getElementById('name').value = user.name;
+        function findEventDetails(name) {
+            if (!name || typeof eventDetails === 'undefined') return null;
+            const clean = name.trim();
+            if (eventDetails[clean]) return eventDetails[clean];
+            if (eventDetails[clean.toUpperCase()]) return eventDetails[clean.toUpperCase()];
+            const norm = clean.toUpperCase().replace(/[\s\-_]/g, '');
+            for (const key of Object.keys(eventDetails)) {
+                if (key.toUpperCase().replace(/[\s\-_]/g, '') === norm) {
+                    return eventDetails[key];
+                }
             }
+            for (const key of Object.keys(eventDetails)) {
+                const kNorm = key.toUpperCase().replace(/[\s\-_]/g, '');
+                if (kNorm.includes(norm) || norm.includes(kNorm)) {
+                    return eventDetails[key];
+                }
+            }
+            return null;
+        }
 
-            const urlParams = new URLSearchParams(window.location.search);
-            const eventName = urlParams.get('event');
+        function initRegistrationPage() {
+            try {
+                // Auto-fill User Data
+                const userStr = localStorage.getItem('vortexCurrentUser');
+                if (userStr) {
+                    try {
+                        const user = JSON.parse(userStr);
+                        if (user.name) document.getElementById('name').value = user.name;
+                    } catch(e) {}
+                }
 
-            if (eventName) {
+                const urlParams = new URLSearchParams(window.location.search);
+                let eventName = urlParams.get('event');
+
+                if (!eventName) {
+                    const saved = sessionStorage.getItem('loginRedirectUrl');
+                    if (saved && saved.includes('event=')) {
+                        const match = saved.match(/[?&]event=([^&]+)/);
+                        if (match) eventName = decodeURIComponent(match[1]);
+                    }
+                }
+
+                if (!eventName) {
+                    // Fallback to events list if no event parameter is present
+                    window.location.replace('events.html');
+                    return;
+                }
+
                 const decodedName = decodeURIComponent(eventName);
                 const cleanName = decodedName.trim();
 
-                // Fill event field
-                document.getElementById('event-name').value = decodedName;
+                // Fill event field and title
+                document.getElementById('event-name').value = cleanName;
+                document.getElementById('reg-hero-name').textContent = cleanName;
 
                 // Populate left panel from events_data.js
-                const details = (typeof eventDetails !== 'undefined') ? eventDetails[cleanName.toUpperCase()] || eventDetails[cleanName] : null;
+                const details = findEventDetails(cleanName);
 
                 if (details) {
                     window.currentEventIsFree = isEventFeeFree(details.fee);
 
                     // Hero image
                     const img = document.getElementById('reg-event-img');
-                    img.src = details.image || '';
-                    img.alt = cleanName;
-
-                    // Hero name
-                    document.getElementById('reg-hero-name').textContent = cleanName;
+                    if (img) {
+                        img.src = details.image || 'https://via.placeholder.com/400x250?text=Event';
+                        img.alt = cleanName;
+                    }
 
                     if (details.date) document.getElementById('reg-date-pill').innerHTML = `<i class="fas fa-calendar"></i> ${details.date}`;
                     if (details.venue) document.getElementById('reg-venue-pill').innerHTML = `<i class="fas fa-map-marker-alt"></i> ${details.venue}`;
@@ -813,24 +850,34 @@
                     const feeBanner = document.getElementById('reg-fee-banner');
                     const feeAmount = document.getElementById('reg-fee-amount');
 
-                    if (!window.currentEventIsFree) {
-                        feeBanner.style.display = 'flex';
-                        feeBanner.className = 'reg-fee-banner';
-                        feeAmount.textContent = details.fee;
-                    } else {
-                        feeBanner.style.display = 'flex';
-                        feeBanner.className = 'reg-fee-banner free-entry';
-                        feeAmount.textContent = 'FREE';
+                    if (feeBanner && feeAmount) {
+                        if (!window.currentEventIsFree) {
+                            feeBanner.style.display = 'flex';
+                            feeBanner.className = 'reg-fee-banner';
+                            feeAmount.textContent = details.fee;
+                        } else {
+                            feeBanner.style.display = 'flex';
+                            feeBanner.className = 'reg-fee-banner free-entry';
+                            feeAmount.textContent = 'FREE';
+                        }
                     }
 
                     // About
-                    document.getElementById('reg-about-text').innerHTML = details.about || '';
+                    const aboutEl = document.getElementById('reg-about-text');
+                    if (aboutEl) aboutEl.innerHTML = details.about || 'Details and highlights for this event will be published soon.';
 
                     // Rules
                     const rulesList = document.getElementById('reg-rules-list');
-                    rulesList.innerHTML = (details.rules || []).map(r => `<li>${r}</li>`).join('');
+                    if (rulesList) {
+                        if (Array.isArray(details.rules) && details.rules.length > 0) {
+                            rulesList.innerHTML = details.rules.map(r => `<li>${r}</li>`).join('');
+                        } else {
+                            rulesList.innerHTML = '<li>Rules and guidelines will be communicated by event coordinators prior to the match.</li>';
+                        }
+                    }
                 } else {
-                    document.getElementById('reg-hero-name').textContent = cleanName;
+                    const aboutEl = document.getElementById('reg-about-text');
+                    if (aboutEl) aboutEl.innerHTML = 'Loading event description and guidelines...';
                 }
 
                 // Teammate section
@@ -1069,8 +1116,16 @@
                             countEl.textContent = '';
                         }
                     });
+            } catch (err) {
+                console.error('Registration init error:', err);
             }
-        });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initRegistrationPage);
+        } else {
+            initRegistrationPage();
+        }
 
         // Handle Registration & Payment
         document.getElementById('registration-form').addEventListener('submit', async function (e) {
