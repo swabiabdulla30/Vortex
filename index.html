@@ -106,7 +106,34 @@
                 </div>
             </div>
 
-            <div class="featured-event-block" id="featured-elevate-block" style="display: none;">
+            <!-- Featured Innexa 26 Card -->
+            <div class="featured-event-block" id="featured-innexa-block" style="cursor: pointer;">
+                <div class="featured-innexa-banner" style="width: 100%; max-width: 540px; height: 210px; border-radius: 16px; overflow: hidden; margin-bottom: 24px; position: relative; border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 10px 30px rgba(0,0,0,0.6);">
+                    <img src="https://image2url.com/r2/default/images/1771924658426-b7ca4811-d7d7-4f79-b1e9-64e516259d86.jpeg" alt="Innexa 26" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease;">
+                    <div style="position: absolute; top: 12px; left: 12px; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); border: 1px solid rgba(0, 255, 136, 0.4); color: #00ff88; font-size: 0.7rem; font-weight: 700; padding: 5px 14px; border-radius: 20px; letter-spacing: 1px;">
+                        ● REGISTRATION OPEN
+                    </div>
+                </div>
+                <span class="event-label" style="color: #00ff88;">&#9679; STATE LEVEL TECH SYMPOSIUM &#9679;</span>
+                <h2 class="featured-event-title" id="innexa-title" style="font-size: clamp(3rem, 7vw, 5.5rem); letter-spacing: 2px; margin-bottom: 16px;">INNEXA 26</h2>
+                <hr>
+                <p class="featured-event-desc">
+                    The Ultimate Technical Symposium &amp; Innovation Challenge. Bringing together passionate coders, designers, gamers, and tech visionaries.
+                </p>
+                <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin: 16px 0 28px;">
+                    <span class="highlight-date" style="margin: 0; background: rgba(0, 255, 136, 0.12); border-color: rgba(0, 255, 136, 0.35); color: #00ff88;">
+                        &#128467; MAR 26, 2026
+                    </span>
+                    <span class="highlight-date" style="margin: 0; background: rgba(255, 255, 255, 0.05); border-color: rgba(255, 255, 255, 0.15); color: #e0e0e0;">
+                        📍 KMCT IETM
+                    </span>
+                </div>
+                <a href="elevate.html?event=INNEXA%2026" class="theme-grid-btn innexa-open-btn" style="cursor: pointer; text-decoration: none;">
+                    <span>EXPLORE INNEXA 26 &nbsp;↗</span>
+                </a>
+            </div>
+
+            <div class="featured-event-block" id="featured-elevate-block" style="display: none; margin-top: 40px;">
                 <span class="event-label">&#9679; FLAGSHIP EVENT &#9679;</span>
                 <h2 class="featured-event-title" id="elevate-title">ELEVATE</h2>
                 <hr>
@@ -116,8 +143,8 @@
                     above the ordinary.
                 </p>
                 <span class="highlight-date">&#128467; MAR 05 &ndash; 06</span>
-                <a href="javascript:void(0)" onclick="alert('The Elevate Series is locked and registrations are closed.'); return false;" class="theme-grid-btn" style="cursor: not-allowed; opacity: 0.7;">
-                    <span>CLOSED</span>
+                <a href="elevate.html?event=ELEVATE" class="theme-grid-btn" style="cursor: pointer;">
+                    <span>● CLOSED (ADMIN OPEN)</span>
                 </a>
             </div>
 
@@ -170,6 +197,23 @@
             } catch (e) {
                 console.error('Error checking user status:', e);
             }
+
+            // Intercept Innexa card clicks for unauthenticated visitors
+            document.addEventListener('click', (e) => {
+                const innexaEl = e.target.closest('#featured-innexa-block, .innexa-open-btn');
+                if (!innexaEl) return;
+
+                const targetUrl = 'elevate.html?event=INNEXA%2026';
+                const user = localStorage.getItem('vortexCurrentUser');
+                if (!user) {
+                    e.preventDefault();
+                    sessionStorage.setItem('loginRedirectUrl', targetUrl);
+                    sessionStorage.setItem('vortex_toast_msg', 'Please sign in to access Innexa 26.');
+                    window.location.href = 'login.html?redirect=' + encodeURIComponent(targetUrl);
+                } else if (!e.target.closest('a')) {
+                    window.location.href = targetUrl;
+                }
+            });
         })();
     </script>
 </body>
