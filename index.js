@@ -1267,13 +1267,30 @@ app.get("/api/network", async (req, res) => {
     }
 });
 
+// --- High-Speed Gallery Cache for Instant Response ---
+let galleryMemoryCache = null;
+let galleryMemoryCacheTime = 0;
+const GALLERY_CACHE_TTL = 60000; // 60s cache TTL
+
+function invalidateGalleryCache() {
+    galleryMemoryCache = null;
+    galleryMemoryCacheTime = 0;
+}
+
 app.get("/api/gallery", async (req, res) => {
     try {
+        res.setHeader('Cache-Control', 'public, max-age=60, s-maxage=120, stale-while-revalidate=300');
+        if (!req.query._t && galleryMemoryCache && (Date.now() - galleryMemoryCacheTime < GALLERY_CACHE_TTL)) {
+            return res.json(galleryMemoryCache);
+        }
         await connectDB();
-        const items = await GalleryItem.find().sort({ order: 1, createdAt: 1 });
+        const items = await GalleryItem.find().sort({ order: 1, createdAt: 1 }).lean();
+        galleryMemoryCache = items;
+        galleryMemoryCacheTime = Date.now();
         res.json(items);
     } catch (error) {
         console.error("Get gallery error:", error);
+        if (galleryMemoryCache) return res.json(galleryMemoryCache);
         res.status(500).json({ error: "Failed to fetch gallery items" });
     }
 });
@@ -1450,6 +1467,7 @@ app.post("/api/admin/gallery", authenticateToken, async (req, res) => {
             order: order !== undefined && order !== "" ? Number(order) : 0
         });
         await item.save();
+        invalidateGalleryCache();
         res.status(201).json({ success: true, item });
     } catch (error) {
         console.error("Create gallery item error:", error);
@@ -1463,6 +1481,7 @@ app.delete("/api/admin/gallery/:id", authenticateToken, async (req, res) => {
         await connectDB();
         const deleted = await GalleryItem.findByIdAndDelete(req.params.id);
         if (!deleted) return res.status(404).json({ error: "Gallery item not found" });
+        invalidateGalleryCache();
         res.json({ success: true, message: "Gallery item removed successfully" });
     } catch (error) {
         console.error("Delete gallery error:", error);
@@ -1483,6 +1502,7 @@ app.put("/api/admin/gallery/:id", authenticateToken, async (req, res) => {
 
         const updated = await GalleryItem.findByIdAndUpdate(req.params.id, updateData, { new: true });
         if (!updated) return res.status(404).json({ error: "Gallery item not found" });
+        invalidateGalleryCache();
         res.json({ success: true, item: updated });
     } catch (error) {
         console.error("Update gallery item error:", error);

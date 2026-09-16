@@ -638,41 +638,77 @@ async function loadDynamicAboutData() {
     }
 }
 
+function renderGalleryToDOM(items, slideContainer, galleryGrid) {
+    if (!Array.isArray(items) || items.length === 0) return;
+
+    // Immediately trigger parallel background preloading for all images
+    items.forEach(item => {
+        if (item.imageUrl) {
+            const preloader = new Image();
+            preloader.decoding = 'async';
+            preloader.src = item.imageUrl;
+        }
+    });
+
+    if (slideContainer) {
+        slideContainer.innerHTML = items.map((item, idx) => `
+            <div class="item">
+                <img src="${item.imageUrl}" alt="${item.title || 'Moments'}" loading="${idx < 6 ? 'eager' : 'lazy'}" decoding="async" class="slider-img" ${idx < 2 ? 'fetchpriority="high"' : ''}>
+                <div class="content">
+                    <div class="name">${item.title || ''}</div>
+                    <div class="des">${item.description || ''}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    if (galleryGrid) {
+        galleryGrid.innerHTML = items.map((item, idx) => `
+            <div class="gallery-item">
+                <img src="${item.imageUrl}" alt="${item.title || 'Moments'}" loading="${idx < 8 ? 'eager' : 'lazy'}" decoding="async" ${idx < 4 ? 'fetchpriority="high"' : ''}>
+                <div class="overlay"></div>
+            </div>
+        `).join('');
+    }
+}
+
 async function loadDynamicGalleryData() {
     const slideContainer = document.querySelector('.gallery-container .slide');
     const galleryGrid = document.querySelector('.gallery-grid');
 
-    if (slideContainer || galleryGrid) {
-        try {
-            const res = await fetch('/api/gallery');
-            if (res.ok) {
-                const items = await res.json();
-                if (Array.isArray(items) && items.length > 0) {
-                    if (slideContainer) {
-                        slideContainer.innerHTML = items.map(item => `
-                            <div class="item">
-                                <img src="${item.imageUrl}" alt="${item.title || 'Moments'}" loading="lazy" class="slider-img">
-                                <div class="content">
-                                    <div class="name">${item.title || ''}</div>
-                                    <div class="des">${item.description || ''}</div>
-                                </div>
-                            </div>
-                        `).join('');
-                    }
+    if (!slideContainer && !galleryGrid) return;
 
-                    if (galleryGrid) {
-                        galleryGrid.innerHTML = items.map(item => `
-                            <div class="gallery-item">
-                                <img src="${item.imageUrl}" alt="${item.title || 'Moments'}" loading="lazy">
-                                <div class="overlay"></div>
-                            </div>
-                        `).join('');
-                    }
+    // 1. Instant 0ms render from localStorage cache
+    try {
+        const cachedRaw = localStorage.getItem('vortex_cached_gallery');
+        if (cachedRaw) {
+            const cachedItems = JSON.parse(cachedRaw);
+            if (Array.isArray(cachedItems) && cachedItems.length > 0) {
+                renderGalleryToDOM(cachedItems, slideContainer, galleryGrid);
+            }
+        }
+    } catch (e) {
+        console.warn("Gallery cache read error:", e);
+    }
+
+    // 2. Background fresh fetch
+    try {
+        const res = await fetch('/api/gallery');
+        if (res.ok) {
+            const items = await res.json();
+            if (Array.isArray(items) && items.length > 0) {
+                const currentCache = localStorage.getItem('vortex_cached_gallery');
+                const newString = JSON.stringify(items);
+                if (currentCache !== newString) {
+                    try {
+                        localStorage.setItem('vortex_cached_gallery', newString);
+                    } catch (e) {}
+                    renderGalleryToDOM(items, slideContainer, galleryGrid);
                 }
             }
-        } catch (e) {
-            console.log("Using static gallery fallback:", e.message);
         }
+    } catch (e) {
+        console.log("Using static/cached gallery fallback:", e.message);
     }
 }
 

@@ -1075,21 +1075,58 @@ function initAdminCMS() {
         }
     }
 
+    function compressImageFile(file, maxWidth = 1600, quality = 0.82) {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    let w = img.width;
+                    let h = img.height;
+                    if (w > maxWidth || h > maxWidth) {
+                        if (w > h) {
+                            h = Math.round((h * maxWidth) / w);
+                            w = maxWidth;
+                        } else {
+                            w = Math.round((w * maxWidth) / h);
+                            h = maxWidth;
+                        }
+                    }
+                    canvas.width = w;
+                    canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, w, h);
+                    resolve(canvas.toDataURL('image/jpeg', quality));
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
     // File input preview
-    inputFile.addEventListener('change', (e) => {
+    inputFile.addEventListener('change', async (e) => {
         const file = e.target.files[0];
         if (file) {
-            if (file.size > 8 * 1024 * 1024) {
-                alert('File size too large. Please select an image under 8MB.');
+            if (file.size > 15 * 1024 * 1024) {
+                alert('File size too large. Please select an image under 15MB.');
                 inputFile.value = '';
                 return;
             }
-            const reader = new FileReader();
-            reader.onload = function (event) {
-                currentImageBase64 = event.target.result;
+            try {
+                // Instantly compress client-side for lightning-fast loading
+                currentImageBase64 = await compressImageFile(file);
                 showImagePreview(currentImageBase64);
-            };
-            reader.readAsDataURL(file);
+            } catch (err) {
+                console.error("Compression error:", err);
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    currentImageBase64 = event.target.result;
+                    showImagePreview(currentImageBase64);
+                };
+                reader.readAsDataURL(file);
+            }
         } else {
             currentImageBase64 = '';
             resetImagePreview();
