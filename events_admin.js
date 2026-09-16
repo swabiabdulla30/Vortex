@@ -52,17 +52,20 @@
         await loadAndRenderMainEvents();
     }
 
-    async function loadAndRenderMainEvents() {
+    async function loadAndRenderMainEvents(forceFresh = false) {
         const grid = document.querySelector('#events .cards-grid');
         if (!grid) return;
 
         try {
-            let allEvents = window._vortexLoadedEvents;
-            if (!allEvents && window._vortexFetchPromise) {
-                allEvents = await window._vortexFetchPromise;
+            let allEvents = null;
+            if (!forceFresh) {
+                allEvents = window._vortexLoadedEvents;
+                if (!allEvents && window._vortexFetchPromise) {
+                    allEvents = await window._vortexFetchPromise;
+                }
             }
             if (!allEvents) {
-                const res = await fetch('/api/events');
+                const res = await fetch('/api/events?_t=' + Date.now(), { cache: 'no-store' });
                 if (res.ok) allEvents = await res.json();
             }
             if (Array.isArray(allEvents)) {
@@ -235,8 +238,18 @@
                         throw new Error(data.error || 'Failed to delete event card');
                     }
 
+                    // Immediately remove from local state
+                    loadedMainEvents = loadedMainEvents.filter(x => x._id !== id);
+                    if (Array.isArray(window._vortexLoadedEvents)) {
+                        window._vortexLoadedEvents = window._vortexLoadedEvents.filter(x => x._id !== id);
+                        try {
+                            localStorage.setItem('vortex_cached_events', JSON.stringify(window._vortexLoadedEvents));
+                        } catch (e) {}
+                    }
+                    renderMainEventsGrid();
+
                     alert(`Event card "${title}" deleted successfully!`);
-                    await loadAndRenderMainEvents();
+                    await loadAndRenderMainEvents(true);
                 } catch (err) {
                     console.error('Delete error:', err);
                     alert('Error: ' + err.message);
@@ -413,9 +426,37 @@
                         throw new Error(data.error || 'Failed to save event card');
                     }
 
+                    // Instantly reflect the updated/created event in memory & cache
+                    if (data.event) {
+                        const savedEvt = data.event;
+                        const idx = loadedMainEvents.findIndex(x => x._id === savedEvt._id);
+                        if (idx !== -1) {
+                            loadedMainEvents[idx] = savedEvt;
+                        } else {
+                            loadedMainEvents.push(savedEvt);
+                        }
+
+                        if (Array.isArray(window._vortexLoadedEvents)) {
+                            const vIdx = window._vortexLoadedEvents.findIndex(x => x._id === savedEvt._id);
+                            if (vIdx !== -1) {
+                                window._vortexLoadedEvents[vIdx] = savedEvt;
+                            } else {
+                                window._vortexLoadedEvents.push(savedEvt);
+                            }
+                        } else {
+                            window._vortexLoadedEvents = [savedEvt];
+                        }
+
+                        try {
+                            localStorage.setItem('vortex_cached_events', JSON.stringify(window._vortexLoadedEvents));
+                        } catch (e) {}
+
+                        renderMainEventsGrid();
+                    }
+
                     alert(isEdit ? 'Event card updated successfully!' : 'Event card created successfully!');
                     closeModal();
-                    await loadAndRenderMainEvents();
+                    await loadAndRenderMainEvents(true);
 
                 } catch (err) {
                     console.error('Error saving event card:', err);

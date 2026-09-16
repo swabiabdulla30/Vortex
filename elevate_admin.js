@@ -141,17 +141,20 @@
         await loadAndRenderSubEvents();
     }
 
-    async function loadAndRenderSubEvents() {
+    async function loadAndRenderSubEvents(forceFresh = false) {
         const grid = document.querySelector('#code-red-events .cards-grid');
         if (!grid) return;
 
         try {
-            let allEvents = window._vortexLoadedEvents;
-            if (!allEvents && window._vortexFetchPromise) {
-                allEvents = await window._vortexFetchPromise;
+            let allEvents = null;
+            if (!forceFresh) {
+                allEvents = window._vortexLoadedEvents;
+                if (!allEvents && window._vortexFetchPromise) {
+                    allEvents = await window._vortexFetchPromise;
+                }
             }
             if (!allEvents) {
-                const res = await fetch('/api/events');
+                const res = await fetch('/api/events?_t=' + Date.now(), { cache: 'no-store' });
                 if (res.ok) allEvents = await res.json();
             }
             if (Array.isArray(allEvents)) {
@@ -341,8 +344,18 @@
                         throw new Error(data.error || 'Failed to delete event');
                     }
 
+                    // Immediately remove from local state
+                    loadedSubEvents = loadedSubEvents.filter(x => x._id !== id);
+                    if (Array.isArray(window._vortexLoadedEvents)) {
+                        window._vortexLoadedEvents = window._vortexLoadedEvents.filter(x => x._id !== id);
+                        try {
+                            localStorage.setItem('vortex_cached_events', JSON.stringify(window._vortexLoadedEvents));
+                        } catch (e) {}
+                    }
+                    renderSubEventsGrid();
+
                     alert(`Event "${title}" removed successfully!`);
-                    await loadAndRenderSubEvents();
+                    await loadAndRenderSubEvents(true);
                 } catch (err) {
                     console.error('Delete error:', err);
                     alert('Error: ' + err.message);
@@ -531,9 +544,37 @@
                         throw new Error(data.error || 'Failed to save event');
                     }
 
+                    // Instantly reflect the updated/created event in memory & cache
+                    if (data.event) {
+                        const savedEvt = data.event;
+                        const idx = loadedSubEvents.findIndex(x => x._id === savedEvt._id);
+                        if (idx !== -1) {
+                            loadedSubEvents[idx] = savedEvt;
+                        } else {
+                            loadedSubEvents.push(savedEvt);
+                        }
+
+                        if (Array.isArray(window._vortexLoadedEvents)) {
+                            const vIdx = window._vortexLoadedEvents.findIndex(x => x._id === savedEvt._id);
+                            if (vIdx !== -1) {
+                                window._vortexLoadedEvents[vIdx] = savedEvt;
+                            } else {
+                                window._vortexLoadedEvents.push(savedEvt);
+                            }
+                        } else {
+                            window._vortexLoadedEvents = [savedEvt];
+                        }
+
+                        try {
+                            localStorage.setItem('vortex_cached_events', JSON.stringify(window._vortexLoadedEvents));
+                        } catch (e) {}
+
+                        renderSubEventsGrid();
+                    }
+
                     alert(isEdit ? 'Event updated successfully!' : 'Event created successfully!');
                     closeModal();
-                    await loadAndRenderSubEvents();
+                    await loadAndRenderSubEvents(true);
 
                 } catch (err) {
                     console.error('Error saving event:', err);

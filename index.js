@@ -1277,8 +1277,8 @@ function invalidateEventsCache() {
 
 app.get("/api/events", async (req, res) => {
     try {
-        res.setHeader('Cache-Control', 'public, max-age=15, stale-while-revalidate=60');
-        if (eventsMemoryCache && (Date.now() - eventsMemoryCacheTime < EVENTS_CACHE_TTL)) {
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        if (!req.query._t && eventsMemoryCache && (Date.now() - eventsMemoryCacheTime < EVENTS_CACHE_TTL)) {
             return res.json(eventsMemoryCache);
         }
         await connectDB();
