@@ -15,6 +15,20 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script>
+        // Access Gatekeeper: requires sign in to open any event registration
+        (function () {
+            try {
+                const user = localStorage.getItem('vortexCurrentUser');
+                if (!user) {
+                    const returnUrl = 'event_registration.html' + (window.location.search || '');
+                    sessionStorage.setItem('loginRedirectUrl', returnUrl);
+                    sessionStorage.setItem('vortex_toast_msg', 'Please sign in or create an account to access event registration.');
+                    window.location.replace('login.html?redirect=' + encodeURIComponent(returnUrl));
+                }
+            } catch (e) {}
+        })();
+    </script>
     <style>
         /* -- Split Layout ----------------------------------- */
         .reg-split {
@@ -523,13 +537,6 @@
         }
     </style>
 </head>
-<script>
-    const currentUser = localStorage.getItem('vortexCurrentUser');
-    if (!currentUser) {
-        sessionStorage.setItem('loginRedirectUrl', window.location.href);
-        window.location.href = '/login.html';
-    }
-</script>
 
 <body>
 
@@ -1094,8 +1101,11 @@
             const userEmail = user ? user.email : '';
 
             if (!userEmail) {
-                alert('Error: User email not found. Please login again.');
-                window.location.href = 'login.html';
+                const returnUrl = 'event_registration.html' + (window.location.search || '');
+                sessionStorage.setItem('loginRedirectUrl', returnUrl);
+                sessionStorage.setItem('vortex_toast_msg', 'Please sign in to register for this event.');
+                alert('Error: User session not found. Please login again.');
+                window.location.href = 'login.html?redirect=' + encodeURIComponent(returnUrl);
                 return;
             }
 

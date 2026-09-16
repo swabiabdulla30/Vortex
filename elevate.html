@@ -17,7 +17,7 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="preload" href="/api/events" as="fetch" crossorigin="anonymous">
     <script>
-        // Access Gatekeeper: strictly prevent non-admin users from accessing Elevate
+        // Access Gatekeeper: requires sign in to open any event, and locks ELEVATE for non-admins
         (function () {
             try {
                 const urlParams = new URLSearchParams(window.location.search);
@@ -25,8 +25,19 @@
                 const isElevate = curEvt.toUpperCase() === 'ELEVATE';
 
                 const userStr = localStorage.getItem('vortexCurrentUser');
-                const token = localStorage.getItem('vortexToken');
                 const user = userStr ? JSON.parse(userStr) : null;
+
+                // 1. Must be signed in to open any event
+                if (!user) {
+                    const returnUrl = 'elevate.html' + (window.location.search || '');
+                    sessionStorage.setItem('loginRedirectUrl', returnUrl);
+                    sessionStorage.setItem('vortex_toast_msg', 'Please sign in to access this event.');
+                    window.location.replace('login.html?redirect=' + encodeURIComponent(returnUrl));
+                    return;
+                }
+
+                // 2. If logged in, but event is ELEVATE and user is not an admin
+                const token = localStorage.getItem('vortexToken');
                 const isAdmin = Boolean(user && user.role === 'admin' && token);
                 if (isElevate && !isAdmin) {
                     sessionStorage.setItem('vortex_toast_msg', 'Access to the Elevate Series is currently closed.');
@@ -226,6 +237,23 @@
                     } catch(e) {}
                 };
                 window.renderSubEventsNow();
+
+                // Auth check when clicking any sub-event / competition card
+                document.addEventListener('click', function (e) {
+                    if (e.target.closest('.card-admin-bar') || e.target.closest('.card-admin-btn')) return;
+                    const card = e.target.closest('.event-card');
+                    if (!card) return;
+                    const href = card.getAttribute('href');
+                    if (!href || href.startsWith('javascript:')) return;
+
+                    const user = localStorage.getItem('vortexCurrentUser');
+                    if (!user) {
+                        e.preventDefault();
+                        sessionStorage.setItem('loginRedirectUrl', href);
+                        sessionStorage.setItem('vortex_toast_msg', 'Please sign in or create an account to access event registration.');
+                        window.location.href = 'login.html?redirect=' + encodeURIComponent(href);
+                    }
+                });
             </script>
         </div>
     </section>

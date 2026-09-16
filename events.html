@@ -295,6 +295,24 @@
                 };
                 window.renderMainEventsNow();
 
+                // Auth check when clicking any event card
+                document.addEventListener('click', function (e) {
+                    if (e.target.closest('.card-admin-bar') || e.target.closest('.card-admin-btn')) return;
+                    const card = e.target.closest('.event-card');
+                    if (!card) return;
+                    if (card.classList.contains('locked-event-card')) return;
+                    const href = card.getAttribute('href');
+                    if (!href || href.startsWith('javascript:')) return;
+
+                    const user = localStorage.getItem('vortexCurrentUser');
+                    if (!user) {
+                        e.preventDefault();
+                        sessionStorage.setItem('loginRedirectUrl', href);
+                        sessionStorage.setItem('vortex_toast_msg', 'Please sign in to access this event.');
+                        window.location.href = 'login.html?redirect=' + encodeURIComponent(href);
+                    }
+                });
+
                 // Toast notification on redirect
                 try {
                     const toastMsg = sessionStorage.getItem('vortex_toast_msg');

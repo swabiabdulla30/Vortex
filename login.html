@@ -720,6 +720,34 @@
             });
         }
 
+        // Save redirect URL from query param immediately
+        const initialRedirect = new URLSearchParams(window.location.search).get('redirect');
+        if (initialRedirect) {
+            sessionStorage.setItem('loginRedirectUrl', initialRedirect);
+        }
+
+        // Show toast notification if present
+        try {
+            const toastMsg = sessionStorage.getItem('vortex_toast_msg');
+            if (toastMsg) {
+                sessionStorage.removeItem('vortex_toast_msg');
+                const msgEl = document.getElementById('login-auth-message');
+                if (msgEl) {
+                    msgEl.textContent = toastMsg;
+                    msgEl.style.color = '#00ff88';
+                }
+            }
+        } catch (e) {}
+
+        function resolveRedirectDestination() {
+            const urlParam = new URLSearchParams(window.location.search).get('redirect');
+            const stored = sessionStorage.getItem('loginRedirectUrl');
+            sessionStorage.removeItem('loginRedirectUrl');
+            let dest = stored || urlParam || 'events.html';
+            if (!dest || dest.includes('login.html')) dest = 'events.html';
+            return dest;
+        }
+
         // -- Google Credential Handler -------------------------------------
         function handleCredentialResponse(response) {
             function decodeJwtResponse(token) {
@@ -747,9 +775,7 @@
             if (existingUser) googleUser.isPaid = existingUser.isPaid || false;
             else { storedUsers.push(googleUser); localStorage.setItem('vortexUsers', JSON.stringify(storedUsers)); }
             localStorage.setItem('vortexCurrentUser', JSON.stringify(googleUser));
-            const redirectUrl = sessionStorage.getItem('loginRedirectUrl');
-            if (redirectUrl) { sessionStorage.removeItem('loginRedirectUrl'); window.location.href = redirectUrl; }
-            else { window.location.href = '/index.html'; }
+            window.location.href = resolveRedirectDestination();
         }
 
         // -- Standard Auth Handlers -----------------------------------------
@@ -764,10 +790,10 @@
                 const result = await loginUser(email, password);
                 if (result.success) {
                     msg.textContent = 'Access Granted. Redirecting...';
-                    msg.style.color = '#ff1a1a';
+                    msg.style.color = '#00ff88';
                     setTimeout(() => {
-                        window.location.href = sessionStorage.getItem('loginRedirectUrl') || 'index.html';
-                    }, 1000);
+                        window.location.href = resolveRedirectDestination();
+                    }, 600);
                 } else {
                     msg.textContent = 'Error: ' + result.message;
                     msg.style.color = '#ff4444';
@@ -787,17 +813,17 @@
                 const result = await registerUser(name, email, password);
                 if (result.success) {
                     msg.textContent = 'Registration Successful. Logging you in...';
-                    msg.style.color = '#ff1a1a';
+                    msg.style.color = '#00ff88';
                     try {
                         const loginResult = await loginUser(email, password);
                         if (loginResult.success) {
                             setTimeout(() => {
-                                window.location.href = sessionStorage.getItem('loginRedirectUrl') || 'index.html';
-                            }, 1000);
+                                window.location.href = resolveRedirectDestination();
+                            }, 600);
                         }
                     } catch (loginErr) {
                         msg.textContent = 'Registration Successful. Please sign in.';
-                        setTimeout(() => switchToLogin(), 1500);
+                        setTimeout(() => switchToLogin(), 1200);
                     }
                 } else {
                     msg.textContent = 'Error: ' + result.message;
