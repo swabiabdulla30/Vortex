@@ -125,7 +125,7 @@
             const cardStyle = isLocked ? 'text-decoration: none; color: inherit; cursor: not-allowed; position: relative; opacity: 0.75;' : 'text-decoration: none; color: inherit; cursor: pointer; position: relative;';
 
             let statusBadge = isLocked 
-                ? '<div class="card-status status-soon">🔒 LOCKED (CLOSED)</div>'
+                ? '<div class="card-status status-soon">CLOSED</div>'
                 : (isClosed ? '<div class="card-status status-active" style="background: rgba(255, 170, 0, 0.2); color: #ffaa00; border-color: rgba(255,170,0,0.5);">● CLOSED (ADMIN OPEN)</div>' : '<div class="card-status status-active">&#9679; REGISTRATION OPEN</div>');
 
             const adminToolbar = (isAdmin && !evt.isStatic) ? `

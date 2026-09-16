@@ -717,7 +717,7 @@ async function loadDynamicEventsData() {
                 const cardStyle = isLocked ? 'text-decoration: none; color: inherit; cursor: not-allowed; opacity: 0.75;' : 'text-decoration: none; color: inherit; cursor: pointer;';
 
                 const statusClass = isLocked ? 'status-soon' : 'status-active';
-                const statusText = isLocked ? '🔒 LOCKED (CLOSED)' : '&#9679; REGISTRATION OPEN';
+                const statusText = isLocked ? 'CLOSED' : '&#9679; REGISTRATION OPEN';
 
                 return `
                 <a href="${linkHref}" ${clickAttr} class="card event-card" style="${cardStyle}">

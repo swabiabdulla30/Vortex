@@ -134,7 +134,7 @@
             <div class="cards-grid" id="main-events-grid">
                 <!-- Pre-locked fallback cards rendered instantly at 0ms parse time -->
                 <div class="card event-card locked-event-card" id="elevate-card" style="text-decoration: none; color: inherit; cursor: not-allowed; position: relative; opacity: 0.75;" onclick="alert('This event is locked and registrations are closed.'); return false;">
-                    <div class="card-status status-soon">🔒 LOCKED (CLOSED)</div>
+                    <div class="card-status status-soon">CLOSED</div>
                     <div class="card-image">
                         <img src="https://image2url.com/r2/default/images/1771925642514-c2c31e9c-1123-455a-ab35-90d2ecb313ef.jpeg"
                             alt="Elevate 2026" loading="lazy" width="400" height="250">
@@ -156,7 +156,7 @@
                     </div>
                 </div>
                 <div class="card event-card locked-event-card" id="techspark-card" style="text-decoration: none; color: inherit; cursor: not-allowed; position: relative; opacity: 0.75;" onclick="alert('This event is locked and registrations are closed.'); return false;">
-                    <div class="card-status status-soon">🔒 LOCKED (CLOSED)</div>
+                    <div class="card-status status-soon">CLOSED</div>
                     <div class="card-image">
                         <img src="https://image2url.com/r2/default/images/1771924658426-b7ca4811-d7d7-4f79-b1e9-64e516259d86.jpeg"
                             alt="Cyber Defense Workshop" loading="lazy" width="400" height="250">
@@ -178,7 +178,7 @@
                     </div>
                 </div>
                 <div class="card event-card locked-event-card" id="ai-frontiers-card" style="text-decoration: none; color: inherit; cursor: not-allowed; position: relative; opacity: 0.75;" onclick="alert('This event is locked and registrations are closed.'); return false;">
-                    <div class="card-status status-soon">🔒 LOCKED (CLOSED)</div>
+                    <div class="card-status status-soon">CLOSED</div>
                     <div class="card-image">
                         <img src="https://image2url.com/r2/default/images/1771925799245-91e45052-89b2-48d4-98f4-5f7081da8dbe.jpeg"
                             alt="AI Frontiers Talk" loading="lazy" width="400" height="250">
@@ -276,7 +276,7 @@
                             const clickAttr = isLocked ? 'onclick="alert(\'This event is locked and registrations are closed.\'); return false;"' : '';
                             const cardStyle = isLocked ? 'text-decoration: none; color: inherit; cursor: not-allowed; position: relative; opacity: 0.75;' : 'text-decoration: none; color: inherit; cursor: pointer; position: relative;';
                             const statusBadge = isLocked
-                                ? '<div class="card-status status-soon">🔒 LOCKED (CLOSED)</div>'
+                                ? '<div class="card-status status-soon">CLOSED</div>'
                                 : (isClosed ? '<div class="card-status status-active" style="background: rgba(255, 170, 0, 0.2); color: #ffaa00; border-color: rgba(255,170,0,0.5);">● CLOSED (ADMIN OPEN)</div>' : '<div class="card-status status-active">&#9679; REGISTRATION OPEN</div>');
                             
                             return '<a href="' + linkHref + '" ' + clickAttr + ' class="card event-card" style="' + cardStyle + '">' +
