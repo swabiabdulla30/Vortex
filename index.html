@@ -108,26 +108,35 @@
 
             <!-- Featured Innexa 26 Card -->
             <div class="featured-event-block" id="featured-innexa-block" style="cursor: pointer;">
-                <div class="featured-innexa-banner" style="width: 100%; max-width: 540px; height: 210px; border-radius: 16px; overflow: hidden; margin-bottom: 24px; position: relative; border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 10px 30px rgba(0,0,0,0.6);">
-                    <img id="featured-innexa-img" src="images/innexa_26.jpeg" alt="Innexa 26" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease;">
-                    <div style="position: absolute; top: 12px; left: 12px; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); border: 1px solid rgba(0, 255, 136, 0.4); color: #00ff88; font-size: 0.7rem; font-weight: 700; padding: 5px 14px; border-radius: 20px; letter-spacing: 1px;">
+                <div class="featured-innexa-banner"
+                    style="width: 100%; max-width: 540px; height: 210px; border-radius: 16px; overflow: hidden; margin-bottom: 24px; position: relative; border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 10px 30px rgba(0,0,0,0.6);">
+                    <img id="featured-innexa-img" src="images/innexa_26.jpeg" alt="Innexa 26"
+                        style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease;">
+                    <div
+                        style="position: absolute; top: 12px; left: 12px; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); border: 1px solid rgba(0, 255, 136, 0.4); color: #00ff88; font-size: 0.7rem; font-weight: 700; padding: 5px 14px; border-radius: 20px; letter-spacing: 1px;">
                         ● REGISTRATION OPEN
                     </div>
                 </div>
-                <h2 class="featured-event-title" id="innexa-title" style="font-size: clamp(3rem, 7vw, 5.5rem); letter-spacing: 2px; margin-bottom: 16px;">INNEXA 26</h2>
+                <h2 class="featured-event-title" id="innexa-title"
+                    style="font-size: clamp(3rem, 7vw, 5.5rem); letter-spacing: 2px; margin-bottom: 16px;">INNEXA'26
+                </h2>
                 <hr>
                 <p class="featured-event-desc">
-                    The Ultimate Technical Symposium &amp; Innovation Challenge. Bringing together passionate coders, designers, gamers, and tech visionaries.
+                    The Ultimate Technical Symposium &amp; Innovation Challenge. Bringing together passionate coders,
+                    designers, gamers, and tech visionaries.
                 </p>
                 <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin: 16px 0 28px;">
-                    <span class="highlight-date" style="margin: 0; background: rgba(0, 255, 136, 0.12); border-color: rgba(0, 255, 136, 0.35); color: #00ff88;">
-                        &#128467; MAR 26, 2026
+                    <span class="highlight-date"
+                        style="margin: 0; background: rgba(0, 255, 136, 0.12); border-color: rgba(0, 255, 136, 0.35); color: #00ff88;">
+                        &#128467; SEP 23, 2026
                     </span>
-                    <span class="highlight-date" style="margin: 0; background: rgba(255, 255, 255, 0.05); border-color: rgba(255, 255, 255, 0.15); color: #e0e0e0;">
+                    <span class="highlight-date"
+                        style="margin: 0; background: rgba(255, 255, 255, 0.05); border-color: rgba(255, 255, 255, 0.15); color: #e0e0e0;">
                         📍 KMCT IETM
                     </span>
                 </div>
-                <a href="elevate.html?event=INNEXA%2026" class="theme-grid-btn innexa-open-btn" style="cursor: pointer; text-decoration: none;">
+                <a href="elevate.html?event=INNEXA%2026" class="theme-grid-btn innexa-open-btn"
+                    style="cursor: pointer; text-decoration: none;">
                     <span>EXPLORE INNEXA 26 &nbsp;↗</span>
                 </a>
             </div>
@@ -211,7 +220,7 @@
                 if (match && match.imageUrl) {
                     applyInnexaImage(match.imageUrl);
                 }
-            } catch (e) {}
+            } catch (e) { }
 
             fetch('/api/events')
                 .then(r => r.json())
@@ -223,7 +232,7 @@
                         }
                     }
                 })
-                .catch(() => {});
+                .catch(() => { });
 
             // Intercept Innexa card clicks for unauthenticated visitors
             document.addEventListener('click', (e) => {
