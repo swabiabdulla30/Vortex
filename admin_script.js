@@ -1489,6 +1489,9 @@ async function fetchEvents() {
         const res = await fetch('/api/events');
         const events = await res.json();
         loadedEvents = Array.isArray(events) ? events : [];
+        try {
+            localStorage.setItem('vortex_cached_events', JSON.stringify(loadedEvents));
+        } catch(e) {}
         renderEventsGrid();
     } catch (err) {
         console.error('Error fetching events:', err);

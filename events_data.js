@@ -123,6 +123,7 @@ const eventDetails = {
     },
     "ELEVATE": {
         image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80",
+        closed: true,
         about: "A flagship event focusing on career development, soft skills, and industry insights from experts. Elevate yourself with knowledge, networking, and inspiration.",
         rules: [
             "Open to all departments.",

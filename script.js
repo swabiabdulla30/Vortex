@@ -692,24 +692,35 @@ async function loadDynamicEventsData() {
         if (!res.ok) return;
         const events = await res.json();
         if (!Array.isArray(events) || events.length === 0) return;
+        try { localStorage.setItem('vortex_cached_events', JSON.stringify(events)); } catch(e) {}
 
         // Render on events.html (#events .cards-grid): ONLY Main Events / Sessions
         if (eventsSectionGrid) {
             const mainEvents = events.filter(e => e.eventType === 'main_event' || (!e.parentEvent && (e.category || '').toLowerCase() === 'session'));
             const displayEvents = mainEvents.length > 0 ? mainEvents : events.filter(e => !e.parentEvent);
 
+            const userStr = localStorage.getItem('vortexCurrentUser');
+            const token = localStorage.getItem('vortexToken');
+            const user = userStr ? JSON.parse(userStr) : null;
+            const isAdmin = Boolean(user && user.role === 'admin' && token);
+
             eventsSectionGrid.innerHTML = displayEvents.map(evt => {
                 const isClosed = (evt.status || 'OPEN').toUpperCase() === 'CLOSED';
-                const statusClass = isClosed ? 'status-soon' : 'status-active';
-                const statusText = isClosed ? 'REGISTRATION CLOSED' : '&#9679; REGISTRATION OPEN';
                 const dateParts = parseEventDate(evt.date);
                 
                 // If title is ELEVATE, link to elevate.html, otherwise link to registration
                 const isElevate = evt.title.trim().toUpperCase() === 'ELEVATE';
-                const linkHref = isElevate ? 'elevate.html' : `event_registration.html?event=${encodeURIComponent(evt.title)}`;
+                
+                // Strictly lock ALL cards for non-admins
+                const linkHref = !isAdmin ? 'javascript:void(0)' : (isElevate ? 'elevate.html' : `event_registration.html?event=${encodeURIComponent(evt.title)}`);
+                const clickAttr = !isAdmin ? 'onclick="alert(\'This event is currently locked. Only administrators can access it.\'); return false;"' : '';
+                const cardStyle = !isAdmin ? 'text-decoration: none; color: inherit; cursor: not-allowed; opacity: 0.75;' : 'text-decoration: none; color: inherit; cursor: pointer;';
+
+                const statusClass = !isAdmin ? 'status-soon' : (isClosed ? 'status-soon' : 'status-active');
+                const statusText = !isAdmin ? '🔒 LOCKED (CLOSED)' : (isClosed ? 'REGISTRATION CLOSED' : '&#9679; REGISTRATION OPEN');
 
                 return `
-                <a href="${linkHref}" class="card event-card" style="text-decoration: none; color: inherit; cursor: pointer;">
+                <a href="${linkHref}" ${clickAttr} class="card event-card" style="${cardStyle}">
                     <div class="card-status ${statusClass}">${statusText}</div>
                     <div class="card-image">
                         <img src="${evt.imageUrl || 'https://via.placeholder.com/400x250?text=Event'}"

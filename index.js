@@ -284,6 +284,17 @@ async function seedDefaultsIfNeeded() {
                 { title: { $nin: ["ELEVATE", "TECHSPARK", "VORTEX INNOVATORS"] }, eventType: { $exists: false } },
                 { $set: { eventType: "sub_event", parentEvent: "ELEVATE" } }
             );
+            // Ensure ELEVATE and its sub-events are updated to CLOSED
+            await Event.updateMany(
+                {
+                    $or: [
+                        { title: { $regex: /^elevate$/i } },
+                        { parentEvent: { $regex: /^elevate$/i } }
+                    ]
+                },
+                { $set: { status: "CLOSED" } }
+            );
+            invalidateEventsCache();
         }
     } catch (err) {
         console.error("Error checking/seeding defaults:", err.message);
@@ -304,7 +315,7 @@ const DEFAULT_EVENTS = [
         fee: "Free",
         prize: "",
         slots: 0,
-        status: "OPEN",
+        status: "CLOSED",
         imageUrl: "https://image2url.com/r2/default/images/1771924612874-479e698d-1dfb-49ec-90d2-a203530cd141.png",
         order: 1
     },
@@ -530,10 +541,40 @@ app.post("/api/login", async (req, res) => {
     }
 });
 
+// --- Helper to verify if an event is closed for registration ---
+async function isEventClosedForUser(eventName, authHeader) {
+    if (!eventName) return false;
+    try {
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+            const token = authHeader.split(' ')[1];
+            const decoded = jwt.verify(token, process.env.JWT_SECRET || 'vortex_jwt_secret_key_2026');
+            if (decoded && decoded.role === 'admin') return false; // Admin bypass
+        }
+    } catch (e) {}
+
+    try {
+        await connectDB();
+        const event = await Event.findOne({
+            title: { $regex: new RegExp(`^${eventName.trim()}$`, 'i') }
+        });
+        if (event && (event.status || 'OPEN').toUpperCase() === 'CLOSED') {
+            return true;
+        }
+    } catch (e) {
+        console.warn("Event status check warning:", e.message);
+    }
+    return false;
+}
+
 // --- Public Routes ---
 app.post("/api/register", async (req, res) => {
     try {
         await connectDB();
+        const eventName = req.body.event || req.body.eventName || '';
+        if (await isEventClosedForUser(eventName, req.headers['authorization'])) {
+            return res.status(403).json({ error: "Registration for this event is closed." });
+        }
+
         const ticketId = "VTX-" + Date.now();
         const data = new Registration({
             ...req.body,
@@ -556,6 +597,11 @@ app.post("/api/register", async (req, res) => {
 app.post("/api/free-register", async (req, res) => {
     try {
         await connectDB();
+        const eventName = req.body.event || req.body.eventName || '';
+        if (await isEventClosedForUser(eventName, req.headers['authorization'])) {
+            return res.status(403).json({ error: "Registration for this event is closed." });
+        }
+
         const ticketId = "VTX-" + Date.now();
         const data = new Registration({
             ...req.body,
@@ -596,6 +642,9 @@ app.post("/api/create-order", async (req, res) => {
         if (type === 'event') {
             await connectDB();
             const eventName = req.body.eventName || '';
+            if (await isEventClosedForUser(eventName, req.headers['authorization'])) {
+                return res.status(403).json({ error: "Registration for this event is closed." });
+            }
             const eventNameUpper = eventName.toUpperCase().trim();
 
             // 1. Check if event is registered dynamically in MongoDB
@@ -1174,13 +1223,30 @@ app.get("/api/gallery", async (req, res) => {
     }
 });
 
+// --- High-Speed Event Cache for Instant Response ---
+let eventsMemoryCache = null;
+let eventsMemoryCacheTime = 0;
+const EVENTS_CACHE_TTL = 30000; // 30s cache TTL
+
+function invalidateEventsCache() {
+    eventsMemoryCache = null;
+    eventsMemoryCacheTime = 0;
+}
+
 app.get("/api/events", async (req, res) => {
     try {
+        res.setHeader('Cache-Control', 'public, max-age=15, stale-while-revalidate=60');
+        if (eventsMemoryCache && (Date.now() - eventsMemoryCacheTime < EVENTS_CACHE_TTL)) {
+            return res.json(eventsMemoryCache);
+        }
         await connectDB();
-        const events = await Event.find().sort({ order: 1, createdAt: 1 });
+        const events = await Event.find().sort({ order: 1, createdAt: 1 }).lean();
+        eventsMemoryCache = events;
+        eventsMemoryCacheTime = Date.now();
         res.json(events);
     } catch (error) {
         console.error("Get events error:", error);
+        if (eventsMemoryCache) return res.json(eventsMemoryCache);
         res.status(500).json({ error: "Failed to fetch events" });
     }
 });
@@ -1407,6 +1473,7 @@ app.post("/api/admin/events", authenticateToken, async (req, res) => {
         });
 
         await newEvent.save();
+        invalidateEventsCache();
         res.status(201).json({ success: true, event: newEvent });
     } catch (error) {
         console.error("Create event error:", error);
@@ -1446,6 +1513,7 @@ app.put("/api/admin/events/:id", authenticateToken, async (req, res) => {
 
         const updated = await Event.findByIdAndUpdate(req.params.id, updateData, { new: true });
         if (!updated) return res.status(404).json({ error: "Event not found" });
+        invalidateEventsCache();
         res.json({ success: true, event: updated });
     } catch (error) {
         console.error("Update event error:", error);
@@ -1459,6 +1527,7 @@ app.delete("/api/admin/events/:id", authenticateToken, async (req, res) => {
         await connectDB();
         const deleted = await Event.findByIdAndDelete(req.params.id);
         if (!deleted) return res.status(404).json({ error: "Event not found" });
+        invalidateEventsCache();
         res.json({ success: true, message: "Event removed successfully" });
     } catch (error) {
         console.error("Delete event error:", error);

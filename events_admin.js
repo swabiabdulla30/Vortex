@@ -28,6 +28,27 @@
         }
 
         setupModal();
+
+        // 1. Instant Render from Local Cache (0ms perceived load time)
+        try {
+            const cachedRaw = localStorage.getItem('vortex_cached_events');
+            if (cachedRaw) {
+                const cachedEvents = JSON.parse(cachedRaw);
+                if (Array.isArray(cachedEvents) && cachedEvents.length > 0) {
+                    cachedEvents.forEach(e => {
+                        if ((e.title || '').trim().toUpperCase() === 'ELEVATE' || (e.parentEvent || '').trim().toUpperCase() === 'ELEVATE') {
+                            e.status = 'CLOSED';
+                        }
+                    });
+                    loadedMainEvents = cachedEvents.filter(e => e.eventType === 'main_event' || (!e.parentEvent && (e.category || '').toLowerCase() === 'session'));
+                    renderMainEventsGrid();
+                }
+            }
+        } catch (e) {
+            console.warn('Cache parse error:', e);
+        }
+
+        // 2. Background Revalidation from API
         await loadAndRenderMainEvents();
     }
 
@@ -36,82 +57,72 @@
         if (!grid) return;
 
         try {
-            const res = await fetch('/api/events');
-            if (res.ok) {
-                const allEvents = await res.json();
-                if (Array.isArray(allEvents)) {
-                    // Filter for main events (eventType === 'main_event' or sessions)
-                    loadedMainEvents = allEvents.filter(e => e.eventType === 'main_event' || (!e.parentEvent && (e.category || '').toLowerCase() === 'session'));
-                }
+            let allEvents = window._vortexLoadedEvents;
+            if (!allEvents && window._vortexFetchPromise) {
+                allEvents = await window._vortexFetchPromise;
+            }
+            if (!allEvents) {
+                const res = await fetch('/api/events');
+                if (res.ok) allEvents = await res.json();
+            }
+            if (Array.isArray(allEvents)) {
+                allEvents.forEach(e => {
+                    if ((e.title || '').trim().toUpperCase() === 'ELEVATE' || (e.parentEvent || '').trim().toUpperCase() === 'ELEVATE') {
+                        e.status = 'CLOSED';
+                    }
+                });
+                // Update cache for all pages
+                try {
+                    localStorage.setItem('vortex_cached_events', JSON.stringify(allEvents));
+                } catch (e) {}
+                window._vortexLoadedEvents = allEvents;
+
+                // Filter for main events (eventType === 'main_event' or sessions)
+                loadedMainEvents = allEvents.filter(e => e.eventType === 'main_event' || (!e.parentEvent && (e.category || '').toLowerCase() === 'session'));
+                renderMainEventsGrid();
+                return;
             }
         } catch (err) {
-            console.warn('Could not fetch events from API, using fallback:', err);
+            console.warn('Could not fetch events from API, keeping current view:', err);
         }
 
-        renderMainEventsGrid();
+        // Only render if nothing rendered yet
+        if (grid.querySelectorAll('.skeleton-card').length > 0) {
+            renderMainEventsGrid();
+        }
     }
 
     function renderMainEventsGrid() {
         const grid = document.querySelector('#events .cards-grid');
         if (!grid) return;
 
-        // Default fallback cards if no dynamic main events exist yet
-        let displayList = [];
-        if (loadedMainEvents.length > 0) {
-            displayList = loadedMainEvents;
-        } else {
-            displayList = [
-                {
-                    _id: 'static_elevate',
-                    isStatic: true,
-                    title: 'ELEVATE',
-                    subtitle: 'To Lift Up, Raise Higher or Improve.',
-                    imageUrl: 'https://image2url.com/r2/default/images/1771924612874-479e698d-1dfb-49ec-90d2-a203530cd141.png',
-                    date: 'MAR 05 - 06',
-                    venue: 'KMCT IETM',
-                    status: 'OPEN'
-                },
-                {
-                    _id: 'static_techspark',
-                    isStatic: true,
-                    title: 'TECHSPARK',
-                    subtitle: 'Igniting the next generation of innovators.',
-                    imageUrl: 'https://image2url.com/r2/default/images/1771924658426-b7ca4811-d7d7-4f79-b1e9-64e516259d86.jpeg',
-                    date: 'AUG 26',
-                    venue: 'KMCT IETM',
-                    status: 'CLOSED'
-                },
-                {
-                    _id: 'static_vortex',
-                    isStatic: true,
-                    title: 'VORTEX INNOVATORS',
-                    subtitle: 'Exploring the future of Generative AI.',
-                    imageUrl: 'https://image2url.com/r2/default/images/1771925799245-91e45052-89b2-48d4-98f4-5f7081da8dbe.jpeg',
-                    date: 'MAR 19',
-                    venue: 'KMCT IETM',
-                    status: 'CLOSED'
-                }
-            ];
+        let displayList = loadedMainEvents;
+
+        if (displayList.length === 0 && !isAdmin) {
+            grid.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: rgba(255, 255, 255, 0.7);">
+                    <i class="fas fa-calendar-alt" style="font-size: 3rem; color: #00ff88; margin-bottom: 16px; opacity: 0.6;"></i>
+                    <h3 style="font-size: 1.5rem; color: #fff; margin-bottom: 8px;">No Sessions Scheduled Yet</h3>
+                    <p style="max-width: 450px; margin: 0 auto;">Upcoming sessions and major events will be announced here soon. Check back later!</p>
+                </div>
+            `;
+            return;
         }
 
         let cardsHtml = displayList.map(evt => {
-            const isClosed = (evt.status || 'OPEN').toUpperCase() === 'CLOSED';
+            const isElevate = evt.title.trim().toUpperCase() === 'ELEVATE';
+            const isClosed = isElevate || (evt.status || 'OPEN').toUpperCase() === 'CLOSED';
             const dateParts = parseDateString(evt.date);
             
-            // Inside the card link: ELEVATE opens elevate.html; any other event opens elevate.html?event=EVENT_NAME
-            const isElevate = evt.title.trim().toUpperCase() === 'ELEVATE';
-            const linkHref = isElevate ? 'elevate.html' : `elevate.html?event=${encodeURIComponent(evt.title)}`;
+            // ELEVATE is strictly locked for everyone; all other cards locked for non-admins
+            const isLocked = isElevate || !isAdmin;
+            const linkHref = isLocked ? 'javascript:void(0)' : 'elevate.html?event=' + encodeURIComponent(evt.title);
+            const clickAttr = isLocked ? 'onclick="alert(\'This event is locked and registrations are closed.\'); return false;"' : '';
+            const cardStyle = isLocked ? 'text-decoration: none; color: inherit; cursor: not-allowed; position: relative; opacity: 0.75;' : 'text-decoration: none; color: inherit; cursor: pointer; position: relative;';
 
-            let statusBadge = '';
-            if (isAdmin) {
-                statusBadge = isClosed 
-                    ? `<div class="card-status status-active" style="background: rgba(255, 170, 0, 0.2); color: #ffaa00; border-color: rgba(255,170,0,0.5);">● CLOSED (ADMIN OPEN)</div>`
-                    : `<div class="card-status status-active">&#9679; REGISTRATION OPEN</div>`;
-            } else {
-                statusBadge = isClosed 
-                    ? `<div class="card-status status-soon">REGISTRATION CLOSED</div>`
-                    : `<div class="card-status status-active">&#9679; REGISTRATION OPEN</div>`;
-            }
+            let statusBadge = isLocked 
+                ? '<div class="card-status status-soon">🔒 LOCKED (CLOSED)</div>'
+                : (isClosed ? '<div class="card-status status-active" style="background: rgba(255, 170, 0, 0.2); color: #ffaa00; border-color: rgba(255,170,0,0.5);">● CLOSED (ADMIN OPEN)</div>' : '<div class="card-status status-active">&#9679; REGISTRATION OPEN</div>');
 
             const adminToolbar = (isAdmin && !evt.isStatic) ? `
                 <div class="card-admin-bar">
@@ -125,7 +136,7 @@
             ` : '';
 
             return `
-            <a href="${linkHref}" class="card event-card" style="text-decoration: none; color: inherit; cursor: pointer; position: relative;">
+            <a href="${linkHref}" ${clickAttr} class="card event-card" style="${cardStyle}">
                 ${adminToolbar}
                 ${statusBadge}
                 <div class="card-image">
@@ -144,7 +155,7 @@
                         <p>${escapeHtml(evt.subtitle || evt.description || '')}</p>
                         <div class="card-footer">
                             <span class="location">📍 ${escapeHtml(evt.venue || 'KMCT IETM')}</span>
-                            <span class="arrow">↗</span>
+                            <span class="arrow">${isLocked ? '🔒' : '↗'}</span>
                         </div>
                     </div>
                 </div>
@@ -511,5 +522,9 @@
             .replace(/'/g, '&#039;');
     }
 
-    document.addEventListener('DOMContentLoaded', initEventsPage);
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initEventsPage);
+    } else {
+        initEventsPage();
+    }
 })();

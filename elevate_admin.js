@@ -35,7 +35,7 @@
             date: 'MAR 06',
             venue: 'SEMINAR HALL',
             prize: '₹300',
-            status: 'OPEN'
+            status: 'CLOSED'
         },
         {
             _id: 'static_techhunt',
@@ -47,7 +47,7 @@
             date: 'MAR 05',
             venue: 'LAB',
             prize: '₹200',
-            status: 'OPEN'
+            status: 'CLOSED'
         },
         {
             _id: 'static_webdesign',
@@ -59,7 +59,7 @@
             date: 'MAR 05',
             venue: 'LAB',
             prize: '₹200',
-            status: 'OPEN'
+            status: 'CLOSED'
         },
         {
             _id: 'static_efootball',
@@ -71,7 +71,7 @@
             date: 'MAR 06',
             venue: 'SEMINAR HALL',
             prize: '₹200',
-            status: 'OPEN'
+            status: 'CLOSED'
         },
         {
             _id: 'static_quiz',
@@ -83,7 +83,7 @@
             date: 'MAR 05',
             venue: 'LAB',
             prize: '',
-            status: 'OPEN'
+            status: 'CLOSED'
         },
         {
             _id: 'static_paperx',
@@ -95,7 +95,7 @@
             date: 'MAR 06',
             venue: 'SEMINAR HALL',
             prize: '',
-            status: 'OPEN'
+            status: 'CLOSED'
         }
     ];
 
@@ -114,6 +114,30 @@
         }
 
         setupSubEventModal();
+
+        // 1. Instant Render from Local Cache (0ms perceived load time)
+        try {
+            const cachedRaw = localStorage.getItem('vortex_cached_events');
+            if (cachedRaw) {
+                const allEvents = JSON.parse(cachedRaw);
+                if (Array.isArray(allEvents) && allEvents.length > 0) {
+                    loadedSubEvents = allEvents.filter(e => {
+                        const parent = (e.parentEvent || '').trim().toUpperCase();
+                        const isCurrentParent = parent === currentEvent.toUpperCase();
+                        const isSubEvent = e.eventType !== 'main_event' && (e.category || '').toLowerCase() !== 'session';
+                        if (currentEvent.toUpperCase() === 'ELEVATE') {
+                            return isCurrentParent || (!e.parentEvent && isSubEvent);
+                        }
+                        return isCurrentParent;
+                    });
+                    renderSubEventsGrid();
+                }
+            }
+        } catch (e) {
+            console.warn('Cache error in elevate_admin:', e);
+        }
+
+        // 2. Background Revalidation from API
         await loadAndRenderSubEvents();
     }
 
@@ -122,28 +146,43 @@
         if (!grid) return;
 
         try {
-            const res = await fetch('/api/events');
-            if (res.ok) {
-                const allEvents = await res.json();
-                if (Array.isArray(allEvents)) {
-                    // Filter sub-events for the current parent event
-                    loadedSubEvents = allEvents.filter(e => {
-                        const parent = (e.parentEvent || '').trim().toUpperCase();
-                        const isCurrentParent = parent === currentEvent.toUpperCase();
-                        const isSubEvent = e.eventType !== 'main_event' && (e.category || '').toLowerCase() !== 'session';
-                        
-                        if (currentEvent.toUpperCase() === 'ELEVATE') {
-                            return isCurrentParent || (!e.parentEvent && isSubEvent);
-                        }
-                        return isCurrentParent;
-                    });
-                }
+            let allEvents = window._vortexLoadedEvents;
+            if (!allEvents && window._vortexFetchPromise) {
+                allEvents = await window._vortexFetchPromise;
+            }
+            if (!allEvents) {
+                const res = await fetch('/api/events');
+                if (res.ok) allEvents = await res.json();
+            }
+            if (Array.isArray(allEvents)) {
+                // Update cache for all pages
+                try {
+                    localStorage.setItem('vortex_cached_events', JSON.stringify(allEvents));
+                } catch (e) {}
+                window._vortexLoadedEvents = allEvents;
+
+                // Filter sub-events for the current parent event
+                loadedSubEvents = allEvents.filter(e => {
+                    const parent = (e.parentEvent || '').trim().toUpperCase();
+                    const isCurrentParent = parent === currentEvent.toUpperCase();
+                    const isSubEvent = e.eventType !== 'main_event' && (e.category || '').toLowerCase() !== 'session';
+                    
+                    if (currentEvent.toUpperCase() === 'ELEVATE') {
+                        return isCurrentParent || (!e.parentEvent && isSubEvent);
+                    }
+                    return isCurrentParent;
+                });
+                renderSubEventsGrid();
+                return;
             }
         } catch (err) {
             console.warn('Could not fetch sub-events from API, using fallback:', err);
         }
 
-        renderSubEventsGrid();
+        // Only re-render if skeletons are still present
+        if (grid.querySelectorAll('.skeleton-card').length > 0) {
+            renderSubEventsGrid();
+        }
     }
 
     function renderSubEventsGrid() {
@@ -151,11 +190,12 @@
         if (!grid) return;
 
         let displayList = [];
-        if (currentEvent.toUpperCase() === 'ELEVATE') {
-            // Merge static events with dynamic ones (dynamic with same title takes precedence)
-            const dynamicTitles = new Set(loadedSubEvents.map(e => e.title.trim().toUpperCase()));
-            const nonOverriddenStatic = staticElevateEvents.filter(e => !dynamicTitles.has(e.title.trim().toUpperCase()));
-            displayList = [...loadedSubEvents, ...nonOverriddenStatic];
+        // If dynamic sub-events exist in DB, display ONLY dynamic events (never force stale static cards)
+        if (loadedSubEvents.length > 0) {
+            displayList = loadedSubEvents;
+        } else if (currentEvent.toUpperCase() === 'ELEVATE' && !isAdmin) {
+            // Only fallback if DB has 0 sub-events
+            displayList = staticElevateEvents;
         } else {
             displayList = loadedSubEvents;
         }
@@ -620,5 +660,9 @@
             .replace(/'/g, '&#039;');
     }
 
-    document.addEventListener('DOMContentLoaded', initElevatePage);
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initElevatePage);
+    } else {
+        initElevatePage();
+    }
 })();

@@ -25,7 +25,7 @@
     `;
     document.body.insertBefore(canvas, document.body.firstChild);
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
     let W, H;
 
     // ── Aurora Points (large slow-drifting gradient sources) ───────────────

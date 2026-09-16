@@ -15,6 +15,37 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preload" href="/api/events" as="fetch" crossorigin="anonymous">
+    <script>
+        // Access Gatekeeper: strictly prevent non-admin users from accessing Elevate
+        (function () {
+            try {
+                const userStr = localStorage.getItem('vortexCurrentUser');
+                const token = localStorage.getItem('vortexToken');
+                const user = userStr ? JSON.parse(userStr) : null;
+                const isAdmin = Boolean(user && user.role === 'admin' && token);
+                if (!isAdmin) {
+                    sessionStorage.setItem('vortex_toast_msg', 'Access to the Elevate Series is currently closed.');
+                    window.location.replace('events.html');
+                }
+            } catch (e) {
+                window.location.replace('events.html');
+            }
+        })();
+    </script>
+    <script>
+        // High-speed parallel fetch: starts before styles or body are parsed
+        window._vortexFetchPromise = fetch('/api/events')
+            .then(r => r.ok ? r.json() : null)
+            .then(data => {
+                if (Array.isArray(data)) {
+                    try { localStorage.setItem('vortex_cached_events', JSON.stringify(data)); } catch(e){}
+                    window._vortexLoadedEvents = data;
+                    if (window.renderSubEventsNow) window.renderSubEventsNow(data);
+                }
+                return data;
+            }).catch(() => null);
+    </script>
 </head>
 
 <body>
@@ -94,159 +125,104 @@
                 </div>
             </div>
 
-            <div class="cards-grid">
-                <!-- Event 1 -->
-                <a href="event_registration.html?event=BGMI" class="card event-card" data-event="BGMI" style="text-decoration: none; color: inherit; cursor: pointer;">
-                    <div class="card-status status-active">● REGISTRATION OPEN</div>
-                    <div class="card-image">
-                        <img src="https://image2url.com/r2/default/images/1772176721946-d99583c6-5bb0-4e52-8e9e-781fa092d280.jpeg"
-                            alt="BGMI" loading="lazy">
-                    </div>
-                    <div class="card-content">
-                        <div class="date-badge">
-                            <span class="month">MAR</span>
-                            <span class="day">06</span>
-                        </div>
-                        <div class="event-details">
-                            <span class="event-type"></span>
-                            <h3>BGMI</h3>
-                            <p>Together till the last circle.</p>
-                            <div class="card-footer">
-                                <span class="location"><i class="fas fa-map-marker-alt"></i> SEMINAR HALL</span>
-                                <span class="prize-badge"><i class="fas fa-trophy" style="color: gold;"></i>
-                                     &#8377;300</span>
-                                <span class="arrow">→</span>
-                            </div>
+            <div class="cards-grid" id="sub-events-grid">
+                <!-- High-tech skeleton loaders (displayed until cache or live API loads) -->
+                <div class="card event-card skeleton-card">
+                    <div class="skeleton-badge"></div>
+                    <div class="skeleton-img-box"></div>
+                    <div class="skeleton-content">
+                        <div class="skeleton-date-badge"></div>
+                        <div class="skeleton-lines">
+                            <div class="skeleton-title"></div>
+                            <div class="skeleton-desc"></div>
+                            <div class="skeleton-footer-line"></div>
                         </div>
                     </div>
-                </a>
-
-                <!-- Event 2 -->
-                <a href="event_registration.html?event=Tech%20Hunt" class="card event-card" data-event="Tech Hunt" style="text-decoration: none; color: inherit; cursor: pointer;">
-                    <div class="card-status status-active">● REGISTRATION OPEN</div>
-                    <div class="card-image">
-                        <img src="https://image2url.com/r2/default/images/1771996030667-7810be98-c833-4915-9f82-6059bb4f7259.jpeg"
-                            alt="Tech Hunt" loading="lazy">
-                    </div>
-                    <div class="card-content">
-                        <div class="date-badge">
-                            <span class="month">MAR</span>
-                            <span class="day">05</span>
-                        </div>
-                        <div class="event-details">
-                            <span class="event-type"></span>
-                            <h3> Tech Hunt</h3>
-                            <p>Hunt through the web, find the prize.</p>
-                            <div class="card-footer">
-                                <span class="location"><i class="fas fa-map-marker-alt"></i> LAB</span>
-                                <span class="prize-badge"><i class="fas fa-trophy" style="color: gold;"></i>
-                                     &#8377;200</span>
-                                <span class="arrow">→</span>
-                            </div>
+                </div>
+                <div class="card event-card skeleton-card">
+                    <div class="skeleton-badge"></div>
+                    <div class="skeleton-img-box"></div>
+                    <div class="skeleton-content">
+                        <div class="skeleton-date-badge"></div>
+                        <div class="skeleton-lines">
+                            <div class="skeleton-title"></div>
+                            <div class="skeleton-desc"></div>
+                            <div class="skeleton-footer-line"></div>
                         </div>
                     </div>
-                </a>
-
-                <!-- Event 3 -->
-                <a href="event_registration.html?event=Web-Designing" class="card event-card" data-event="Web-Designing" style="text-decoration: none; color: inherit; cursor: pointer;">
-                    <div class="card-status status-active">● REGISTRATION OPEN</div>
-                    <div class="card-image">
-                        <img src="https://image2url.com/r2/default/images/1771995989097-15167040-638c-48cd-a3c0-e93ddb26f811.jpeg"
-                            alt="Web-Designing" loading="lazy">
-                    </div>
-                    <div class="card-content">
-                        <div class="date-badge">
-                            <span class="month">MAR</span>
-                            <span class="day">05</span>
-                        </div>
-                        <div class="event-details">
-                            <span class="event-type"></span>
-                            <h3>Web-Designing</h3>
-                            <p>Design your way to the top.</p>
-                            <div class="card-footer">
-                                <span class="location"><i class="fas fa-map-marker-alt"></i> LAB </span>
-                                <span class="prize-badge"><i class="fas fa-trophy" style="color: gold;"></i>
-                                     &#8377;200</span>
-                                <span class="arrow">→</span>
-                            </div>
+                </div>
+                <div class="card event-card skeleton-card">
+                    <div class="skeleton-badge"></div>
+                    <div class="skeleton-img-box"></div>
+                    <div class="skeleton-content">
+                        <div class="skeleton-date-badge"></div>
+                        <div class="skeleton-lines">
+                            <div class="skeleton-title"></div>
+                            <div class="skeleton-desc"></div>
+                            <div class="skeleton-footer-line"></div>
                         </div>
                     </div>
-                </a>
-
-                <!-- Event 4 -->
-                <a href="event_registration.html?event=Co-op%20E-Football" class="card event-card" data-event="Co-op E-Football" style="text-decoration: none; color: inherit; cursor: pointer;">
-                    <div class="card-status status-active">● REGISTRATION OPEN</div>
-                    <div class="card-image">
-                        <img src="https://image2url.com/r2/default/images/1771995899025-6821ca81-aa54-4566-b29d-4fab70571c09.jpeg"
-                            alt="Co-op E-Football" loading="lazy">
-                    </div>
-                    <div class="card-content">
-                        <div class="date-badge">
-                            <span class="month">MAR</span>
-                            <span class="day">06</span>
-                        </div>
-                        <div class="event-details">
-                            <span class="event-type"></span>
-                            <h3>Co-op E-Football</h3>
-                            <p>Kick off, game on, glory awaits.</p>
-                            <div class="card-footer">
-                                <span class="location"><i class="fas fa-map-marker-alt"></i> SEMINAR HALL</span>
-                                <span class="prize-badge"><i class="fas fa-trophy" style="color: gold;"></i>
-                                     &#8377;200</span>
-                                <span class="arrow">→</span>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-
-                <!-- Event 5: Tech Quiz -->
-                <a href="event_registration.html?event=Tech%20Quiz" class="card event-card" data-event="Tech Quiz" style="text-decoration: none; color: inherit; cursor: pointer;">
-                    <div class="card-status status-active">● REGISTRATION OPEN</div>
-                    <div class="card-image">
-                        <img src="https://image2url.com/r2/default/images/1772440085076-0f0df1c1-a19a-4351-aa02-27f67b111fa8.jpeg"
-                            alt="Tech Quiz" loading="lazy">
-                    </div>
-                    <div class="card-content">
-                        <div class="date-badge">
-                            <span class="month">MAR</span>
-                            <span class="day">05</span>
-                        </div>
-                        <div class="event-details">
-                            <span class="event-type"></span>
-                            <h3>Tech Quiz</h3>
-                            <p>Test your knowledge, claim the prize.</p>
-                            <div class="card-footer">
-                                <span class="location"><i class="fas fa-map-marker-alt"></i> LAB</span>
-                                <span class="arrow">→</span>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-
-                <!-- Event 6: Paper-X -->
-                <a href="event_registration.html?event=Paper-X" class="card event-card" data-event="Paper-X" style="text-decoration: none; color: inherit; cursor: pointer;">
-                    <div class="card-status status-active">● REGISTRATION OPEN</div>
-                    <div class="card-image">
-                        <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80"
-                            alt="Paper-X" loading="lazy">
-                    </div>
-                    <div class="card-content">
-                        <div class="date-badge">
-                            <span class="month">MAR</span>
-                            <span class="day">06</span>
-                        </div>
-                        <div class="event-details">
-                            <span class="event-type"></span>
-                            <h3>Paper-X</h3>
-                            <p>Think Beyond Circuits</p>
-                            <div class="card-footer">
-                                <span class="location"><i class="fas fa-map-marker-alt"></i> SEMINAR HALL</span>
-                                <span class="arrow">→</span>
-                            </div>
-                        </div>
-                    </div>
-                </a>
+                </div>
             </div>
+            <!-- Instant 0ms Pre-renderer for Sub-events from local cache or preloaded data -->
+            <script>
+                window.renderSubEventsNow = function(dataOverride) {
+                    try {
+                        let allEvents = dataOverride || window._vortexLoadedEvents;
+                        if (!allEvents) {
+                            const raw = localStorage.getItem('vortex_cached_events');
+                            if (raw) allEvents = JSON.parse(raw);
+                        }
+                        if (!Array.isArray(allEvents) || allEvents.length === 0) return;
+
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const curEvt = (urlParams.get('event') || 'ELEVATE').trim();
+
+                        const subEvts = allEvents.filter(e => {
+                            const parent = (e.parentEvent || '').trim().toUpperCase();
+                            const isCurrentParent = parent === curEvt.toUpperCase();
+                            const isSubEvent = e.eventType !== 'main_event' && (e.category || '').toLowerCase() !== 'session';
+                            if (curEvt.toUpperCase() === 'ELEVATE') {
+                                return isCurrentParent || (!e.parentEvent && isSubEvent);
+                            }
+                            return isCurrentParent;
+                        });
+
+                        if (subEvts.length === 0) return;
+
+                        const grid = document.getElementById('sub-events-grid');
+                        if (!grid) return;
+
+                        const esc = s => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+                        grid.innerHTML = subEvts.map(evt => {
+                            const isClosed = (evt.status || 'OPEN').toUpperCase() === 'CLOSED';
+                            const dateParts = (() => {
+                                if (!evt.date) return { month: 'DATE', day: 'TBA' };
+                                const p = evt.date.trim().split(/[\s,]+/);
+                                return p.length >= 2 ? { month: p[0].substring(0, 3).toUpperCase(), day: p.slice(1).join(' ') } : { month: 'DATE', day: evt.date };
+                            })();
+                            const linkHref = 'event_registration.html?event=' + encodeURIComponent(evt.title);
+                            const statusBadge = isClosed 
+                                ? '<div class="card-status status-soon">REGISTRATION CLOSED</div>'
+                                : '<div class="card-status status-active">● REGISTRATION OPEN</div>';
+                            return '<a href="' + linkHref + '" class="card event-card" data-event="' + esc(evt.title) + '" style="text-decoration: none; color: inherit; cursor: pointer; position: relative;">' +
+                                statusBadge +
+                                '<div class="card-image">' +
+                                    '<img src="' + (evt.imageUrl || 'https://via.placeholder.com/400x250?text=Event') + '" alt="' + esc(evt.title) + '" loading="lazy">' +
+                                '</div>' +
+                                '<div class="card-content">' +
+                                    '<div class="date-badge"><span class="month">' + dateParts.month + '</span><span class="day">' + dateParts.day + '</span></div>' +
+                                    '<div class="event-details"><span class="event-type"></span><h3>' + esc(evt.title) + '</h3><p>' + esc(evt.subtitle || evt.description || '') + '</p>' +
+                                    '<div class="card-footer"><span class="location"><i class="fas fa-map-marker-alt"></i> ' + esc(evt.venue || 'KMCT IETM') + '</span>' +
+                                    (evt.prize ? '<span class="prize-badge"><i class="fas fa-trophy" style="color: gold;"></i> ' + esc(evt.prize) + '</span>' : '') +
+                                    '<span class="arrow">→</span></div></div>' +
+                                '</div>' +
+                            '</a>';
+                        }).join('');
+                    } catch(e) {}
+                };
+                window.renderSubEventsNow();
+            </script>
         </div>
     </section>
 

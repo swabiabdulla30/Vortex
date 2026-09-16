@@ -18,6 +18,41 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preload" href="/api/events" as="fetch" crossorigin="anonymous">
+    <script>
+        // 0ms Cache Sanitizer - runs synchronously before any element is parsed
+        try {
+            const raw = localStorage.getItem('vortex_cached_events');
+            if (raw) {
+                const evts = JSON.parse(raw);
+                if (Array.isArray(evts)) {
+                    evts.forEach(e => {
+                        if ((e.title || '').trim().toUpperCase() === 'ELEVATE' || (e.parentEvent || '').trim().toUpperCase() === 'ELEVATE') {
+                            e.status = 'CLOSED';
+                        }
+                    });
+                    localStorage.setItem('vortex_cached_events', JSON.stringify(evts));
+                }
+            }
+        } catch(e) {}
+
+        // High-speed parallel fetch: starts before styles or body are parsed
+        window._vortexFetchPromise = fetch('/api/events')
+            .then(r => r.ok ? r.json() : null)
+            .then(data => {
+                if (Array.isArray(data)) {
+                    data.forEach(e => {
+                        if ((e.title || '').trim().toUpperCase() === 'ELEVATE' || (e.parentEvent || '').trim().toUpperCase() === 'ELEVATE') {
+                            e.status = 'CLOSED';
+                        }
+                    });
+                    try { localStorage.setItem('vortex_cached_events', JSON.stringify(data)); } catch(e){}
+                    window._vortexLoadedEvents = data;
+                    if (window.renderMainEventsNow) window.renderMainEventsNow(data);
+                }
+                return data;
+            }).catch(() => null);
+    </script>
 </head>
 
 <body>
@@ -96,33 +131,32 @@
                 </button>
             </div>
 
-            <div class="cards-grid">
-                <a href="elevate.html" id="elevate-main-card" class="card event-card" style="text-decoration: none; color: inherit;">
-                    <div class="card-status status-active">&#9679; REGISTRATION OPEN</div>
+            <div class="cards-grid" id="main-events-grid">
+                <!-- Pre-locked fallback cards rendered instantly at 0ms parse time -->
+                <div class="card event-card locked-event-card" id="elevate-card" style="text-decoration: none; color: inherit; cursor: not-allowed; position: relative; opacity: 0.75;" onclick="alert('This event is locked and registrations are closed.'); return false;">
+                    <div class="card-status status-soon">🔒 LOCKED (CLOSED)</div>
                     <div class="card-image">
-                        <img src="https://image2url.com/r2/default/images/1771924612874-479e698d-1dfb-49ec-90d2-a203530cd141.png"
-                            alt="Elevate Event" loading="lazy" width="400" height="250">
+                        <img src="https://image2url.com/r2/default/images/1771925642514-c2c31e9c-1123-455a-ab35-90d2ecb313ef.jpeg"
+                            alt="Elevate 2026" loading="lazy" width="400" height="250">
                     </div>
                     <div class="card-content">
                         <div class="date-badge">
                             <span class="month">MAR</span>
-                            <span class="day">05 - 06 </span>
+                            <span class="day">05 - 06</span>
                         </div>
                         <div class="event-details">
                             <span class="event-type"></span>
                             <h3>ELEVATE</h3>
                             <p>To Lift Up, Raise Higher or Improve.</p>
                             <div class="card-footer">
-                                <span class="location">📍 KMCT IETM </span>
-                                <span class="arrow">↗</span>
+                                <span class="location">📍 KMCT IETM</span>
+                                <span class="arrow">🔒</span>
                             </div>
                         </div>
                     </div>
-                </a>
-                <div class="card event-card" id="techspark-card"
-                    onclick="window.location.href='event_registration.html?event=CYBER%20DEFENSE'"
-                    style="cursor: pointer;">
-                    <div class="card-status status-soon">REGISTRATION CLOSED</div>
+                </div>
+                <div class="card event-card locked-event-card" id="techspark-card" style="text-decoration: none; color: inherit; cursor: not-allowed; position: relative; opacity: 0.75;" onclick="alert('This event is locked and registrations are closed.'); return false;">
+                    <div class="card-status status-soon">🔒 LOCKED (CLOSED)</div>
                     <div class="card-image">
                         <img src="https://image2url.com/r2/default/images/1771924658426-b7ca4811-d7d7-4f79-b1e9-64e516259d86.jpeg"
                             alt="Cyber Defense Workshop" loading="lazy" width="400" height="250">
@@ -138,13 +172,13 @@
                             <p>Igniting the next generation of innovators.</p>
                             <div class="card-footer">
                                 <span class="location">📍 KMCT IETM</span>
-                                <span class="arrow">↗</span>
+                                <span class="arrow">🔒</span>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="card event-card" id="ai-frontiers-card">
-                    <div class="card-status status-soon">REGISTRATION CLOSED</div>
+                <div class="card event-card locked-event-card" id="ai-frontiers-card" style="text-decoration: none; color: inherit; cursor: not-allowed; position: relative; opacity: 0.75;" onclick="alert('This event is locked and registrations are closed.'); return false;">
+                    <div class="card-status status-soon">🔒 LOCKED (CLOSED)</div>
                     <div class="card-image">
                         <img src="https://image2url.com/r2/default/images/1771925799245-91e45052-89b2-48d4-98f4-5f7081da8dbe.jpeg"
                             alt="AI Frontiers Talk" loading="lazy" width="400" height="250">
@@ -161,12 +195,92 @@
                             <p>Exploring the future of Generative AI.</p>
                             <div class="card-footer">
                                 <span class="location">📍 KMCT IETM</span>
-                                <span class="arrow">↗</span>
+                                <span class="arrow">🔒</span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <!-- Instant 0ms Pre-renderer from local cache or preloaded data -->
+            <script>
+                // Sanitize local cache to guarantee ELEVATE is permanently marked CLOSED
+                try {
+                    const raw = localStorage.getItem('vortex_cached_events');
+                    if (raw) {
+                        const evts = JSON.parse(raw);
+                        if (Array.isArray(evts)) {
+                            evts.forEach(e => {
+                                if ((e.title || '').trim().toUpperCase() === 'ELEVATE' || (e.parentEvent || '').trim().toUpperCase() === 'ELEVATE') {
+                                    e.status = 'CLOSED';
+                                }
+                            });
+                            localStorage.setItem('vortex_cached_events', JSON.stringify(evts));
+                        }
+                    }
+                } catch(e) {}
+
+                window.renderMainEventsNow = function(dataOverride) {
+                    try {
+                        let events = dataOverride || window._vortexLoadedEvents;
+                        if (!events) {
+                            const raw = localStorage.getItem('vortex_cached_events');
+                            if (raw) events = JSON.parse(raw);
+                        }
+                        if (!Array.isArray(events) || events.length === 0) return;
+                        const mainEvts = events.filter(e => e.eventType === 'main_event' || (!e.parentEvent && (e.category || '').toLowerCase() === 'session'));
+                        const displayList = mainEvts.length > 0 ? mainEvts : events.filter(e => !e.parentEvent);
+                        if (displayList.length === 0) return;
+                        const grid = document.getElementById('main-events-grid');
+                        if (!grid) return;
+                        const esc = s => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+                        const userStr = localStorage.getItem('vortexCurrentUser');
+                        const token = localStorage.getItem('vortexToken');
+                        const user = userStr ? JSON.parse(userStr) : null;
+                        const isAdmin = Boolean(user && user.role === 'admin' && token);
+
+                        grid.innerHTML = displayList.map(evt => {
+                            const isElevate = (evt.title || '').trim().toUpperCase() === 'ELEVATE';
+                            const isClosed = isElevate || (evt.status || 'OPEN').toUpperCase() === 'CLOSED';
+                            const dateParts = (() => {
+                                if (!evt.date) return { month: 'DATE', day: 'TBA' };
+                                const p = evt.date.trim().split(/[\s,]+/);
+                                return p.length >= 2 ? { month: p[0].substring(0, 3).toUpperCase(), day: p.slice(1).join(' ') } : { month: 'DATE', day: evt.date };
+                            })();
+
+                            // ELEVATE is strictly locked for everyone; all other cards locked for non-admins
+                            const isLocked = isElevate || !isAdmin;
+                            const linkHref = isLocked ? 'javascript:void(0)' : 'elevate.html?event=' + encodeURIComponent(evt.title);
+                            const clickAttr = isLocked ? 'onclick="alert(\'This event is locked and registrations are closed.\'); return false;"' : '';
+                            const cardStyle = isLocked ? 'text-decoration: none; color: inherit; cursor: not-allowed; position: relative; opacity: 0.75;' : 'text-decoration: none; color: inherit; cursor: pointer; position: relative;';
+                            const statusBadge = isLocked
+                                ? '<div class="card-status status-soon">🔒 LOCKED (CLOSED)</div>'
+                                : (isClosed ? '<div class="card-status status-active" style="background: rgba(255, 170, 0, 0.2); color: #ffaa00; border-color: rgba(255,170,0,0.5);">● CLOSED (ADMIN OPEN)</div>' : '<div class="card-status status-active">&#9679; REGISTRATION OPEN</div>');
+                            
+                            return '<a href="' + linkHref + '" ' + clickAttr + ' class="card event-card" style="' + cardStyle + '">' +
+                                statusBadge +
+                                '<div class="card-image">' +
+                                    '<img src="' + (evt.imageUrl || 'https://via.placeholder.com/400x250?text=Event') + '" alt="' + esc(evt.title) + '" loading="lazy" width="400" height="250">' +
+                                '</div>' +
+                                '<div class="card-content">' +
+                                    '<div class="date-badge"><span class="month">' + dateParts.month + '</span><span class="day">' + dateParts.day + '</span></div>' +
+                                    '<div class="event-details"><span class="event-type"></span><h3>' + esc(evt.title) + '</h3><p>' + esc(evt.subtitle || evt.description || '') + '</p>' +
+                                    '<div class="card-footer"><span class="location">📍 ' + esc(evt.venue || 'KMCT IETM') + '</span><span class="arrow">' + (isLocked ? '🔒' : '↗') + '</span></div></div>' +
+                                '</div>' +
+                            '</a>';
+                        }).join('');
+                    } catch(e) {}
+                };
+                window.renderMainEventsNow();
+
+                // Toast notification on redirect
+                try {
+                    const toastMsg = sessionStorage.getItem('vortex_toast_msg');
+                    if (toastMsg) {
+                        sessionStorage.removeItem('vortex_toast_msg');
+                        alert(toastMsg);
+                    }
+                } catch(e) {}
+            </script>
         </div>
     </section>
 
