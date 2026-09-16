@@ -11,7 +11,11 @@
                     "*.js",
                     "*.json",
                     "*.svg",
-                    "templates/**"
+                    "*.jpg",
+                    "*.jpeg",
+                    "*.png",
+                    "templates/**",
+                    "images/**"
                 ]
             }
         }

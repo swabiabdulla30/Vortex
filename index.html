@@ -109,12 +109,11 @@
             <!-- Featured Innexa 26 Card -->
             <div class="featured-event-block" id="featured-innexa-block" style="cursor: pointer;">
                 <div class="featured-innexa-banner" style="width: 100%; max-width: 540px; height: 210px; border-radius: 16px; overflow: hidden; margin-bottom: 24px; position: relative; border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 10px 30px rgba(0,0,0,0.6);">
-                    <img src="images/innexa_26.jpeg" alt="Innexa 26" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease;">
+                    <img id="featured-innexa-img" src="images/innexa_26.jpeg" alt="Innexa 26" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease;">
                     <div style="position: absolute; top: 12px; left: 12px; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); border: 1px solid rgba(0, 255, 136, 0.4); color: #00ff88; font-size: 0.7rem; font-weight: 700; padding: 5px 14px; border-radius: 20px; letter-spacing: 1px;">
                         ● REGISTRATION OPEN
                     </div>
                 </div>
-                <span class="event-label" style="color: #00ff88;">&#9679; STATE LEVEL TECH SYMPOSIUM &#9679;</span>
                 <h2 class="featured-event-title" id="innexa-title" style="font-size: clamp(3rem, 7vw, 5.5rem); letter-spacing: 2px; margin-bottom: 16px;">INNEXA 26</h2>
                 <hr>
                 <p class="featured-event-desc">
@@ -197,6 +196,34 @@
             } catch (e) {
                 console.error('Error checking user status:', e);
             }
+
+            // Dynamically resolve Innexa poster from local cache or live API
+            const innexaImg = document.getElementById('featured-innexa-img');
+            function applyInnexaImage(url) {
+                if (innexaImg && url && url.trim() && !url.includes('1771924658426')) {
+                    innexaImg.src = url;
+                }
+            }
+
+            try {
+                const cached = JSON.parse(localStorage.getItem('vortex_cached_events') || '[]');
+                const match = cached.find(e => (e.title || '').toUpperCase().includes('INNEXA') && !e.parentEvent);
+                if (match && match.imageUrl) {
+                    applyInnexaImage(match.imageUrl);
+                }
+            } catch (e) {}
+
+            fetch('/api/events')
+                .then(r => r.json())
+                .then(evts => {
+                    if (Array.isArray(evts)) {
+                        const match = evts.find(e => (e.title || '').toUpperCase().includes('INNEXA') && !e.parentEvent);
+                        if (match && match.imageUrl) {
+                            applyInnexaImage(match.imageUrl);
+                        }
+                    }
+                })
+                .catch(() => {});
 
             // Intercept Innexa card clicks for unauthenticated visitors
             document.addEventListener('click', (e) => {
