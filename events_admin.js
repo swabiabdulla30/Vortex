@@ -118,8 +118,8 @@
             const isClosed = !isInnexa && (isElevate || (evt.status || 'OPEN').toUpperCase() === 'CLOSED');
             const dateParts = parseDateString(evt.date);
             
-            // ELEVATE is strictly locked; INNEXA 26 is explicitly UNLOCKED for everyone; others follow admin/status
-            const isLocked = isElevate || (!isInnexa && !isAdmin && isClosed);
+            // INNEXA 26 is explicitly UNLOCKED for everyone; ELEVATE and other closed events are unlocked for admin (like TECHSPARK)
+            const isLocked = !isInnexa && !isAdmin && isClosed;
             const linkHref = isLocked ? 'javascript:void(0)' : 'elevate.html?event=' + encodeURIComponent(evt.title);
             const clickAttr = isLocked ? 'onclick="alert(\'This event is locked and registrations are closed.\'); return false;"' : '';
             const cardStyle = isLocked ? 'text-decoration: none; color: inherit; cursor: not-allowed; position: relative; opacity: 0.75;' : 'text-decoration: none; color: inherit; cursor: pointer; position: relative;';

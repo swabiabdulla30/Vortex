@@ -664,7 +664,6 @@ section {
     opacity: 0.75 !important;
 }
 
-#elevate-card .status-active,
 .locked-event-card .status-active {
     display: none !important;
 }

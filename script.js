@@ -710,8 +710,8 @@ async function loadDynamicEventsData() {
                 const isClosed = !isInnexa && (isElevate || (evt.status || 'OPEN').toUpperCase() === 'CLOSED');
                 const dateParts = parseEventDate(evt.date);
                 
-                // Strictly lock ELEVATE; keep INNEXA unlocked; other cards follow admin/status
-                const isLocked = isElevate || (!isInnexa && !isAdmin && isClosed);
+                // INNEXA 26 is open for everyone; ELEVATE & closed events are unlocked for admin (like TECHSPARK)
+                const isLocked = !isInnexa && !isAdmin && isClosed;
                 const linkHref = isLocked ? 'javascript:void(0)' : (isElevate ? 'elevate.html' : `elevate.html?event=${encodeURIComponent(evt.title)}`);
                 const clickAttr = isLocked ? 'onclick="alert(\'This event is currently locked. Only administrators can access it.\'); return false;"' : '';
                 const cardStyle = isLocked ? 'text-decoration: none; color: inherit; cursor: not-allowed; opacity: 0.75;' : 'text-decoration: none; color: inherit; cursor: pointer;';

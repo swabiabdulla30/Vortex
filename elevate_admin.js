@@ -196,7 +196,7 @@
         // If dynamic sub-events exist in DB, display ONLY dynamic events (never force stale static cards)
         if (loadedSubEvents.length > 0) {
             displayList = loadedSubEvents;
-        } else if (currentEvent.toUpperCase() === 'ELEVATE' && !isAdmin) {
+        } else if (currentEvent.toUpperCase() === 'ELEVATE') {
             // Only fallback if DB has 0 sub-events
             displayList = staticElevateEvents;
         } else {
