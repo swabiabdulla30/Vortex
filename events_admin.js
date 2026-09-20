@@ -35,11 +35,6 @@
             if (cachedRaw) {
                 const cachedEvents = JSON.parse(cachedRaw);
                 if (Array.isArray(cachedEvents) && cachedEvents.length > 0) {
-                    cachedEvents.forEach(e => {
-                        if ((e.title || '').trim().toUpperCase() === 'ELEVATE' || (e.parentEvent || '').trim().toUpperCase() === 'ELEVATE') {
-                            e.status = 'CLOSED';
-                        }
-                    });
                     loadedMainEvents = cachedEvents.filter(e => e.eventType === 'main_event' || (!e.parentEvent && (e.category || '').toLowerCase() === 'session'));
                     renderMainEventsGrid();
                 }
@@ -118,19 +113,20 @@
                 ? (isAdmin ? '<div class="card-status status-active" style="background: rgba(255, 170, 0, 0.2); color: #ffaa00; border-color: rgba(255,170,0,0.5);">● CLOSED (ADMIN OPEN)</div>' : '<div class="card-status status-soon">REGISTRATION CLOSED</div>')
                 : '<div class="card-status status-active">&#9679; REGISTRATION OPEN</div>';
 
+            const eventId = evt._id || evt.title;
             const adminToolbar = (isAdmin && !evt.isStatic) ? `
                 <div class="card-admin-bar">
-                    <button class="card-admin-btn edit" data-id="${evt._id}" title="Edit this event card">
+                    <button type="button" class="card-admin-btn edit" data-id="${eventId}" title="Edit this event card">
                         <i class="fas fa-edit"></i> Edit
                     </button>
-                    <button class="card-admin-btn delete" data-id="${evt._id}" data-title="${escapeHtml(evt.title)}" title="Delete this event card">
+                    <button type="button" class="card-admin-btn delete" data-id="${eventId}" data-title="${escapeHtml(evt.title)}" title="Delete this event card">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
             ` : '';
 
             return `
-            <a href="${linkHref}" ${clickAttr} class="card event-card" style="${cardStyle}">
+            <a href="${linkHref}" class="card event-card" style="${cardStyle}">
                 ${adminToolbar}
                 ${statusBadge}
                 <div class="card-image">
@@ -149,7 +145,7 @@
                         <p>${escapeHtml(evt.subtitle || evt.description || '')}</p>
                         <div class="card-footer">
                             <span class="location">📍 ${escapeHtml(evt.venue || 'KMCT IETM')}</span>
-                            <span class="arrow">${isLocked ? '🔒' : '↗'}</span>
+                            <span class="arrow">${isClosed ? '🔒' : '↗'}</span>
                         </div>
                     </div>
                 </div>
@@ -189,7 +185,8 @@
                 e.preventDefault();
                 e.stopPropagation();
                 const id = btn.getAttribute('data-id');
-                const item = loadedMainEvents.find(x => x._id === id);
+                const item = loadedMainEvents.find(x => x._id === id || x.title === id)
+                    || (Array.isArray(window._vortexLoadedEvents) ? window._vortexLoadedEvents.find(x => x._id === id || x.title === id) : null);
                 if (item) {
                     openMainEventModal(item);
                 }
@@ -202,7 +199,9 @@
                 e.preventDefault();
                 e.stopPropagation();
                 const id = btn.getAttribute('data-id');
-                const title = btn.getAttribute('data-title') || 'this event card';
+                const item = loadedMainEvents.find(x => x._id === id || x.title === id);
+                const title = (item && item.title) || btn.getAttribute('data-title') || 'this event card';
+                const deleteId = (item && item._id) ? item._id : id;
 
                 if (!confirm(`Are you sure you want to delete the event card "${title}"?\nAll related sub-events will also be removed.`)) {
                     return;
@@ -553,6 +552,18 @@
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#039;');
     }
+
+    function openMainEventModalById(id) {
+        const item = loadedMainEvents.find(x => x._id === id || x.title === id)
+            || (Array.isArray(window._vortexLoadedEvents) ? window._vortexLoadedEvents.find(x => x._id === id || x.title === id) : null);
+        if (item) {
+            openMainEventModal(item);
+        } else {
+            openMainEventModal();
+        }
+    }
+    window.openMainEventModal = openMainEventModal;
+    window.openMainEventModalById = openMainEventModalById;
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initEventsPage);

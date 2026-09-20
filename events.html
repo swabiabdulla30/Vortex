@@ -237,7 +237,20 @@
                                 ? (isAdmin ? '<div class="card-status status-active" style="background: rgba(255, 170, 0, 0.2); color: #ffaa00; border-color: rgba(255,170,0,0.5);">● CLOSED (ADMIN OPEN)</div>' : '<div class="card-status status-soon">REGISTRATION CLOSED</div>')
                                 : '<div class="card-status status-active">&#9679; REGISTRATION OPEN</div>';
                             
+                            const eventId = evt._id || evt.title;
+                            const adminToolbar = (isAdmin && !evt.isStatic) ? (
+                                '<div class="card-admin-bar">' +
+                                    '<button type="button" class="card-admin-btn edit" data-id="' + esc(eventId) + '" title="Edit this event card">' +
+                                        '<i class="fas fa-edit"></i> Edit' +
+                                    '</button>' +
+                                    '<button type="button" class="card-admin-btn delete" data-id="' + esc(eventId) + '" data-title="' + esc(evt.title) + '" title="Delete this event card">' +
+                                        '<i class="fas fa-trash"></i>' +
+                                    '</button>' +
+                                '</div>'
+                            ) : '';
+                            
                             return '<a href="' + linkHref + '" class="card event-card" style="' + cardStyle + '">' +
+                                adminToolbar +
                                 statusBadge +
                                 '<div class="card-image">' +
                                     '<img src="' + (evt.imageUrl || 'https://via.placeholder.com/400x250?text=Event') + '" alt="' + esc(evt.title) + '" loading="lazy" width="400" height="250">' +
@@ -255,6 +268,16 @@
 
                 // Auth check when clicking any event card
                 document.addEventListener('click', function (e) {
+                    const editBtn = e.target.closest('.card-admin-btn.edit');
+                    if (editBtn) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const id = editBtn.getAttribute('data-id');
+                        if (typeof window.openMainEventModalById === 'function') {
+                            window.openMainEventModalById(id);
+                        }
+                        return;
+                    }
                     if (e.target.closest('.card-admin-bar') || e.target.closest('.card-admin-btn')) return;
                     const card = e.target.closest('.event-card');
                     if (!card) return;
