@@ -15,6 +15,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preload" href="/api/events" as="fetch" crossorigin="anonymous">
+    <link rel="preload" href="/api/event-slots" as="fetch" crossorigin="anonymous">
+    <script>
+        window._vortexEventsPromise = fetch('/api/events').then(r => r.ok ? r.json() : null).catch(() => null);
+        window._vortexSlotsPromise = fetch('/api/event-slots').then(r => r.ok ? r.json() : null).catch(() => null);
+    </script>
     <script>
         // Access Gatekeeper: requires sign in to open any event registration
         (function () {
@@ -1066,38 +1072,22 @@
                     }
                 } catch(e) {}
 
-                // 2. Dynamic live event sync from API (background revalidation with cache-busting)
-                fetch('/api/events?_t=' + Date.now(), { cache: 'no-store' })
-                    .then(r => r.json())
-                    .then(events => {
-                        if (!Array.isArray(events)) return;
-                        try {
-                            localStorage.setItem('vortex_cached_events', JSON.stringify(events));
-                        } catch(e) {}
-                        const match = events.find(e => e.title && e.title.trim().toUpperCase() === cleanName.toUpperCase());
-                        if (match) applyDynamicEventData(match);
-                    })
-                    .catch(err => console.log('Live event sync skipped:', err.message));
+                // 2. Dynamic live event sync from API (consumes head preload promise for instant response)
+                const eventsPromise = window._vortexEventsPromise || fetch('/api/events').then(r => r.ok ? r.json() : null);
+                eventsPromise.then(events => {
+                    if (!Array.isArray(events)) return;
+                    try {
+                        localStorage.setItem('vortex_cached_events', JSON.stringify(events));
+                    } catch(e) {}
+                    const match = events.find(e => e.title && e.title.trim().toUpperCase() === cleanName.toUpperCase());
+                    if (match) applyDynamicEventData(match);
+                }).catch(err => console.log('Live event sync skipped:', err.message));
 
-                // 3. Direct single event query fallback
-                fetch(`/api/events/${encodeURIComponent(cleanName)}?_t=${Date.now()}`, { cache: 'no-store' })
-                    .then(r => r.ok ? r.json() : null)
-                    .then(exactEvt => {
-                        if (exactEvt && exactEvt.title) {
-                            applyDynamicEventData(exactEvt);
-                        }
-                    })
-                    .catch(() => {});
-
-                // Slot bar – fetch from API
-                const API_URL = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost')
-                    ? 'http://127.0.0.1:5000/api' : '/api';
-
-                fetch(`${API_URL}/event-slots?_t=${Date.now()}`, { cache: 'no-store' })
-                    .then(r => r.json())
-                    .then(slots => {
-                        if (!Array.isArray(slots)) return;
-                        const match = slots.find(s => s.event && s.event.toUpperCase() === cleanName.toUpperCase());
+                // 3. Slot bar – consume head preloaded slots promise for 0ms response
+                const slotsPromise = window._vortexSlotsPromise || fetch('/api/event-slots').then(r => r.ok ? r.json() : null);
+                slotsPromise.then(slots => {
+                    if (!Array.isArray(slots)) return;
+                    const match = slots.find(s => s.event && s.event.toUpperCase() === cleanName.toUpperCase());
                         if (!match) {
                             if (countEl && (countEl.textContent.includes('Checking') || !countEl.textContent)) {
                                 countEl.textContent = 'OPEN';

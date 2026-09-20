@@ -223,12 +223,14 @@
                         localStorage.setItem('vortex_cached_events', JSON.stringify(allEvents));
                     } catch (e) {}
                     loadedSubEvents = allEvents.filter(e => isSubEventMatch(e, currentEvent));
-                    renderSubEventsGrid();
                 }
             }
         } catch (e) {
             console.warn('Cache error in elevate_admin:', e);
         }
+
+        // Always render immediately in Step 1 (0ms instantaneous display)
+        renderSubEventsGrid();
 
         // 2. Background Revalidation from API
         await loadAndRenderSubEvents();
@@ -247,7 +249,7 @@
                 }
             }
             if (!allEvents) {
-                const res = await fetch('/api/events?_t=' + Date.now(), { cache: 'no-store' });
+                const res = await fetch('/api/events');
                 if (res.ok) allEvents = await res.json();
             }
             if (Array.isArray(allEvents)) {

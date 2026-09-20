@@ -42,7 +42,7 @@
     </script>
     <script>
         // High-speed parallel fetch: starts before styles or body are parsed
-        window._vortexFetchPromise = fetch('/api/events?_t=' + Date.now(), { cache: 'no-store' })
+        window._vortexFetchPromise = fetch('/api/events')
             .then(r => r.ok ? r.json() : null)
             .then(data => {
                 if (Array.isArray(data)) {
@@ -301,8 +301,6 @@
                                 }
                             }
                         }
-                        if (!Array.isArray(allEvents) || allEvents.length === 0) return;
-
                         const urlParams = new URLSearchParams(window.location.search);
                         const curEvt = (urlParams.get('event') || 'ELEVATE').trim();
 
@@ -319,7 +317,10 @@
                             adminBar.style.display = 'flex';
                         }
 
-                        let subEvts = allEvents.filter(e => isSubEventMatch(e, curEvt));
+                        let subEvts = [];
+                        if (Array.isArray(allEvents) && allEvents.length > 0) {
+                            subEvts = allEvents.filter(e => isSubEventMatch(e, curEvt));
+                        }
                         if (subEvts.length === 0 && curEvt.toUpperCase().includes('INNEXA')) {
                             subEvts = staticInnexaFallback;
                         }

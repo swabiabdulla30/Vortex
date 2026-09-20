@@ -170,6 +170,57 @@ const eventDetails = {
             "Participants must adhere to the event guidelines and schedule.",
             "Official certificates will be issued to all registered participants."
         ]
+    },
+    "Pyxel Sync": {
+        image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80",
+        closed: false,
+        date: "Sep 23, 2026",
+        time: "10:00AM - 1:00PM",
+        venue: "KMCT IETM",
+        slots: 50,
+        prize: "Cash Prize",
+        fee: "Free",
+        about: "<strong>⚡ Pyxel Sync — Creative Design & Development Challenge</strong><br><br>Put your creativity and technical execution to the test in Pyxel Sync. Synchronize your ideas, craft visually stunning experiences, and compete with the brightest creative minds.",
+        rules: [
+            "Open to all registered college students with valid ID.",
+            "Individual or team participation as specified at registration.",
+            "Original work only; assets and libraries must comply with event rules.",
+            "Submissions will be judged on innovation, design aesthetics, and technical execution."
+        ]
+    },
+    "Iconix": {
+        image: "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&q=80",
+        closed: false,
+        date: "Sep 23, 2026",
+        time: "1:30PM - 3:30PM",
+        venue: "KMCT IETM",
+        slots: 50,
+        prize: "Cash Prize",
+        fee: "Free",
+        about: "<strong>🎨 Iconix — Visual Branding & UI Challenge</strong><br><br>Iconix challenges aspiring UI/UX designers and visual creators to craft state-of-the-art digital interfaces, brand identities, and iconic digital assets.",
+        rules: [
+            "Open to all students with a valid college ID card.",
+            "Design prompts will be revealed at the commencement of the event.",
+            "Standard design tools (Figma, Adobe XD, Illustrator) are permitted.",
+            "Judging criteria: visual appeal, user experience, typography, and originality."
+        ]
+    },
+    "Blind App Challenge": {
+        image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&q=80",
+        closed: false,
+        date: "Sep 23, 2026",
+        time: "3:45PM - 5:00PM",
+        venue: "KMCT IETM",
+        slots: 50,
+        prize: "Cash Prize",
+        fee: "Free",
+        about: "<strong>💻 Blind App Challenge — The Ultimate Blind Coding Trial</strong><br><br>Can you build without seeing your output? Blind App Challenge tests pure raw programming instincts and muscle memory. Write clean code and build responsive apps with preview screens turned off until submission!",
+        rules: [
+            "Screens/displays will be turned off or UI previews disabled during coding time.",
+            "Standard IDEs and text editors are provided; no internet search during blind coding phase.",
+            "Code must compile and run on the final reveal.",
+            "Scoring is based on accuracy, completeness, and error-free execution."
+        ]
     }
 };
 
@@ -182,6 +233,14 @@ eventDetails["Innexa '26"] = eventDetails["INNEXA 26"];
 eventDetails["INNEXA' 26"] = eventDetails["INNEXA 26"];
 eventDetails["Innexa' 26"] = eventDetails["INNEXA 26"];
 eventDetails["INNEXA'26"] = eventDetails["INNEXA 26"];
+eventDetails["PYXEL SYNC"] = eventDetails["Pyxel Sync"];
+eventDetails["Pixel Sync"] = eventDetails["Pyxel Sync"];
+eventDetails["PIXEL SYNC"] = eventDetails["Pyxel Sync"];
+eventDetails["ICONIX"] = eventDetails["Iconix"];
+eventDetails["BLIND APP CHALLENGE"] = eventDetails["Blind App Challenge"];
+eventDetails["Blind App"] = eventDetails["Blind App Challenge"];
+eventDetails["BLIND APP"] = eventDetails["Blind App Challenge"];
+eventDetails["Blind Coding"] = eventDetails["Blind App Challenge"];
 eventDetails["TECH HUNT"] = eventDetails["TECH HUNT"];
 eventDetails["Tech Hunt"] = eventDetails["TECH HUNT"];
 eventDetails["WEBSITE DESIGNING COMPETITION"] = eventDetails["WEBSITE DESIGNING COMPETITION"];

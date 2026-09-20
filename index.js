@@ -736,6 +736,7 @@ app.post("/api/free-register", async (req, res) => {
             if (!result.success) console.error("Excel save failed:", result.error);
         }).catch(err => console.error("Excel save error:", err));
 
+        invalidateSlotsCache();
         res.status(201).json({ success: true, ticketId, data });
     } catch (error) {
         console.error("Free registration error:", error);
@@ -859,6 +860,7 @@ app.post("/api/payment-success", async (req, res) => {
             if (!result.success) console.error("Excel save failed:", result.error);
         }).catch(err => console.error("Excel save error:", err));
 
+        invalidateSlotsCache();
         res.json({ success: true, message: "Payment verified and registration complete" });
     } catch (error) {
         console.error("Payment verification error:", error);
@@ -889,11 +891,27 @@ const EVENT_SLOTS = {
     "WEB-DESIGNING": 0,
     "CO-OP E-FOOTBALL": 16,
     "TECH QUIZ": 10,
-    "PAPER-X": 0
+    "PAPER-X": 0,
+    "PYXEL SYNC": 50,
+    "ICONIX": 50,
+    "BLIND APP CHALLENGE": 50
 };
+
+let eventSlotsCache = null;
+let eventSlotsCacheTime = 0;
+const SLOTS_CACHE_TTL = 15000; // 15 seconds
+
+function invalidateSlotsCache() {
+    eventSlotsCache = null;
+    eventSlotsCacheTime = 0;
+}
 
 app.get("/api/event-slots", async (req, res) => {
     try {
+        res.setHeader('Cache-Control', 'public, max-age=15, s-maxage=30, stale-while-revalidate=60');
+        if (!req.query._force && eventSlotsCache && (Date.now() - eventSlotsCacheTime < SLOTS_CACHE_TTL)) {
+            return res.json(eventSlotsCache);
+        }
         await connectDB();
         const allDbEvents = await Event.find().lean();
         const eventMap = new Map();
@@ -917,31 +935,46 @@ app.get("/api/event-slots", async (req, res) => {
             });
         }
 
-        // 3. Count paid registrations for each event
-        const results = await Promise.all(
-            Array.from(eventMap.values()).map(async (item) => {
-                const registered = await Registration.countDocuments({
-                    event: { $regex: new RegExp(`^${item.event.trim()}$`, 'i') },
-                    paymentStatus: "PAID"
-                });
-                const total = item.total;
-                const isClosed = item.status === 'CLOSED';
-                const remaining = total > 0 ? Math.max(0, total - registered) : (isClosed ? 0 : 999);
-                const isFull = total > 0 && remaining === 0;
+        // 3. Fast single aggregation query for paid registrations
+        const paidAggregation = await Registration.aggregate([
+            { $match: { paymentStatus: "PAID" } },
+            { $group: { _id: { $toUpper: { $trim: { input: "$event" } } }, count: { $sum: 1 } } }
+        ]);
+        const paidMap = new Map();
+        for (const item of paidAggregation) {
+            if (item._id) paidMap.set(item._id, item.count);
+        }
 
-                return {
-                    event: item.event,
-                    total: total,
-                    registered: registered,
-                    remaining: remaining,
-                    status: isClosed ? 'CLOSED' : (isFull ? 'FULL' : 'OPEN')
-                };
-            })
-        );
+        const results = Array.from(eventMap.values()).map((item) => {
+            const key = item.event.trim().toUpperCase();
+            let registered = paidMap.get(key) || 0;
+            if (registered === 0) {
+                for (const [pKey, count] of paidMap.entries()) {
+                    if (pKey.includes(key) || key.includes(pKey)) {
+                        registered += count;
+                    }
+                }
+            }
+            const total = item.total;
+            const isClosed = item.status === 'CLOSED';
+            const remaining = total > 0 ? Math.max(0, total - registered) : (isClosed ? 0 : 999);
+            const isFull = total > 0 && remaining === 0;
 
+            return {
+                event: item.event,
+                total: total,
+                registered: registered,
+                remaining: remaining,
+                status: isClosed ? 'CLOSED' : (isFull ? 'FULL' : 'OPEN')
+            };
+        });
+
+        eventSlotsCache = results;
+        eventSlotsCacheTime = Date.now();
         res.json(results);
     } catch (error) {
         console.error("Event slots error:", error);
+        if (eventSlotsCache) return res.json(eventSlotsCache);
         res.status(500).json({ error: "Failed to fetch slot data" });
     }
 });
@@ -1428,99 +1461,97 @@ app.get("/api/gallery", async (req, res) => {
 // --- High-Speed Event Cache for Instant Response ---
 let eventsMemoryCache = null;
 let eventsMemoryCacheTime = 0;
-const EVENTS_CACHE_TTL = 30000; // 30s cache TTL
+const EVENTS_CACHE_TTL = 15000; // 15s cache TTL
 
 function invalidateEventsCache() {
     eventsMemoryCache = null;
     eventsMemoryCacheTime = 0;
 }
 
+let innexaCleanedAndSeeded = false;
+async function ensureInnexaCleanedAndSeeded() {
+    if (innexaCleanedAndSeeded) return;
+    try {
+        await Event.deleteMany({
+            $or: [
+                { title: /^pes$/i },
+                { parentEvent: { $regex: /innexa/i }, title: /^bgmi$/i },
+                { imageUrl: { $regex: /mukkam/i } },
+                { parentEvent: { $regex: /innexa/i }, title: { $nin: [/pyxel/i, /pixel/i, /iconix/i, /blind/i] } }
+            ]
+        });
+        const innexaSubCount = await Event.countDocuments({
+            parentEvent: { $regex: /innexa/i }
+        });
+        if (innexaSubCount === 0) {
+            await Event.insertMany([
+                {
+                    title: "Pyxel Sync",
+                    description: "Synchronize your vision and code.",
+                    about: "Pyxel Sync is a creative design and development challenge conducted under INNEXA 26.",
+                    date: "SEP 23",
+                    time: "10:00 AM - 1:00 PM",
+                    venue: "KMCT IETM",
+                    category: "Competition",
+                    eventType: "sub_event",
+                    parentEvent: "INNEXA 26",
+                    fee: "Free",
+                    prize: "Cash Prize",
+                    slots: 50,
+                    status: "OPEN",
+                    imageUrl: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80",
+                    order: 10
+                },
+                {
+                    title: "Iconix",
+                    description: "Master the craft of visual branding & UI.",
+                    about: "Iconix challenges participants to design modern UI/UX and brand identities under INNEXA 26.",
+                    date: "SEP 23",
+                    time: "1:30 PM - 3:30 PM",
+                    venue: "KMCT IETM",
+                    category: "Competition",
+                    eventType: "sub_event",
+                    parentEvent: "INNEXA 26",
+                    fee: "Free",
+                    prize: "Cash Prize",
+                    slots: 50,
+                    status: "OPEN",
+                    imageUrl: "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&q=80",
+                    order: 11
+                },
+                {
+                    title: "Blind App Challenge",
+                    description: "Code without seeing the output until time is up.",
+                    about: "Blind App Challenge tests pure raw programming instincts where developers code without previewing their output.",
+                    date: "SEP 23",
+                    time: "3:45 PM - 5:00 PM",
+                    venue: "KMCT IETM",
+                    category: "Competition",
+                    eventType: "sub_event",
+                    parentEvent: "INNEXA 26",
+                    fee: "Free",
+                    prize: "Cash Prize",
+                    slots: 50,
+                    status: "OPEN",
+                    imageUrl: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&q=80",
+                    order: 12
+                }
+            ]);
+        }
+        innexaCleanedAndSeeded = true;
+    } catch (err) {
+        console.warn("Innexa init warning:", err.message);
+    }
+}
+
 app.get("/api/events", async (req, res) => {
     try {
-        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-        if (!req.query._t && eventsMemoryCache && (Date.now() - eventsMemoryCacheTime < EVENTS_CACHE_TTL)) {
+        res.setHeader('Cache-Control', 'public, max-age=15, s-maxage=30, stale-while-revalidate=60');
+        if (eventsMemoryCache && (Date.now() - eventsMemoryCacheTime < EVENTS_CACHE_TTL)) {
             return res.json(eventsMemoryCache);
         }
         await connectDB();
-
-        // 1. Purge legacy/test events (pes, test bgmi under innexa, mukkam images)
-        try {
-            await Event.deleteMany({
-                $or: [
-                    { title: /^pes$/i },
-                    { parentEvent: { $regex: /innexa/i }, title: /^bgmi$/i },
-                    { imageUrl: { $regex: /mukkam/i } },
-                    { parentEvent: { $regex: /innexa/i }, title: { $nin: [/pyxel/i, /pixel/i, /iconix/i, /blind/i] } }
-                ]
-            });
-        } catch (cleanupErr) {
-            console.warn("Cleanup warning:", cleanupErr.message);
-        }
-
-        // 2. Ensure official INNEXA competitions exist
-        try {
-            const innexaSubCount = await Event.countDocuments({
-                parentEvent: { $regex: /innexa/i }
-            });
-            if (innexaSubCount === 0) {
-                await Event.insertMany([
-                    {
-                        title: "Pyxel Sync",
-                        description: "Synchronize your vision and code.",
-                        about: "Pyxel Sync is a creative design and development challenge conducted under INNEXA 26.",
-                        date: "SEP 23",
-                        time: "10:00 AM - 1:00 PM",
-                        venue: "KMCT IETM",
-                        category: "Competition",
-                        eventType: "sub_event",
-                        parentEvent: "INNEXA 26",
-                        fee: "Free",
-                        prize: "Cash Prize",
-                        slots: 50,
-                        status: "OPEN",
-                        imageUrl: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80",
-                        order: 10
-                    },
-                    {
-                        title: "Iconix",
-                        description: "Master the craft of visual branding & UI.",
-                        about: "Iconix challenges participants to design modern UI/UX and brand identities under INNEXA 26.",
-                        date: "SEP 23",
-                        time: "1:30 PM - 3:30 PM",
-                        venue: "KMCT IETM",
-                        category: "Competition",
-                        eventType: "sub_event",
-                        parentEvent: "INNEXA 26",
-                        fee: "Free",
-                        prize: "Cash Prize",
-                        slots: 50,
-                        status: "OPEN",
-                        imageUrl: "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&q=80",
-                        order: 11
-                    },
-                    {
-                        title: "Blind App Challenge",
-                        description: "Code without seeing the output until time is up.",
-                        about: "Blind App Challenge tests pure raw programming instincts where developers code without previewing their output.",
-                        date: "SEP 23",
-                        time: "3:45 PM - 5:00 PM",
-                        venue: "KMCT IETM",
-                        category: "Competition",
-                        eventType: "sub_event",
-                        parentEvent: "INNEXA 26",
-                        fee: "Free",
-                        prize: "Cash Prize",
-                        slots: 50,
-                        status: "OPEN",
-                        imageUrl: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&q=80",
-                        order: 12
-                    }
-                ]);
-            }
-        } catch (seedErr) {
-            console.warn("Innexa sub-events seed warning:", seedErr.message);
-        }
-
+        await ensureInnexaCleanedAndSeeded();
         const events = await Event.find().sort({ order: 1, createdAt: 1 }).lean();
         eventsMemoryCache = events;
         eventsMemoryCacheTime = Date.now();
