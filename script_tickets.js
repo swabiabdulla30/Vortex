@@ -4,14 +4,41 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Images and details are read dynamically from events_data.js (single source of truth).
     // To update an event image, just change the `image` field in events_data.js.
-    const defaultImage = "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80";
+    const defaultImage = "https://image2url.com/r2/default/images/1771925642514-c2c31e9c-1123-455a-ab35-90d2ecb313ef.jpeg";
 
     function getEventImage(eventName) {
         if (!eventName) return defaultImage;
         const cleanName = eventName.trim().toUpperCase();
-        if (typeof eventDetails !== 'undefined' && eventDetails[cleanName]) {
-            return eventDetails[cleanName].image || defaultImage;
+
+        // 1. Check local cached events from MongoDB
+        try {
+            const cachedRaw = localStorage.getItem('vortex_cached_events');
+            if (cachedRaw) {
+                const cachedEvents = JSON.parse(cachedRaw);
+                if (Array.isArray(cachedEvents)) {
+                    const match = cachedEvents.find(e => e.title && (
+                        e.title.trim().toUpperCase() === cleanName ||
+                        cleanName.includes(e.title.trim().toUpperCase())
+                    ));
+                    if (match && match.imageUrl && !match.imageUrl.includes('unsplash.com/photo-1550751827-4bd374c3f58b')) {
+                        return match.imageUrl;
+                    }
+                }
+            }
+        } catch(e) {}
+
+        // 2. Check events_data.js
+        if (typeof eventDetails !== 'undefined' && eventDetails[cleanName] && eventDetails[cleanName].image) {
+            if (!eventDetails[cleanName].image.includes('unsplash.com/photo-1550751827-4bd374c3f58b')) {
+                return eventDetails[cleanName].image;
+            }
         }
+
+        // 3. Fallback to official posters
+        if (cleanName.includes('INNEXA') || cleanName.includes('PYXEL') || cleanName.includes('PIXEL') || cleanName.includes('ICONIX') || cleanName.includes('BLIND')) {
+            return 'images/innexa_26.jpeg';
+        }
+
         return defaultImage;
     }
 

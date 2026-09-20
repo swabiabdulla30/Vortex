@@ -1241,6 +1241,13 @@
                     }
                 }
 
+                const eventImgEl = document.getElementById('reg-event-img');
+                const eventImageSrc = (eventImgEl && eventImgEl.src && !eventImgEl.src.includes('placeholder')) ? eventImgEl.src : '';
+                if (eventImageSrc) {
+                    eventData.imageUrl = eventImageSrc;
+                    sessionStorage.setItem('regEventImage', eventImageSrc);
+                }
+
                 if (isFreeEvent) {
                     const freeRes = await fetch('/api/free-register', {
                         method: 'POST',
@@ -1254,6 +1261,7 @@
                     sessionStorage.setItem('regDept', eventData.department);
                     sessionStorage.setItem('regId', freeData.ticketId);
                     sessionStorage.setItem('regTeammate', eventData.teammateName || '');
+                    if (eventImageSrc) sessionStorage.setItem('regEventImage', eventImageSrc);
                     window.location.href = 'registration_success.html';
                     return;
                 }
@@ -1287,6 +1295,7 @@
                             sessionStorage.setItem('regDept', eventData.department);
                             sessionStorage.setItem('regId', freeData.ticketId);
                             sessionStorage.setItem('regTeammate', eventData.teammateName || '');
+                            if (eventImageSrc) sessionStorage.setItem('regEventImage', eventImageSrc);
                             window.location.href = 'registration_success.html';
                             return;
                         }
@@ -1324,6 +1333,7 @@
                                 sessionStorage.setItem('regDept', eventData.department);
                                 sessionStorage.setItem('regId', ticketId);
                                 sessionStorage.setItem('regTeammate', eventData.teammateName || '');
+                                if (eventImageSrc) sessionStorage.setItem('regEventImage', eventImageSrc);
                                 window.location.href = 'registration_success.html';
                             } else {
                                 throw new Error(verifyData.error || 'Payment verification failed.');

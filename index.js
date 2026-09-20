@@ -524,7 +524,7 @@ const DEFAULT_EVENTS = [
         prize: "Cash Prize",
         slots: 50,
         status: "OPEN",
-        imageUrl: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80",
+        imageUrl: "images/innexa_26.jpeg",
         order: 10
     },
     {
@@ -541,7 +541,7 @@ const DEFAULT_EVENTS = [
         prize: "Cash Prize",
         slots: 50,
         status: "OPEN",
-        imageUrl: "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&q=80",
+        imageUrl: "images/innexa_26.jpeg",
         order: 11
     },
     {
@@ -558,7 +558,7 @@ const DEFAULT_EVENTS = [
         prize: "Cash Prize",
         slots: 50,
         status: "OPEN",
-        imageUrl: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&q=80",
+        imageUrl: "images/innexa_26.jpeg",
         order: 12
     }
 ];
@@ -1508,7 +1508,7 @@ async function ensureInnexaCleanedAndSeeded() {
                     prize: "Cash Prize",
                     slots: 50,
                     status: "OPEN",
-                    imageUrl: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80",
+                    imageUrl: "images/innexa_26.jpeg",
                     order: 10
                 },
                 {
@@ -1525,7 +1525,7 @@ async function ensureInnexaCleanedAndSeeded() {
                     prize: "Cash Prize",
                     slots: 50,
                     status: "OPEN",
-                    imageUrl: "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&q=80",
+                    imageUrl: "images/innexa_26.jpeg",
                     order: 11
                 },
                 {
@@ -1542,11 +1542,25 @@ async function ensureInnexaCleanedAndSeeded() {
                     prize: "Cash Prize",
                     slots: 50,
                     status: "OPEN",
-                    imageUrl: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&q=80",
+                    imageUrl: "images/innexa_26.jpeg",
                     order: 12
                 }
             ]);
         }
+
+        // Backfill any existing INNEXA sub-events with the official INNEXA poster if they still have random stock photos
+        await Event.updateMany(
+            {
+                parentEvent: { $regex: /innexa/i },
+                $or: [
+                    { imageUrl: { $regex: /unsplash\.com/i } },
+                    { imageUrl: "" },
+                    { imageUrl: { $exists: false } }
+                ]
+            },
+            { $set: { imageUrl: "images/innexa_26.jpeg" } }
+        );
+
         innexaCleanedAndSeeded = true;
     } catch (err) {
         console.warn("Innexa init warning:", err.message);

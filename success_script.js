@@ -177,10 +177,43 @@ window.addEventListener('load', function () {
             if (dlLocRow) dlLocRow.style.display = 'none';
         }
 
-        // Event image is read from events_data.js (single source of truth).
-        // To update, just change the `image` field in events_data.js.
-        const defaultImage = "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80";
-        const imageUrl = eventData ? (eventData.image || defaultImage) : defaultImage;
+        // Resolve the actual event image
+        let imageUrl = sessionStorage.getItem('regEventImage') || '';
+
+        // 1. Check local cached events from MongoDB
+        if (!imageUrl) {
+            try {
+                const cachedRaw = localStorage.getItem('vortex_cached_events');
+                if (cachedRaw) {
+                    const cachedEvents = JSON.parse(cachedRaw);
+                    if (Array.isArray(cachedEvents)) {
+                        const match = cachedEvents.find(e => e.title && (
+                            e.title.trim().toUpperCase() === cleanEventName ||
+                            cleanEventName.includes(e.title.trim().toUpperCase())
+                        ));
+                        if (match && match.imageUrl && !match.imageUrl.includes('unsplash.com/photo-1550751827-4bd374c3f58b')) {
+                            imageUrl = match.imageUrl;
+                        }
+                    }
+                }
+            } catch(e) {}
+        }
+
+        // 2. Check events_data.js
+        if (!imageUrl && eventData && eventData.image) {
+            if (!eventData.image.includes('unsplash.com/photo-1550751827-4bd374c3f58b')) {
+                imageUrl = eventData.image;
+            }
+        }
+
+        // 3. Fallback to official category posters
+        if (!imageUrl) {
+            if (cleanEventName.includes('INNEXA') || cleanEventName.includes('PYXEL') || cleanEventName.includes('PIXEL') || cleanEventName.includes('ICONIX') || cleanEventName.includes('BLIND')) {
+                imageUrl = 'images/innexa_26.jpeg';
+            } else {
+                imageUrl = 'https://image2url.com/r2/default/images/1771925642514-c2c31e9c-1123-455a-ab35-90d2ecb313ef.jpeg';
+            }
+        }
 
         // Set Images
         const ticketImage = document.getElementById('ticket-event-image');

@@ -172,7 +172,7 @@ const eventDetails = {
         ]
     },
     "Pyxel Sync": {
-        image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80",
+        image: "images/innexa_26.jpeg",
         closed: false,
         date: "Sep 23, 2026",
         time: "10:00AM - 1:00PM",
@@ -189,7 +189,7 @@ const eventDetails = {
         ]
     },
     "Iconix": {
-        image: "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&q=80",
+        image: "images/innexa_26.jpeg",
         closed: false,
         date: "Sep 23, 2026",
         time: "1:30PM - 3:30PM",
@@ -206,7 +206,7 @@ const eventDetails = {
         ]
     },
     "Blind App Challenge": {
-        image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&q=80",
+        image: "images/innexa_26.jpeg",
         closed: false,
         date: "Sep 23, 2026",
         time: "3:45PM - 5:00PM",
