@@ -20,8 +20,8 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="preload" href="/api/events" as="fetch" crossorigin="anonymous">
     <script>
-        // High-speed parallel fetch: starts before styles or body are parsed
-        window._vortexFetchPromise = fetch('/api/events?_t=' + Date.now(), { cache: 'no-store' })
+        // High-speed parallel fetch: matches link preload exactly, cached instantly
+        window._vortexFetchPromise = fetch('/api/events')
             .then(r => r.ok ? r.json() : null)
             .then(data => {
                 if (Array.isArray(data)) {
@@ -111,7 +111,30 @@
             </div>
 
             <div class="cards-grid" id="main-events-grid">
-                <!-- Pre-locked fallback cards rendered instantly at 0ms parse time -->
+                <!-- INNEXA 26: Active Flagship Event at the TOP (0ms instant render) -->
+                <a href="elevate.html?event=INNEXA%2026" class="card event-card" id="innexa-card" style="text-decoration: none; color: inherit; cursor: pointer; position: relative;">
+                    <div class="card-status status-active">&#9679; REGISTRATION OPEN</div>
+                    <div class="card-image">
+                        <img src="images/innexa_26.jpeg"
+                            alt="Innexa 26" width="400" height="250">
+                    </div>
+                    <div class="card-content">
+                        <div class="date-badge">
+                            <span class="month">MAR</span>
+                            <span class="day">26</span>
+                        </div>
+                        <div class="event-details">
+                            <span class="event-type"></span>
+                            <h3>INNEXA 26</h3>
+                            <p>The Ultimate Tech Symposium &amp; Innovation Challenge.</p>
+                            <div class="card-footer">
+                                <span class="location">📍 KMCT IETM</span>
+                                <span class="arrow">↗</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                <!-- Closed Archives below INNEXA -->
                 <div class="card event-card locked-event-card" id="elevate-card" style="text-decoration: none; color: inherit; cursor: not-allowed; position: relative; opacity: 0.75;" onclick="alert('This event is locked and registrations are closed.'); return false;">
                     <div class="card-status status-soon">CLOSED</div>
                     <div class="card-image">
@@ -179,31 +202,48 @@
                         </div>
                     </div>
                 </div>
-                <a href="elevate.html?event=INNEXA%2026" class="card event-card" id="innexa-card" style="text-decoration: none; color: inherit; cursor: pointer; position: relative;">
-                    <div class="card-status status-active">&#9679; REGISTRATION OPEN</div>
-                    <div class="card-image">
-                        <img src="images/innexa_26.jpeg"
-                            alt="Innexa 26" loading="lazy" width="400" height="250">
-                    </div>
-                    <div class="card-content">
-                        <div class="date-badge">
-                            <span class="month">MAR</span>
-                            <span class="day">26</span>
-                        </div>
-                        <div class="event-details">
-                            <span class="event-type"></span>
-                            <h3>INNEXA 26</h3>
-                            <p>The Ultimate Tech Symposium &amp; Innovation Challenge.</p>
-                            <div class="card-footer">
-                                <span class="location">📍 KMCT IETM</span>
-                                <span class="arrow">↗</span>
-                            </div>
-                        </div>
-                    </div>
-                </a>
             </div>
             <!-- Instant 0ms Pre-renderer from local cache or preloaded data -->
             <script>
+                const staticMainEventsFallback = [
+                    {
+                        title: "INNEXA 26",
+                        description: "The Ultimate Tech Symposium & Innovation Challenge.",
+                        date: "MAR 26",
+                        venue: "KMCT IETM",
+                        imageUrl: "images/innexa_26.jpeg",
+                        status: "OPEN",
+                        order: 1
+                    },
+                    {
+                        title: "ELEVATE",
+                        description: "To Lift Up, Raise Higher or Improve.",
+                        date: "MAR 05 - 06",
+                        venue: "KMCT IETM",
+                        imageUrl: "https://image2url.com/r2/default/images/1771924612874-479e698d-1dfb-49ec-90d2-a203530cd141.png",
+                        status: "CLOSED",
+                        order: 10
+                    },
+                    {
+                        title: "TECHSPARK",
+                        description: "Igniting the next generation of innovators.",
+                        date: "AUG 26",
+                        venue: "KMCT IETM",
+                        imageUrl: "https://image2url.com/r2/default/images/1771924658426-b7ca4811-d7d7-4f79-b1e9-64e516259d86.jpeg",
+                        status: "CLOSED",
+                        order: 11
+                    },
+                    {
+                        title: "VORTEX INNOVATORS",
+                        description: "Exploring the future of Generative AI.",
+                        date: "MAR 19",
+                        venue: "KMCT IETM",
+                        imageUrl: "https://image2url.com/r2/default/images/1771925799245-91e45052-89b2-48d4-98f4-5f7081da8dbe.jpeg",
+                        status: "CLOSED",
+                        order: 12
+                    }
+                ];
+
                 window.renderMainEventsNow = function(dataOverride) {
                     try {
                         let events = dataOverride || window._vortexLoadedEvents;
@@ -211,10 +251,22 @@
                             const raw = localStorage.getItem('vortex_cached_events');
                             if (raw) events = JSON.parse(raw);
                         }
-                        if (!Array.isArray(events) || events.length === 0) return;
+                        if (!Array.isArray(events) || events.length === 0) {
+                            events = staticMainEventsFallback;
+                            try { localStorage.setItem('vortex_cached_events', JSON.stringify(staticMainEventsFallback)); } catch(e){}
+                        }
                         const mainEvts = events.filter(e => e.eventType === 'main_event' || (!e.parentEvent && (e.category || '').toLowerCase() === 'session'));
-                        const displayList = mainEvts.length > 0 ? mainEvts : events.filter(e => !e.parentEvent);
-                        if (displayList.length === 0) return;
+                        let displayList = mainEvts.length > 0 ? mainEvts : events.filter(e => !e.parentEvent);
+                        if (displayList.length === 0) displayList = staticMainEventsFallback;
+
+                        // Guarantee OPEN events and INNEXA 26 are always at the top
+                        displayList.sort((a, b) => {
+                            const aOpen = (a.status || 'OPEN').toUpperCase() !== 'CLOSED';
+                            const bOpen = (b.status || 'OPEN').toUpperCase() !== 'CLOSED';
+                            if (aOpen !== bOpen) return aOpen ? -1 : 1;
+                            return (a.order || 99) - (b.order || 99);
+                        });
+
                         const grid = document.getElementById('main-events-grid');
                         if (!grid) return;
                         const esc = s => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');

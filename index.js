@@ -286,22 +286,19 @@ async function seedDefaultsIfNeeded() {
                 { $set: { eventType: "sub_event", parentEvent: "ELEVATE" } }
             );
 
-            // Ensure INNEXA events are explicitly OPEN
+            // Ensure INNEXA 26 is explicitly OPEN, order: 1, and has official poster
+            await Event.updateMany(
+                { title: { $regex: /innexa/i }, $or: [{ eventType: "main_event" }, { parentEvent: "" }] },
+                { $set: { order: 1, status: "OPEN", imageUrl: "images/innexa_26.jpeg" } }
+            );
+
+            // Ensure previous legacy sessions are marked CLOSED and ordered after INNEXA
+            await Event.updateOne({ title: "ELEVATE", eventType: "main_event" }, { $set: { order: 10, status: "CLOSED" } });
+            await Event.updateOne({ title: "TECHSPARK", eventType: "main_event" }, { $set: { order: 11, status: "CLOSED" } });
+            await Event.updateOne({ title: "VORTEX INNOVATORS", eventType: "main_event" }, { $set: { order: 12, status: "CLOSED" } });
+
             const innexaEvent = await Event.findOne({ title: { $regex: /innexa/i } });
-            if (innexaEvent) {
-                // If it still has the old Techspark image placeholder, update to official Innexa poster
-                await Event.updateMany(
-                    {
-                        title: { $regex: /innexa/i },
-                        $or: [
-                            { imageUrl: "https://image2url.com/r2/default/images/1771924658426-b7ca4811-d7d7-4f79-b1e9-64e516259d86.jpeg" },
-                            { imageUrl: "" },
-                            { imageUrl: { $exists: false } }
-                        ]
-                    },
-                    { $set: { imageUrl: "images/innexa_26.jpeg" } }
-                );
-            } else {
+            if (!innexaEvent) {
                 await Event.create({
                     title: "INNEXA 26",
                     description: "The Ultimate Tech Symposium & Innovation Challenge.",
@@ -317,7 +314,7 @@ async function seedDefaultsIfNeeded() {
                     slots: 100,
                     status: "OPEN",
                     imageUrl: "images/innexa_26.jpeg",
-                    order: 4
+                    order: 1
                 });
             }
 
@@ -341,6 +338,23 @@ async function seedDefaultsIfNeeded() {
 
 const DEFAULT_EVENTS = [
     {
+        title: "INNEXA 26",
+        description: "The Ultimate Tech Symposium & Innovation Challenge.",
+        about: "INNEXA 26 — The flagship state-level technical symposium of Department of Computer Applications, KMCT IETM. Uniting coders, creators, and innovators.",
+        date: "MAR 26",
+        time: "9:30 AM - 4:30 PM",
+        venue: "KMCT IETM",
+        category: "Session",
+        eventType: "main_event",
+        parentEvent: "",
+        fee: "Free",
+        prize: "₹10,000+",
+        slots: 100,
+        status: "OPEN",
+        imageUrl: "images/innexa_26.jpeg",
+        order: 1
+    },
+    {
         title: "ELEVATE",
         description: "To Lift Up, Raise Higher or Improve.",
         about: "A flagship event focusing on career development, soft skills, and industry insights from experts. Elevate yourself with knowledge, networking, and inspiration.",
@@ -355,7 +369,7 @@ const DEFAULT_EVENTS = [
         slots: 0,
         status: "CLOSED",
         imageUrl: "https://image2url.com/r2/default/images/1771924612874-479e698d-1dfb-49ec-90d2-a203530cd141.png",
-        order: 1
+        order: 10
     },
     {
         title: "TECHSPARK",
@@ -372,7 +386,7 @@ const DEFAULT_EVENTS = [
         slots: 0,
         status: "CLOSED",
         imageUrl: "https://image2url.com/r2/default/images/1771924658426-b7ca4811-d7d7-4f79-b1e9-64e516259d86.jpeg",
-        order: 2
+        order: 11
     },
     {
         title: "VORTEX INNOVATORS",
@@ -389,24 +403,7 @@ const DEFAULT_EVENTS = [
         slots: 0,
         status: "CLOSED",
         imageUrl: "https://image2url.com/r2/default/images/1771925799245-91e45052-89b2-48d4-98f4-5f7081da8dbe.jpeg",
-        order: 3
-    },
-    {
-        title: "INNEXA 26",
-        description: "The Ultimate Tech Symposium & Innovation Challenge.",
-        about: "INNEXA 26 — The flagship state-level technical symposium of Department of Computer Applications, KMCT IETM. Uniting coders, creators, and innovators.",
-        date: "MAR 26",
-        time: "9:30 AM - 4:30 PM",
-        venue: "KMCT IETM",
-        category: "Session",
-        eventType: "main_event",
-        parentEvent: "",
-        fee: "Free",
-        prize: "₹10,000+",
-        slots: 100,
-        status: "OPEN",
-        imageUrl: "images/innexa_26.jpeg",
-        order: 4
+        order: 12
     },
     {
         title: "BGMI",
@@ -1470,7 +1467,7 @@ app.get("/api/gallery", async (req, res) => {
 // --- High-Speed Event Cache for Instant Response ---
 let eventsMemoryCache = null;
 let eventsMemoryCacheTime = 0;
-const EVENTS_CACHE_TTL = 15000; // 15s cache TTL
+const EVENTS_CACHE_TTL = 60000; // 60s memory cache TTL
 
 function invalidateEventsCache() {
     eventsMemoryCache = null;
@@ -1481,6 +1478,17 @@ let innexaCleanedAndSeeded = false;
 async function ensureInnexaCleanedAndSeeded() {
     if (innexaCleanedAndSeeded) return;
     try {
+        // Guarantee INNEXA 26 main event is order 1, OPEN, with official poster
+        await Event.updateMany(
+            { title: { $regex: /innexa/i }, $or: [{ eventType: "main_event" }, { parentEvent: "" }] },
+            { $set: { order: 1, status: "OPEN", imageUrl: "images/innexa_26.jpeg" } }
+        );
+
+        // Ensure legacy sessions are CLOSED and ordered after INNEXA
+        await Event.updateOne({ title: "ELEVATE", eventType: "main_event" }, { $set: { order: 10, status: "CLOSED" } });
+        await Event.updateOne({ title: "TECHSPARK", eventType: "main_event" }, { $set: { order: 11, status: "CLOSED" } });
+        await Event.updateOne({ title: "VORTEX INNOVATORS", eventType: "main_event" }, { $set: { order: 12, status: "CLOSED" } });
+
         await Event.deleteMany({
             $or: [
                 { title: /^pes$/i },
@@ -1569,8 +1577,8 @@ async function ensureInnexaCleanedAndSeeded() {
 
 app.get("/api/events", async (req, res) => {
     try {
-        res.setHeader('Cache-Control', 'public, max-age=15, s-maxage=30, stale-while-revalidate=60');
-        if (eventsMemoryCache && (Date.now() - eventsMemoryCacheTime < EVENTS_CACHE_TTL)) {
+        res.setHeader('Cache-Control', 'public, max-age=60, s-maxage=120, stale-while-revalidate=300');
+        if (!req.query._t && eventsMemoryCache && (Date.now() - eventsMemoryCacheTime < EVENTS_CACHE_TTL)) {
             return res.json(eventsMemoryCache);
         }
         await connectDB();

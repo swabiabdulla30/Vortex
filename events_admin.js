@@ -33,13 +33,50 @@
         // 1. Instant Render from Local Cache (0ms perceived load time)
         try {
             const cachedRaw = localStorage.getItem('vortex_cached_events');
-            if (cachedRaw) {
-                const cachedEvents = JSON.parse(cachedRaw);
-                if (Array.isArray(cachedEvents) && cachedEvents.length > 0) {
-                    loadedMainEvents = cachedEvents.filter(e => e.eventType === 'main_event' || (!e.parentEvent && (e.category || '').toLowerCase() === 'session'));
-                    renderMainEventsGrid();
-                }
+            let cachedEvents = cachedRaw ? JSON.parse(cachedRaw) : null;
+            if (!Array.isArray(cachedEvents) || cachedEvents.length === 0) {
+                cachedEvents = [
+                    {
+                        title: "INNEXA 26",
+                        description: "The Ultimate Tech Symposium & Innovation Challenge.",
+                        date: "MAR 26",
+                        venue: "KMCT IETM",
+                        imageUrl: "images/innexa_26.jpeg",
+                        status: "OPEN",
+                        order: 1
+                    },
+                    {
+                        title: "ELEVATE",
+                        description: "To Lift Up, Raise Higher or Improve.",
+                        date: "MAR 05 - 06",
+                        venue: "KMCT IETM",
+                        imageUrl: "https://image2url.com/r2/default/images/1771924612874-479e698d-1dfb-49ec-90d2-a203530cd141.png",
+                        status: "CLOSED",
+                        order: 10
+                    },
+                    {
+                        title: "TECHSPARK",
+                        description: "Igniting the next generation of innovators.",
+                        date: "AUG 26",
+                        venue: "KMCT IETM",
+                        imageUrl: "https://image2url.com/r2/default/images/1771924658426-b7ca4811-d7d7-4f79-b1e9-64e516259d86.jpeg",
+                        status: "CLOSED",
+                        order: 11
+                    },
+                    {
+                        title: "VORTEX INNOVATORS",
+                        description: "Exploring the future of Generative AI.",
+                        date: "MAR 19",
+                        venue: "KMCT IETM",
+                        imageUrl: "https://image2url.com/r2/default/images/1771925799245-91e45052-89b2-48d4-98f4-5f7081da8dbe.jpeg",
+                        status: "CLOSED",
+                        order: 12
+                    }
+                ];
+                try { localStorage.setItem('vortex_cached_events', JSON.stringify(cachedEvents)); } catch(e) {}
             }
+            loadedMainEvents = cachedEvents.filter(e => e.eventType === 'main_event' || (!e.parentEvent && (e.category || '').toLowerCase() === 'session'));
+            renderMainEventsGrid();
         } catch (e) {
             console.warn('Cache parse error:', e);
         }
@@ -61,7 +98,9 @@
                 }
             }
             if (!allEvents) {
-                const res = await fetch('/api/events?_t=' + Date.now(), { cache: 'no-store' });
+                const fetchUrl = forceFresh ? ('/api/events?_t=' + Date.now()) : '/api/events';
+                const fetchOpts = forceFresh ? { cache: 'no-store' } : {};
+                const res = await fetch(fetchUrl, fetchOpts);
                 if (res.ok) allEvents = await res.json();
             }
             if (Array.isArray(allEvents)) {
@@ -90,7 +129,13 @@
         const grid = document.querySelector('#events .cards-grid');
         if (!grid) return;
 
-        let displayList = loadedMainEvents;
+        // Prioritize active/OPEN events (INNEXA 26) at the top of the grid
+        let displayList = [...loadedMainEvents].sort((a, b) => {
+            const aOpen = (a.status || 'OPEN').toUpperCase() !== 'CLOSED';
+            const bOpen = (b.status || 'OPEN').toUpperCase() !== 'CLOSED';
+            if (aOpen !== bOpen) return aOpen ? -1 : 1;
+            return (a.order || 99) - (b.order || 99);
+        });
 
         if (displayList.length === 0 && !isAdmin) {
             grid.innerHTML = `

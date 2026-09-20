@@ -21,8 +21,8 @@
     <link rel="preload" href="/api/leads" as="fetch" crossorigin="anonymous">
     <link rel="preload" href="/api/network" as="fetch" crossorigin="anonymous">
     <script>
-        // High-speed parallel fetch: starts before styles or body are parsed
-        window._vortexLeadsPromise = fetch('/api/leads?_t=' + Date.now(), { cache: 'no-store' })
+        // High-speed parallel fetch: starts before styles or body are parsed and utilizes preload
+        window._vortexLeadsPromise = fetch('/api/leads')
             .then(r => r.ok ? r.json() : null)
             .then(data => {
                 if (Array.isArray(data) && data.length > 0) {
@@ -33,7 +33,7 @@
                 return data;
             }).catch(() => null);
 
-        window._vortexNetworkPromise = fetch('/api/network?_t=' + Date.now(), { cache: 'no-store' })
+        window._vortexNetworkPromise = fetch('/api/network')
             .then(r => r.ok ? r.json() : null)
             .then(data => {
                 if (Array.isArray(data) && data.length > 0) {
