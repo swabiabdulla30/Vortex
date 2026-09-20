@@ -516,7 +516,7 @@
                         venue: venue,
                         fee: fee,
                         prize: prize,
-                        slots: slots ? Number(slots) : 0,
+                        slots: slots ? (parseInt(String(slots).replace(/[^0-9]/g, ''), 10) || 0) : 0,
                         status: status.toUpperCase(),
                         order: order ? Number(order) : 0,
                         about: about,

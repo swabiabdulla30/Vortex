@@ -69,11 +69,6 @@
                 if (res.ok) allEvents = await res.json();
             }
             if (Array.isArray(allEvents)) {
-                allEvents.forEach(e => {
-                    if ((e.title || '').trim().toUpperCase() === 'ELEVATE' || (e.parentEvent || '').trim().toUpperCase() === 'ELEVATE') {
-                        e.status = 'CLOSED';
-                    }
-                });
                 // Update cache for all pages
                 try {
                     localStorage.setItem('vortex_cached_events', JSON.stringify(allEvents));
@@ -113,20 +108,15 @@
         }
 
         let cardsHtml = displayList.map(evt => {
-            const isElevate = evt.title.trim().toUpperCase() === 'ELEVATE';
-            const isInnexa = evt.title.trim().toUpperCase().includes('INNEXA');
-            const isClosed = !isInnexa && (isElevate || (evt.status || 'OPEN').toUpperCase() === 'CLOSED');
+            const isClosed = (evt.status || 'OPEN').toUpperCase() === 'CLOSED';
             const dateParts = parseDateString(evt.date);
             
-            // INNEXA 26 is explicitly UNLOCKED for everyone; ELEVATE and other closed events are unlocked for admin (like TECHSPARK)
-            const isLocked = !isInnexa && !isAdmin && isClosed;
-            const linkHref = isLocked ? 'javascript:void(0)' : 'elevate.html?event=' + encodeURIComponent(evt.title);
-            const clickAttr = isLocked ? 'onclick="alert(\'This event is locked and registrations are closed.\'); return false;"' : '';
-            const cardStyle = isLocked ? 'text-decoration: none; color: inherit; cursor: not-allowed; position: relative; opacity: 0.75;' : 'text-decoration: none; color: inherit; cursor: pointer; position: relative;';
+            const linkHref = 'elevate.html?event=' + encodeURIComponent(evt.title);
+            const cardStyle = 'text-decoration: none; color: inherit; cursor: pointer; position: relative;';
 
-            let statusBadge = isLocked 
-                ? '<div class="card-status status-soon">CLOSED</div>'
-                : (isClosed ? '<div class="card-status status-active" style="background: rgba(255, 170, 0, 0.2); color: #ffaa00; border-color: rgba(255,170,0,0.5);">● CLOSED (ADMIN OPEN)</div>' : '<div class="card-status status-active">&#9679; REGISTRATION OPEN</div>');
+            let statusBadge = isClosed 
+                ? (isAdmin ? '<div class="card-status status-active" style="background: rgba(255, 170, 0, 0.2); color: #ffaa00; border-color: rgba(255,170,0,0.5);">● CLOSED (ADMIN OPEN)</div>' : '<div class="card-status status-soon">REGISTRATION CLOSED</div>')
+                : '<div class="card-status status-active">&#9679; REGISTRATION OPEN</div>';
 
             const adminToolbar = (isAdmin && !evt.isStatic) ? `
                 <div class="card-admin-bar">

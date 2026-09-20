@@ -285,16 +285,6 @@ async function seedDefaultsIfNeeded() {
                 { title: { $nin: ["ELEVATE", "TECHSPARK", "VORTEX INNOVATORS"] }, eventType: { $exists: false } },
                 { $set: { eventType: "sub_event", parentEvent: "ELEVATE" } }
             );
-            // Ensure ELEVATE and its sub-events are updated to CLOSED
-            await Event.updateMany(
-                {
-                    $or: [
-                        { title: { $regex: /^elevate$/i } },
-                        { parentEvent: { $regex: /^elevate$/i } }
-                    ]
-                },
-                { $set: { status: "CLOSED" } }
-            );
 
             // Ensure INNEXA events are explicitly OPEN
             const innexaEvent = await Event.findOne({ title: { $regex: /innexa/i } });
@@ -598,7 +588,6 @@ app.post("/api/login", async (req, res) => {
 // --- Helper to verify if an event is closed for registration ---
 async function isEventClosedForUser(eventName, authHeader) {
     if (!eventName) return false;
-    if (eventName.trim().toUpperCase().includes('INNEXA')) return false; // INNEXA is unlocked and open
     try {
         if (authHeader && authHeader.startsWith('Bearer ')) {
             const token = authHeader.split(' ')[1];
@@ -612,8 +601,22 @@ async function isEventClosedForUser(eventName, authHeader) {
         const event = await Event.findOne({
             title: { $regex: new RegExp(`^${eventName.trim()}$`, 'i') }
         });
-        if (event && (event.status || 'OPEN').toUpperCase() === 'CLOSED') {
-            return true;
+        if (event) {
+            if ((event.status || 'OPEN').toUpperCase() === 'CLOSED') {
+                return { closed: true, message: `Registration for ${event.title} is officially closed.` };
+            }
+            const totalSlots = event.slots !== undefined && event.slots !== null && event.slots !== ""
+                ? (parseInt(String(event.slots).replace(/[^0-9]/g, ''), 10) || 0)
+                : 0;
+            if (totalSlots > 0) {
+                const registered = await Registration.countDocuments({
+                    event: { $regex: new RegExp(`^${event.title.trim()}$`, 'i') },
+                    paymentStatus: "PAID"
+                });
+                if (registered >= totalSlots) {
+                    return { closed: true, message: `Registration is full! All ${totalSlots} spots for ${event.title} have been filled.` };
+                }
+            }
         }
     } catch (e) {
         console.warn("Event status check warning:", e.message);
@@ -626,8 +629,9 @@ app.post("/api/register", async (req, res) => {
     try {
         await connectDB();
         const eventName = req.body.event || req.body.eventName || '';
-        if (await isEventClosedForUser(eventName, req.headers['authorization'])) {
-            return res.status(403).json({ error: "Registration for this event is closed." });
+        const closedCheck = await isEventClosedForUser(eventName, req.headers['authorization']);
+        if (closedCheck && closedCheck.closed) {
+            return res.status(403).json({ error: closedCheck.message || "Registration for this event is closed." });
         }
 
         const ticketId = "VTX-" + Date.now();
@@ -638,8 +642,6 @@ app.post("/api/register", async (req, res) => {
             certificateStatus: "Pending"
         });
         await data.save();
-
-        // Note: Excel save is now DEFERRED until payment success
 
         res.status(201).json(data);
     } catch (error) {
@@ -653,8 +655,9 @@ app.post("/api/free-register", async (req, res) => {
     try {
         await connectDB();
         const eventName = req.body.event || req.body.eventName || '';
-        if (await isEventClosedForUser(eventName, req.headers['authorization'])) {
-            return res.status(403).json({ error: "Registration for this event is closed." });
+        const closedCheck = await isEventClosedForUser(eventName, req.headers['authorization']);
+        if (closedCheck && closedCheck.closed) {
+            return res.status(403).json({ error: closedCheck.message || "Registration for this event is closed." });
         }
 
         const ticketId = "VTX-" + Date.now();
@@ -697,8 +700,9 @@ app.post("/api/create-order", async (req, res) => {
         if (type === 'event') {
             await connectDB();
             const eventName = req.body.eventName || '';
-            if (await isEventClosedForUser(eventName, req.headers['authorization'])) {
-                return res.status(403).json({ error: "Registration for this event is closed." });
+            const closedCheck = await isEventClosedForUser(eventName, req.headers['authorization']);
+            if (closedCheck && closedCheck.closed) {
+                return res.status(403).json({ error: closedCheck.message || "Registration for this event is closed." });
             }
             const eventNameUpper = eventName.toUpperCase().trim();
 
@@ -829,20 +833,50 @@ const EVENT_SLOTS = {
 app.get("/api/event-slots", async (req, res) => {
     try {
         await connectDB();
+        const allDbEvents = await Event.find().lean();
+        const eventMap = new Map();
+
+        // 1. Initial fallbacks
+        Object.entries(EVENT_SLOTS).forEach(([name, total]) => {
+            eventMap.set(name.trim().toUpperCase(), { event: name, total });
+        });
+
+        // 2. MongoDB events OVERRIDE static fallbacks (Admin panel has full authority)
+        for (const ev of allDbEvents) {
+            if (!ev.title) continue;
+            const parsedSlots = (ev.slots !== undefined && ev.slots !== null && ev.slots !== "")
+                ? (parseInt(String(ev.slots).replace(/[^0-9]/g, ''), 10) || 0)
+                : 0;
+            const isClosed = (ev.status || 'OPEN').toUpperCase() === 'CLOSED';
+            eventMap.set(ev.title.trim().toUpperCase(), {
+                event: ev.title.trim(),
+                total: parsedSlots,
+                status: isClosed ? 'CLOSED' : 'OPEN'
+            });
+        }
+
+        // 3. Count paid registrations for each event
         const results = await Promise.all(
-            Object.entries(EVENT_SLOTS).map(async ([eventName, total]) => {
+            Array.from(eventMap.values()).map(async (item) => {
                 const registered = await Registration.countDocuments({
-                    event: { $regex: new RegExp(`^${eventName}$`, 'i') },
+                    event: { $regex: new RegExp(`^${item.event.trim()}$`, 'i') },
                     paymentStatus: "PAID"
                 });
+                const total = item.total;
+                const isClosed = item.status === 'CLOSED';
+                const remaining = total > 0 ? Math.max(0, total - registered) : (isClosed ? 0 : 999);
+                const isFull = total > 0 && remaining === 0;
+
                 return {
-                    event: eventName,
-                    total,
-                    registered,
-                    remaining: Math.max(0, total - registered)
+                    event: item.event,
+                    total: total,
+                    registered: registered,
+                    remaining: remaining,
+                    status: isClosed ? 'CLOSED' : (isFull ? 'FULL' : 'OPEN')
                 };
             })
         );
+
         res.json(results);
     } catch (error) {
         console.error("Event slots error:", error);
@@ -1541,7 +1575,7 @@ app.post("/api/admin/events", authenticateToken, async (req, res) => {
             parentEvent: resolvedParent,
             fee: fee ? fee.trim() : "Free",
             prize: prize ? prize.trim() : "",
-            slots: slots !== undefined && slots !== "" ? Number(slots) : 0,
+            slots: slots !== undefined && slots !== "" ? (parseInt(String(slots).replace(/[^0-9]/g, ''), 10) || 0) : 0,
             status: status ? status.toUpperCase() : "OPEN",
             imageUrl: imageUrl.trim(),
             order: order !== undefined && order !== "" ? Number(order) : 0
@@ -1581,7 +1615,9 @@ app.put("/api/admin/events/:id", authenticateToken, async (req, res) => {
         }
         if (fee !== undefined) updateData.fee = fee.trim();
         if (prize !== undefined) updateData.prize = prize.trim();
-        if (slots !== undefined && slots !== "") updateData.slots = Number(slots);
+        if (slots !== undefined && slots !== "") {
+            updateData.slots = parseInt(String(slots).replace(/[^0-9]/g, ''), 10) || 0;
+        }
         if (status !== undefined) updateData.status = status.toUpperCase();
         if (imageUrl) updateData.imageUrl = imageUrl.trim();
         if (order !== undefined && order !== "") updateData.order = Number(order);

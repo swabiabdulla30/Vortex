@@ -590,7 +590,7 @@
         <!-- LEFT: Event Info Panel -->
         <div class="reg-left">
             <div class="reg-event-hero">
-                <img id="reg-event-img" src="" alt="Event">
+                <img id="reg-event-img" src="https://image2url.com/r2/default/images/1771323328076-73754ca7-5637-40c3-9e39-77832d8f5a18.jpeg" alt="Event" onerror="this.src='https://image2url.com/r2/default/images/1771323328076-73754ca7-5637-40c3-9e39-77832d8f5a18.jpeg';">
                 <div class="reg-hero-overlay"></div>
                 <div class="reg-hero-badge" id="reg-hero-badge">● REGISTRATION OPEN</div>
                 <div class="reg-hero-title">
@@ -892,17 +892,10 @@
                 }
 
                 let isClosed = Boolean(details && details.closed);
-                if (cleanName.toUpperCase().includes('INNEXA')) isClosed = false;
                 window.currentEventIsClosed = isClosed;
                 const user = userStr ? JSON.parse(userStr) : null;
                 const isAdmin = Boolean(user && user.role === 'admin');
 
-                // Strictly block regular users from accessing ELEVATE registration
-                if (cleanName.toUpperCase() === 'ELEVATE' && !isAdmin) {
-                    alert('Access to the Elevate Series is officially closed.');
-                    window.location.replace('events.html');
-                    return;
-                }
 
                 const countEl = document.getElementById('reg-slot-count');
                 const slotFillEl = document.getElementById('reg-slot-fill');
@@ -997,9 +990,10 @@
                 // Helper to apply dynamic/cached event data to form
                 function applyDynamicEventData(match) {
                     if (!match) return;
-                    if (match.imageUrl) {
-                        const img = document.getElementById('reg-event-img');
-                        if (img) { img.src = match.imageUrl; img.alt = match.title; }
+                    const img = document.getElementById('reg-event-img');
+                    if (img) {
+                        img.src = match.imageUrl || 'https://image2url.com/r2/default/images/1771323328076-73754ca7-5637-40c3-9e39-77832d8f5a18.jpeg';
+                        img.alt = match.title || cleanName;
                     }
                     if (match.date) {
                         const datePill = document.getElementById('reg-date-pill');
@@ -1023,26 +1017,37 @@
                         if (!window.currentEventIsFree) {
                             feeBanner.style.display = 'flex';
                             feeBanner.className = 'reg-fee-banner';
-                            feeAmount.textContent = match.fee;
+                            feeAmount.textContent = match.fee || '₹50';
                         } else {
                             feeBanner.style.display = 'flex';
                             feeBanner.className = 'reg-fee-banner free-entry';
                             feeAmount.textContent = 'FREE';
                         }
                     }
-                    if (match.about) {
-                        const aboutEl = document.getElementById('reg-about-text');
-                        if (aboutEl) aboutEl.innerHTML = match.about;
+                    const aboutEl = document.getElementById('reg-about-text');
+                    if (aboutEl) {
+                        aboutEl.innerHTML = match.about || match.description || match.subtitle || 'Details and highlights for this event will be published soon.';
                     }
-                    if (Array.isArray(match.rules) && match.rules.length > 0) {
-                        const rulesList = document.getElementById('reg-rules-list');
-                        if (rulesList) rulesList.innerHTML = match.rules.map(r => `<li>${r}</li>`).join('');
+                    const rulesList = document.getElementById('reg-rules-list');
+                    if (rulesList) {
+                        if (Array.isArray(match.rules) && match.rules.length > 0) {
+                            rulesList.innerHTML = match.rules.map(r => `<li>${r}</li>`).join('');
+                        } else {
+                            rulesList.innerHTML = '<li>Rules and guidelines will be communicated by event coordinators prior to the match.</li>';
+                        }
+                    }
+
+                    if (match.slots && Number(match.slots) > 0) {
+                        if (countEl && (countEl.textContent.includes('Checking') || !countEl.textContent)) {
+                            countEl.textContent = `${match.slots} spots available`;
+                            countEl.style.color = '#00e05a';
+                            if (slotFillEl) slotFillEl.style.width = '100%';
+                        }
                     }
 
                     // Dynamic status check from DB
-                    const isInnexa = cleanName.toUpperCase().includes('INNEXA');
-                    const isLiveClosed = !isInnexa && (match.status || 'OPEN').toUpperCase() === 'CLOSED';
-                    if (!isInnexa && (isLiveClosed || isClosed)) {
+                    const isLiveClosed = (match.status || 'OPEN').toUpperCase() === 'CLOSED';
+                    if (isLiveClosed || isClosed) {
                         applyClosedState(true, 'closed');
                     } else {
                         applyClosedState(false);
@@ -1061,8 +1066,8 @@
                     }
                 } catch(e) {}
 
-                // 2. Dynamic live event sync from API (background revalidation)
-                fetch('/api/events')
+                // 2. Dynamic live event sync from API (background revalidation with cache-busting)
+                fetch('/api/events?_t=' + Date.now(), { cache: 'no-store' })
                     .then(r => r.json())
                     .then(events => {
                         if (!Array.isArray(events)) return;
@@ -1074,15 +1079,33 @@
                     })
                     .catch(err => console.log('Live event sync skipped:', err.message));
 
+                // 3. Direct single event query fallback
+                fetch(`/api/events/${encodeURIComponent(cleanName)}?_t=${Date.now()}`, { cache: 'no-store' })
+                    .then(r => r.ok ? r.json() : null)
+                    .then(exactEvt => {
+                        if (exactEvt && exactEvt.title) {
+                            applyDynamicEventData(exactEvt);
+                        }
+                    })
+                    .catch(() => {});
+
                 // Slot bar – fetch from API
                 const API_URL = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost')
                     ? 'http://127.0.0.1:5000/api' : '/api';
 
-                fetch(`${API_URL}/event-slots`)
+                fetch(`${API_URL}/event-slots?_t=${Date.now()}`, { cache: 'no-store' })
                     .then(r => r.json())
                     .then(slots => {
-                        const match = slots.find(s => s.event.toUpperCase() === cleanName.toUpperCase());
-                        if (!match) return;
+                        if (!Array.isArray(slots)) return;
+                        const match = slots.find(s => s.event && s.event.toUpperCase() === cleanName.toUpperCase());
+                        if (!match) {
+                            if (countEl && (countEl.textContent.includes('Checking') || !countEl.textContent)) {
+                                countEl.textContent = 'OPEN';
+                                countEl.style.color = '#00e05a';
+                                if (slotFillEl) slotFillEl.style.width = '100%';
+                            }
+                            return;
+                        }
                         const { total, remaining } = match;
                         const pct = total > 0 ? Math.round(((total - remaining) / total) * 100) : 100;
                         if (slotFillEl) slotFillEl.style.width = pct + '%';
@@ -1113,7 +1136,8 @@
                     })
                     .catch(() => {
                         if (!isClosed && !window.currentEventIsClosed && countEl) {
-                            countEl.textContent = '';
+                            countEl.textContent = 'OPEN';
+                            countEl.style.color = '#00e05a';
                         }
                     });
             } catch (err) {
@@ -1151,8 +1175,6 @@
             submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> &nbsp;Processing...';
             submitBtn.disabled = true;
 
-            const userStr = localStorage.getItem('vortexCurrentUser');
-            const user = userStr ? JSON.parse(userStr) : null;
             const userEmail = user ? user.email : '';
 
             if (!userEmail) {

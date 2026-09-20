@@ -208,28 +208,35 @@
 
             // Dynamically resolve Innexa poster from local cache or live API
             const innexaImg = document.getElementById('featured-innexa-img');
-            function applyInnexaImage(url) {
-                if (innexaImg && url && url.trim() && !url.includes('1771924658426')) {
-                    innexaImg.src = url;
+            const innexaTitle = document.getElementById('innexa-title');
+            const innexaDesc = document.querySelector('.featured-event-desc');
+
+            function applyInnexaData(evt) {
+                if (!evt) return;
+                if (innexaImg && evt.imageUrl && evt.imageUrl.trim() && !evt.imageUrl.includes('1771924658426')) {
+                    innexaImg.src = evt.imageUrl;
+                }
+                if (innexaTitle && evt.title) {
+                    innexaTitle.textContent = evt.title;
+                }
+                if (innexaDesc && (evt.subtitle || evt.description)) {
+                    innexaDesc.textContent = evt.subtitle || evt.description;
                 }
             }
 
             try {
                 const cached = JSON.parse(localStorage.getItem('vortex_cached_events') || '[]');
                 const match = cached.find(e => (e.title || '').toUpperCase().includes('INNEXA') && !e.parentEvent);
-                if (match && match.imageUrl) {
-                    applyInnexaImage(match.imageUrl);
-                }
+                if (match) applyInnexaData(match);
             } catch (e) { }
 
-            fetch('/api/events')
+            fetch('/api/events?_t=' + Date.now(), { cache: 'no-store' })
                 .then(r => r.json())
                 .then(evts => {
                     if (Array.isArray(evts)) {
+                        try { localStorage.setItem('vortex_cached_events', JSON.stringify(evts)); } catch(e){}
                         const match = evts.find(e => (e.title || '').toUpperCase().includes('INNEXA') && !e.parentEvent);
-                        if (match && match.imageUrl) {
-                            applyInnexaImage(match.imageUrl);
-                        }
+                        if (match) applyInnexaData(match);
                     }
                 })
                 .catch(() => { });

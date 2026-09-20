@@ -35,14 +35,6 @@
                     window.location.replace('login.html?redirect=' + encodeURIComponent(returnUrl));
                     return;
                 }
-
-                // 2. If logged in, but event is ELEVATE and user is not an admin
-                const token = localStorage.getItem('vortexToken');
-                const isAdmin = Boolean(user && user.role === 'admin' && token);
-                if (isElevate && !isAdmin) {
-                    sessionStorage.setItem('vortex_toast_msg', 'Access to the Elevate Series is currently closed.');
-                    window.location.replace('events.html');
-                }
             } catch (e) {
                 // Keep accessible
             }
@@ -50,7 +42,7 @@
     </script>
     <script>
         // High-speed parallel fetch: starts before styles or body are parsed
-        window._vortexFetchPromise = fetch('/api/events')
+        window._vortexFetchPromise = fetch('/api/events?_t=' + Date.now(), { cache: 'no-store' })
             .then(r => r.ok ? r.json() : null)
             .then(data => {
                 if (Array.isArray(data)) {

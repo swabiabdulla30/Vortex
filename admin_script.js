@@ -1192,7 +1192,10 @@ function initAdminCMS() {
                     venue: document.getElementById('input-event-venue')?.value.trim() || '',
                     fee: document.getElementById('input-event-fee')?.value.trim() || 'Free',
                     prize: document.getElementById('input-event-prize')?.value.trim() || '',
-                    slots: document.getElementById('input-event-slots')?.value.trim() || '',
+                    slots: (() => {
+                        const val = document.getElementById('input-event-slots')?.value.trim() || '';
+                        return parseInt(String(val).replace(/[^0-9]/g, ''), 10) || 0;
+                    })(),
                     about: document.getElementById('input-event-about')?.value.trim() || '',
                     rules: rulesArray,
                     order: orderVal ? Number(orderVal) : 0

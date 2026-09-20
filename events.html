@@ -20,32 +20,11 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="preload" href="/api/events" as="fetch" crossorigin="anonymous">
     <script>
-        // 0ms Cache Sanitizer - runs synchronously before any element is parsed
-        try {
-            const raw = localStorage.getItem('vortex_cached_events');
-            if (raw) {
-                const evts = JSON.parse(raw);
-                if (Array.isArray(evts)) {
-                    evts.forEach(e => {
-                        if ((e.title || '').trim().toUpperCase() === 'ELEVATE' || (e.parentEvent || '').trim().toUpperCase() === 'ELEVATE') {
-                            e.status = 'CLOSED';
-                        }
-                    });
-                    localStorage.setItem('vortex_cached_events', JSON.stringify(evts));
-                }
-            }
-        } catch(e) {}
-
         // High-speed parallel fetch: starts before styles or body are parsed
-        window._vortexFetchPromise = fetch('/api/events')
+        window._vortexFetchPromise = fetch('/api/events?_t=' + Date.now(), { cache: 'no-store' })
             .then(r => r.ok ? r.json() : null)
             .then(data => {
                 if (Array.isArray(data)) {
-                    data.forEach(e => {
-                        if ((e.title || '').trim().toUpperCase() === 'ELEVATE' || (e.parentEvent || '').trim().toUpperCase() === 'ELEVATE') {
-                            e.status = 'CLOSED';
-                        }
-                    });
                     try { localStorage.setItem('vortex_cached_events', JSON.stringify(data)); } catch(e){}
                     window._vortexLoadedEvents = data;
                     if (window.renderMainEventsNow) window.renderMainEventsNow(data);
@@ -225,22 +204,6 @@
             </div>
             <!-- Instant 0ms Pre-renderer from local cache or preloaded data -->
             <script>
-                // Sanitize local cache to guarantee ELEVATE is permanently marked CLOSED
-                try {
-                    const raw = localStorage.getItem('vortex_cached_events');
-                    if (raw) {
-                        const evts = JSON.parse(raw);
-                        if (Array.isArray(evts)) {
-                            evts.forEach(e => {
-                                if ((e.title || '').trim().toUpperCase() === 'ELEVATE' || (e.parentEvent || '').trim().toUpperCase() === 'ELEVATE') {
-                                    e.status = 'CLOSED';
-                                }
-                            });
-                            localStorage.setItem('vortex_cached_events', JSON.stringify(evts));
-                        }
-                    }
-                } catch(e) {}
-
                 window.renderMainEventsNow = function(dataOverride) {
                     try {
                         let events = dataOverride || window._vortexLoadedEvents;
@@ -261,25 +224,20 @@
                         const isAdmin = Boolean(user && user.role === 'admin' && token);
 
                         grid.innerHTML = displayList.map(evt => {
-                            const isElevate = (evt.title || '').trim().toUpperCase() === 'ELEVATE';
-                            const isInnexa = (evt.title || '').trim().toUpperCase().includes('INNEXA');
-                            const isClosed = !isInnexa && (isElevate || (evt.status || 'OPEN').toUpperCase() === 'CLOSED');
+                            const isClosed = (evt.status || 'OPEN').toUpperCase() === 'CLOSED';
                             const dateParts = (() => {
                                 if (!evt.date) return { month: 'DATE', day: 'TBA' };
                                 const p = evt.date.trim().split(/[\s,]+/);
                                 return p.length >= 2 ? { month: p[0].substring(0, 3).toUpperCase(), day: p.slice(1).join(' ') } : { month: 'DATE', day: evt.date };
                             })();
 
-                            // INNEXA 26 is explicitly UNLOCKED for everyone; ELEVATE and other closed events are unlocked for admin (like TECHSPARK)
-                            const isLocked = !isInnexa && !isAdmin && isClosed;
-                            const linkHref = isLocked ? 'javascript:void(0)' : 'elevate.html?event=' + encodeURIComponent(evt.title);
-                            const clickAttr = isLocked ? 'onclick="alert(\'This event is locked and registrations are closed.\'); return false;"' : '';
-                            const cardStyle = isLocked ? 'text-decoration: none; color: inherit; cursor: not-allowed; position: relative; opacity: 0.75;' : 'text-decoration: none; color: inherit; cursor: pointer; position: relative;';
-                            const statusBadge = isLocked
-                                ? '<div class="card-status status-soon">CLOSED</div>'
-                                : (isClosed ? '<div class="card-status status-active" style="background: rgba(255, 170, 0, 0.2); color: #ffaa00; border-color: rgba(255,170,0,0.5);">● CLOSED (ADMIN OPEN)</div>' : '<div class="card-status status-active">&#9679; REGISTRATION OPEN</div>');
+                            const linkHref = 'elevate.html?event=' + encodeURIComponent(evt.title);
+                            const cardStyle = 'text-decoration: none; color: inherit; cursor: pointer; position: relative;';
+                            const statusBadge = isClosed
+                                ? (isAdmin ? '<div class="card-status status-active" style="background: rgba(255, 170, 0, 0.2); color: #ffaa00; border-color: rgba(255,170,0,0.5);">● CLOSED (ADMIN OPEN)</div>' : '<div class="card-status status-soon">REGISTRATION CLOSED</div>')
+                                : '<div class="card-status status-active">&#9679; REGISTRATION OPEN</div>';
                             
-                            return '<a href="' + linkHref + '" ' + clickAttr + ' class="card event-card" style="' + cardStyle + '">' +
+                            return '<a href="' + linkHref + '" class="card event-card" style="' + cardStyle + '">' +
                                 statusBadge +
                                 '<div class="card-image">' +
                                     '<img src="' + (evt.imageUrl || 'https://via.placeholder.com/400x250?text=Event') + '" alt="' + esc(evt.title) + '" loading="lazy" width="400" height="250">' +
@@ -287,7 +245,7 @@
                                 '<div class="card-content">' +
                                     '<div class="date-badge"><span class="month">' + dateParts.month + '</span><span class="day">' + dateParts.day + '</span></div>' +
                                     '<div class="event-details"><span class="event-type"></span><h3>' + esc(evt.title) + '</h3><p>' + esc(evt.subtitle || evt.description || '') + '</p>' +
-                                    '<div class="card-footer"><span class="location">📍 ' + esc(evt.venue || 'KMCT IETM') + '</span><span class="arrow">' + (isLocked ? '🔒' : '↗') + '</span></div></div>' +
+                                    '<div class="card-footer"><span class="location">📍 ' + esc(evt.venue || 'KMCT IETM') + '</span><span class="arrow">' + (isClosed ? '🔒' : '↗') + '</span></div></div>' +
                                 '</div>' +
                             '</a>';
                         }).join('');
