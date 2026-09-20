@@ -581,59 +581,99 @@ async function loadDynamicAboutData() {
     const leadsWrapper = document.querySelector('.leads-wrapper');
     const networkRow = document.querySelector('.network-row');
 
+    function applyLeads(leads) {
+        if (!leadsWrapper || !Array.isArray(leads) || leads.length === 0) return;
+        leads.forEach(l => {
+            if (l.imageUrl) {
+                const img = new Image();
+                img.decoding = 'async';
+                img.src = l.imageUrl;
+            }
+        });
+
+        leadsWrapper.innerHTML = leads.map((lead, idx) => `
+            <div class="lead-slide">
+                <div class="member-card main">
+                    <div class="frame">
+                        <div class="member-image">
+                            <img src="${lead.imageUrl}" alt="${lead.name}" loading="${idx < 3 ? 'eager' : 'lazy'}" decoding="async" ${idx === 1 ? 'fetchpriority="high"' : ''}>
+                        </div>
+                    </div>
+                    <div class="member-info">
+                        <h3>${lead.name}</h3>
+                        <p>${lead.role || 'ASSISTANT PROFESSOR'}</p>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+        const currentSlides = leadsWrapper.querySelectorAll('.lead-slide');
+        currentSlides.forEach(s => s.classList.remove('active'));
+        const activeIndex = window.innerWidth <= 768 ? 0 : 1;
+        if (currentSlides[activeIndex]) currentSlides[activeIndex].classList.add('active');
+    }
+
+    function applyNetwork(members) {
+        if (!networkRow || !Array.isArray(members) || members.length === 0) return;
+        members.forEach(m => {
+            if (m.imageUrl) {
+                const img = new Image();
+                img.decoding = 'async';
+                img.src = m.imageUrl;
+            }
+        });
+
+        networkRow.innerHTML = members.map((m, idx) => `
+            <div class="mini-card ${idx === 0 ? 'active' : ''}">
+                <img src="${m.imageUrl}" alt="${m.name}" loading="${idx < 6 ? 'eager' : 'lazy'}" decoding="async">
+                <div class="name-popup">
+                    <span class="name">${m.name}</span>
+                    <span class="role">${m.role || 'Member'}</span>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // 1. Instant render from local cache
+    try {
+        const cachedLeads = JSON.parse(localStorage.getItem('vortex_cached_leads') || 'null');
+        if (cachedLeads) applyLeads(cachedLeads);
+        const cachedNet = JSON.parse(localStorage.getItem('vortex_cached_network') || 'null');
+        if (cachedNet) applyNetwork(cachedNet);
+    } catch(e) {}
+
+    // 2. Background Revalidation from API
     if (leadsWrapper) {
         try {
-            const res = await fetch('/api/leads');
-            if (res.ok) {
-                const leads = await res.json();
-                if (Array.isArray(leads) && leads.length > 0) {
-                    leadsWrapper.innerHTML = leads.map(lead => `
-                        <div class="lead-slide">
-                            <div class="member-card main">
-                                <div class="frame">
-                                    <div class="member-image">
-                                        <img src="${lead.imageUrl}" alt="${lead.name}" loading="lazy">
-                                    </div>
-                                </div>
-                                <div class="member-info">
-                                    <h3>${lead.name}</h3>
-                                    <p>${lead.role || 'ASSISTANT PROFESSOR'}</p>
-                                </div>
-                            </div>
-                        </div>
-                    `).join('');
-
-                    // Reset initial slider active state
-                    const currentSlides = leadsWrapper.querySelectorAll('.lead-slide');
-                    currentSlides.forEach(s => s.classList.remove('active'));
-                    const activeIndex = window.innerWidth <= 768 ? 0 : 1;
-                    if (currentSlides[activeIndex]) currentSlides[activeIndex].classList.add('active');
-                }
+            let leads = window._vortexLoadedLeads;
+            if (!leads && window._vortexLeadsPromise) leads = await window._vortexLeadsPromise;
+            if (!leads) {
+                const res = await fetch('/api/leads?_t=' + Date.now(), { cache: 'no-store' });
+                if (res.ok) leads = await res.json();
+            }
+            if (Array.isArray(leads) && leads.length > 0) {
+                try { localStorage.setItem('vortex_cached_leads', JSON.stringify(leads)); } catch(e){}
+                applyLeads(leads);
             }
         } catch (e) {
-            console.log("Using static leads fallback:", e.message);
+            console.log("Using leads fallback:", e.message);
         }
     }
 
     if (networkRow) {
         try {
-            const res = await fetch('/api/network');
-            if (res.ok) {
-                const members = await res.json();
-                if (Array.isArray(members) && members.length > 0) {
-                    networkRow.innerHTML = members.map((m, idx) => `
-                        <div class="mini-card ${idx === 0 ? 'active' : ''}">
-                            <img src="${m.imageUrl}" alt="${m.name}" loading="lazy">
-                            <div class="name-popup">
-                                <span class="name">${m.name}</span>
-                                <span class="role">${m.role || 'Member'}</span>
-                            </div>
-                        </div>
-                    `).join('');
-                }
+            let members = window._vortexLoadedNetwork;
+            if (!members && window._vortexNetworkPromise) members = await window._vortexNetworkPromise;
+            if (!members) {
+                const res = await fetch('/api/network?_t=' + Date.now(), { cache: 'no-store' });
+                if (res.ok) members = await res.json();
+            }
+            if (Array.isArray(members) && members.length > 0) {
+                try { localStorage.setItem('vortex_cached_network', JSON.stringify(members)); } catch(e){}
+                applyNetwork(members);
             }
         } catch (e) {
-            console.log("Using static network fallback:", e.message);
+            console.log("Using network fallback:", e.message);
         }
     }
 }

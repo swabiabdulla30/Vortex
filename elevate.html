@@ -214,6 +214,9 @@
                     if (e.eventType === 'main_event') return false;
                     if ((e.category || '').toLowerCase() === 'session' && !e.parentEvent) return false;
 
+                    const titleUpper = String(e.title || '').trim().toUpperCase();
+                    if (titleUpper.includes('TEST') || titleUpper.includes('DUMMY') || titleUpper === 'NEW EVENT') return false;
+
                     const t = (targetName || 'ELEVATE').trim();
                     const p = (e.parentEvent || '').trim();
 

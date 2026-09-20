@@ -1341,9 +1341,10 @@ async function fetchLeads() {
     const countBadge = document.getElementById('leads-count');
     const tabBadge = document.getElementById('tab-badge-leads');
     try {
-        const res = await fetch('/api/leads');
+        const res = await fetch('/api/leads?_t=' + Date.now(), { cache: 'no-store' });
         const leads = await res.json();
         loadedLeads = Array.isArray(leads) ? leads : [];
+        try { localStorage.setItem('vortex_cached_leads', JSON.stringify(loadedLeads)); } catch(e){}
         if (countBadge) countBadge.textContent = `${loadedLeads.length} items`;
         if (tabBadge) tabBadge.textContent = loadedLeads.length;
 
@@ -1386,9 +1387,10 @@ async function fetchNetwork() {
     const countBadge = document.getElementById('network-count');
     const tabBadge = document.getElementById('tab-badge-network');
     try {
-        const res = await fetch('/api/network');
+        const res = await fetch('/api/network?_t=' + Date.now(), { cache: 'no-store' });
         const members = await res.json();
         loadedNetwork = Array.isArray(members) ? members : [];
+        try { localStorage.setItem('vortex_cached_network', JSON.stringify(loadedNetwork)); } catch(e){}
         if (countBadge) countBadge.textContent = `${loadedNetwork.length} items`;
         if (tabBadge) tabBadge.textContent = loadedNetwork.length;
 

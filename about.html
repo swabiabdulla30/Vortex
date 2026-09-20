@@ -18,6 +18,32 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preload" href="/api/leads" as="fetch" crossorigin="anonymous">
+    <link rel="preload" href="/api/network" as="fetch" crossorigin="anonymous">
+    <script>
+        // High-speed parallel fetch: starts before styles or body are parsed
+        window._vortexLeadsPromise = fetch('/api/leads?_t=' + Date.now(), { cache: 'no-store' })
+            .then(r => r.ok ? r.json() : null)
+            .then(data => {
+                if (Array.isArray(data) && data.length > 0) {
+                    try { localStorage.setItem('vortex_cached_leads', JSON.stringify(data)); } catch(e){}
+                    window._vortexLoadedLeads = data;
+                    if (typeof window.renderLeadsNow === 'function') window.renderLeadsNow(data);
+                }
+                return data;
+            }).catch(() => null);
+
+        window._vortexNetworkPromise = fetch('/api/network?_t=' + Date.now(), { cache: 'no-store' })
+            .then(r => r.ok ? r.json() : null)
+            .then(data => {
+                if (Array.isArray(data) && data.length > 0) {
+                    try { localStorage.setItem('vortex_cached_network', JSON.stringify(data)); } catch(e){}
+                    window._vortexLoadedNetwork = data;
+                    if (typeof window.renderNetworkNow === 'function') window.renderNetworkNow(data);
+                }
+                return data;
+            }).catch(() => null);
+    </script>
 </head>
 
 <body>
@@ -361,6 +387,91 @@
 
                 </div>
             </div>
+            <!-- Instant 0ms Pre-renderer for Leads & Network Members -->
+            <script>
+                (function() {
+                    const esc = s => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+                    window.renderLeadsNow = function(dataOverride) {
+                        try {
+                            let leads = dataOverride || window._vortexLoadedLeads;
+                            if (!leads) {
+                                const raw = localStorage.getItem('vortex_cached_leads');
+                                if (raw) leads = JSON.parse(raw);
+                            }
+                            if (!Array.isArray(leads) || leads.length === 0) return;
+                            const wrapper = document.querySelector('.leads-wrapper');
+                            if (!wrapper) return;
+
+                            // Preload all lead images asynchronously
+                            leads.forEach(l => {
+                                if (l.imageUrl) {
+                                    const img = new Image();
+                                    img.decoding = 'async';
+                                    img.src = l.imageUrl;
+                                }
+                            });
+
+                            wrapper.innerHTML = leads.map((lead, idx) => `
+                                <div class="lead-slide">
+                                    <div class="member-card main">
+                                        <div class="frame">
+                                            <div class="member-image">
+                                                <img src="${esc(lead.imageUrl)}" alt="${esc(lead.name)}" loading="${idx < 3 ? 'eager' : 'lazy'}" decoding="async" ${idx === 1 ? 'fetchpriority="high"' : ''}>
+                                            </div>
+                                        </div>
+                                        <div class="member-info">
+                                            <h3>${esc(lead.name)}</h3>
+                                            <p>${esc(lead.role || 'ASSISTANT PROFESSOR')}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('');
+
+                            const currentSlides = wrapper.querySelectorAll('.lead-slide');
+                            currentSlides.forEach(s => s.classList.remove('active'));
+                            const activeIndex = window.innerWidth <= 768 ? 0 : 1;
+                            if (currentSlides[activeIndex]) currentSlides[activeIndex].classList.add('active');
+                        } catch(e) {}
+                    };
+
+                    window.renderNetworkNow = function(dataOverride) {
+                        try {
+                            let members = dataOverride || window._vortexLoadedNetwork;
+                            if (!members) {
+                                const raw = localStorage.getItem('vortex_cached_network');
+                                if (raw) members = JSON.parse(raw);
+                            }
+                            if (!Array.isArray(members) || members.length === 0) return;
+                            const netRow = document.querySelector('.network-row');
+                            if (!netRow) return;
+
+                            members.forEach(m => {
+                                if (m.imageUrl) {
+                                    const img = new Image();
+                                    img.decoding = 'async';
+                                    img.src = m.imageUrl;
+                                }
+                            });
+
+                            netRow.innerHTML = members.map((m, idx) => `
+                                <div class="mini-card ${idx === 0 ? 'active' : ''}">
+                                    <img src="${esc(m.imageUrl)}" alt="${esc(m.name)}" loading="${idx < 6 ? 'eager' : 'lazy'}" decoding="async">
+                                    <div class="name-popup">
+                                        <span class="name">${esc(m.name)}</span>
+                                        <span class="role">${esc(m.role || 'Member')}</span>
+                                    </div>
+                                </div>
+                            `).join('');
+                        } catch(e) {}
+                    };
+
+                    // Execute 0ms initial render immediately
+                    window.renderLeadsNow();
+                    window.renderNetworkNow();
+                })();
+            </script>
+        </div>
     </section>
 
     <!-- Contact Section -->

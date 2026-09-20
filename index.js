@@ -320,6 +320,18 @@ async function seedDefaultsIfNeeded() {
                     order: 4
                 });
             }
+
+            // Clean up any legacy testing sub-events under INNEXA (keep only the official competitions)
+            try {
+                await Event.deleteMany({
+                    parentEvent: { $regex: /innexa/i },
+                    title: { $nin: [/pyxel sync/i, /pixel sync/i, /iconix/i, /blind app/i] }
+                });
+                console.log("Cleaned up legacy testing events under INNEXA.");
+            } catch (err) {
+                console.warn("Legacy test cleanup warning:", err.message);
+            }
+
             invalidateEventsCache();
         }
     } catch (err) {
@@ -1278,24 +1290,58 @@ app.delete("/api/admin/registrations", authenticateToken, async (req, res) => {
 // ============================================================
 // --- Public Dynamic CMS Routes ---
 // ============================================================
+// --- High-Speed Leads Cache for Instant Response ---
+let leadsMemoryCache = null;
+let leadsMemoryCacheTime = 0;
+const LEADS_CACHE_TTL = 60000;
+
+function invalidateLeadsCache() {
+    leadsMemoryCache = null;
+    leadsMemoryCacheTime = 0;
+}
+
 app.get("/api/leads", async (req, res) => {
     try {
+        res.setHeader('Cache-Control', 'public, max-age=60, s-maxage=120, stale-while-revalidate=300');
+        if (!req.query._t && leadsMemoryCache && (Date.now() - leadsMemoryCacheTime < LEADS_CACHE_TTL)) {
+            return res.json(leadsMemoryCache);
+        }
         await connectDB();
-        const leads = await LeadMember.find().sort({ order: 1, createdAt: 1 });
+        const leads = await LeadMember.find().sort({ order: 1, createdAt: 1 }).lean();
+        leadsMemoryCache = leads;
+        leadsMemoryCacheTime = Date.now();
         res.json(leads);
     } catch (error) {
         console.error("Get leads error:", error);
+        if (leadsMemoryCache) return res.json(leadsMemoryCache);
         res.status(500).json({ error: "Failed to fetch leads" });
     }
 });
 
+// --- High-Speed Network Cache for Instant Response ---
+let networkMemoryCache = null;
+let networkMemoryCacheTime = 0;
+const NETWORK_CACHE_TTL = 60000;
+
+function invalidateNetworkCache() {
+    networkMemoryCache = null;
+    networkMemoryCacheTime = 0;
+}
+
 app.get("/api/network", async (req, res) => {
     try {
+        res.setHeader('Cache-Control', 'public, max-age=60, s-maxage=120, stale-while-revalidate=300');
+        if (!req.query._t && networkMemoryCache && (Date.now() - networkMemoryCacheTime < NETWORK_CACHE_TTL)) {
+            return res.json(networkMemoryCache);
+        }
         await connectDB();
-        const members = await NetworkMember.find().sort({ order: 1, createdAt: 1 });
+        const members = await NetworkMember.find().sort({ order: 1, createdAt: 1 }).lean();
+        networkMemoryCache = members;
+        networkMemoryCacheTime = Date.now();
         res.json(members);
     } catch (error) {
         console.error("Get network error:", error);
+        if (networkMemoryCache) return res.json(networkMemoryCache);
         res.status(500).json({ error: "Failed to fetch network members" });
     }
 });
@@ -1392,6 +1438,7 @@ app.post("/api/admin/leads", authenticateToken, async (req, res) => {
             order: order !== undefined && order !== "" ? Number(order) : 0
         });
         await lead.save();
+        invalidateLeadsCache();
         res.status(201).json({ success: true, lead });
     } catch (error) {
         console.error("Create lead error:", error);
@@ -1405,6 +1452,7 @@ app.delete("/api/admin/leads/:id", authenticateToken, async (req, res) => {
         await connectDB();
         const deleted = await LeadMember.findByIdAndDelete(req.params.id);
         if (!deleted) return res.status(404).json({ error: "Lead member not found" });
+        invalidateLeadsCache();
         res.json({ success: true, message: "Lead member removed successfully" });
     } catch (error) {
         console.error("Delete lead error:", error);
@@ -1425,6 +1473,7 @@ app.put("/api/admin/leads/:id", authenticateToken, async (req, res) => {
 
         const updated = await LeadMember.findByIdAndUpdate(req.params.id, updateData, { new: true });
         if (!updated) return res.status(404).json({ error: "Lead member not found" });
+        invalidateLeadsCache();
         res.json({ success: true, lead: updated });
     } catch (error) {
         console.error("Update lead error:", error);
@@ -1446,6 +1495,7 @@ app.post("/api/admin/network", authenticateToken, async (req, res) => {
             order: order !== undefined && order !== "" ? Number(order) : 0
         });
         await member.save();
+        invalidateNetworkCache();
         res.status(201).json({ success: true, member });
     } catch (error) {
         console.error("Create network member error:", error);
@@ -1459,6 +1509,7 @@ app.delete("/api/admin/network/:id", authenticateToken, async (req, res) => {
         await connectDB();
         const deleted = await NetworkMember.findByIdAndDelete(req.params.id);
         if (!deleted) return res.status(404).json({ error: "Network member not found" });
+        invalidateNetworkCache();
         res.json({ success: true, message: "Network member removed successfully" });
     } catch (error) {
         console.error("Delete network member error:", error);
@@ -1479,6 +1530,7 @@ app.put("/api/admin/network/:id", authenticateToken, async (req, res) => {
 
         const updated = await NetworkMember.findByIdAndUpdate(req.params.id, updateData, { new: true });
         if (!updated) return res.status(404).json({ error: "Network member not found" });
+        invalidateNetworkCache();
         res.json({ success: true, member: updated });
     } catch (error) {
         console.error("Update network member error:", error);
