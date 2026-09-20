@@ -7,6 +7,7 @@
     let loadedMainEvents = [];
     let currentImageMode = 'upload';
     let currentImageBase64 = '';
+    let setImageMode = function() {};
 
     function checkIsAdmin() {
         try {
@@ -282,7 +283,7 @@
         const inputFile = document.getElementById('main-event-file');
         const inputUrl = document.getElementById('main-event-url');
 
-        function setImageMode(mode) {
+        setImageMode = function(mode) {
             currentImageMode = mode;
             if (mode === 'upload') {
                 if (tabUpload) {
@@ -586,6 +587,13 @@
     }
     window.openMainEventModal = openMainEventModal;
     window.openMainEventModalById = openMainEventModalById;
+
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('#open-create-main-event-btn') || e.target.closest('#add-main-event-card-slot')) {
+            e.preventDefault();
+            openMainEventModal();
+        }
+    });
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initEventsPage);

@@ -10,6 +10,7 @@
     let loadedSubEvents = [];
     let currentImageMode = 'upload';
     let currentImageBase64 = '';
+    let setImageMode = function() {};
 
     function checkIsAdmin() {
         try {
@@ -402,7 +403,7 @@
         const inputFile = document.getElementById('sub-event-file');
         const inputUrl = document.getElementById('sub-event-url');
 
-        function setImageMode(mode) {
+        setImageMode = function(mode) {
             currentImageMode = mode;
             if (mode === 'upload') {
                 if (tabUpload) {
@@ -725,6 +726,15 @@
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#039;');
     }
+
+    window.openSubEventModal = openSubEventModal;
+
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('#open-create-sub-event-btn') || e.target.closest('#add-sub-event-card-slot')) {
+            e.preventDefault();
+            openSubEventModal();
+        }
+    });
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initElevatePage);
