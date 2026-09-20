@@ -493,10 +493,29 @@
                 const rulesArray = rulesRaw.split('\n').map(r => r.trim()).filter(Boolean);
 
                 let imageUrl = '';
-                if (currentImageMode === 'upload') {
+                if (currentImageBase64 && currentImageBase64.startsWith('data:image')) {
                     imageUrl = currentImageBase64;
+                } else if (inputUrl && inputUrl.value.trim()) {
+                    imageUrl = inputUrl.value.trim();
                 } else {
-                    imageUrl = inputUrl ? inputUrl.value.trim() : '';
+                    const previewImg = document.getElementById('sub-event-preview-img');
+                    if (previewImg && previewImg.src && (previewImg.src.startsWith('data:image') || previewImg.src.startsWith('http') || previewImg.src.startsWith('images/'))) {
+                        imageUrl = previewImg.src;
+                    }
+                }
+
+                if (!imageUrl && inputFile && inputFile.files && inputFile.files[0]) {
+                    try {
+                        imageUrl = await new Promise((resolve, reject) => {
+                            const reader = new FileReader();
+                            reader.onload = ev => resolve(ev.target.result);
+                            reader.onerror = err => reject(err);
+                            reader.readAsDataURL(inputFile.files[0]);
+                        });
+                        currentImageBase64 = imageUrl;
+                    } catch (e) {
+                        console.warn('Fallback file read failed:', e);
+                    }
                 }
 
                 if (!imageUrl && !isEdit) {
@@ -656,6 +675,7 @@
             feeInput.value = 'Free';
             statusInput.value = 'OPEN';
             orderInput.value = 0;
+            setImageMode('upload');
             submitBtn.innerHTML = '<i class="fas fa-check"></i> Save Event';
         }
 

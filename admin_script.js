@@ -1157,10 +1157,29 @@ function initAdminCMS() {
         const orderVal = document.getElementById('input-order').value;
 
         let imageUrl = '';
-        if (currentImageMode === 'upload') {
+        if (currentImageBase64 && currentImageBase64.startsWith('data:image')) {
             imageUrl = currentImageBase64;
-        } else {
+        } else if (inputUrl && inputUrl.value && inputUrl.value.trim()) {
             imageUrl = inputUrl.value.trim();
+        } else {
+            const previewImg = document.getElementById('preview-img');
+            if (previewImg && previewImg.src && (previewImg.src.startsWith('data:image') || previewImg.src.startsWith('http') || previewImg.src.startsWith('images/'))) {
+                imageUrl = previewImg.src;
+            }
+        }
+
+        if (!imageUrl && inputFile && inputFile.files && inputFile.files[0]) {
+            try {
+                imageUrl = await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = ev => resolve(ev.target.result);
+                    reader.onerror = err => reject(err);
+                    reader.readAsDataURL(inputFile.files[0]);
+                });
+                currentImageBase64 = imageUrl;
+            } catch (e) {
+                console.warn('Fallback file read failed in admin_script:', e);
+            }
         }
 
         if (!imageUrl && !isEdit) {
