@@ -1051,9 +1051,13 @@
                         }
                     }
 
-                    // Dynamic status check from DB
-                    const isLiveClosed = (match.status || 'OPEN').toUpperCase() === 'CLOSED';
-                    if (isLiveClosed || isClosed) {
+                    // Dynamic status check from DB (authoritative)
+                    const liveStatus = (match.status || '').toUpperCase();
+                    if (liveStatus === 'CLOSED') {
+                        applyClosedState(true, 'closed');
+                    } else if (liveStatus === 'OPEN') {
+                        applyClosedState(false);
+                    } else if (isClosed) {
                         applyClosedState(true, 'closed');
                     } else {
                         applyClosedState(false);
@@ -1066,7 +1070,10 @@
                     if (cachedRaw) {
                         const cachedEvents = JSON.parse(cachedRaw);
                         if (Array.isArray(cachedEvents)) {
-                            const cachedMatch = cachedEvents.find(e => e.title && e.title.trim().toUpperCase() === cleanName.toUpperCase());
+                            const cachedMatch = cachedEvents.find(e => e.title && (
+                                e.title.trim().toUpperCase() === cleanName.toUpperCase() ||
+                                e.title.toUpperCase().replace(/[^A-Z0-9]/g, '') === cleanName.toUpperCase().replace(/[^A-Z0-9]/g, '')
+                            ));
                             if (cachedMatch) applyDynamicEventData(cachedMatch);
                         }
                     }
@@ -1079,7 +1086,10 @@
                     try {
                         localStorage.setItem('vortex_cached_events', JSON.stringify(events));
                     } catch(e) {}
-                    const match = events.find(e => e.title && e.title.trim().toUpperCase() === cleanName.toUpperCase());
+                    const match = events.find(e => e.title && (
+                        e.title.trim().toUpperCase() === cleanName.toUpperCase() ||
+                        e.title.toUpperCase().replace(/[^A-Z0-9]/g, '') === cleanName.toUpperCase().replace(/[^A-Z0-9]/g, '')
+                    ));
                     if (match) applyDynamicEventData(match);
                 }).catch(err => console.log('Live event sync skipped:', err.message));
 
@@ -1087,44 +1097,51 @@
                 const slotsPromise = window._vortexSlotsPromise || fetch('/api/event-slots').then(r => r.ok ? r.json() : null);
                 slotsPromise.then(slots => {
                     if (!Array.isArray(slots)) return;
-                    const match = slots.find(s => s.event && s.event.toUpperCase() === cleanName.toUpperCase());
-                        if (!match) {
-                            if (countEl && (countEl.textContent.includes('Checking') || !countEl.textContent)) {
-                                countEl.textContent = 'OPEN';
-                                countEl.style.color = '#00e05a';
-                                if (slotFillEl) slotFillEl.style.width = '100%';
-                            }
-                            return;
+                    const match = slots.find(s => {
+                        if (!s || !s.event) return false;
+                        const sName = s.event.trim().toUpperCase();
+                        const cName = cleanName.trim().toUpperCase();
+                        if (sName === cName) return true;
+                        const cleanS = sName.replace(/[^A-Z0-9]/g, '');
+                        const cleanC = cName.replace(/[^A-Z0-9]/g, '');
+                        return cleanS === cleanC || (cleanS.includes('INNEXA') && cleanC.includes('INNEXA'));
+                    });
+                    if (!match) {
+                        if (countEl && (countEl.textContent.includes('Checking') || !countEl.textContent)) {
+                            countEl.textContent = 'OPEN';
+                            countEl.style.color = '#00e05a';
+                            if (slotFillEl) slotFillEl.style.width = '100%';
                         }
-                        const { total, remaining } = match;
-                        const pct = total > 0 ? Math.round(((total - remaining) / total) * 100) : 100;
-                        if (slotFillEl) slotFillEl.style.width = pct + '%';
+                        return;
+                    }
+                    const { total, remaining } = match;
+                    const pct = total > 0 ? Math.round(((total - remaining) / total) * 100) : 100;
+                    if (slotFillEl) slotFillEl.style.width = pct + '%';
 
-                        const isFullyClosed = isClosed || window.currentEventIsClosed;
+                    const matchStatus = (match.status || '').toUpperCase();
+                    const isStatusClosed = matchStatus === 'CLOSED';
+                    const isStatusOpen = matchStatus === 'OPEN';
 
-                        if (remaining === 0) {
-                            applyClosedState(true, 'full');
-                        } else if (isFullyClosed) {
-                            applyClosedState(true, 'closed');
-                            if (countEl) {
-                                countEl.textContent = isAdmin ? `${remaining} / ${total} left (CLOSED - ADMIN OPEN)` : 'CLOSED';
-                                countEl.style.color = isAdmin ? '#00e05a' : '#ff4444';
-                            }
-                        } else if (remaining <= 5) {
-                            if (countEl) {
-                                countEl.textContent = `${remaining} / ${total} left`;
-                                countEl.style.color = '#ff8c42';
-                            }
-                            if (slotFillEl) slotFillEl.style.background = 'linear-gradient(90deg,#8B0000,#ff6b00)';
-                        } else {
-                            if (countEl) {
-                                countEl.textContent = `${remaining} / ${total} left`;
-                                countEl.style.color = '#00e05a';
-                            }
-                            if (slotFillEl) slotFillEl.style.background = 'linear-gradient(90deg,#005820,#00c853)';
+                    if (total > 0 && remaining === 0) {
+                        applyClosedState(true, 'full');
+                    } else if (isStatusClosed) {
+                        applyClosedState(true, 'closed');
+                        if (countEl) {
+                            countEl.textContent = isAdmin ? `${remaining} / ${total} left (CLOSED - ADMIN OPEN)` : 'CLOSED';
+                            countEl.style.color = isAdmin ? '#00e05a' : '#ff4444';
                         }
-                    })
-                    .catch(() => {
+                    } else if (isStatusOpen) {
+                        applyClosedState(false);
+                        if (countEl) {
+                            countEl.textContent = total > 0 ? `${remaining} / ${total} left` : 'OPEN';
+                            countEl.style.color = '#00e05a';
+                        }
+                    } else if (window.currentEventIsClosed) {
+                        applyClosedState(true, 'closed');
+                    } else {
+                        applyClosedState(false);
+                    }
+                }).catch(() => {
                         if (!isClosed && !window.currentEventIsClosed && countEl) {
                             countEl.textContent = 'OPEN';
                             countEl.style.color = '#00e05a';

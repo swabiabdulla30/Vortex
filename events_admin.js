@@ -502,7 +502,7 @@
         resetPreview();
 
         const isEdit = Boolean(itemToEdit);
-        editIdInput.value = isEdit ? itemToEdit._id : '';
+        editIdInput.value = isEdit ? (itemToEdit._id || itemToEdit.title || '') : '';
 
         if (isEdit) {
             titleEl.innerHTML = '<i class="fas fa-edit"></i> Edit Event Card';

@@ -308,7 +308,8 @@
         const parentIsClosed = Boolean(parentEvt && (parentEvt.status || '').toUpperCase() === 'CLOSED');
 
         let cardsHtml = displayList.map(evt => {
-            const isClosed = parentIsClosed || (evt.status || 'OPEN').toUpperCase() === 'CLOSED';
+            const evtStatus = (evt.status || '').toUpperCase();
+            const isClosed = evtStatus === 'OPEN' ? false : (evtStatus === 'CLOSED' ? true : parentIsClosed);
             const dateParts = parseDateString(evt.date);
             const regUrl = `event_registration.html?event=${encodeURIComponent(evt.title)}`;
 
@@ -740,7 +741,7 @@
         }
 
         const isEdit = Boolean(itemToEdit);
-        editIdInput.value = isEdit ? itemToEdit._id : '';
+        editIdInput.value = isEdit ? (itemToEdit._id || itemToEdit.title || '') : '';
 
         if (isEdit) {
             titleEl.innerHTML = `<i class="fas fa-edit"></i> Edit Event under ${escapeHtml(currentEvent)}`;

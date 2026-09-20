@@ -356,7 +356,8 @@
 
                         const esc = s => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
                         let html = subEvts.map(evt => {
-                            const isClosed = parentIsClosed || (evt.status || 'OPEN').toUpperCase() === 'CLOSED';
+                            const evtStatus = (evt.status || '').toUpperCase();
+                            const isClosed = evtStatus === 'OPEN' ? false : (evtStatus === 'CLOSED' ? true : parentIsClosed);
                             const dateParts = (() => {
                                 if (!evt.date) return { month: 'DATE', day: 'TBA' };
                                 const p = evt.date.trim().split(/[\s,]+/);
