@@ -723,6 +723,14 @@ async function loadDynamicEventsData() {
 
     if (!eventsSectionGrid && !elevateSectionGrid) return;
 
+    // Yield to dedicated controllers on events.html and elevate.html so they are not trampled
+    if (eventsSectionGrid && (typeof window.renderMainEventsNow === 'function' || window._vortexEventsAdminLoaded)) {
+        return;
+    }
+    if (elevateSectionGrid && (typeof window.renderSubEventsNow === 'function' || window._vortexElevateAdminLoaded)) {
+        return;
+    }
+
     try {
         const res = await fetch('/api/events');
         if (!res.ok) return;
@@ -741,22 +749,19 @@ async function loadDynamicEventsData() {
             const isAdmin = Boolean(user && user.role === 'admin' && token);
 
             eventsSectionGrid.innerHTML = displayEvents.map(evt => {
-                const isElevate = evt.title.trim().toUpperCase() === 'ELEVATE';
-                const isInnexa = evt.title.trim().toUpperCase().includes('INNEXA');
-                const isClosed = !isInnexa && (isElevate || (evt.status || 'OPEN').toUpperCase() === 'CLOSED');
+                const isClosed = (evt.status || 'OPEN').toUpperCase() === 'CLOSED';
                 const dateParts = parseEventDate(evt.date);
                 
-                // INNEXA 26 is open for everyone; ELEVATE & closed events are unlocked for admin (like TECHSPARK)
-                const isLocked = !isInnexa && !isAdmin && isClosed;
-                const linkHref = isLocked ? 'javascript:void(0)' : (isElevate ? 'elevate.html' : `elevate.html?event=${encodeURIComponent(evt.title)}`);
-                const clickAttr = isLocked ? 'onclick="alert(\'This event is currently locked. Only administrators can access it.\'); return false;"' : '';
+                const isLocked = !isAdmin && isClosed;
+                const linkHref = isLocked ? 'javascript:void(0)' : `elevate.html?event=${encodeURIComponent(evt.title)}`;
+                const clickAttr = isLocked ? 'onclick="alert(\'Registration for this event is closed. New registrations cannot be accepted.\'); return false;"' : '';
                 const cardStyle = isLocked ? 'text-decoration: none; color: inherit; cursor: not-allowed; opacity: 0.75;' : 'text-decoration: none; color: inherit; cursor: pointer;';
 
-                const statusClass = isLocked ? 'status-soon' : 'status-active';
-                const statusText = isLocked ? 'CLOSED' : '&#9679; REGISTRATION OPEN';
+                const statusClass = isClosed ? 'status-soon' : 'status-active';
+                const statusText = isClosed ? (isAdmin ? '● CLOSED (ADMIN OPEN)' : 'CLOSED') : '&#9679; REGISTRATION OPEN';
 
                 return `
-                <a href="${linkHref}" ${clickAttr} class="card event-card" style="${cardStyle}">
+                <a href="${linkHref}" ${clickAttr} class="card event-card ${isLocked ? 'locked-event-card' : ''}" style="${cardStyle}">
                     <div class="card-status ${statusClass}">${statusText}</div>
                     <div class="card-image">
                         <img src="${evt.imageUrl || 'https://via.placeholder.com/400x250?text=Event'}"

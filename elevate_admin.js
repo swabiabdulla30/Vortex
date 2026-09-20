@@ -214,8 +214,13 @@
             return;
         }
 
+        const parentEvt = Array.isArray(window._vortexLoadedEvents)
+            ? window._vortexLoadedEvents.find(e => (e.title || '').trim().toUpperCase() === currentEvent.toUpperCase() && !e.parentEvent)
+            : null;
+        const parentIsClosed = Boolean(parentEvt && (parentEvt.status || '').toUpperCase() === 'CLOSED');
+
         let cardsHtml = displayList.map(evt => {
-            const isClosed = (evt.status || 'OPEN').toUpperCase() === 'CLOSED';
+            const isClosed = parentIsClosed || (evt.status || 'OPEN').toUpperCase() === 'CLOSED';
             const dateParts = parseDateString(evt.date);
             const regUrl = `event_registration.html?event=${encodeURIComponent(evt.title)}`;
 

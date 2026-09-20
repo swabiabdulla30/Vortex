@@ -104,10 +104,12 @@
 
         let cardsHtml = displayList.map(evt => {
             const isClosed = (evt.status || 'OPEN').toUpperCase() === 'CLOSED';
+            const isLocked = !isAdmin && isClosed;
             const dateParts = parseDateString(evt.date);
-            
-            const linkHref = 'elevate.html?event=' + encodeURIComponent(evt.title);
-            const cardStyle = 'text-decoration: none; color: inherit; cursor: pointer; position: relative;';
+            const linkHref = isLocked ? 'javascript:void(0)' : ('elevate.html?event=' + encodeURIComponent(evt.title));
+            const clickAttr = isLocked ? 'onclick="alert(\'Registration for this event is closed. New registrations cannot be accepted.\'); return false;"' : '';
+            const cardClass = 'card event-card' + (isLocked ? ' locked-event-card' : '');
+            const cardStyle = isLocked ? 'text-decoration: none; color: inherit; cursor: not-allowed; position: relative; opacity: 0.75;' : 'text-decoration: none; color: inherit; cursor: pointer; position: relative;';
 
             let statusBadge = isClosed 
                 ? (isAdmin ? '<div class="card-status status-active" style="background: rgba(255, 170, 0, 0.2); color: #ffaa00; border-color: rgba(255,170,0,0.5);">● CLOSED (ADMIN OPEN)</div>' : '<div class="card-status status-soon">REGISTRATION CLOSED</div>')
@@ -126,7 +128,7 @@
             ` : '';
 
             return `
-            <a href="${linkHref}" class="card event-card" style="${cardStyle}">
+            <a href="${linkHref}" ${clickAttr} class="${cardClass}" style="${cardStyle}">
                 ${adminToolbar}
                 ${statusBadge}
                 <div class="card-image">

@@ -200,9 +200,12 @@
                         const grid = document.getElementById('sub-events-grid');
                         if (!grid) return;
 
+                        const parentEvt = allEvents.find(e => (e.title || '').trim().toUpperCase() === curEvt.toUpperCase() && !e.parentEvent);
+                        const parentIsClosed = Boolean(parentEvt && (parentEvt.status || '').toUpperCase() === 'CLOSED');
+
                         const esc = s => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
                         grid.innerHTML = subEvts.map(evt => {
-                            const isClosed = (evt.status || 'OPEN').toUpperCase() === 'CLOSED';
+                            const isClosed = parentIsClosed || (evt.status || 'OPEN').toUpperCase() === 'CLOSED';
                             const dateParts = (() => {
                                 if (!evt.date) return { month: 'DATE', day: 'TBA' };
                                 const p = evt.date.trim().split(/[\s,]+/);

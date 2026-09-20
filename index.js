@@ -301,7 +301,6 @@ async function seedDefaultsIfNeeded() {
                     },
                     { $set: { imageUrl: "images/innexa_26.jpeg" } }
                 );
-                await Event.updateMany({ title: { $regex: /innexa/i } }, { $set: { status: "OPEN" } });
             } else {
                 await Event.create({
                     title: "INNEXA 26",

@@ -222,6 +222,18 @@
                 if (innexaDesc && (evt.subtitle || evt.description)) {
                     innexaDesc.textContent = evt.subtitle || evt.description;
                 }
+                const isClosed = (evt.status || 'OPEN').toUpperCase() === 'CLOSED';
+                const userStr = localStorage.getItem('vortexCurrentUser');
+                const user = userStr ? JSON.parse(userStr) : null;
+                const isAdmin = Boolean(user && user.role === 'admin');
+                const btnSpan = document.querySelector('.innexa-open-btn span');
+                if (btnSpan) {
+                    if (isClosed) {
+                        btnSpan.textContent = isAdmin ? '● CLOSED (ADMIN OPEN)' : 'REGISTRATION CLOSED';
+                    } else {
+                        btnSpan.textContent = `EXPLORE ${evt.title || 'INNEXA 26'} ↗`;
+                    }
+                }
             }
 
             try {
@@ -241,13 +253,26 @@
                 })
                 .catch(() => { });
 
-            // Intercept Innexa card clicks for unauthenticated visitors
+            // Intercept Innexa card clicks
             document.addEventListener('click', (e) => {
                 const innexaEl = e.target.closest('#featured-innexa-block, .innexa-open-btn');
                 if (!innexaEl) return;
 
-                const targetUrl = 'elevate.html?event=INNEXA%2026';
+                const cached = JSON.parse(localStorage.getItem('vortex_cached_events') || '[]');
+                const match = cached.find(ev => (ev.title || '').toUpperCase().includes('INNEXA') && !ev.parentEvent);
+                const isClosed = match && (match.status || 'OPEN').toUpperCase() === 'CLOSED';
                 const user = localStorage.getItem('vortexCurrentUser');
+                const userObj = user ? JSON.parse(user) : null;
+                const isAdmin = Boolean(userObj && userObj.role === 'admin');
+
+                if (isClosed && !isAdmin) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    alert('Registration for this event is closed. New registrations cannot be accepted.');
+                    return;
+                }
+
+                const targetUrl = 'elevate.html?event=INNEXA%2026';
                 if (!user) {
                     e.preventDefault();
                     sessionStorage.setItem('loginRedirectUrl', targetUrl);
