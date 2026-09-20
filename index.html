@@ -226,6 +226,10 @@
                 const userStr = localStorage.getItem('vortexCurrentUser');
                 const user = userStr ? JSON.parse(userStr) : null;
                 const isAdmin = Boolean(user && user.role === 'admin');
+                const openBtn = document.querySelector('.innexa-open-btn');
+                if (openBtn && evt.title) {
+                    openBtn.href = 'elevate.html?event=' + encodeURIComponent(evt.title);
+                }
                 const btnSpan = document.querySelector('.innexa-open-btn span');
                 if (btnSpan) {
                     if (isClosed) {
@@ -272,7 +276,7 @@
                     return;
                 }
 
-                const targetUrl = 'elevate.html?event=INNEXA%2026';
+                const targetUrl = 'elevate.html?event=' + encodeURIComponent(match ? match.title : 'INNEXA 26');
                 if (!user) {
                     e.preventDefault();
                     sessionStorage.setItem('loginRedirectUrl', targetUrl);

@@ -173,6 +173,62 @@
             </div>
             <!-- Instant 0ms Pre-renderer for Sub-events from local cache or preloaded data -->
             <script>
+                (function() {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const curEvt = (urlParams.get('event') || 'ELEVATE').trim();
+                    const titleEl = document.getElementById('series-event-title');
+                    if (titleEl) titleEl.textContent = curEvt.toUpperCase();
+                    const currentNameEl = document.getElementById('admin-current-event-name');
+                    if (currentNameEl) currentNameEl.textContent = curEvt;
+                    document.title = curEvt + ' Series - Vortex Innovators';
+
+                    const userStr = localStorage.getItem('vortexCurrentUser');
+                    const token = localStorage.getItem('vortexToken');
+                    let isAdmin = false;
+                    try {
+                        const u = userStr ? JSON.parse(userStr) : null;
+                        isAdmin = Boolean(u && u.role === 'admin' && token);
+                    } catch(e) {}
+
+                    const adminBar = document.getElementById('admin-subevents-bar');
+                    if (isAdmin && adminBar) {
+                        adminBar.style.display = 'flex';
+                    }
+                })();
+
+                function isSameParentEvent(pName, tName) {
+                    if (!pName || !tName) return false;
+                    const p = String(pName).trim().toUpperCase();
+                    const t = String(tName).trim().toUpperCase();
+                    if (p === t) return true;
+                    const cleanP = p.replace(/[^A-Z0-9]/g, '');
+                    const cleanT = t.replace(/[^A-Z0-9]/g, '');
+                    if (cleanP && cleanP === cleanT) return true;
+                    if (cleanP.includes('INNEXA') && cleanT.includes('INNEXA')) return true;
+                    if (cleanP.includes('ELEVATE') && cleanT.includes('ELEVATE')) return true;
+                    return false;
+                }
+
+                function isSubEventMatch(e, targetName) {
+                    if (!e) return false;
+                    if (e.eventType === 'main_event') return false;
+                    if ((e.category || '').toLowerCase() === 'session' && !e.parentEvent) return false;
+
+                    const t = (targetName || 'ELEVATE').trim();
+                    const p = (e.parentEvent || '').trim();
+
+                    if (isSameParentEvent(p, t)) return true;
+
+                    const cleanT = t.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                    if (cleanT.includes('ELEVATE')) {
+                        return !p || isSameParentEvent(p, 'ELEVATE');
+                    }
+                    if (cleanT.includes('INNEXA')) {
+                        if (p && p.toUpperCase().includes('INNEXA')) return true;
+                    }
+                    return false;
+                }
+
                 window.renderSubEventsNow = function(dataOverride) {
                     try {
                         let allEvents = dataOverride || window._vortexLoadedEvents;
@@ -185,26 +241,52 @@
                         const urlParams = new URLSearchParams(window.location.search);
                         const curEvt = (urlParams.get('event') || 'ELEVATE').trim();
 
-                        const subEvts = allEvents.filter(e => {
-                            const parent = (e.parentEvent || '').trim().toUpperCase();
-                            const isCurrentParent = parent === curEvt.toUpperCase();
-                            const isSubEvent = e.eventType !== 'main_event' && (e.category || '').toLowerCase() !== 'session';
-                            if (curEvt.toUpperCase() === 'ELEVATE') {
-                                return isCurrentParent || (!e.parentEvent && isSubEvent);
-                            }
-                            return isCurrentParent;
-                        });
+                        const userStr = localStorage.getItem('vortexCurrentUser');
+                        const token = localStorage.getItem('vortexToken');
+                        let isAdmin = false;
+                        try {
+                            const u = userStr ? JSON.parse(userStr) : null;
+                            isAdmin = Boolean(u && u.role === 'admin' && token);
+                        } catch(e) {}
 
-                        if (subEvts.length === 0) return;
+                        const adminBar = document.getElementById('admin-subevents-bar');
+                        if (isAdmin && adminBar) {
+                            adminBar.style.display = 'flex';
+                        }
 
+                        const subEvts = allEvents.filter(e => isSubEventMatch(e, curEvt));
                         const grid = document.getElementById('sub-events-grid');
                         if (!grid) return;
 
-                        const parentEvt = allEvents.find(e => (e.title || '').trim().toUpperCase() === curEvt.toUpperCase() && !e.parentEvent);
+                        if (subEvts.length === 0) {
+                            if (isAdmin) {
+                                grid.innerHTML = `
+                                <div class="card event-card card-add-placeholder" id="add-sub-event-card-slot" style="cursor: pointer;">
+                                    <div class="add-card-inner">
+                                        <div class="add-card-icon-wrap"><i class="fas fa-plus"></i></div>
+                                        <h3>ADD EVENT / GAME</h3>
+                                        <p>Create a new competition or game conducted under ${curEvt}</p>
+                                        <span class="add-card-badge">+ NEW COMPETITION</span>
+                                    </div>
+                                </div>
+                                `;
+                            } else if (curEvt.toUpperCase() !== 'ELEVATE') {
+                                grid.innerHTML = `
+                                <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: rgba(255, 255, 255, 0.7);">
+                                    <i class="fas fa-calendar-alt" style="font-size: 3rem; color: #00ff88; margin-bottom: 16px; opacity: 0.6;"></i>
+                                    <h3 style="font-size: 1.5rem; color: #fff; margin-bottom: 8px;">No Competitions Announced Yet</h3>
+                                    <p style="max-width: 450px; margin: 0 auto;">Events and games for ${curEvt} are being finalized. Check back soon for registration details!</p>
+                                </div>
+                                `;
+                            }
+                            return;
+                        }
+
+                        const parentEvt = allEvents.find(e => (e.eventType === 'main_event' || !e.parentEvent) && isSameParentEvent(e.title, curEvt));
                         const parentIsClosed = Boolean(parentEvt && (parentEvt.status || '').toUpperCase() === 'CLOSED');
 
                         const esc = s => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-                        grid.innerHTML = subEvts.map(evt => {
+                        let html = subEvts.map(evt => {
                             const isClosed = parentIsClosed || (evt.status || 'OPEN').toUpperCase() === 'CLOSED';
                             const dateParts = (() => {
                                 if (!evt.date) return { month: 'DATE', day: 'TBA' };
@@ -212,30 +294,69 @@
                                 return p.length >= 2 ? { month: p[0].substring(0, 3).toUpperCase(), day: p.slice(1).join(' ') } : { month: 'DATE', day: evt.date };
                             })();
                             const linkHref = 'event_registration.html?event=' + encodeURIComponent(evt.title);
-                            const statusBadge = isClosed 
-                                ? '<div class="card-status status-soon">REGISTRATION CLOSED</div>'
-                                : '<div class="card-status status-active">● REGISTRATION OPEN</div>';
+                            let statusBadge = '';
+                            if (isAdmin) {
+                                statusBadge = isClosed 
+                                    ? '<div class="card-status status-active" style="background: rgba(255, 170, 0, 0.2); color: #ffaa00; border-color: rgba(255,170,0,0.5);">● CLOSED (ADMIN OPEN)</div>'
+                                    : '<div class="card-status status-active">● REGISTRATION OPEN</div>';
+                            } else {
+                                statusBadge = isClosed 
+                                    ? '<div class="card-status status-soon">REGISTRATION CLOSED</div>'
+                                    : '<div class="card-status status-active">● REGISTRATION OPEN</div>';
+                            }
+
+                            const adminToolbar = (isAdmin && !evt.isStatic) ? `
+                                <div class="card-admin-bar">
+                                    <button class="card-admin-btn edit" data-id="${evt._id || ''}" title="Edit this event">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                    <button class="card-admin-btn delete" data-id="${evt._id || ''}" data-title="${esc(evt.title)}" title="Delete this event">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            ` : '';
+
+                            const prizeMarkup = evt.prize ? '<span class="prize-badge"><i class="fas fa-trophy" style="color: gold;"></i> ' + esc(evt.prize) + '</span>' : '';
+
                             return '<a href="' + linkHref + '" class="card event-card" data-event="' + esc(evt.title) + '" style="text-decoration: none; color: inherit; cursor: pointer; position: relative;">' +
+                                adminToolbar +
                                 statusBadge +
                                 '<div class="card-image">' +
-                                    '<img src="' + (evt.imageUrl || 'https://via.placeholder.com/400x250?text=Event') + '" alt="' + esc(evt.title) + '" loading="lazy">' +
+                                    '<img src="' + (evt.imageUrl || 'https://via.placeholder.com/400x250?text=Event') + '" alt="' + esc(evt.title) + '" loading="lazy" onerror="this.src=\'https://via.placeholder.com/400x250?text=Event\';">' +
                                 '</div>' +
                                 '<div class="card-content">' +
                                     '<div class="date-badge"><span class="month">' + dateParts.month + '</span><span class="day">' + dateParts.day + '</span></div>' +
                                     '<div class="event-details"><span class="event-type"></span><h3>' + esc(evt.title) + '</h3><p>' + esc(evt.subtitle || evt.description || '') + '</p>' +
                                     '<div class="card-footer"><span class="location"><i class="fas fa-map-marker-alt"></i> ' + esc(evt.venue || 'KMCT IETM') + '</span>' +
-                                    (evt.prize ? '<span class="prize-badge"><i class="fas fa-trophy" style="color: gold;"></i> ' + esc(evt.prize) + '</span>' : '') +
+                                    prizeMarkup +
                                     '<span class="arrow">→</span></div></div>' +
                                 '</div>' +
                             '</a>';
                         }).join('');
-                    } catch(e) {}
+
+                        if (isAdmin) {
+                            html += `
+                            <div class="card event-card card-add-placeholder" id="add-sub-event-card-slot" style="cursor: pointer;">
+                                <div class="add-card-inner">
+                                    <div class="add-card-icon-wrap"><i class="fas fa-plus"></i></div>
+                                    <h3>ADD EVENT / GAME</h3>
+                                    <p>Create a new competition or game conducted under ${curEvt}</p>
+                                    <span class="add-card-badge">+ NEW COMPETITION</span>
+                                </div>
+                            </div>
+                            `;
+                        }
+
+                        grid.innerHTML = html;
+                    } catch(e) {
+                        console.warn('renderSubEventsNow error:', e);
+                    }
                 };
                 window.renderSubEventsNow();
 
                 // Auth check when clicking any sub-event / competition card
                 document.addEventListener('click', function (e) {
-                    if (e.target.closest('.card-admin-bar') || e.target.closest('.card-admin-btn')) return;
+                    if (e.target.closest('.card-admin-bar') || e.target.closest('.card-admin-btn') || e.target.closest('#add-sub-event-card-slot') || e.target.closest('#open-create-sub-event-btn')) return;
                     const card = e.target.closest('.event-card');
                     if (!card) return;
                     const href = card.getAttribute('href');

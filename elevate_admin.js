@@ -100,6 +100,39 @@
         }
     ];
 
+    function isSameParentEvent(pName, tName) {
+        if (!pName || !tName) return false;
+        const p = String(pName).trim().toUpperCase();
+        const t = String(tName).trim().toUpperCase();
+        if (p === t) return true;
+        const cleanP = p.replace(/[^A-Z0-9]/g, '');
+        const cleanT = t.replace(/[^A-Z0-9]/g, '');
+        if (cleanP && cleanP === cleanT) return true;
+        if (cleanP.includes('INNEXA') && cleanT.includes('INNEXA')) return true;
+        if (cleanP.includes('ELEVATE') && cleanT.includes('ELEVATE')) return true;
+        return false;
+    }
+
+    function isSubEventMatch(e, targetName) {
+        if (!e) return false;
+        if (e.eventType === 'main_event') return false;
+        if ((e.category || '').toLowerCase() === 'session' && !e.parentEvent) return false;
+
+        const t = (targetName || 'ELEVATE').trim();
+        const p = (e.parentEvent || '').trim();
+
+        if (isSameParentEvent(p, t)) return true;
+
+        const cleanT = t.toUpperCase().replace(/[^A-Z0-9]/g, '');
+        if (cleanT.includes('ELEVATE')) {
+            return !p || isSameParentEvent(p, 'ELEVATE');
+        }
+        if (cleanT.includes('INNEXA')) {
+            if (p && p.toUpperCase().includes('INNEXA')) return true;
+        }
+        return false;
+    }
+
     async function initElevatePage() {
         // Update Title and Headers
         document.title = `${currentEvent} Series - Vortex Innovators`;
@@ -122,15 +155,7 @@
             if (cachedRaw) {
                 const allEvents = JSON.parse(cachedRaw);
                 if (Array.isArray(allEvents) && allEvents.length > 0) {
-                    loadedSubEvents = allEvents.filter(e => {
-                        const parent = (e.parentEvent || '').trim().toUpperCase();
-                        const isCurrentParent = parent === currentEvent.toUpperCase();
-                        const isSubEvent = e.eventType !== 'main_event' && (e.category || '').toLowerCase() !== 'session';
-                        if (currentEvent.toUpperCase() === 'ELEVATE') {
-                            return isCurrentParent || (!e.parentEvent && isSubEvent);
-                        }
-                        return isCurrentParent;
-                    });
+                    loadedSubEvents = allEvents.filter(e => isSubEventMatch(e, currentEvent));
                     renderSubEventsGrid();
                 }
             }
@@ -166,16 +191,7 @@
                 window._vortexLoadedEvents = allEvents;
 
                 // Filter sub-events for the current parent event
-                loadedSubEvents = allEvents.filter(e => {
-                    const parent = (e.parentEvent || '').trim().toUpperCase();
-                    const isCurrentParent = parent === currentEvent.toUpperCase();
-                    const isSubEvent = e.eventType !== 'main_event' && (e.category || '').toLowerCase() !== 'session';
-                    
-                    if (currentEvent.toUpperCase() === 'ELEVATE') {
-                        return isCurrentParent || (!e.parentEvent && isSubEvent);
-                    }
-                    return isCurrentParent;
-                });
+                loadedSubEvents = allEvents.filter(e => isSubEventMatch(e, currentEvent));
                 renderSubEventsGrid();
                 return;
             }
@@ -216,7 +232,7 @@
         }
 
         const parentEvt = Array.isArray(window._vortexLoadedEvents)
-            ? window._vortexLoadedEvents.find(e => (e.title || '').trim().toUpperCase() === currentEvent.toUpperCase() && !e.parentEvent)
+            ? window._vortexLoadedEvents.find(e => (e.eventType === 'main_event' || !e.parentEvent) && isSameParentEvent(e.title, currentEvent))
             : null;
         const parentIsClosed = Boolean(parentEvt && (parentEvt.status || '').toUpperCase() === 'CLOSED');
 
@@ -320,56 +336,64 @@
 
         // Delete buttons
         document.querySelectorAll('.card-admin-btn.delete').forEach(btn => {
-            btn.addEventListener('click', async (e) => {
+            btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 const id = btn.getAttribute('data-id');
                 const title = btn.getAttribute('data-title') || 'this event';
-
-                if (!confirm(`Are you sure you want to remove "${title}" from ${currentEvent}?`)) {
-                    return;
-                }
-
-                const token = localStorage.getItem('vortexToken');
-                if (!token) {
-                    alert('Session expired. Please log in.');
-                    return;
-                }
-
-                try {
-                    btn.disabled = true;
-                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-
-                    const res = await fetch(`/api/admin/events/${id}`, {
-                        method: 'DELETE',
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
-
-                    if (!res.ok) {
-                        const data = await res.json();
-                        throw new Error(data.error || 'Failed to delete event');
-                    }
-
-                    // Immediately remove from local state
-                    loadedSubEvents = loadedSubEvents.filter(x => x._id !== id);
-                    if (Array.isArray(window._vortexLoadedEvents)) {
-                        window._vortexLoadedEvents = window._vortexLoadedEvents.filter(x => x._id !== id);
-                        try {
-                            localStorage.setItem('vortex_cached_events', JSON.stringify(window._vortexLoadedEvents));
-                        } catch (e) {}
-                    }
-                    renderSubEventsGrid();
-
-                    alert(`Event "${title}" removed successfully!`);
-                    await loadAndRenderSubEvents(true);
-                } catch (err) {
-                    console.error('Delete error:', err);
-                    alert('Error: ' + err.message);
-                    btn.disabled = false;
-                    btn.innerHTML = '<i class="fas fa-trash"></i>';
-                }
+                handleDeleteSubEvent(id, title, btn);
             });
         });
+    }
+
+    async function handleDeleteSubEvent(id, title, btn) {
+        if (!id) return;
+        if (!confirm(`Are you sure you want to remove "${title}" from ${currentEvent}?`)) {
+            return;
+        }
+
+        const token = localStorage.getItem('vortexToken');
+        if (!token) {
+            alert('Session expired. Please log in.');
+            return;
+        }
+
+        try {
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            }
+
+            const res = await fetch(`/api/admin/events/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (!res.ok) {
+                const data = await res.json();
+                throw new Error(data.error || 'Failed to delete event');
+            }
+
+            // Immediately remove from local state
+            loadedSubEvents = loadedSubEvents.filter(x => x._id !== id);
+            if (Array.isArray(window._vortexLoadedEvents)) {
+                window._vortexLoadedEvents = window._vortexLoadedEvents.filter(x => x._id !== id);
+                try {
+                    localStorage.setItem('vortex_cached_events', JSON.stringify(window._vortexLoadedEvents));
+                } catch (e) {}
+            }
+            renderSubEventsGrid();
+
+            alert(`Event "${title}" removed successfully!`);
+            await loadAndRenderSubEvents(true);
+        } catch (err) {
+            console.error('Delete error:', err);
+            alert('Error: ' + err.message);
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-trash"></i>';
+            }
+        }
     }
 
     function setupSubEventModal() {
@@ -733,6 +757,29 @@
         if (e.target.closest('#open-create-sub-event-btn') || e.target.closest('#add-sub-event-card-slot')) {
             e.preventDefault();
             openSubEventModal();
+            return;
+        }
+
+        const editBtn = e.target.closest('.card-admin-btn.edit');
+        if (editBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            const id = editBtn.getAttribute('data-id');
+            const item = loadedSubEvents.find(x => x._id === id) || (window._vortexLoadedEvents && window._vortexLoadedEvents.find(x => x._id === id));
+            if (item) {
+                openSubEventModal(item);
+            }
+            return;
+        }
+
+        const deleteBtn = e.target.closest('.card-admin-btn.delete');
+        if (deleteBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            const id = deleteBtn.getAttribute('data-id');
+            const title = deleteBtn.getAttribute('data-title') || 'this event';
+            handleDeleteSubEvent(id, title, deleteBtn);
+            return;
         }
     });
 
