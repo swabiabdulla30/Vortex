@@ -108,33 +108,13 @@
 
             <!-- Featured Innexa 26 Card -->
             <div class="featured-event-block" id="featured-innexa-block" style="cursor: pointer;">
-                <div class="featured-innexa-banner"
-                    style="width: 100%; max-width: 540px; height: 210px; border-radius: 16px; overflow: hidden; margin-bottom: 24px; position: relative; border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 10px 30px rgba(0,0,0,0.6);">
-                    <img id="featured-innexa-img" src="images/innexa_26.jpeg" alt="Innexa 26"
-                        style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease;">
-                    <div
-                        style="position: absolute; top: 12px; left: 12px; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); border: 1px solid rgba(0, 255, 136, 0.4); color: #00ff88; font-size: 0.7rem; font-weight: 700; padding: 5px 14px; border-radius: 20px; letter-spacing: 1px;">
-                        ● REGISTRATION OPEN
-                    </div>
-                </div>
-                <h2 class="featured-event-title" id="innexa-title"
-                    style="font-size: clamp(3rem, 7vw, 5.5rem); letter-spacing: 2px; margin-bottom: 16px;">INNEXA' 26
-                </h2>
+                <span class="event-label">&#9679; FLAGSHIP EVENT &#9679;</span>
+                <h2 class="featured-event-title" id="innexa-title" style="letter-spacing: 2px;">INNEXA' 26</h2>
                 <hr>
                 <p class="featured-event-desc">
-                    The Ultimate Technical Symposium &amp; Innovation Challenge. Bringing together passionate coders,
-                    designers, gamers, and tech visionaries.
+                    The Ultimate Technical Symposium &amp; Innovation Challenge. Driven by creativity and powered by talent, this platform celebrates bold ideas and fearless participation. It’s a space where skills are tested, teamwork is strengthened, and excellence rises above the ordinary.
                 </p>
-                <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin: 16px 0 28px;">
-                    <span class="highlight-date"
-                        style="margin: 0; background: rgba(0, 255, 136, 0.12); border-color: rgba(0, 255, 136, 0.35); color: #00ff88;">
-                        &#128467; SEP 23, 2026
-                    </span>
-                    <span class="highlight-date"
-                        style="margin: 0; background: rgba(255, 255, 255, 0.05); border-color: rgba(255, 255, 255, 0.15); color: #e0e0e0;">
-                        📍 KMCT IETM
-                    </span>
-                </div>
+                <span class="highlight-date">&#128467; SEP 23, 2026</span>
                 <a href="elevate.html?event=INNEXA%2026" class="theme-grid-btn innexa-open-btn"
                     style="cursor: pointer; text-decoration: none;">
                     <span>EXPLORE INNEXA 26 &nbsp;↗</span>
@@ -206,77 +186,15 @@
                 console.error('Error checking user status:', e);
             }
 
-            // Dynamically resolve Innexa poster from local cache or live API
-            const innexaImg = document.getElementById('featured-innexa-img');
-            const innexaTitle = document.getElementById('innexa-title');
-            const innexaDesc = document.querySelector('.featured-event-desc');
 
-            function applyInnexaData(evt) {
-                if (!evt) return;
-                if (innexaImg && evt.imageUrl && evt.imageUrl.trim() && !evt.imageUrl.includes('1771924658426')) {
-                    innexaImg.src = evt.imageUrl;
-                }
-                if (innexaTitle && evt.title) {
-                    innexaTitle.textContent = evt.title;
-                }
-                if (innexaDesc && (evt.subtitle || evt.description)) {
-                    innexaDesc.textContent = evt.subtitle || evt.description;
-                }
-                const isClosed = (evt.status || 'OPEN').toUpperCase() === 'CLOSED';
-                const userStr = localStorage.getItem('vortexCurrentUser');
-                const user = userStr ? JSON.parse(userStr) : null;
-                const isAdmin = Boolean(user && user.role === 'admin');
-                const openBtn = document.querySelector('.innexa-open-btn');
-                if (openBtn && evt.title) {
-                    openBtn.href = 'elevate.html?event=' + encodeURIComponent(evt.title);
-                }
-                const btnSpan = document.querySelector('.innexa-open-btn span');
-                if (btnSpan) {
-                    if (isClosed) {
-                        btnSpan.textContent = isAdmin ? '● CLOSED (ADMIN OPEN)' : 'REGISTRATION CLOSED';
-                    } else {
-                        btnSpan.textContent = `EXPLORE ${evt.title || 'INNEXA 26'} ↗`;
-                    }
-                }
-            }
 
-            try {
-                const cached = JSON.parse(localStorage.getItem('vortex_cached_events') || '[]');
-                const match = cached.find(e => (e.title || '').toUpperCase().includes('INNEXA') && !e.parentEvent);
-                if (match) applyInnexaData(match);
-            } catch (e) { }
-
-            fetch('/api/events?_t=' + Date.now(), { cache: 'no-store' })
-                .then(r => r.json())
-                .then(evts => {
-                    if (Array.isArray(evts)) {
-                        try { localStorage.setItem('vortex_cached_events', JSON.stringify(evts)); } catch(e){}
-                        const match = evts.find(e => (e.title || '').toUpperCase().includes('INNEXA') && !e.parentEvent);
-                        if (match) applyInnexaData(match);
-                    }
-                })
-                .catch(() => { });
-
-            // Intercept Innexa card clicks
+            // Intercept Innexa card clicks for unauthenticated visitors
             document.addEventListener('click', (e) => {
                 const innexaEl = e.target.closest('#featured-innexa-block, .innexa-open-btn');
                 if (!innexaEl) return;
 
-                const cached = JSON.parse(localStorage.getItem('vortex_cached_events') || '[]');
-                const match = cached.find(ev => (ev.title || '').toUpperCase().includes('INNEXA') && !ev.parentEvent);
-                const isClosed = match && (match.status || 'OPEN').toUpperCase() === 'CLOSED';
+                const targetUrl = 'elevate.html?event=INNEXA%2026';
                 const user = localStorage.getItem('vortexCurrentUser');
-                const userObj = user ? JSON.parse(user) : null;
-                const isAdmin = Boolean(userObj && userObj.role === 'admin');
-
-                if (isClosed && !isAdmin) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    alert('Registration for this event is closed. New registrations cannot be accepted.');
-                    return;
-                }
-
-                const targetUrl = 'elevate.html?event=' + encodeURIComponent(match ? match.title : 'INNEXA 26');
                 if (!user) {
                     e.preventDefault();
                     sessionStorage.setItem('loginRedirectUrl', targetUrl);

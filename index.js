@@ -509,6 +509,57 @@ const DEFAULT_EVENTS = [
         status: "CLOSED",
         imageUrl: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80",
         order: 9
+    },
+    {
+        title: "Pyxel Sync",
+        description: "Synchronize your vision and code.",
+        about: "Pyxel Sync is a creative design and development challenge conducted under INNEXA 26.",
+        date: "SEP 23",
+        time: "10:00 AM - 1:00 PM",
+        venue: "KMCT IETM",
+        category: "Competition",
+        eventType: "sub_event",
+        parentEvent: "INNEXA 26",
+        fee: "Free",
+        prize: "Cash Prize",
+        slots: 50,
+        status: "OPEN",
+        imageUrl: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80",
+        order: 10
+    },
+    {
+        title: "Iconix",
+        description: "Master the craft of visual branding & UI.",
+        about: "Iconix challenges participants to design modern UI/UX and brand identities under INNEXA 26.",
+        date: "SEP 23",
+        time: "1:30 PM - 3:30 PM",
+        venue: "KMCT IETM",
+        category: "Competition",
+        eventType: "sub_event",
+        parentEvent: "INNEXA 26",
+        fee: "Free",
+        prize: "Cash Prize",
+        slots: 50,
+        status: "OPEN",
+        imageUrl: "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&q=80",
+        order: 11
+    },
+    {
+        title: "Blind App Challenge",
+        description: "Code without seeing the output until time is up.",
+        about: "Blind App Challenge tests pure raw programming instincts where developers code without previewing their output.",
+        date: "SEP 23",
+        time: "3:45 PM - 5:00 PM",
+        venue: "KMCT IETM",
+        category: "Competition",
+        eventType: "sub_event",
+        parentEvent: "INNEXA 26",
+        fee: "Free",
+        prize: "Cash Prize",
+        slots: 50,
+        status: "OPEN",
+        imageUrl: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&q=80",
+        order: 12
     }
 ];
 
@@ -1391,6 +1442,85 @@ app.get("/api/events", async (req, res) => {
             return res.json(eventsMemoryCache);
         }
         await connectDB();
+
+        // 1. Purge legacy/test events (pes, test bgmi under innexa, mukkam images)
+        try {
+            await Event.deleteMany({
+                $or: [
+                    { title: /^pes$/i },
+                    { parentEvent: { $regex: /innexa/i }, title: /^bgmi$/i },
+                    { imageUrl: { $regex: /mukkam/i } },
+                    { parentEvent: { $regex: /innexa/i }, title: { $nin: [/pyxel/i, /pixel/i, /iconix/i, /blind/i] } }
+                ]
+            });
+        } catch (cleanupErr) {
+            console.warn("Cleanup warning:", cleanupErr.message);
+        }
+
+        // 2. Ensure official INNEXA competitions exist
+        try {
+            const innexaSubCount = await Event.countDocuments({
+                parentEvent: { $regex: /innexa/i }
+            });
+            if (innexaSubCount === 0) {
+                await Event.insertMany([
+                    {
+                        title: "Pyxel Sync",
+                        description: "Synchronize your vision and code.",
+                        about: "Pyxel Sync is a creative design and development challenge conducted under INNEXA 26.",
+                        date: "SEP 23",
+                        time: "10:00 AM - 1:00 PM",
+                        venue: "KMCT IETM",
+                        category: "Competition",
+                        eventType: "sub_event",
+                        parentEvent: "INNEXA 26",
+                        fee: "Free",
+                        prize: "Cash Prize",
+                        slots: 50,
+                        status: "OPEN",
+                        imageUrl: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80",
+                        order: 10
+                    },
+                    {
+                        title: "Iconix",
+                        description: "Master the craft of visual branding & UI.",
+                        about: "Iconix challenges participants to design modern UI/UX and brand identities under INNEXA 26.",
+                        date: "SEP 23",
+                        time: "1:30 PM - 3:30 PM",
+                        venue: "KMCT IETM",
+                        category: "Competition",
+                        eventType: "sub_event",
+                        parentEvent: "INNEXA 26",
+                        fee: "Free",
+                        prize: "Cash Prize",
+                        slots: 50,
+                        status: "OPEN",
+                        imageUrl: "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&q=80",
+                        order: 11
+                    },
+                    {
+                        title: "Blind App Challenge",
+                        description: "Code without seeing the output until time is up.",
+                        about: "Blind App Challenge tests pure raw programming instincts where developers code without previewing their output.",
+                        date: "SEP 23",
+                        time: "3:45 PM - 5:00 PM",
+                        venue: "KMCT IETM",
+                        category: "Competition",
+                        eventType: "sub_event",
+                        parentEvent: "INNEXA 26",
+                        fee: "Free",
+                        prize: "Cash Prize",
+                        slots: 50,
+                        status: "OPEN",
+                        imageUrl: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&q=80",
+                        order: 12
+                    }
+                ]);
+            }
+        } catch (seedErr) {
+            console.warn("Innexa sub-events seed warning:", seedErr.message);
+        }
+
         const events = await Event.find().sort({ order: 1, createdAt: 1 }).lean();
         eventsMemoryCache = events;
         eventsMemoryCacheTime = Date.now();

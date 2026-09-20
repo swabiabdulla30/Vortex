@@ -100,6 +100,48 @@
         }
     ];
 
+    const staticInnexaEvents = [
+        {
+            _id: 'static_pyxel_sync',
+            isStatic: false,
+            title: 'Pyxel Sync',
+            subtitle: 'Synchronize your vision and code.',
+            description: 'Pyxel Sync is a creative design and development challenge conducted under INNEXA 26.',
+            parentEvent: 'INNEXA 26',
+            imageUrl: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80',
+            date: 'SEP 23',
+            venue: 'KMCT IETM',
+            prize: 'Cash Prize',
+            status: 'OPEN'
+        },
+        {
+            _id: 'static_iconix',
+            isStatic: false,
+            title: 'Iconix',
+            subtitle: 'Master the craft of visual branding & UI.',
+            description: 'Iconix challenges participants to design modern UI/UX and brand identities under INNEXA 26.',
+            parentEvent: 'INNEXA 26',
+            imageUrl: 'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&q=80',
+            date: 'SEP 23',
+            venue: 'KMCT IETM',
+            prize: 'Cash Prize',
+            status: 'OPEN'
+        },
+        {
+            _id: 'static_blind_app',
+            isStatic: false,
+            title: 'Blind App Challenge',
+            subtitle: 'Code without seeing the output until time is up.',
+            description: 'Blind App Challenge tests pure raw programming instincts where developers code without previewing their output.',
+            parentEvent: 'INNEXA 26',
+            imageUrl: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&q=80',
+            date: 'SEP 23',
+            venue: 'KMCT IETM',
+            prize: 'Cash Prize',
+            status: 'OPEN'
+        }
+    ];
+
     function isSameParentEvent(pName, tName) {
         if (!pName || !tName) return false;
         const p = String(pName).trim().toUpperCase();
@@ -120,18 +162,29 @@
 
         const titleUpper = String(e.title || '').trim().toUpperCase();
         if (titleUpper.includes('TEST') || titleUpper.includes('DUMMY') || titleUpper === 'NEW EVENT') return false;
+        if (titleUpper === 'PES') return false;
 
         const t = (targetName || 'ELEVATE').trim();
         const p = (e.parentEvent || '').trim();
+        const cleanT = t.toUpperCase().replace(/[^A-Z0-9]/g, '');
+
+        if (cleanT.includes('INNEXA')) {
+            if (titleUpper === 'PES' || titleUpper === 'BGMI' || String(e.imageUrl || '').toLowerCase().includes('mukkam')) {
+                return false;
+            }
+            const isMatch = isSameParentEvent(p, t) || (p && p.toUpperCase().includes('INNEXA'));
+            if (!isMatch) return false;
+            const isAllowed = titleUpper.includes('PYXEL') || 
+                              titleUpper.includes('PIXEL') || 
+                              titleUpper.includes('ICONIX') || 
+                              titleUpper.includes('BLIND');
+            return isAllowed;
+        }
 
         if (isSameParentEvent(p, t)) return true;
 
-        const cleanT = t.toUpperCase().replace(/[^A-Z0-9]/g, '');
         if (cleanT.includes('ELEVATE')) {
             return !p || isSameParentEvent(p, 'ELEVATE');
-        }
-        if (cleanT.includes('INNEXA')) {
-            if (p && p.toUpperCase().includes('INNEXA')) return true;
         }
         return false;
     }
@@ -156,8 +209,19 @@
         try {
             const cachedRaw = localStorage.getItem('vortex_cached_events');
             if (cachedRaw) {
-                const allEvents = JSON.parse(cachedRaw);
+                let allEvents = JSON.parse(cachedRaw);
                 if (Array.isArray(allEvents) && allEvents.length > 0) {
+                    allEvents = allEvents.filter(ev => {
+                        const tit = String(ev.title || '').toUpperCase().trim();
+                        const par = String(ev.parentEvent || '').toUpperCase().trim();
+                        if (tit === 'PES') return false;
+                        if (tit === 'BGMI' && par.includes('INNEXA')) return false;
+                        if (String(ev.imageUrl || '').toLowerCase().includes('mukkam')) return false;
+                        return true;
+                    });
+                    try {
+                        localStorage.setItem('vortex_cached_events', JSON.stringify(allEvents));
+                    } catch (e) {}
                     loadedSubEvents = allEvents.filter(e => isSubEventMatch(e, currentEvent));
                     renderSubEventsGrid();
                 }
@@ -216,9 +280,11 @@
         // If dynamic sub-events exist in DB, display ONLY dynamic events (never force stale static cards)
         if (loadedSubEvents.length > 0) {
             displayList = loadedSubEvents;
-        } else if (currentEvent.toUpperCase() === 'ELEVATE') {
+        } else if (currentEvent.toUpperCase().includes('ELEVATE')) {
             // Only fallback if DB has 0 sub-events
             displayList = staticElevateEvents;
+        } else if (currentEvent.toUpperCase().includes('INNEXA')) {
+            displayList = staticInnexaEvents;
         } else {
             displayList = loadedSubEvents;
         }

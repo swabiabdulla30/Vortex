@@ -216,28 +216,90 @@
 
                     const titleUpper = String(e.title || '').trim().toUpperCase();
                     if (titleUpper.includes('TEST') || titleUpper.includes('DUMMY') || titleUpper === 'NEW EVENT') return false;
+                    if (titleUpper === 'PES') return false;
 
                     const t = (targetName || 'ELEVATE').trim();
                     const p = (e.parentEvent || '').trim();
+                    const cleanT = t.toUpperCase().replace(/[^A-Z0-9]/g, '');
+
+                    if (cleanT.includes('INNEXA')) {
+                        if (titleUpper === 'PES' || titleUpper === 'BGMI' || String(e.imageUrl || '').toLowerCase().includes('mukkam')) {
+                            return false;
+                        }
+                        const isMatch = isSameParentEvent(p, t) || (p && p.toUpperCase().includes('INNEXA'));
+                        if (!isMatch) return false;
+                        const isAllowed = titleUpper.includes('PYXEL') || 
+                                          titleUpper.includes('PIXEL') || 
+                                          titleUpper.includes('ICONIX') || 
+                                          titleUpper.includes('BLIND');
+                        return isAllowed;
+                    }
 
                     if (isSameParentEvent(p, t)) return true;
 
-                    const cleanT = t.toUpperCase().replace(/[^A-Z0-9]/g, '');
                     if (cleanT.includes('ELEVATE')) {
                         return !p || isSameParentEvent(p, 'ELEVATE');
                     }
-                    if (cleanT.includes('INNEXA')) {
-                        if (p && p.toUpperCase().includes('INNEXA')) return true;
-                    }
                     return false;
                 }
+
+                const staticInnexaFallback = [
+                    {
+                        title: "Pyxel Sync",
+                        subtitle: "Synchronize your vision and code.",
+                        description: "Pyxel Sync is a creative design and development challenge conducted under INNEXA 26.",
+                        parentEvent: "INNEXA 26",
+                        imageUrl: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80",
+                        date: "SEP 23",
+                        venue: "KMCT IETM",
+                        prize: "Cash Prize",
+                        status: "OPEN"
+                    },
+                    {
+                        title: "Iconix",
+                        subtitle: "Master the craft of visual branding & UI.",
+                        description: "Iconix challenges participants to design modern UI/UX and brand identities under INNEXA 26.",
+                        parentEvent: "INNEXA 26",
+                        imageUrl: "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&q=80",
+                        date: "SEP 23",
+                        venue: "KMCT IETM",
+                        prize: "Cash Prize",
+                        status: "OPEN"
+                    },
+                    {
+                        title: "Blind App Challenge",
+                        subtitle: "Code without seeing the output until time is up.",
+                        description: "Blind App Challenge tests pure raw programming instincts where developers code without previewing their output.",
+                        parentEvent: "INNEXA 26",
+                        imageUrl: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&q=80",
+                        date: "SEP 23",
+                        venue: "KMCT IETM",
+                        prize: "Cash Prize",
+                        status: "OPEN"
+                    }
+                ];
 
                 window.renderSubEventsNow = function(dataOverride) {
                     try {
                         let allEvents = dataOverride || window._vortexLoadedEvents;
                         if (!allEvents) {
                             const raw = localStorage.getItem('vortex_cached_events');
-                            if (raw) allEvents = JSON.parse(raw);
+                            if (raw) {
+                                allEvents = JSON.parse(raw);
+                                if (Array.isArray(allEvents)) {
+                                    allEvents = allEvents.filter(ev => {
+                                        const tit = String(ev.title || '').toUpperCase().trim();
+                                        const par = String(ev.parentEvent || '').toUpperCase().trim();
+                                        if (tit === 'PES') return false;
+                                        if (tit === 'BGMI' && par.includes('INNEXA')) return false;
+                                        if (String(ev.imageUrl || '').toLowerCase().includes('mukkam')) return false;
+                                        return true;
+                                    });
+                                    try {
+                                        localStorage.setItem('vortex_cached_events', JSON.stringify(allEvents));
+                                    } catch(e) {}
+                                }
+                            }
                         }
                         if (!Array.isArray(allEvents) || allEvents.length === 0) return;
 
@@ -257,7 +319,10 @@
                             adminBar.style.display = 'flex';
                         }
 
-                        const subEvts = allEvents.filter(e => isSubEventMatch(e, curEvt));
+                        let subEvts = allEvents.filter(e => isSubEventMatch(e, curEvt));
+                        if (subEvts.length === 0 && curEvt.toUpperCase().includes('INNEXA')) {
+                            subEvts = staticInnexaFallback;
+                        }
                         const grid = document.getElementById('sub-events-grid');
                         if (!grid) return;
 
