@@ -411,11 +411,19 @@
                 const order = document.getElementById('main-event-order').value;
                 const about = document.getElementById('main-event-about').value.trim();
 
+                if (!title) {
+                    alert('Please enter an event title.');
+                    document.getElementById('main-event-title')?.focus();
+                    return;
+                }
+
                 let imageUrl = '';
-                if (currentImageBase64 && currentImageBase64.startsWith('data:image')) {
+                if (currentImageMode === 'upload' && currentImageBase64 && currentImageBase64.startsWith('data:image')) {
                     imageUrl = currentImageBase64;
                 } else if (inputUrl && inputUrl.value.trim()) {
                     imageUrl = inputUrl.value.trim();
+                } else if (currentImageBase64 && currentImageBase64.startsWith('data:image')) {
+                    imageUrl = currentImageBase64;
                 } else {
                     const previewImg = document.getElementById('main-event-preview-img');
                     if (previewImg && previewImg.src && (previewImg.src.startsWith('data:image') || previewImg.src.startsWith('http') || previewImg.src.startsWith('images/'))) {
@@ -442,6 +450,10 @@
                     return;
                 }
 
+                if (imageUrl && imageUrl.startsWith(window.location.origin + '/')) {
+                    imageUrl = imageUrl.replace(window.location.origin + '/', '');
+                }
+
                 const submitBtn = document.getElementById('submit-main-event-btn');
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
@@ -457,7 +469,7 @@
                         date: date,
                         venue: venue,
                         status: status.toUpperCase(),
-                        order: order ? Number(order) : 0,
+                        order: order !== '' && order !== null && order !== undefined ? Number(order) : 0,
                         about: about
                     };
 
@@ -465,7 +477,7 @@
                         payload.imageUrl = imageUrl;
                     }
 
-                    const url = isEdit ? `/api/admin/events/${editId}` : `/api/admin/events`;
+                    const url = isEdit ? `/api/admin/events/${encodeURIComponent(editId)}` : `/api/admin/events`;
                     const method = isEdit ? 'PUT' : 'POST';
 
                     const res = await fetch(url, {
@@ -485,7 +497,13 @@
                     // Instantly reflect the updated/created event in memory & cache
                     if (data.event) {
                         const savedEvt = data.event;
-                        const idx = loadedMainEvents.findIndex(x => x._id === savedEvt._id);
+                        const matchFn = x => Boolean(
+                            (x._id && savedEvt._id && x._id === savedEvt._id) ||
+                            (x.title && savedEvt.title && x.title.trim().toLowerCase() === savedEvt.title.trim().toLowerCase()) ||
+                            (editId && (x._id === editId || x.title === editId))
+                        );
+
+                        const idx = loadedMainEvents.findIndex(matchFn);
                         if (idx !== -1) {
                             loadedMainEvents[idx] = savedEvt;
                         } else {
@@ -493,7 +511,7 @@
                         }
 
                         if (Array.isArray(window._vortexLoadedEvents)) {
-                            const vIdx = window._vortexLoadedEvents.findIndex(x => x._id === savedEvt._id);
+                            const vIdx = window._vortexLoadedEvents.findIndex(matchFn);
                             if (vIdx !== -1) {
                                 window._vortexLoadedEvents[vIdx] = savedEvt;
                             } else {
@@ -508,6 +526,9 @@
                         } catch (e) {}
 
                         renderMainEventsGrid();
+                        if (typeof window.renderMainEventsNow === 'function') {
+                            try { window.renderMainEventsNow(window._vortexLoadedEvents); } catch (e) {}
+                        }
                     }
 
                     alert(isEdit ? 'Event card updated successfully!' : 'Event card created successfully!');
@@ -560,9 +581,11 @@
             aboutInput.value = itemToEdit.about || '';
 
             if (itemToEdit.imageUrl) {
-                currentImageMode = 'url';
+                setImageMode('url');
                 if (inputUrl) inputUrl.value = itemToEdit.imageUrl;
                 showPreview(itemToEdit.imageUrl);
+            } else {
+                setImageMode('upload');
             }
             submitBtn.innerHTML = '<i class="fas fa-save"></i> Update Event Card';
         } else {

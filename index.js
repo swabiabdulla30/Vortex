@@ -1866,20 +1866,21 @@ app.put("/api/admin/events/:id", authenticateToken, async (req, res) => {
         if (imageUrl) updateData.imageUrl = imageUrl.trim();
         if (order !== undefined && order !== "") updateData.order = Number(order);
 
+        const escapeRegex = (s) => String(s || '').replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
         let updated = null;
         if (mongoose.Types.ObjectId.isValid(req.params.id)) {
             updated = await Event.findByIdAndUpdate(req.params.id, updateData, { new: true });
         }
-        if (!updated) {
+        if (!updated && req.params.id) {
             updated = await Event.findOneAndUpdate(
-                { title: { $regex: new RegExp(`^${req.params.id.trim()}$`, 'i') } },
+                { title: { $regex: new RegExp(`^${escapeRegex(req.params.id.trim())}$`, 'i') } },
                 updateData,
                 { new: true }
             );
         }
         if (!updated && title) {
             updated = await Event.findOneAndUpdate(
-                { title: { $regex: new RegExp(`^${title.trim()}$`, 'i') } },
+                { title: { $regex: new RegExp(`^${escapeRegex(title.trim())}$`, 'i') } },
                 updateData,
                 { new: true }
             );
@@ -1917,13 +1918,14 @@ app.delete("/api/admin/events/:id", authenticateToken, async (req, res) => {
     if (req.user.role !== 'admin') return res.status(403).json({ error: "Access denied" });
     try {
         await connectDB();
+        const escapeRegex = (s) => String(s || '').replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
         let deleted = null;
         if (mongoose.Types.ObjectId.isValid(req.params.id)) {
             deleted = await Event.findByIdAndDelete(req.params.id);
         }
-        if (!deleted) {
+        if (!deleted && req.params.id) {
             deleted = await Event.findOneAndDelete({
-                title: { $regex: new RegExp(`^${req.params.id.trim()}$`, 'i') }
+                title: { $regex: new RegExp(`^${escapeRegex(req.params.id.trim())}$`, 'i') }
             });
         }
         if (!deleted) return res.status(404).json({ error: "Event not found" });

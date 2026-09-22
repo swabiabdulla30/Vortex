@@ -466,7 +466,7 @@
                 <h3 id="sub-event-modal-title"><i class="fas fa-gamepad"></i> Add Competition / Game</h3>
                 <button class="vortex-close-modal" id="close-sub-event-modal">&times;</button>
             </div>
-            <form id="vortex-sub-event-form">
+            <form id="vortex-sub-event-form" novalidate>
                 <input type="hidden" id="sub-event-id" value="">
 
                 <div style="background: rgba(0, 255, 136, 0.08); border: 1px solid rgba(0, 255, 136, 0.25); border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; font-size: 0.85rem; color: #00ff88;">
@@ -499,7 +499,7 @@
                         <input type="file" id="sub-event-file" class="vortex-form-control" accept="image/*">
                     </div>
                     <div id="sub-event-url-wrap" style="display: none;">
-                        <input type="url" id="sub-event-url" class="vortex-form-control" placeholder="https://image2url.com/...">
+                        <input type="text" id="sub-event-url" class="vortex-form-control" placeholder="https://image2url.com/... or images/...">
                     </div>
                     <div class="vortex-img-preview-box" id="sub-event-preview-box">
                         <img id="sub-event-preview-img" src="" alt="Preview" style="display: none;">

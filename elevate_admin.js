@@ -589,11 +589,19 @@
                 const rulesRaw = document.getElementById('sub-event-rules').value || '';
                 const rulesArray = rulesRaw.split('\n').map(r => r.trim()).filter(Boolean);
 
+                if (!title) {
+                    alert('Competition/Event name is required.');
+                    document.getElementById('sub-event-title')?.focus();
+                    return;
+                }
+
                 let imageUrl = '';
-                if (currentImageBase64 && currentImageBase64.startsWith('data:image')) {
+                if (currentImageMode === 'upload' && currentImageBase64 && currentImageBase64.startsWith('data:image')) {
                     imageUrl = currentImageBase64;
                 } else if (inputUrl && inputUrl.value.trim()) {
                     imageUrl = inputUrl.value.trim();
+                } else if (currentImageBase64 && currentImageBase64.startsWith('data:image')) {
+                    imageUrl = currentImageBase64;
                 } else {
                     const previewImg = document.getElementById('sub-event-preview-img');
                     if (previewImg && previewImg.src && (previewImg.src.startsWith('data:image') || previewImg.src.startsWith('http') || previewImg.src.startsWith('images/'))) {
@@ -620,6 +628,10 @@
                     return;
                 }
 
+                if (imageUrl && imageUrl.startsWith(window.location.origin + '/')) {
+                    imageUrl = imageUrl.replace(window.location.origin + '/', '');
+                }
+
                 const submitBtn = document.getElementById('submit-sub-event-btn');
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
@@ -637,9 +649,9 @@
                         venue: venue,
                         fee: fee,
                         prize: prize,
-                        slots: slots ? (parseInt(String(slots).replace(/[^0-9]/g, ''), 10) || 0) : 0,
+                        slots: slots !== '' && slots !== null && slots !== undefined ? (parseInt(String(slots).replace(/[^0-9]/g, ''), 10) || 0) : 0,
                         status: status.toUpperCase(),
-                        order: order ? Number(order) : 0,
+                        order: order !== '' && order !== null && order !== undefined ? Number(order) : 0,
                         about: about,
                         rules: rulesArray
                     };
@@ -648,7 +660,7 @@
                         payload.imageUrl = imageUrl;
                     }
 
-                    const url = isEdit ? `/api/admin/events/${editId}` : `/api/admin/events`;
+                    const url = isEdit ? `/api/admin/events/${encodeURIComponent(editId)}` : `/api/admin/events`;
                     const method = isEdit ? 'PUT' : 'POST';
 
                     const res = await fetch(url, {
@@ -668,7 +680,13 @@
                     // Instantly reflect the updated/created event in memory & cache
                     if (data.event) {
                         const savedEvt = data.event;
-                        const idx = loadedSubEvents.findIndex(x => x._id === savedEvt._id);
+                        const matchFn = x => Boolean(
+                            (x._id && savedEvt._id && x._id === savedEvt._id) ||
+                            (x.title && savedEvt.title && x.title.trim().toLowerCase() === savedEvt.title.trim().toLowerCase()) ||
+                            (editId && (x._id === editId || x.title === editId))
+                        );
+
+                        const idx = loadedSubEvents.findIndex(matchFn);
                         if (idx !== -1) {
                             loadedSubEvents[idx] = savedEvt;
                         } else {
@@ -676,7 +694,7 @@
                         }
 
                         if (Array.isArray(window._vortexLoadedEvents)) {
-                            const vIdx = window._vortexLoadedEvents.findIndex(x => x._id === savedEvt._id);
+                            const vIdx = window._vortexLoadedEvents.findIndex(matchFn);
                             if (vIdx !== -1) {
                                 window._vortexLoadedEvents[vIdx] = savedEvt;
                             } else {
@@ -760,9 +778,11 @@
             rulesInput.value = Array.isArray(itemToEdit.rules) ? itemToEdit.rules.join('\n') : (itemToEdit.rules || '');
 
             if (itemToEdit.imageUrl) {
-                currentImageMode = 'url';
+                setImageMode('url');
                 if (inputUrl) inputUrl.value = itemToEdit.imageUrl;
                 showPreview(itemToEdit.imageUrl);
+            } else {
+                setImageMode('upload');
             }
             submitBtn.innerHTML = '<i class="fas fa-save"></i> Update Event';
         } else {

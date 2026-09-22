@@ -387,7 +387,7 @@
                 <h3 id="main-event-modal-title"><i class="fas fa-calendar-plus"></i> Create Event Card</h3>
                 <button class="vortex-close-modal" id="close-main-event-modal">&times;</button>
             </div>
-            <form id="vortex-main-event-form">
+            <form id="vortex-main-event-form" novalidate>
                 <input type="hidden" id="main-event-id" value="">
 
                 <div class="vortex-form-group">
@@ -410,7 +410,7 @@
                         <input type="file" id="main-event-file" class="vortex-form-control" accept="image/*">
                     </div>
                     <div id="main-event-url-wrap" style="display: none;">
-                        <input type="url" id="main-event-url" class="vortex-form-control" placeholder="https://image2url.com/...">
+                        <input type="text" id="main-event-url" class="vortex-form-control" placeholder="https://image2url.com/... or images/...">
                     </div>
                     <div class="vortex-img-preview-box" id="main-event-preview-box">
                         <img id="main-event-preview-img" src="" alt="Preview" style="display: none;">
